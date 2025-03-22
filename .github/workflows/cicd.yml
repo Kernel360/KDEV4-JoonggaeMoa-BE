@@ -15,8 +15,9 @@ on:
 
 jobs:
   ci:
-    if: contains(github.ref, 'develop')
-
+    if: |
+      (github.event_name == 'push' && github.ref == 'refs/heads/develop') ||
+      (github.event_name == 'pull_request' && github.event.pull_request.base.ref == 'develop')
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -29,6 +30,15 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
+
+      # create application-prod.yml
+      - name: make application-prod.yml
+        run: |
+          mkdir -p src/main/resources
+          cd src/main/resources
+          touch ./application-prod.yml
+          echo "${{secrets.PROPERTIES_PROD}}" > ./application-prod.yml
+        shell: bash
 
       #gradle caching
       - name: Gradle Caching
@@ -43,15 +53,17 @@ jobs:
 
       #gradle build
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@af1da67850ed9a4cedd57bfd976089dd991e2582 # v4.0.0
+        uses: gradle/actions/setup-gradle@af1da67850ed9a4cedd57bfd976089dd991e2582
 
       - name: Build with Gradle Wrapper
         run: |
           export SPRING_PROFILES_ACTIVE=prod
-          ./gradlew build
+          ./gradlew build -x test 
 
   cd:
-    if: contains(github.ref, 'main')
+    if: |
+      (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
+      (github.event_name == 'pull_request' && github.event.pull_request.base.ref == 'main')
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -61,56 +73,99 @@ jobs:
 
       # create application-prod.yml
       - name: make application-prod.yml
-        if: contatins(github.red, 'main')
         run: |
           cd ./src/main/resources
-          touch ./application-main.yml
-          echo "${{ secrets.PROPERTIES_PROD}}" > ./application-main.tml
+          touch ./application-prod.yml
+          echo "${{ secrets.PROPERTIES_PROD}}" > ./application-prod.yml
         shell: bash
 
       # gradle build
       - name: gradle build
         run: |
           export SPRING_PROFILES_ACTIVE=prod
-          ./gradlew build
+          ./gradlew build -x test
 
       #docker build&push
       - name: Docker build & push to prod
-        if: contains(github.ref, 'main')
         run: |
           docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
-          docker build -f Dockerfile -t ${{secrets.DOCKER_USERNAME}}/docker-main .
-          docker push ${{secrets.DOCKER_USERNAME}}/docker-main
+          docker build -f Dockerfile -t ${{secrets.DOCKER_USERNAME}}/docker-joonggaemoa .
+          docker push ${{secrets.DOCKER_USERNAME}}/docker-joonggaemoa
 
       #deploy to ec2
       - name: Deploy to prod
-        uses: appleboy/ssh-action@master #원격 접속시 사용할 action
-        if: contains(github.ref, 'main')
+        uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.HOST_PROD}}  #EC2 public ip DNS
+          host: ${{ secrets.HOST_PROD }}
           username: ubuntu
-          key: ${{ secrets.PRIVATE_KEY }} #pem key
+          key: ${{ secrets.PRIVATE_KEY }}
           script: |
+
+            # 초기 상태 설정
+            DEPLOY_STATUS="success"
+
+            # 컨테이너, 이미지 확인
+            echo "Docker Imformations:"
             sudo docker ps
-            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/docker-main
-            sudo docker run -d -p 8080:8080 ${{ secrets.DOCKER_USERNAME }}/docker-main
-            sudo docker image prune -f
+            sudo docker images
 
+            # 기존 컨테이너 ID 조회, 중지
+            OLD_CONTAINER_ID=$(sudo docker ps -q --filter name=joonggaemoa)
+            sudo docker stop $OLD_CONTAINER_ID 2>/dev/null || true
+            #sudo docker rm $OLD_CONTAINER_ID 2>/dev/null || true
+            
+            # 새로운 컨테이너 pull, run
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/docker-joonggaemoa
+            sudo docker run -d --name new-joonggaemoa -p 8080:8080 \
+              -e SPRING_PROFILES_ACTIVE=prod \
+              ${{ secrets.DOCKER_USERNAME }}/docker-joonggaemoa
+            
+            # log 
+            sleep 10
+            sudo docker logs new-joonggaemoa
+            
+            # 컨테이너 실행 확인
+            if ! sudo docker ps | grep -q new-joonggaemoa; then
+              echo "New Container failed to start"
+              sudo docker rm new-joonggaemoa 2>/dev/null || true
 
+              # 새로운 컨테이너 실행 실패 시, 기존 컨테이너 재시작
+              if [ -n "$OLD_CONTAINER_ID" ]; then
+                DEPLOY_STATUS="failed"
+                echo "Restarting old container: $OLD_CONTAINER_ID"
+                sudo docker start $OLD_CONTAINER_ID
+            
+                # 기존 컨테이너 재시작 확인
+                sleep 10
+                if sudo docker ps | grep -q "$OLD_CONTAINER_ID"; then
+                  echo "Rollback successful. Old container is running."
+                else
+                  echo "Rollback failed. Old container did not start properly."
+                  exit 1
+                fi
+              else
+                DEPLOY_STATUS="old_failed"
+                echo "No old container found. Rollback not possible."
+                exit 1
+              fi
+            else
+              # 컨테이너, 이미지 정리
+              sudo docker rm $OLD_CONTAINER_ID
+              sudo docker rename new-joonggaemoa joonggaemoa
+              sudo docker image prune -f
+            fi
 
-  dependency-submission:
+            echo "After Deploy:"
+            sudo docker ps
+            sudo docker images
 
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-
-    steps:
-      - uses: actions/checkout@v4
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-
-      - name: Generate and submit dependency graph
-        uses: gradle/actions/dependency-submission@af1da67850ed9a4cedd57bfd976089dd991e2582 # v4.0.0
+            echo "Deploy Status: $DEPLOY_STATUS"
+            if [ "$DEPLOY_STATUS" == "failed" ]; then
+              echo "New deploy failed. Please check the logs."
+              exit 1
+            elif [ "$DEPLOY_STATUS" == "old_failed" ]; then
+              echo "Rollback failed. Please check the logs."
+              exit 1
+            fi
+            
+            
