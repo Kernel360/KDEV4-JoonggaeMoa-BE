@@ -1,13 +1,14 @@
 package org.silsagusi.joonggaemoa.domain.agent.controller.dto;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class LoginRequestDto {
+@Builder
+public class FindUsernameResponse {
 	private String username;
-	private String password;
 }

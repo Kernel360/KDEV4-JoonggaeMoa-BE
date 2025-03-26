@@ -88,11 +88,11 @@ public class SecurityConfig {
 		CorsConfiguration corsConfiguration = new CorsConfiguration();
 
 		corsConfiguration.addAllowedHeader("*");
-		corsConfiguration.addExposedHeader("*");
+		corsConfiguration.addExposedHeader("Authorization");
 		corsConfiguration.setAllowCredentials(true);
 
 		corsConfiguration.setAllowedOrigins(
-			List.of("http://localhost:3000")
+			List.of("http://localhost:5173")
 		);
 
 		corsConfiguration.setAllowedMethods(Arrays.asList("GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"));

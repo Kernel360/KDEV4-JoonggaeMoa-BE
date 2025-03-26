@@ -1,6 +1,6 @@
 package org.silsagusi.joonggaemoa.domain.contract.entity;
 
-import org.silsagusi.joonggaemoa.domain.agent.entity.AgentCustomer;
+import org.silsagusi.joonggaemoa.domain.customer.entity.Customer;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -10,15 +10,9 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 @ToString
 @Entity(name = "contracts")
 @Getter
@@ -31,10 +25,10 @@ public class Contract {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "agent_landlord")
-	private AgentCustomer agentLandlord;
+	private Customer customerLandlord;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "agent_tenant")
-	private AgentCustomer agentTenant;
+	private Customer customerTenant;
 
 }

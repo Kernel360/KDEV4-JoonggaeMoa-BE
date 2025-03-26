@@ -4,10 +4,10 @@ import org.silsagusi.joonggaemoa.domain.agent.entity.Agent;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Data
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -24,7 +24,7 @@ public class AgentCommand {
 	private String businessNo;
 	private String role;
 
-	public static AgentCommand toCommand(Agent agent) {
+	public static AgentCommand of(Agent agent) {
 		return AgentCommand.builder()
 			.id(agent.getId())
 			.name(agent.getName())

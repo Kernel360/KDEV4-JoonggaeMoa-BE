@@ -1,8 +1,8 @@
 package org.silsagusi.joonggaemoa.domain.agent.controller;
 
-import org.silsagusi.joonggaemoa.domain.agent.controller.dto.FindUsernameRequestDto;
-import org.silsagusi.joonggaemoa.domain.agent.controller.dto.FindUsernameResponseDto;
-import org.silsagusi.joonggaemoa.domain.agent.controller.dto.SignupRequestDto;
+import org.silsagusi.joonggaemoa.domain.agent.controller.dto.FindUsernameRequest;
+import org.silsagusi.joonggaemoa.domain.agent.controller.dto.FindUsernameResponse;
+import org.silsagusi.joonggaemoa.domain.agent.controller.dto.SignupRequest;
 import org.silsagusi.joonggaemoa.domain.agent.service.AgentService;
 import org.silsagusi.joonggaemoa.domain.agent.service.command.AgentCommand;
 import org.silsagusi.joonggaemoa.global.api.ApiResponse;
@@ -24,7 +24,7 @@ public class AgentController {
 	private final AgentService agentService;
 
 	@PostMapping("/api/agent/signup")
-	public ResponseEntity<ApiResponse<Void>> signup(@RequestBody SignupRequestDto signupRequestDto) {
+	public ResponseEntity<ApiResponse<Void>> signup(@RequestBody SignupRequest signupRequestDto) {
 		agentService.signup(
 			signupRequestDto.getUsername(),
 			signupRequestDto.getPassword(),
@@ -39,15 +39,15 @@ public class AgentController {
 	}
 
 	@GetMapping("/api/agent/username")
-	public ResponseEntity<ApiResponse<FindUsernameResponseDto>> getUsername(
-		@RequestBody FindUsernameRequestDto findUsernameRequestDto) {
+	public ResponseEntity<ApiResponse<FindUsernameResponse>> getUsername(
+		@RequestBody FindUsernameRequest findUsernameRequestDto) {
 		AgentCommand agentCommand = agentService.getAgentByNameAndPhone(
 			findUsernameRequestDto.getName(),
 			findUsernameRequestDto.getPhone()
 		);
 
 		return ResponseEntity.ok(ApiResponse.ok(
-			new FindUsernameResponseDto(agentCommand.getUsername())
+			new FindUsernameResponse(agentCommand.getUsername())
 		));
 	}
 

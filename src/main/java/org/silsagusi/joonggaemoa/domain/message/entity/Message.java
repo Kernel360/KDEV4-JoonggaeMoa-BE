@@ -1,8 +1,9 @@
 package org.silsagusi.joonggaemoa.domain.message.entity;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
-import org.silsagusi.joonggaemoa.domain.agent.entity.AgentCustomer;
+import org.silsagusi.joonggaemoa.domain.customer.entity.Customer;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -10,16 +11,13 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @NoArgsConstructor
-@AllArgsConstructor
-@Builder
 @ToString
 @Entity(name = "messages")
 @Getter
@@ -31,12 +29,19 @@ public class Message {
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	private AgentCustomer agentCustomer;
+	@JoinColumn(name = "customer_id")
+	private Customer customer;
 
-	private LocalDate scheduledAt;
+	private String scheduledAt;
 
-	private LocalDate sendAt;
+	private LocalDateTime sendAt;
 
 	private String content;
 
+	public Message(Customer customer, LocalDateTime sendAt, String content) {
+		this.customer = customer;
+		this.scheduledAt = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+		this.sendAt = sendAt;
+		this.content = content;
+	}
 }

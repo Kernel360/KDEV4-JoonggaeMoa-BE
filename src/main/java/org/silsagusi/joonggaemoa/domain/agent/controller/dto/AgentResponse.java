@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class AgentResponseDto {
+public class AgentResponse {
 
 	private Long id;
 	private String name;
@@ -24,8 +24,8 @@ public class AgentResponseDto {
 	private String businessNo;
 	private String role;
 
-	public static AgentResponseDto toDto(AgentCommand agentCommand) {
-		return AgentResponseDto.builder()
+	public static AgentResponse of(AgentCommand agentCommand) {
+		return AgentResponse.builder()
 			.id(agentCommand.getId())
 			.name(agentCommand.getName())
 			.phone(agentCommand.getPhone())

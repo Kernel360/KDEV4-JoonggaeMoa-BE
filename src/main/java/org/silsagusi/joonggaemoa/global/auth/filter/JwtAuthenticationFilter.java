@@ -3,7 +3,7 @@ package org.silsagusi.joonggaemoa.global.auth.filter;
 import java.io.IOException;
 import java.util.stream.Collectors;
 
-import org.silsagusi.joonggaemoa.domain.agent.controller.dto.LoginRequestDto;
+import org.silsagusi.joonggaemoa.domain.agent.controller.dto.LoginRequest;
 import org.silsagusi.joonggaemoa.global.auth.jwt.JwtProvider;
 import org.silsagusi.joonggaemoa.global.auth.jwt.RefreshTokenStore;
 import org.silsagusi.joonggaemoa.global.auth.userDetails.CustomUserDetails;
@@ -43,9 +43,9 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 	@Override
 	public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws
 		AuthenticationException {
-		LoginRequestDto requestDto = null;
+		LoginRequest requestDto = null;
 		try {
-			requestDto = objectMapper.readValue(request.getInputStream(), LoginRequestDto.class);
+			requestDto = objectMapper.readValue(request.getInputStream(), LoginRequest.class);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
