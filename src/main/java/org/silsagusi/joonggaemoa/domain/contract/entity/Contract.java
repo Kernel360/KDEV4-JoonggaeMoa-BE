@@ -31,7 +31,7 @@ public class Contract {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "agent_landlord")
-	private AgentCustomer agentLandloard;
+	private AgentCustomer agentLandlord;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "agent_tenant")
