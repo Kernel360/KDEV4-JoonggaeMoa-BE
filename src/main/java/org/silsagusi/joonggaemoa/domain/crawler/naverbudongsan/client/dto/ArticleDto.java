@@ -53,18 +53,22 @@ public class ArticleDto {
     @JsonProperty("repImgThumb")
     private String repImgThumb;
 
+    // 위도
     @JsonProperty("lat")
     private double lat;
 
+    // 경도
     @JsonProperty("lng")
     private double lng;
 
+    // 태그
     @JsonProperty("tagList")
     private List<String> tagList;
 
     @JsonProperty("minute")
     private int minute;
 
+    // 동일 매물 수
     @JsonProperty("sameAddrCnt")
     private int sameAddrCnt;
 
@@ -104,12 +108,12 @@ public class ArticleDto {
     @JsonProperty("tradeRentPrice")
     private int tradeRentPrice;
 
-    @JsonProperty("tradeCheckedByOwner")
     // 확인 매물 여부
+    @JsonProperty("tradeCheckedByOwner")
     private boolean tradeCheckedByOwner;
 
-    @JsonProperty("isVrExposed")
     // VR 촬영 여부
+    @JsonProperty("isVrExposed")
     private boolean isVrExposed;
 
 }
