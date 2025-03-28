@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.Collections;
 
 import org.silsagusi.joonggaemoa.global.auth.jwt.JwtProvider;
-import org.silsagusi.joonggaemoa.global.auth.jwt.RefreshTokenStore;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -24,7 +23,6 @@ import lombok.extern.slf4j.Slf4j;
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
 	private final JwtProvider jwtProvider;
-	private final RefreshTokenStore refreshTokenStore;
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
@@ -54,5 +52,11 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 			username, "",
 			Collections.singleton(new SimpleGrantedAuthority(role))
 		);
+	}
+
+	@Override
+	protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+		String path = request.getRequestURI();
+		return path.equals("/api/agent/login") || path.equals("/api/agent/signup") || path.equals("/api/refresh-token");
 	}
 }

@@ -3,17 +3,20 @@ package org.silsagusi.joonggaemoa.domain.agent.service;
 import org.silsagusi.joonggaemoa.domain.agent.entity.Agent;
 import org.silsagusi.joonggaemoa.domain.agent.repository.AgentRepository;
 import org.silsagusi.joonggaemoa.domain.agent.service.command.AgentCommand;
+import org.silsagusi.joonggaemoa.domain.message.service.MessageTemplateService;
 import org.silsagusi.joonggaemoa.global.api.exception.CustomException;
 import org.silsagusi.joonggaemoa.global.api.exception.ErrorCode;
 import org.silsagusi.joonggaemoa.global.auth.jwt.JwtProvider;
 import org.silsagusi.joonggaemoa.global.auth.jwt.RefreshTokenStore;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class AgentService {
 
@@ -21,6 +24,7 @@ public class AgentService {
 	private final AgentRepository agentRepository;
 	private final BCryptPasswordEncoder bCryptPasswordEncoder;
 	private final RefreshTokenStore refreshTokenStore;
+	private final MessageTemplateService messageTemplateService;
 
 	public void signup(
 		String username,
@@ -37,17 +41,19 @@ public class AgentService {
 		}
 
 		Agent agent = new Agent(
-			username,
-			bCryptPasswordEncoder.encode(password),
 			name,
 			phone,
 			email,
+			username,
+			bCryptPasswordEncoder.encode(password),
 			office,
 			region,
 			businessNo
 		);
 
 		agentRepository.save(agent);
+
+		messageTemplateService.createMessageTemplate(agent);
 	}
 
 	public AgentCommand getAgentByNameAndPhone(String name, String phone) {

@@ -1,3 +1,4 @@
+/*
 package org.silsagusi.joonggaemoa.global.api;
 
 import org.springframework.core.MethodParameter;
@@ -25,3 +26,4 @@ public class ResponseInterceptor implements ResponseBodyAdvice<Object> {
 		return body;
 	}
 }
+*/

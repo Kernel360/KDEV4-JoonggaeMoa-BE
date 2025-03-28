@@ -24,6 +24,12 @@ spring:
       host: localhost
       port: 6379
 
+  batch:
+    job:
+      enabled: false
+    jdbc:
+      schema: classpath:org/springframework/batch/core/schema-mysql.sql
+      initialize-schema: always
 
 logging:
   level:

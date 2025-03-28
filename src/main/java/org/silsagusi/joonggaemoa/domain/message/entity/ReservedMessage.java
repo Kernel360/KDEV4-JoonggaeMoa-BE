@@ -1,5 +1,8 @@
 package org.silsagusi.joonggaemoa.domain.message.entity;
 
+import java.time.LocalDateTime;
+
+import org.silsagusi.joonggaemoa.domain.customer.entity.Customer;
 import org.silsagusi.joonggaemoa.global.BaseEntity;
 
 import jakarta.persistence.Column;
@@ -8,6 +11,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,31 +19,26 @@ import lombok.ToString;
 
 @NoArgsConstructor
 @ToString
-@Entity(name = "message_logs")
+@Entity(name = "reserved_messages")
 @Getter
-public class MessageLog extends BaseEntity {
+public class ReservedMessage extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "message_log_id")
+	@Column(name = "reserved_message_id")
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	private Message message;
+	@JoinColumn(name = "customer_id")
+	private Customer customer;
 
-	// TODO 수신자
+	private LocalDateTime sendAt;
 
-	private String responseCode;
+	private String content;
 
-	private String errorMessage;
-
-	private SendStatus sendStatus;
-
-	private String smsMessageId;
-
-	private String smsGroupId;
-
-	enum SendStatus {
-		READY, SENT, FAILED
+	public ReservedMessage(Customer customer, LocalDateTime sendAt, String content) {
+		this.customer = customer;
+		this.sendAt = sendAt;
+		this.content = content;
 	}
 }

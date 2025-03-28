@@ -55,17 +55,16 @@ public class SecurityConfig {
 		httpSecurity
 			.csrf(AbstractHttpConfigurer::disable)
 			.formLogin(AbstractHttpConfigurer::disable)
-			// .logout(logout -> logout.logoutUrl("/api/agent/logout"))
 			.httpBasic(AbstractHttpConfigurer::disable)
 			.cors(configurer -> configurer.configurationSource(corsConfigurationSource()))
 			.sessionManagement(configurer -> configurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-			.addFilterBefore(
+			.addFilter(
 				new JwtAuthenticationFilter(authenticationManager(customUserDetailsService), jwtProvider, objectMapper,
-					refreshTokenStore),
-				UsernamePasswordAuthenticationFilter.class)
-			.addFilterBefore(new JwtAuthorizationFilter(jwtProvider, refreshTokenStore), JwtAuthenticationFilter.class)
+					refreshTokenStore))
+			.addFilterBefore(new JwtAuthorizationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class)
 			.authorizeHttpRequests(auth -> auth
-				.anyRequest().permitAll()
+				.requestMatchers("/api/agent/login", "/api/agent/signup").permitAll()
+				.anyRequest().authenticated()
 			)
 			.exceptionHandling(configurer -> configurer
 				.authenticationEntryPoint(customAuthenticationEntryPointHandler)

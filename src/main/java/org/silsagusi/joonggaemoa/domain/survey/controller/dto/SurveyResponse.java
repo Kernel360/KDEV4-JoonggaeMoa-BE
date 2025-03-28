@@ -20,6 +20,7 @@ public class SurveyResponse {
 			.stream().map(it -> QuestionResponse.of(it)).toList();
 
 		return SurveyResponse.builder()
+			.id(surveyCommand.getId())
 			.title(surveyCommand.getTitle())
 			.description(surveyCommand.getDescription())
 			.questionList(questionResponseList)

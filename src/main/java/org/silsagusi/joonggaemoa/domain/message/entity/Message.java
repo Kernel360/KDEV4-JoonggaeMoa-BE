@@ -1,9 +1,7 @@
 package org.silsagusi.joonggaemoa.domain.message.entity;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-
 import org.silsagusi.joonggaemoa.domain.customer.entity.Customer;
+import org.silsagusi.joonggaemoa.global.BaseEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -21,7 +19,7 @@ import lombok.ToString;
 @ToString
 @Entity(name = "messages")
 @Getter
-public class Message {
+public class Message extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,16 +30,20 @@ public class Message {
 	@JoinColumn(name = "customer_id")
 	private Customer customer;
 
-	private String scheduledAt;
-
-	private LocalDateTime sendAt;
-
 	private String content;
 
-	public Message(Customer customer, LocalDateTime sendAt, String content) {
+	private SendStatus sendStatus;
+
+	private String responseCode;
+
+	private String errorMessage;
+
+	private String smsMessageId;
+
+	private String smsGroupId;
+
+	public Message(Customer customer, String content) {
 		this.customer = customer;
-		this.scheduledAt = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-		this.sendAt = sendAt;
 		this.content = content;
 	}
 }

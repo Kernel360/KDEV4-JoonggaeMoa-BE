@@ -2,10 +2,13 @@ package org.silsagusi.joonggaemoa.domain.survey.controller;
 
 import java.util.List;
 
+import org.silsagusi.joonggaemoa.domain.survey.controller.dto.AnswerRequest;
+import org.silsagusi.joonggaemoa.domain.survey.controller.dto.AnswerResponse;
 import org.silsagusi.joonggaemoa.domain.survey.controller.dto.SurveyCreateRequest;
 import org.silsagusi.joonggaemoa.domain.survey.controller.dto.SurveyResponse;
 import org.silsagusi.joonggaemoa.domain.survey.controller.dto.SurveyUpdateRequest;
 import org.silsagusi.joonggaemoa.domain.survey.service.SurveyService;
+import org.silsagusi.joonggaemoa.domain.survey.service.command.AnswerCommand;
 import org.silsagusi.joonggaemoa.domain.survey.service.command.QuestionCommand;
 import org.silsagusi.joonggaemoa.domain.survey.service.command.SurveyCommand;
 import org.silsagusi.joonggaemoa.global.api.ApiResponse;
@@ -96,6 +99,33 @@ public class SurveyController {
 	) {
 		SurveyCommand surveyCommand = surveyService.findById(surveyId);
 		return ResponseEntity.ok(ApiResponse.ok(SurveyResponse.of(surveyCommand)));
+	}
+
+	@PostMapping("/api/agents/{agentId}/surveys/{surveyId}/submit")
+	public ResponseEntity<ApiResponse<Void>> submitSurveyAnswer(
+		@PathVariable("agentId") Long agentId,
+		@PathVariable("surveyId") Long surveyId,
+		@RequestBody AnswerRequest answerRequest
+	) {
+		surveyService.submitSurveyAnswer(
+			agentId,
+			surveyId,
+			answerRequest.getName(),
+			answerRequest.getEmail(),
+			answerRequest.getPhone(),
+			answerRequest.getConsent(),
+			answerRequest.getQuestions(),
+			answerRequest.getAnswers()
+		);
+		return ResponseEntity.ok(ApiResponse.ok());
+	}
+
+	@GetMapping("/api/agents/{agentId}/surveys/answer")
+	public ResponseEntity<ApiResponse<List<AnswerResponse>>> getSurveyAnswers() {
+		List<AnswerCommand> answerCommandList = surveyService.getAllAnswers();
+		List<AnswerResponse> answerResponseList = answerCommandList.stream()
+			.map(it -> AnswerResponse.of(it)).toList();
+		return ResponseEntity.ok(ApiResponse.ok(answerResponseList));
 	}
 
 }

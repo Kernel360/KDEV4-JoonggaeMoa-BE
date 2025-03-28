@@ -49,8 +49,17 @@ public class Customer {
 	@JoinColumn(name = "agent_id", nullable = false)
 	private Agent agent;
 
-	public Customer(String name, LocalDate birthday, String phone, String email, String job, Boolean isVip,
-		String memo, Boolean consent, Agent agent) {
+	public Customer(
+		String name,
+		LocalDate birthday,
+		String phone,
+		String email,
+		String job,
+		Boolean isVip,
+		String memo,
+		Boolean consent,
+		Agent agent
+	) {
 		this.name = name;
 		this.birthday = birthday;
 		this.phone = phone;
@@ -58,6 +67,20 @@ public class Customer {
 		this.job = job;
 		this.isVip = isVip;
 		this.memo = memo;
+		this.consent = consent;
+		this.agent = agent;
+	}
+
+	public Customer(
+		String name,
+		String phone,
+		String email,
+		Boolean consent,
+		Agent agent
+	) {
+		this.name = name;
+		this.phone = phone;
+		this.email = email;
 		this.consent = consent;
 		this.agent = agent;
 	}

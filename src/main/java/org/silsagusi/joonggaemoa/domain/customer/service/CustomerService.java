@@ -137,4 +137,8 @@ public class CustomerService {
 			.map(it -> CustomerCommand.of(it)).toList();
 		return customerCommandList;
 	}
+
+	public Customer getCustomerByPhone(String phone) {
+		return customerRepository.findByPhone(phone);
+	}
 }
