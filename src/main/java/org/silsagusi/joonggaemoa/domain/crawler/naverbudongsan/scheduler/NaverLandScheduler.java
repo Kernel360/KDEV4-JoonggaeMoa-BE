@@ -10,8 +10,8 @@ public class NaverLandScheduler {
     @Autowired
     private NaverLandCrawlerService naverLandCrawlerService;
 
-    // 매일 자정에 실행
-    @Scheduled(cron = "0 0 * * * *")
+    // 기본값: 매 시간 정각에 실행
+    @Scheduled(cron = "0/10 * * * * *")
     public void crawlNaverLand() {
         naverLandCrawlerService.startCrawling();
     }

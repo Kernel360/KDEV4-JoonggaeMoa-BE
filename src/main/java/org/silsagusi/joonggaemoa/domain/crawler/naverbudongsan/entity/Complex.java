@@ -1,17 +1,21 @@
 package org.silsagusi.joonggaemoa.domain.crawler.naverbudongsan.entity;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.Column;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
-@Entity
-@Table(name = "complexes")
+import java.math.BigDecimal;
+
+@NoArgsConstructor
+@ToString
+@Entity(name = "complexes")
 public class Complex {
 
     @Id
-    @Column(name = "hscp_no", nullable = false, unique = true)
-    private String hscpNo;
+    @Column(name = "hscp_no")
+    private Long hscpNo;
 
     @Column(name = "hscp_nm")
     private String hscpNm;
@@ -23,59 +27,57 @@ public class Complex {
     private String hscpTypeNm;
 
     @Column(name = "tot_dong_cnt")
-    private Integer totDongCnt;
+    private int totDongCnt;
 
     @Column(name = "tot_hseh_cnt")
-    private Integer totHsehCnt;
+    private int totHsehCnt;
 
     @Column(name = "gen_hseh_cnt")
-    private Integer genHsehCnt;
+    private int genHsehCnt;
 
     @Column(name = "use_aprv_ymd")
     private String useAprvYmd;
 
+    @Column(name = "rep_img_url")
+    private String repImgUrl;
+
     @Column(name = "deal_cnt")
-    private Integer dealCnt;
+    private int dealCnt;
 
     @Column(name = "lease_cnt")
-    private Integer leaseCnt;
+    private int leaseCnt;
 
     @Column(name = "rent_cnt")
-    private Integer rentCnt;
+    private int rentCnt;
 
     @Column(name = "strm_rent_cnt")
-    private Integer strmRentCnt;
+    private int strmRentCnt;
 
     @Column(name = "total_atcl_cnt")
-    private Integer totalAtclCnt;
+    private int totalAtclCnt;
 
     @Column(name = "min_spc")
-    private String minSpc;
+    private BigDecimal minSpc;
 
     @Column(name = "max_spc")
-    private String maxSpc;
+    private BigDecimal maxSpc;
 
-    @Column(name = "isale_prc_min")
-    private String isalePrcMin;
+    @Column(name = "deal_prc_min")
+    private int dealPrcMin;
 
-    @Column(name = "isale_prc_max")
-    private String isalePrcMax;
+    @Column(name = "deal_prc_max")
+    private int dealPrcMax;
 
-    @Column(name = "isale_notif_seq")
-    private String isaleNotifSeq;
+    @Column(name = "lease_prc_min")
+    private int leasePrcMin;
 
-    @Column(name = "isale_sche_label")
-    private String isaleScheLabel;
+    @Column(name = "lease_prc_max")
+    private int leasePrcMax;
 
-    @Column(name = "isale_sche_label_pre")
-    private String isaleScheLabelPre;
+    @Column(name = "rent_prc_min")
+    private int rentPrcMin;
 
-    @Column(name = "tour_exist")
-    private boolean tourExist;
+    @Column(name = "rent_prc_max")
+    private int rentPrcMax;
 
-    @Column(name = "is_seismic")
-    private boolean isSeismic;
-
-    @Column(name = "total_elevator_count")
-    private Integer totalElevatorCount;
 }

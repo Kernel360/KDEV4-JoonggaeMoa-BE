@@ -17,12 +17,12 @@ public class NaverBudongsanPropertyController {
 
     @PostMapping("/{atclNo}/articles")
     public Optional<Article> postArticle(@PathVariable("atclNo") String atclNo) {
-        return naverLandCrawlerService.getArticle(Long.valueOf(atclNo));
+        return null;
     }
 
     @PostMapping("/{atclNo}/complexes")
     public Optional<Complex> postComplex(@PathVariable("atclNo") String atclNo) {
-        return naverLandCrawlerService.getComplex(Long.valueOf(atclNo));
+        return null;
     }
 
 //    @GetMapping(value = "/{atclNo}/articles")

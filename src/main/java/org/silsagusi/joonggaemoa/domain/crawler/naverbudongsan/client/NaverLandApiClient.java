@@ -1,17 +1,43 @@
 package org.silsagusi.joonggaemoa.domain.crawler.naverbudongsan.client;
 
-import io.lettuce.core.dynamic.annotation.Value;
-import org.silsagusi.joonggaemoa.domain.crawler.naverbudongsan.client.dto.ArticleListResponseDto;
-import org.silsagusi.joonggaemoa.domain.crawler.naverbudongsan.client.dto.ComplexListResponseDto;
+import org.silsagusi.joonggaemoa.domain.crawler.naverbudongsan.client.dto.ArticleResponseDto;
+import org.silsagusi.joonggaemoa.domain.crawler.naverbudongsan.client.dto.ComplexResponseDto;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.beans.factory.annotation.Value;
 
 @Component
 public class NaverLandApiClient {
 
     private final WebClient webClient;
+
+    @Value("${naverbudongsan.rletTpCd:APT}")
+    private String rletTpCd;
+
+    @Value("${naverbudongsan.tradTpCd:A1}")
+    private String tradTpCd;
+
+    @Value("${naverbudongsan.lat:37.517408}")
+    private String lat;
+
+    @Value("${naverbudongsan.lon:127.047313}")
+    private String lon;
+
+    @Value("${naverbudongsan.btm:37.4546135}")
+    private String btm;
+
+    @Value("${naverbudongsan.lft:126.8825181}")
+    private String lft;
+
+    @Value("${naverbudongsan.top:37.5801497}")
+    private String top;
+
+    @Value("${naverbudongsan.rgt:127.2121079}")
+    private String rgt;
+
+    @Value("${naverbudongsan.cortarNo:1168000000}")
+    private String cortarNo;
 
     public NaverLandApiClient(WebClient.Builder webClientBuilder) {
         this.webClient = webClientBuilder.baseUrl("https://m.land.naver.com").build();
@@ -23,22 +49,12 @@ public class NaverLandApiClient {
         ).build();
     }
 
-    public ArticleListResponseDto fetchArticleList(
-            @RequestParam(value = "rletTpCd", defaultValue = "${naverbudongsan.rletTpCd:APT}") String rletTpCd,
-            @RequestParam(value = "tradTpCd", defaultValue = "${naverbudongsan.tradTpCd:A1}") String tradTpCd,
-            @RequestParam(value = "lat", defaultValue = "${naverbudongsan.lat:37.517408}") String lat,
-            @RequestParam(value = "lon", defaultValue = "${naverbudongsan.lon:127.047313}") String lon,
-            @RequestParam(value = "btm", defaultValue = "${naverbudongsan.btm:37.4546135}") String btm,
-            @RequestParam(value = "lft", defaultValue = "${naverbudongsan.lft:126.8825181}") String lft,
-            @RequestParam(value = "top", defaultValue = "${naverbudongsan.top:37.5801497}") String top,
-            @RequestParam(value = "rgt", defaultValue = "${naverbudongsan.rgt:127.2121079}") String rgt,
-            @RequestParam(value = "cortarNo", defaultValue = "${naverbudongsan.cortarNo:1168000000}") String cortarNo
-    ) {
+    public ArticleResponseDto fetchArticleList() {
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder.path("/cluster/ajax/articleList")
                         .queryParam("rletTpCd", rletTpCd)
                         .queryParam("tradTpCd", tradTpCd)
-                        .queryParam("z,", 14)
+                        .queryParam("z", 14)
                         .queryParam("lat", lat)
                         .queryParam("lon", lon)
                         .queryParam("btm", btm)
@@ -49,26 +65,16 @@ public class NaverLandApiClient {
                         .build())
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
-                .bodyToMono(ArticleListResponseDto.class)
+                .bodyToMono(ArticleResponseDto.class)
                 .block();
     }
 
-    public ComplexListResponseDto fetchComplexList(
-            @RequestParam(value = "rletTpCd", defaultValue = "${naverbudongsan.rletTpCd:APT}") String rletTpCd,
-            @RequestParam(value = "tradTpCd", defaultValue = "${naverbudongsan.tradTpCd:A1}") String tradTpCd,
-            @RequestParam(value = "lat", defaultValue = "${naverbudongsan.lat:37.517408}") String lat,
-            @RequestParam(value = "lon", defaultValue = "${naverbudongsan.lon:127.047313}") String lon,
-            @RequestParam(value = "btm", defaultValue = "${naverbudongsan.btm:37.4546135}") String btm,
-            @RequestParam(value = "lft", defaultValue = "${naverbudongsan.lft:126.8825181}") String lft,
-            @RequestParam(value = "top", defaultValue = "${naverbudongsan.top:37.5801497}") String top,
-            @RequestParam(value = "rgt", defaultValue = "${naverbudongsan.rgt:127.2121079}") String rgt,
-            @RequestParam(value = "cortarNo", defaultValue = "${naverbudongsan.cortarNo:1168000000}") String cortarNo
-    ) {
+    public ComplexResponseDto fetchComplexList() {
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder.path("/cluster/ajax/complexList")
                         .queryParam("rletTpCd", rletTpCd)
                         .queryParam("tradTpCd", tradTpCd)
-                        .queryParam("z,", 14)
+                        .queryParam("z", 14)
                         .queryParam("lat", lat)
                         .queryParam("lon", lon)
                         .queryParam("btm", btm)
@@ -79,8 +85,7 @@ public class NaverLandApiClient {
                         .build())
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
-                // JSON을 DTO로 역직렬화
-                .bodyToMono(ComplexListResponseDto.class)
+                .bodyToMono(ComplexResponseDto.class)
                 .block();
     }
 }

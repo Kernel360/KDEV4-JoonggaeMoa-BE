@@ -11,7 +11,7 @@ public class KakaoApiClient {
 
     private final WebClient webClient;
 
-    // kakao.api.key: application.properties에 설정된 Kakao REST API 키 (KakaoAK {API_KEY})
+    // kakao.api.key: application.yml에 설정된 Kakao REST API 키 (KakaoAK {API_KEY})
     @Autowired
     public KakaoApiClient(@Value("${kakao.api.key}") String kakaoApiKey) {
         // WebClient를 Kakao API의 기본 URL과 Authorization 헤더로 초기화한다.

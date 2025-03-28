@@ -43,7 +43,7 @@ dependencies {
     // Redis
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
-    //batch
+    // Batch
     implementation 'org.springframework.boot:spring-boot-starter-batch'
 
     // Lombok
@@ -74,4 +74,11 @@ dependencies {
 
 test {
     useJUnitPlatform()
+}
+
+tasks.withType(JavaCompile) {
+    options.compilerArgs += [
+        "--module-path", classpath.asPath
+    ]
+    modularity.inferModulePath = true
 }
