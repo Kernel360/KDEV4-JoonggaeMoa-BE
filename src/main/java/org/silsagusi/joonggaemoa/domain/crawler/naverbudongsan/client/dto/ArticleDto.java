@@ -2,6 +2,7 @@ package org.silsagusi.joonggaemoa.domain.crawler.naverbudongsan.client.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import org.silsagusi.joonggaemoa.domain.crawler.naverbudongsan.entity.Article;
 
 import java.util.List;
 
@@ -36,10 +37,10 @@ public class ArticleDto {
     private String vrfcTpCd;
 
     @JsonProperty("prc")
-    private int prc;
+    private int price;
 
     @JsonProperty("rentPrc")
-    private int rentPrc;
+    private int rentPrice;
 
     @JsonProperty("direction")
     private String direction;
@@ -115,5 +116,9 @@ public class ArticleDto {
     // VR 촬영 여부
     @JsonProperty("isVrExposed")
     private boolean isVrExposed;
+
+    public Article toEntity() {
+        return new Article();
+    }
 
 }

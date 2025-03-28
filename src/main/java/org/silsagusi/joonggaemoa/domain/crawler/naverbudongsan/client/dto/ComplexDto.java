@@ -2,6 +2,7 @@ package org.silsagusi.joonggaemoa.domain.crawler.naverbudongsan.client.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import org.silsagusi.joonggaemoa.domain.crawler.naverbudongsan.entity.Complex;
 
 @Data
 public class ComplexDto {
@@ -52,10 +53,10 @@ public class ComplexDto {
     private String maxSpc;
 
     @JsonProperty("isalePrcMin")
-    private String isalePrcMin;
+    private String minPrice;
 
     @JsonProperty("isalePrcMax")
-    private String isalePrcMax;
+    private String maxPrice;
 
     @JsonProperty("isaleNotifSeq")
     private String isaleNotifSeq;
@@ -74,4 +75,8 @@ public class ComplexDto {
 
     @JsonProperty("totalElevatorCount")
     private Integer totalElevatorCount;
+
+    public Complex toEntity() {
+        return new Complex();
+    }
 }

@@ -11,8 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Table;
 
-@Entity
-@Table(name = "articles")
+@Entity(name = "articles")
 public class Article {
     /** 매물 ID (JSON 키: articleNo) */
     @Id
