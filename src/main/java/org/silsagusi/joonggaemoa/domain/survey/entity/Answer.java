@@ -3,6 +3,7 @@ package org.silsagusi.joonggaemoa.domain.survey.entity;
 import java.util.List;
 
 import org.silsagusi.joonggaemoa.domain.customer.entity.Customer;
+import org.silsagusi.joonggaemoa.global.BaseEntity;
 
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
@@ -20,9 +21,9 @@ import lombok.ToString;
 
 @NoArgsConstructor
 @ToString
-@Entity(name = "answer")
+@Entity(name = "answers")
 @Getter
-public class Answer {
+public class Answer extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,16 +39,16 @@ public class Answer {
 	private Survey survey;
 
 	@ElementCollection
-	@CollectionTable(name = "question_answers", joinColumns = @JoinColumn(name = "answer_id"))
-	private List<QuestionAnswer> answer;
+	@CollectionTable(name = "question_answer_pairs", joinColumns = @JoinColumn(name = "question_answer_pair_id"))
+	private List<QuestionAnswerPair> questionAnswerPairs;
 
 	public Answer(
 		Customer customer,
 		Survey survey,
-		List<QuestionAnswer> answer
+		List<QuestionAnswerPair> questionAnswerPairs
 	) {
 		this.customer = customer;
 		this.survey = survey;
-		this.answer = answer;
+		this.questionAnswerPairs = questionAnswerPairs;
 	}
 }

@@ -37,7 +37,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 		this.jwtProvider = jwtProvider;
 		this.objectMapper = objectMapper;
 		this.refreshTokenStore = refreshTokenStore;
-		setFilterProcessesUrl("/api/agent/login");
+		setFilterProcessesUrl("/api/agents/login");
 	}
 
 	@Override
@@ -87,5 +87,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 		response.setStatus(HttpServletResponse.SC_OK);
 		response.addHeader("Authorization", "Bearer " + accessToken);
 		response.addHeader("Set-Cookie", cookie.toString());
+		response.addHeader("agentId", id + "");
 	}
 }

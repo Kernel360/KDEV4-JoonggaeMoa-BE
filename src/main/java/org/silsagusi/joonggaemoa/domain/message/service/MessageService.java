@@ -3,13 +3,13 @@ package org.silsagusi.joonggaemoa.domain.message.service;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.silsagusi.joonggaemoa.domain.agent.repository.AgentRepository;
 import org.silsagusi.joonggaemoa.domain.customer.repository.CustomerRepository;
 import org.silsagusi.joonggaemoa.domain.message.entity.Message;
 import org.silsagusi.joonggaemoa.domain.message.entity.ReservedMessage;
 import org.silsagusi.joonggaemoa.domain.message.repository.MessageRepository;
 import org.silsagusi.joonggaemoa.domain.message.repository.ReservedMessageRepository;
 import org.silsagusi.joonggaemoa.domain.message.service.command.MessageCommand;
+import org.silsagusi.joonggaemoa.domain.message.service.command.ReservedMessageCommand;
 import org.silsagusi.joonggaemoa.global.api.exception.CustomException;
 import org.silsagusi.joonggaemoa.global.api.exception.ErrorCode;
 import org.springframework.stereotype.Service;
@@ -20,7 +20,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class MessageService {
 
-	private final AgentRepository agentRepository;
 	private final CustomerRepository customerRepository;
 	private final MessageRepository messageRepository;
 	private final ReservedMessageRepository reservedMessageRepository;
@@ -48,4 +47,20 @@ public class MessageService {
 			.map(customer -> new ReservedMessage(customer, LocalDateTime.parse(sendAt), content))
 			.forEach(reservedMessageRepository::save);
 	}
+
+	public List<ReservedMessageCommand> getReservedMessage(Long agentId, Long lastMessageId) {
+		List<ReservedMessage> reservedMessages;
+
+		if (lastMessageId == null || lastMessageId == 0) {
+			reservedMessages = reservedMessageRepository.findTop10ByCustomerAgent_IdOrderByIdDesc(agentId);
+		} else {
+			reservedMessages = reservedMessageRepository.findTop10ByCustomerAgent_IdAndIdLessThanOrderByIdDesc(agentId,
+				lastMessageId);
+		}
+
+		return reservedMessages.stream()
+			.map(ReservedMessageCommand::of)
+			.toList();
+	}
+
 }

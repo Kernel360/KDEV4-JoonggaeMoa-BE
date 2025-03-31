@@ -11,5 +11,6 @@ public class AnswerRequest {
 	private String phone;
 	private Boolean consent;
 	private List<String> questions;
-	private List<String> answers;
+	private List<List<String>> answers;
+
 }

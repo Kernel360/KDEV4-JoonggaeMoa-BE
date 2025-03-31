@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: local
+    active: prod
   web:
     resources:
       add-mappings: false # Disable static resource mapping (For NoHandlerFoundException)
@@ -31,9 +31,29 @@ spring:
       schema: classpath:org/springframework/batch/core/schema-mysql.sql
       initialize-schema: always
 
+  servlet:
+    multipart:
+      max-file-size: 5MB #파일 용량 제한
+      max-request-size: 10MB #전체 최대 크기 제한
+
 logging:
   level:
     org.hibernate.sql: debug
+
+cloud:
+  aws:
+    credentials:
+      access-key: ${S3_ACCESS_KEY}
+      secret-key: ${S3_SECRET_KEY}
+    s3:
+      bucket: joonggaemoa
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false
+
+
+
 
 ---
 spring:

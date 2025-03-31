@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -28,13 +29,13 @@ public class CustomerController {
 
 	private final CustomerService customerService;
 
-	@PostMapping("/api/agents/{agentId}/customers")
+	@PostMapping("/api/customers")
 	public ResponseEntity<ApiResponse<Void>> createCustomer(
-		@PathVariable("agentId") Long agentId,
+		HttpServletRequest request,
 		@RequestBody CreateCustomerRequest createCustomerRequestDto
 	) {
 		customerService.createCustomer(
-			agentId,
+			(Long)request.getAttribute("agentId"),
 			createCustomerRequestDto.getName(),
 			createCustomerRequestDto.getBirthday(),
 			createCustomerRequestDto.getPhone(),
@@ -48,17 +49,21 @@ public class CustomerController {
 		return ResponseEntity.ok(ApiResponse.ok());
 	}
 
-	@PostMapping(value = "/api/agents/{agentId}/customers/bulk", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(value = "/api/customers/bulk", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ApiResponse<Void>> bulkCreateCustomer(
-		@PathVariable("agentId") Long agentId,
+		HttpServletRequest request,
 		@RequestParam("file") MultipartFile file
 	) {
 		//TODO: service<->controller command dto
-		customerService.bulkCreateCustomer(agentId, file);
+		customerService.bulkCreateCustomer(
+			(Long)request.getAttribute("agentId"),
+			file
+		);
+
 		return ResponseEntity.ok(ApiResponse.ok());
 	}
 
-	@DeleteMapping("/api/agents/{agentId}/customers/{customerId}")
+	@DeleteMapping("/api/customers/{customerId}")
 	public ResponseEntity<ApiResponse<Void>> deleteCustomer(
 		@PathVariable("customerId") Long customerId
 	) {
@@ -66,9 +71,8 @@ public class CustomerController {
 		return ResponseEntity.ok(ApiResponse.ok());
 	}
 
-	@PatchMapping("/api/agents/{agentId}/customers/{customerId}")
+	@PatchMapping("/api/customers/{customerId}")
 	public ResponseEntity<ApiResponse<Void>> updateCustomer(
-		@PathVariable("agentId") Long agentId,
 		@PathVariable("customerId") Long customerId,
 		@RequestBody UpdateCustomerRequest updateCustomerRequest
 	) {
@@ -86,16 +90,16 @@ public class CustomerController {
 		return ResponseEntity.ok(ApiResponse.ok());
 	}
 
-	@GetMapping("/api/agents/{agentId}/customers")
+	@GetMapping("/api/customers")
 	public ResponseEntity<ApiResponse<List<CustomerResponse>>> getAllCustomers() {
 		List<CustomerCommand> customerCommandList = customerService.getAllCustomers();
 		List<CustomerResponse> customerResponseList = customerCommandList.stream()
-			.map(it -> CustomerResponse.of(it)).toList();
+			.map(CustomerResponse::of).toList();
 
 		return ResponseEntity.ok(ApiResponse.ok(customerResponseList));
 	}
 
-	@GetMapping("/api/agents/{agentId}/customers/{customerId}")
+	@GetMapping("/api/customers/{customerId}")
 	public ResponseEntity<ApiResponse<CustomerResponse>> getCustomer(
 		@PathVariable("customerId") Long customerId
 	) {

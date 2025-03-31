@@ -12,7 +12,7 @@ import org.silsagusi.joonggaemoa.domain.customer.repository.CustomerRepository;
 import org.silsagusi.joonggaemoa.domain.customer.service.CustomerService;
 import org.silsagusi.joonggaemoa.domain.survey.entity.Answer;
 import org.silsagusi.joonggaemoa.domain.survey.entity.Question;
-import org.silsagusi.joonggaemoa.domain.survey.entity.QuestionAnswer;
+import org.silsagusi.joonggaemoa.domain.survey.entity.QuestionAnswerPair;
 import org.silsagusi.joonggaemoa.domain.survey.entity.Survey;
 import org.silsagusi.joonggaemoa.domain.survey.repository.AnswerRepository;
 import org.silsagusi.joonggaemoa.domain.survey.repository.QuestionRepository;
@@ -73,7 +73,7 @@ public class SurveyService {
 	@Transactional
 	public void deleteSurvey(Long surveyId) {
 		Survey survey = surveyRepository.findById(surveyId)
-				.orElseThrow(()-> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
+			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
 		questionRepository.deleteAll(survey.getQuestionList());
 		surveyRepository.delete(survey);
 	}
@@ -96,50 +96,45 @@ public class SurveyService {
 		questionRepository.deleteAll(survey.getQuestionList());
 		survey.getQuestionList().clear();
 
-
-		List<Question> udpateQuestions = questionCommandList.stream()
-			.map(it->{
-				return new Question(
+		List<Question> updateQuestions = questionCommandList.stream()
+			.map(it -> new Question(
 					survey,
 					it.getContent(),
 					it.getType(),
 					it.getIsRequired(),
 					it.getOptions()
-				);
-			}).toList();
+				)
+			).toList();
 
-		survey.getQuestionList().addAll(udpateQuestions);
-		questionRepository.saveAll(udpateQuestions);
+		survey.getQuestionList().addAll(updateQuestions);
+		questionRepository.saveAll(updateQuestions);
 		surveyRepository.save(survey);
 
 	}
 
 	public List<SurveyCommand> getAllSurveys() {
 		List<Survey> surveyList = surveyRepository.findAll();
-		return surveyList.stream().map(it -> SurveyCommand.of(it)).toList();
+		return surveyList.stream().map(SurveyCommand::of).toList();
 	}
 
 	public SurveyCommand findById(Long surveyId) {
 		Survey survey = surveyRepository.findById(surveyId)
 			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
-		;
 		return SurveyCommand.of(survey);
 	}
 
 	public void submitSurveyAnswer(
-		Long agentId,
 		Long surveyId,
 		String name,
 		String email,
 		String phone,
 		Boolean consent,
 		List<String> questions,
-		List<String> answers
+		List<List<String>> answers
 	) {
 		Survey survey = surveyRepository.findById(surveyId)
 			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
-		Agent agent = agentRepository.findById(agentId)
-			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
+		Agent agent = survey.getAgent();
 
 		// 고객인지 판별(휴대폰 번호) 후 고객 데이터 추가
 		Customer customer = customerService.getCustomerByPhone(phone);
@@ -163,28 +158,26 @@ public class SurveyService {
 		consultationRepository.save(consultation);
 
 		// 응답 추가
-		List<QuestionAnswer> questionAnswerList = new ArrayList<>();
+		List<QuestionAnswerPair> pairList = new ArrayList<>();
 		for (int i = 0; i < questions.size(); i++) {
-			QuestionAnswer questionAnswer = new QuestionAnswer(
+			QuestionAnswerPair pair = new QuestionAnswerPair(
 				questions.get(i),
 				answers.get(i)
 			);
-			questionAnswerList.add(questionAnswer);
+			pairList.add(pair);
 		}
 
-		Answer newanswer = new Answer(
+		Answer newAnswer = new Answer(
 			customer,
 			survey,
-			questionAnswerList
+			pairList
 		);
 
-		answerRepository.save(newanswer);
-
+		answerRepository.save(newAnswer);
 	}
 
 	public List<AnswerCommand> getAllAnswers() {
 		List<Answer> answerList = answerRepository.findAll();
-		return answerList.stream().map(it -> AnswerCommand.of(it)).toList();
-
+		return answerList.stream().map(AnswerCommand::of).toList();
 	}
 }

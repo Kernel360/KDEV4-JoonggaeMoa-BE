@@ -23,11 +23,11 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-public class ConsultationApiController {
+public class ConsultationController {
 
 	private final ConsultationService consultationService;
 
-	@PostMapping("/api/agents/{agentId}/consultations")
+	@PostMapping("/api/consultations")
 	public ResponseEntity<ApiResponse<Void>> createConsultation(
 		@RequestBody CreateConsultationRequest createConsultationRequest
 	) {
@@ -39,7 +39,7 @@ public class ConsultationApiController {
 
 	}
 
-	@GetMapping("/api/agents/{agentId}/consultations")
+	@GetMapping("/api/consultations")
 	public ResponseEntity<ApiResponse<List<ConsultationResponse>>> getAllConsultation() {
 		List<ConsultationCommand> consultationCommandList = consultationService.getAllConsultations();
 		List<ConsultationResponse> consultationResponseList = consultationCommandList.stream()
@@ -47,7 +47,7 @@ public class ConsultationApiController {
 		return ResponseEntity.ok(ApiResponse.ok(consultationResponseList));
 	}
 
-	@GetMapping("/api/agents/{agentId}/consultations/status")
+	@GetMapping("/api/consultations/status")
 	public ResponseEntity<ApiResponse<List<ConsultationResponse>>> getAllConsultationByStatus(
 		@RequestParam String consultationStatus
 	) {
@@ -58,7 +58,7 @@ public class ConsultationApiController {
 		return ResponseEntity.ok(ApiResponse.ok(consultationResponseList));
 	}
 
-	@GetMapping("/api/agents/{agentId}/consultations/{consultationId}")
+	@GetMapping("/api/consultations/{consultationId}")
 	public ResponseEntity<ApiResponse<ConsultationResponse>> getConsultation(
 		@PathVariable("consultationId") Long consultationId
 	) {
@@ -67,7 +67,7 @@ public class ConsultationApiController {
 		return ResponseEntity.ok(ApiResponse.ok(consultationResponse));
 	}
 
-	@GetMapping("/api/agents/{agentId}/consultations/status-inform")
+	@GetMapping("/api/consultations/status-inform")
 	public ResponseEntity<ApiResponse<ConsultationStatusResponse>> getStatusInformation() {
 		ConsultationStatusCommand consultationStatusCommand = consultationService.getStatusInformation();
 		ConsultationStatusResponse consultationStatusResponse = ConsultationStatusResponse.of(
@@ -75,7 +75,7 @@ public class ConsultationApiController {
 		return ResponseEntity.ok(ApiResponse.ok(consultationStatusResponse));
 	}
 
-	@PatchMapping("/api/agents/{agentId}/consultations/{consultationId}")
+	@PatchMapping("/api/consultations/{consultationId}")
 	public ResponseEntity<ApiResponse<Void>> updateConsultation(
 		@PathVariable("consultationId") Long consultationId,
 		@RequestBody UpdateConsultationRequest updateConsultationRequest
@@ -94,7 +94,7 @@ public class ConsultationApiController {
 		return ResponseEntity.ok(ApiResponse.ok());
 	}
 
-	@PatchMapping("/api/agents/{agentId}/consultations/{consultationId}/status")
+	@PatchMapping("/api/consultations/{consultationId}/status")
 	public ResponseEntity<ApiResponse<Void>> updateConsultationStatus(
 		@PathVariable("consultationId") Long consultationId,
 		@RequestParam String consultationStatus

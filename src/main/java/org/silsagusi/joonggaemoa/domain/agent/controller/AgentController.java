@@ -23,7 +23,7 @@ public class AgentController {
 
 	private final AgentService agentService;
 
-	@PostMapping("/api/agent/signup")
+	@PostMapping("/api/agents/signup")
 	public ResponseEntity<ApiResponse<Void>> signup(@RequestBody SignupRequest signupRequestDto) {
 		agentService.signup(
 			signupRequestDto.getUsername(),
@@ -38,7 +38,7 @@ public class AgentController {
 		return ResponseEntity.ok(ApiResponse.ok());
 	}
 
-	@GetMapping("/api/agent/username")
+	@GetMapping("/api/agents/username")
 	public ResponseEntity<ApiResponse<FindUsernameResponse>> getUsername(
 		@RequestBody FindUsernameRequest findUsernameRequestDto) {
 		AgentCommand agentCommand = agentService.getAgentByNameAndPhone(
@@ -51,7 +51,7 @@ public class AgentController {
 		));
 	}
 
-	@PostMapping("/api/agent/logout")
+	@PostMapping("/api/agents/logout")
 	public ResponseEntity<ApiResponse<Void>> logout(HttpServletRequest request, HttpServletResponse response) {
 		agentService.logout(request.getHeader("Authorization").substring(7));
 

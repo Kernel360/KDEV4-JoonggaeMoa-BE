@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -29,9 +30,9 @@ public class SurveyController {
 
 	private final SurveyService surveyService;
 
-	@PostMapping("/api/agents/{agentId}/surveys")
+	@PostMapping("/api/surveys")
 	public ResponseEntity<ApiResponse<Void>> createSurvey(
-		@PathVariable("agentId") Long agentId,
+		HttpServletRequest request,
 		@RequestBody SurveyCreateRequest surveyCreateRequest
 	) {
 		List<QuestionCommand> questionCommandList = surveyCreateRequest.getQuestionList()
@@ -44,7 +45,7 @@ public class SurveyController {
 			).toList();
 
 		surveyService.createSurvey(
-			agentId,
+			(Long)request.getAttribute("agentId"),
 			surveyCreateRequest.getTitle(),
 			surveyCreateRequest.getDescription(),
 			questionCommandList
@@ -52,7 +53,7 @@ public class SurveyController {
 		return ResponseEntity.ok(ApiResponse.ok());
 	}
 
-	@DeleteMapping("/api/agents/{agentId}/surveys/{surveyId}")
+	@DeleteMapping("/api/surveys/{surveyId}")
 	public ResponseEntity<ApiResponse<Void>> deleteSurvey(
 		@PathVariable("surveyId") Long surveyId
 	) {
@@ -60,7 +61,7 @@ public class SurveyController {
 		return ResponseEntity.ok(ApiResponse.ok());
 	}
 
-	@PatchMapping("/api/agents/{agentId}/surveys/{surveyId}")
+	@PatchMapping("/api/surveys/{surveyId}")
 	public ResponseEntity<ApiResponse<Void>> updateSurvey(
 		@PathVariable("surveyId") Long surveyId,
 		@RequestBody SurveyUpdateRequest surveyUpdateRequest
@@ -85,15 +86,15 @@ public class SurveyController {
 		return ResponseEntity.ok(ApiResponse.ok());
 	}
 
-	@GetMapping("/api/agents/{agentId}/surveys")
+	@GetMapping("/api/surveys")
 	public ResponseEntity<ApiResponse<List<SurveyResponse>>> getAllSurveys() {
 		List<SurveyCommand> surveyCommandList = surveyService.getAllSurveys();
 		List<SurveyResponse> surveyResponseList = surveyCommandList.stream()
-			.map(it -> SurveyResponse.of(it)).toList();
+			.map(SurveyResponse::of).toList();
 		return ResponseEntity.ok(ApiResponse.ok(surveyResponseList));
 	}
 
-	@GetMapping("/api/agents/{agentId}/surveys/{surveyId}")
+	@GetMapping("/api/surveys/{surveyId}")
 	public ResponseEntity<ApiResponse<SurveyResponse>> getSurvey(
 		@PathVariable("surveyId") Long surveyId
 	) {
@@ -101,14 +102,29 @@ public class SurveyController {
 		return ResponseEntity.ok(ApiResponse.ok(SurveyResponse.of(surveyCommand)));
 	}
 
-	@PostMapping("/api/agents/{agentId}/surveys/{surveyId}/submit")
+	@GetMapping("/api/surveys/answer")
+	public ResponseEntity<ApiResponse<List<AnswerResponse>>> getSurveyAnswers() {
+		List<AnswerCommand> answerCommandList = surveyService.getAllAnswers();
+		List<AnswerResponse> answerResponseList = answerCommandList.stream()
+			.map(AnswerResponse::of).toList();
+		return ResponseEntity.ok(ApiResponse.ok(answerResponseList));
+	}
+
+	// 고객용 api
+	@GetMapping("/api/customers/surveys/{surveyId}")
+	public ResponseEntity<ApiResponse<SurveyResponse>> getSurveyForCustomer(
+		@PathVariable("surveyId") Long surveyId
+	) {
+		SurveyCommand surveyCommand = surveyService.findById(surveyId);
+		return ResponseEntity.ok(ApiResponse.ok(SurveyResponse.of(surveyCommand)));
+	}
+
+	@PostMapping("/api/customers/surveys/{surveyId}/submit")
 	public ResponseEntity<ApiResponse<Void>> submitSurveyAnswer(
-		@PathVariable("agentId") Long agentId,
 		@PathVariable("surveyId") Long surveyId,
 		@RequestBody AnswerRequest answerRequest
 	) {
 		surveyService.submitSurveyAnswer(
-			agentId,
 			surveyId,
 			answerRequest.getName(),
 			answerRequest.getEmail(),
@@ -119,13 +135,4 @@ public class SurveyController {
 		);
 		return ResponseEntity.ok(ApiResponse.ok());
 	}
-
-	@GetMapping("/api/agents/{agentId}/surveys/answer")
-	public ResponseEntity<ApiResponse<List<AnswerResponse>>> getSurveyAnswers() {
-		List<AnswerCommand> answerCommandList = surveyService.getAllAnswers();
-		List<AnswerResponse> answerResponseList = answerCommandList.stream()
-			.map(it -> AnswerResponse.of(it)).toList();
-		return ResponseEntity.ok(ApiResponse.ok(answerResponseList));
-	}
-
 }

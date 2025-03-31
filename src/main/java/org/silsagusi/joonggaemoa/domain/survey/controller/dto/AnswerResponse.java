@@ -14,6 +14,7 @@ public class AnswerResponse {
 	private CustomerResponse customer;
 	private SurveyResponse survey;
 	private List<QuestionAnswerResponse> answer;
+	private String createdAt;
 
 	public static AnswerResponse of(AnswerCommand command) {
 		List<QuestionAnswerResponse> questionAnswerResponseList = command.getAnswers().stream()
@@ -22,6 +23,7 @@ public class AnswerResponse {
 			.customer(CustomerResponse.of(command.getCustomer()))
 			.survey(SurveyResponse.of(command.getSurvey()))
 			.answer(questionAnswerResponseList)
+			.createdAt(command.getCreatedAt())
 			.build();
 	}
 }

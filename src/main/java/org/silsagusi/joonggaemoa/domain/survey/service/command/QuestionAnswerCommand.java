@@ -1,6 +1,8 @@
 package org.silsagusi.joonggaemoa.domain.survey.service.command;
 
-import org.silsagusi.joonggaemoa.domain.survey.entity.QuestionAnswer;
+import java.util.List;
+
+import org.silsagusi.joonggaemoa.domain.survey.entity.QuestionAnswerPair;
 
 import lombok.Builder;
 import lombok.Data;
@@ -9,12 +11,12 @@ import lombok.Data;
 @Builder
 public class QuestionAnswerCommand {
 	private String question;
-	private String answer;
+	private List<String> answer;
 
-	public static QuestionAnswerCommand of(QuestionAnswer answer) {
+	public static QuestionAnswerCommand of(QuestionAnswerPair questionAnswerPair) {
 		return QuestionAnswerCommand.builder()
-			.question(answer.getQuestion())
-			.answer(answer.getAnswer())
+			.question(questionAnswerPair.getQuestion())
+			.answer(questionAnswerPair.getAnswer())
 			.build();
 	}
 }

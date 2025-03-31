@@ -3,6 +3,7 @@ package org.silsagusi.joonggaemoa.global.auth.filter;
 import java.io.IOException;
 import java.util.Collections;
 
+import org.apache.commons.lang3.StringUtils;
 import org.silsagusi.joonggaemoa.global.auth.jwt.JwtProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -37,6 +38,9 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 			Claims claims = jwtProvider.getClaims(token);
 			username = claims.get("username", String.class);
 			role = claims.get("role", String.class);
+
+			Long agentId = Long.valueOf(claims.getId());
+			request.setAttribute("agentId", agentId);
 		}
 
 		if (username != null && !username.isEmpty() && SecurityContextHolder.getContext().getAuthentication() == null) {
@@ -57,6 +61,10 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 	@Override
 	protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
 		String path = request.getRequestURI();
-		return path.equals("/api/agent/login") || path.equals("/api/agent/signup") || path.equals("/api/refresh-token");
+		return StringUtils.startsWithAny(path,
+			"/api/agent/login",
+			"/api/agent/signup",
+			"/api/refresh-token"
+		);
 	}
 }

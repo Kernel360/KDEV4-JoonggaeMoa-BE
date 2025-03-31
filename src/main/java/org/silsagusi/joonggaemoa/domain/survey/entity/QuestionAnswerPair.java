@@ -1,5 +1,7 @@
 package org.silsagusi.joonggaemoa.domain.survey.entity;
 
+import java.util.List;
+
 import jakarta.persistence.Embeddable;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -7,15 +9,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Embeddable
 @Getter
-public class QuestionAnswer {
+public class QuestionAnswerPair {
 	private String question;
-	private String answer;
+	private List<String> answer;
 
-	public QuestionAnswer(
-		String answer,
-		String question
+	public QuestionAnswerPair (
+		String question,
+		List<String> answer
 	) {
-		this.answer = answer;
 		this.question = question;
+		this.answer = answer;
 	}
 }

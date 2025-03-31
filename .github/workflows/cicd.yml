@@ -9,9 +9,9 @@ name: JoonggaeMoa CI/CD
 
 on:
   push:
-    branches: [ "main", "develop" ]
+    branches: [ "release", "develop" ]
   pull_request:
-    branches: [ "main", "develop" ]
+    branches: [ "release", "develop" ]
 
 jobs:
   ci:
@@ -62,8 +62,8 @@ jobs:
 
   cd:
     if: |
-      (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
-      (github.event_name == 'pull_request' && github.event.pull_request.base.ref == 'main')
+      (github.event_name == 'push' && github.ref == 'refs/heads/release') ||
+      (github.event_name == 'pull_request' && github.event.pull_request.base.ref == 'release')
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -110,19 +110,27 @@ jobs:
             sudo docker images
 
             # 기존 컨테이너 ID 조회, 중지
-            OLD_CONTAINER_ID=$(sudo docker ps -q --filter name=joonggaemoa)
+            OLD_CONTAINER_ID=$(sudo docker ps -aq --filter name=joonggaemoa)
             sudo docker stop $OLD_CONTAINER_ID 2>/dev/null || true
             #sudo docker rm $OLD_CONTAINER_ID 2>/dev/null || true
             
+            # 기존 'new-joonggaemoa' 컨테이너 ID 조회 및 삭제
+            NEW_CONTAINER_ID=$(sudo docker ps -aq --filter name=new-joonggaemoa)
+            if [ -n "$NEW_CONTAINER_ID" ]; then
+              echo "Stopping and removing existing new-joonggaemoa container: $NEW_CONTAINER_ID"
+              sudo docker stop $NEW_CONTAINER_ID 2>/dev/null || true
+              sudo docker rm $NEW_CONTAINER_ID 2>/dev/null || true
+            fi
+            
             # 새로운 컨테이너 pull, run
-            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/docker-joonggaemoa
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/docker-joonggaemoa 
             sudo docker run -d --name new-joonggaemoa -p 8080:8080 \
               -e SPRING_PROFILES_ACTIVE=prod \
-              ${{ secrets.DOCKER_USERNAME }}/docker-joonggaemoa
+              ${{ secrets.DOCKER_USERNAME }}/docker-joonggaemoa 
             
             # log 
             sleep 10
-            sudo docker logs new-joonggaemoa
+            sudo docker logs new-joonggaemoa 
             
             # 컨테이너 실행 확인
             if ! sudo docker ps | grep -q new-joonggaemoa; then
@@ -133,7 +141,7 @@ jobs:
               if [ -n "$OLD_CONTAINER_ID" ]; then
                 DEPLOY_STATUS="failed"
                 echo "Restarting old container: $OLD_CONTAINER_ID"
-                sudo docker start $OLD_CONTAINER_ID
+                sudo docker start $OLD_CONTAINER_ID 
             
                 # 기존 컨테이너 재시작 확인
                 sleep 10
@@ -150,9 +158,9 @@ jobs:
               fi
             else
               # 컨테이너, 이미지 정리
-              sudo docker rm $OLD_CONTAINER_ID
-              sudo docker rename new-joonggaemoa joonggaemoa
-              sudo docker image prune -f
+              sudo docker rm $OLD_CONTAINER_ID || exit 1
+              sudo docker rename new-joonggaemoa joonggaemoa || exit 1
+              sudo docker image prune -f 2>/dev/null || true
             fi
 
             echo "After Deploy:"

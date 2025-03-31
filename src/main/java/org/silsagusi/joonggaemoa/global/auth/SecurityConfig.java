@@ -45,6 +45,15 @@ public class SecurityConfig {
 	private final CustomUserDetailsService customUserDetailsService;
 	private final RefreshTokenStore refreshTokenStore;
 
+	private static final String[] AUTH_WHITELIST = {
+		"/api/agents/login",
+		"/api/agents/signup",
+		"/api/refresh-token",
+		"/api/customers/**",
+		"/swagger-ui/**",
+		"/v3/api-docs/**"
+	};
+
 	@Bean
 	public BCryptPasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
@@ -56,16 +65,19 @@ public class SecurityConfig {
 			.csrf(AbstractHttpConfigurer::disable)
 			.formLogin(AbstractHttpConfigurer::disable)
 			.httpBasic(AbstractHttpConfigurer::disable)
-			.cors(configurer -> configurer.configurationSource(corsConfigurationSource()))
 			.sessionManagement(configurer -> configurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-			.addFilter(
+			.cors(configurer -> configurer.configurationSource(corsConfigurationSource()))
+
+			.addFilterAt(
 				new JwtAuthenticationFilter(authenticationManager(customUserDetailsService), jwtProvider, objectMapper,
-					refreshTokenStore))
+					refreshTokenStore), UsernamePasswordAuthenticationFilter.class)
 			.addFilterBefore(new JwtAuthorizationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class)
+
 			.authorizeHttpRequests(auth -> auth
-				.requestMatchers("/api/agent/login", "/api/agent/signup").permitAll()
+				.requestMatchers(AUTH_WHITELIST).permitAll()
 				.anyRequest().authenticated()
 			)
+
 			.exceptionHandling(configurer -> configurer
 				.authenticationEntryPoint(customAuthenticationEntryPointHandler)
 				.accessDeniedHandler(customAccessDeniedHandler)
@@ -88,6 +100,7 @@ public class SecurityConfig {
 
 		corsConfiguration.addAllowedHeader("*");
 		corsConfiguration.addExposedHeader("Authorization");
+		corsConfiguration.addExposedHeader("Agentid");
 		corsConfiguration.setAllowCredentials(true);
 
 		corsConfiguration.setAllowedOrigins(

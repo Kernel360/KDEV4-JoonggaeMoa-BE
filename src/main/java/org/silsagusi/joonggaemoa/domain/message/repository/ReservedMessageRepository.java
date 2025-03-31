@@ -1,6 +1,7 @@
 package org.silsagusi.joonggaemoa.domain.message.repository;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.silsagusi.joonggaemoa.domain.message.entity.ReservedMessage;
 import org.springframework.data.domain.Pageable;
@@ -18,5 +19,9 @@ public interface ReservedMessageRepository extends JpaRepository<ReservedMessage
 		@Param("end") LocalDateTime end,
 		Pageable pageable
 	);
+
+	List<ReservedMessage> findTop10ByCustomerAgent_IdOrderByIdDesc(Long agentId);
+
+	List<ReservedMessage> findTop10ByCustomerAgent_IdAndIdLessThanOrderByIdDesc(Long agentId, Long lastMessageId);
 
 }
