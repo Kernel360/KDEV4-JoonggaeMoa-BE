@@ -1,5 +1,7 @@
 package org.silsagusi.joonggaemoa.domain.crawler.naverbudongsan.client;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.silsagusi.joonggaemoa.domain.crawler.naverbudongsan.client.dto.ArticleResponseDto;
 import org.silsagusi.joonggaemoa.domain.crawler.naverbudongsan.client.dto.ComplexResponseDto;
 import org.springframework.http.MediaType;
@@ -39,6 +41,11 @@ public class NaverLandApiClient {
     @Value("${naverbudongsan.cortarNo:1168000000}")
     private String cortarNo;
 
+    @Getter
+    @Setter
+    @Value("${naverbudongsan.page:1}")
+    private String page;
+
     public NaverLandApiClient(WebClient.Builder webClientBuilder) {
         this.webClient = webClientBuilder.baseUrl("https://m.land.naver.com").build();
         this.webClient.mutate().defaultHeader(
@@ -50,28 +57,16 @@ public class NaverLandApiClient {
     }
 
     public ArticleResponseDto fetchArticleList() {
-        return webClient.get()
-                .uri(uriBuilder -> uriBuilder.path("/cluster/ajax/articleList")
-                        .queryParam("rletTpCd", rletTpCd)
-                        .queryParam("tradTpCd", tradTpCd)
-                        .queryParam("z", 14)
-                        .queryParam("lat", lat)
-                        .queryParam("lon", lon)
-                        .queryParam("btm", btm)
-                        .queryParam("lft", lft)
-                        .queryParam("top", top)
-                        .queryParam("rgt", rgt)
-                        .queryParam("cortarNo", cortarNo)
-                        .build())
-                .accept(MediaType.APPLICATION_JSON)
-                .retrieve()
-                .bodyToMono(ArticleResponseDto.class)
-                .block();
+        return fetchList("/cluster/ajax/articleList", ArticleResponseDto.class);
     }
 
     public ComplexResponseDto fetchComplexList() {
+        return fetchList("/cluster/ajax/complexList", ComplexResponseDto.class);
+    }
+
+    public <T> T fetchList(String path, Class<T> responseType) {
         return webClient.get()
-                .uri(uriBuilder -> uriBuilder.path("/cluster/ajax/complexList")
+                .uri(uriBuilder -> uriBuilder.path(path)
                         .queryParam("rletTpCd", rletTpCd)
                         .queryParam("tradTpCd", tradTpCd)
                         .queryParam("z", 14)
@@ -82,10 +77,11 @@ public class NaverLandApiClient {
                         .queryParam("top", top)
                         .queryParam("rgt", rgt)
                         .queryParam("cortarNo", cortarNo)
+                        .queryParam("page", page)
                         .build())
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
-                .bodyToMono(ComplexResponseDto.class)
+                .bodyToMono(responseType)
                 .block();
     }
 }

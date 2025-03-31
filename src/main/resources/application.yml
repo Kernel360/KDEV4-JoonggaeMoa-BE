@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: prod
+    active: local
   web:
     resources:
       add-mappings: false # Disable static resource mapping (For NoHandlerFoundException)
