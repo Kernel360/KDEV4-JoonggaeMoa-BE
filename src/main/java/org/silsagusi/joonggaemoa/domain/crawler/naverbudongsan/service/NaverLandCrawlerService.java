@@ -30,8 +30,7 @@ public class NaverLandCrawlerService {
             // 매물 정보 저장
             log.info("네이버 부동산 매물 정보 크롤링 시작");
             aResponse = client.fetchArticleList();
-            System.out.println(aResponse);
-
+            log.info(aResponse.toString());
             while (aResponse.isMore()) {
 
                 for (int i = 0; i < 20; i++) {
