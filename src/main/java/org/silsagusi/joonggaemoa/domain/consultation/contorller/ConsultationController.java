@@ -2,9 +2,8 @@ package org.silsagusi.joonggaemoa.domain.consultation.contorller;
 
 import java.util.List;
 
-import org.silsagusi.joonggaemoa.domain.consultation.contorller.dto.ConsultationResponse;
+import org.silsagusi.joonggaemoa.domain.consultation.contorller.dto.ConsultationDto;
 import org.silsagusi.joonggaemoa.domain.consultation.contorller.dto.ConsultationStatusResponse;
-import org.silsagusi.joonggaemoa.domain.consultation.contorller.dto.CreateConsultationRequest;
 import org.silsagusi.joonggaemoa.domain.consultation.contorller.dto.UpdateConsultationRequest;
 import org.silsagusi.joonggaemoa.domain.consultation.service.ConsultationService;
 import org.silsagusi.joonggaemoa.domain.consultation.service.command.ConsultationCommand;
@@ -29,41 +28,41 @@ public class ConsultationController {
 
 	@PostMapping("/api/consultations")
 	public ResponseEntity<ApiResponse<Void>> createConsultation(
-		@RequestBody CreateConsultationRequest createConsultationRequest
+		@RequestBody ConsultationDto.Request requestDto
 	) {
 		consultationService.createConsultation(
-			createConsultationRequest.getCustomerId(),
-			createConsultationRequest.getDate()
+			requestDto.getCustomerId(),
+			requestDto.getDate()
 		);
 		return ResponseEntity.ok(ApiResponse.ok());
 
 	}
 
 	@GetMapping("/api/consultations")
-	public ResponseEntity<ApiResponse<List<ConsultationResponse>>> getAllConsultation() {
+	public ResponseEntity<ApiResponse<List<ConsultationDto.Response>>> getAllConsultation() {
 		List<ConsultationCommand> consultationCommandList = consultationService.getAllConsultations();
-		List<ConsultationResponse> consultationResponseList = consultationCommandList.stream()
-			.map(it -> ConsultationResponse.of(it)).toList();
+		List<ConsultationDto.Response> consultationResponseList = consultationCommandList.stream()
+			.map(ConsultationDto.Response::of).toList();
 		return ResponseEntity.ok(ApiResponse.ok(consultationResponseList));
 	}
 
 	@GetMapping("/api/consultations/status")
-	public ResponseEntity<ApiResponse<List<ConsultationResponse>>> getAllConsultationByStatus(
+	public ResponseEntity<ApiResponse<List<ConsultationDto.Response>>> getAllConsultationByStatus(
 		@RequestParam String consultationStatus
 	) {
 		List<ConsultationCommand> consultationCommandList = consultationService.getConsultationsByStatus(
 			consultationStatus);
-		List<ConsultationResponse> consultationResponseList = consultationCommandList.stream()
-			.map(it -> ConsultationResponse.of(it)).toList();
+		List<ConsultationDto.Response> consultationResponseList = consultationCommandList.stream()
+			.map(ConsultationDto.Response::of).toList();
 		return ResponseEntity.ok(ApiResponse.ok(consultationResponseList));
 	}
 
 	@GetMapping("/api/consultations/{consultationId}")
-	public ResponseEntity<ApiResponse<ConsultationResponse>> getConsultation(
+	public ResponseEntity<ApiResponse<ConsultationDto.Response>> getConsultation(
 		@PathVariable("consultationId") Long consultationId
 	) {
 		ConsultationCommand consultationCommand = consultationService.getConsultation(consultationId);
-		ConsultationResponse consultationResponse = ConsultationResponse.of(consultationCommand);
+		ConsultationDto.Response consultationResponse = ConsultationDto.Response.of(consultationCommand);
 		return ResponseEntity.ok(ApiResponse.ok(consultationResponse));
 	}
 

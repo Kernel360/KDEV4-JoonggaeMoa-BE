@@ -2,9 +2,7 @@ package org.silsagusi.joonggaemoa.domain.customer.controller;
 
 import java.util.List;
 
-import org.silsagusi.joonggaemoa.domain.customer.controller.dto.CreateCustomerRequest;
-import org.silsagusi.joonggaemoa.domain.customer.controller.dto.CustomerResponse;
-import org.silsagusi.joonggaemoa.domain.customer.controller.dto.UpdateCustomerRequest;
+import org.silsagusi.joonggaemoa.domain.customer.controller.dto.CustomerDto;
 import org.silsagusi.joonggaemoa.domain.customer.service.CustomerService;
 import org.silsagusi.joonggaemoa.domain.customer.service.command.CustomerCommand;
 import org.silsagusi.joonggaemoa.global.api.ApiResponse;
@@ -32,18 +30,18 @@ public class CustomerController {
 	@PostMapping("/api/customers")
 	public ResponseEntity<ApiResponse<Void>> createCustomer(
 		HttpServletRequest request,
-		@RequestBody CreateCustomerRequest createCustomerRequestDto
+		@RequestBody CustomerDto.Request requestDto
 	) {
 		customerService.createCustomer(
 			(Long)request.getAttribute("agentId"),
-			createCustomerRequestDto.getName(),
-			createCustomerRequestDto.getBirthday(),
-			createCustomerRequestDto.getPhone(),
-			createCustomerRequestDto.getEmail(),
-			createCustomerRequestDto.getJob(),
-			createCustomerRequestDto.getIsVip(),
-			createCustomerRequestDto.getMemo(),
-			createCustomerRequestDto.getConsent()
+			requestDto.getName(),
+			requestDto.getBirthday(),
+			requestDto.getPhone(),
+			requestDto.getEmail(),
+			requestDto.getJob(),
+			requestDto.getIsVip(),
+			requestDto.getMemo(),
+			requestDto.getConsent()
 		);
 
 		return ResponseEntity.ok(ApiResponse.ok());
@@ -74,38 +72,38 @@ public class CustomerController {
 	@PatchMapping("/api/customers/{customerId}")
 	public ResponseEntity<ApiResponse<Void>> updateCustomer(
 		@PathVariable("customerId") Long customerId,
-		@RequestBody UpdateCustomerRequest updateCustomerRequest
+		@RequestBody CustomerDto.Request requestDto
 	) {
 		customerService.updateCustomer(
 			customerId,
-			updateCustomerRequest.getName(),
-			updateCustomerRequest.getBirthday(),
-			updateCustomerRequest.getPhone(),
-			updateCustomerRequest.getEmail(),
-			updateCustomerRequest.getJob(),
-			updateCustomerRequest.getIsVip(),
-			updateCustomerRequest.getMemo(),
-			updateCustomerRequest.getConsent()
+			requestDto.getName(),
+			requestDto.getBirthday(),
+			requestDto.getPhone(),
+			requestDto.getEmail(),
+			requestDto.getJob(),
+			requestDto.getIsVip(),
+			requestDto.getMemo(),
+			requestDto.getConsent()
 		);
 		return ResponseEntity.ok(ApiResponse.ok());
 	}
 
 	@GetMapping("/api/customers")
-	public ResponseEntity<ApiResponse<List<CustomerResponse>>> getAllCustomers() {
+	public ResponseEntity<ApiResponse<List<CustomerDto.Response>>> getAllCustomers() {
 		List<CustomerCommand> customerCommandList = customerService.getAllCustomers();
-		List<CustomerResponse> customerResponseList = customerCommandList.stream()
-			.map(CustomerResponse::of).toList();
+		List<CustomerDto.Response> customerResponseList = customerCommandList.stream()
+			.map(CustomerDto.Response::of).toList();
 
 		return ResponseEntity.ok(ApiResponse.ok(customerResponseList));
 	}
 
 	@GetMapping("/api/customers/{customerId}")
-	public ResponseEntity<ApiResponse<CustomerResponse>> getCustomer(
+	public ResponseEntity<ApiResponse<CustomerDto.Response>> getCustomer(
 		@PathVariable("customerId") Long customerId
 	) {
 		CustomerCommand customerCommand = customerService.getCustomerById(customerId);
 
-		return ResponseEntity.ok(ApiResponse.ok(CustomerResponse.of(customerCommand)));
+		return ResponseEntity.ok(ApiResponse.ok(CustomerDto.Response.of(customerCommand)));
 	}
 
 }

@@ -2,11 +2,8 @@ package org.silsagusi.joonggaemoa.domain.survey.controller;
 
 import java.util.List;
 
-import org.silsagusi.joonggaemoa.domain.survey.controller.dto.AnswerRequest;
-import org.silsagusi.joonggaemoa.domain.survey.controller.dto.AnswerResponse;
-import org.silsagusi.joonggaemoa.domain.survey.controller.dto.SurveyCreateRequest;
-import org.silsagusi.joonggaemoa.domain.survey.controller.dto.SurveyResponse;
-import org.silsagusi.joonggaemoa.domain.survey.controller.dto.SurveyUpdateRequest;
+import org.silsagusi.joonggaemoa.domain.survey.controller.dto.AnswerDto;
+import org.silsagusi.joonggaemoa.domain.survey.controller.dto.SurveyDto;
 import org.silsagusi.joonggaemoa.domain.survey.service.SurveyService;
 import org.silsagusi.joonggaemoa.domain.survey.service.command.AnswerCommand;
 import org.silsagusi.joonggaemoa.domain.survey.service.command.QuestionCommand;
@@ -33,9 +30,9 @@ public class SurveyController {
 	@PostMapping("/api/surveys")
 	public ResponseEntity<ApiResponse<Void>> createSurvey(
 		HttpServletRequest request,
-		@RequestBody SurveyCreateRequest surveyCreateRequest
+		@RequestBody SurveyDto.Request requestDto
 	) {
-		List<QuestionCommand> questionCommandList = surveyCreateRequest.getQuestionList()
+		List<QuestionCommand> questionCommandList = requestDto.getQuestionList()
 			.stream().map(it -> QuestionCommand.builder()
 				.content(it.getContent())
 				.type(it.getType())
@@ -46,8 +43,8 @@ public class SurveyController {
 
 		surveyService.createSurvey(
 			(Long)request.getAttribute("agentId"),
-			surveyCreateRequest.getTitle(),
-			surveyCreateRequest.getDescription(),
+			requestDto.getTitle(),
+			requestDto.getDescription(),
 			questionCommandList
 		);
 		return ResponseEntity.ok(ApiResponse.ok());
@@ -64,9 +61,9 @@ public class SurveyController {
 	@PatchMapping("/api/surveys/{surveyId}")
 	public ResponseEntity<ApiResponse<Void>> updateSurvey(
 		@PathVariable("surveyId") Long surveyId,
-		@RequestBody SurveyUpdateRequest surveyUpdateRequest
+		@RequestBody SurveyDto.Request requestDto
 	) {
-		List<QuestionCommand> questionCommandList = surveyUpdateRequest.getQuestionList()
+		List<QuestionCommand> questionCommandList = requestDto.getQuestionList()
 			.stream().map(it -> QuestionCommand.builder()
 				.id(it.getId())
 				.content(it.getContent())
@@ -78,8 +75,8 @@ public class SurveyController {
 
 		surveyService.updateSurvey(
 			surveyId,
-			surveyUpdateRequest.getTitle(),
-			surveyUpdateRequest.getDescription(),
+			requestDto.getTitle(),
+			requestDto.getDescription(),
 			questionCommandList
 		);
 
@@ -87,51 +84,51 @@ public class SurveyController {
 	}
 
 	@GetMapping("/api/surveys")
-	public ResponseEntity<ApiResponse<List<SurveyResponse>>> getAllSurveys() {
+	public ResponseEntity<ApiResponse<List<SurveyDto.Response>>> getAllSurveys() {
 		List<SurveyCommand> surveyCommandList = surveyService.getAllSurveys();
-		List<SurveyResponse> surveyResponseList = surveyCommandList.stream()
-			.map(SurveyResponse::of).toList();
+		List<SurveyDto.Response> surveyResponseList = surveyCommandList.stream()
+			.map(SurveyDto.Response::of).toList();
 		return ResponseEntity.ok(ApiResponse.ok(surveyResponseList));
 	}
 
 	@GetMapping("/api/surveys/{surveyId}")
-	public ResponseEntity<ApiResponse<SurveyResponse>> getSurvey(
+	public ResponseEntity<ApiResponse<SurveyDto.Response>> getSurvey(
 		@PathVariable("surveyId") Long surveyId
 	) {
 		SurveyCommand surveyCommand = surveyService.findById(surveyId);
-		return ResponseEntity.ok(ApiResponse.ok(SurveyResponse.of(surveyCommand)));
+		return ResponseEntity.ok(ApiResponse.ok(SurveyDto.Response.of(surveyCommand)));
 	}
 
 	@GetMapping("/api/surveys/answer")
-	public ResponseEntity<ApiResponse<List<AnswerResponse>>> getSurveyAnswers() {
+	public ResponseEntity<ApiResponse<List<AnswerDto.Response>>> getSurveyAnswers() {
 		List<AnswerCommand> answerCommandList = surveyService.getAllAnswers();
-		List<AnswerResponse> answerResponseList = answerCommandList.stream()
-			.map(AnswerResponse::of).toList();
+		List<AnswerDto.Response> answerResponseList = answerCommandList.stream()
+			.map(AnswerDto.Response::of).toList();
 		return ResponseEntity.ok(ApiResponse.ok(answerResponseList));
 	}
 
 	// 고객용 api
 	@GetMapping("/api/customers/surveys/{surveyId}")
-	public ResponseEntity<ApiResponse<SurveyResponse>> getSurveyForCustomer(
+	public ResponseEntity<ApiResponse<SurveyDto.Response>> getSurveyForCustomer(
 		@PathVariable("surveyId") Long surveyId
 	) {
 		SurveyCommand surveyCommand = surveyService.findById(surveyId);
-		return ResponseEntity.ok(ApiResponse.ok(SurveyResponse.of(surveyCommand)));
+		return ResponseEntity.ok(ApiResponse.ok(SurveyDto.Response.of(surveyCommand)));
 	}
 
 	@PostMapping("/api/customers/surveys/{surveyId}/submit")
 	public ResponseEntity<ApiResponse<Void>> submitSurveyAnswer(
 		@PathVariable("surveyId") Long surveyId,
-		@RequestBody AnswerRequest answerRequest
+		@RequestBody AnswerDto.Request requestDto
 	) {
 		surveyService.submitSurveyAnswer(
 			surveyId,
-			answerRequest.getName(),
-			answerRequest.getEmail(),
-			answerRequest.getPhone(),
-			answerRequest.getConsent(),
-			answerRequest.getQuestions(),
-			answerRequest.getAnswers()
+			requestDto.getName(),
+			requestDto.getEmail(),
+			requestDto.getPhone(),
+			requestDto.getConsent(),
+			requestDto.getQuestions(),
+			requestDto.getAnswers()
 		);
 		return ResponseEntity.ok(ApiResponse.ok());
 	}
