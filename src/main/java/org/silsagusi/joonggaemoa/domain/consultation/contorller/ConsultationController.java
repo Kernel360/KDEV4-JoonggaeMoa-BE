@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -28,7 +29,7 @@ public class ConsultationController {
 
 	@PostMapping("/api/consultations")
 	public ResponseEntity<ApiResponse<Void>> createConsultation(
-		@RequestBody ConsultationDto.Request requestDto
+		@RequestBody @Valid ConsultationDto.Request requestDto
 	) {
 		consultationService.createConsultation(
 			requestDto.getCustomerId(),
@@ -77,7 +78,7 @@ public class ConsultationController {
 	@PatchMapping("/api/consultations/{consultationId}")
 	public ResponseEntity<ApiResponse<Void>> updateConsultation(
 		@PathVariable("consultationId") Long consultationId,
-		@RequestBody UpdateConsultationRequest updateConsultationRequest
+		@RequestBody @Valid UpdateConsultationRequest updateConsultationRequest
 	) {
 		consultationService.updateConsultation(
 			consultationId,

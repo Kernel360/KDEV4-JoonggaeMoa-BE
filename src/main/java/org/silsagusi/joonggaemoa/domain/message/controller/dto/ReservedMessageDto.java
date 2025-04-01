@@ -4,7 +4,13 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import org.silsagusi.joonggaemoa.domain.message.service.command.ReservedMessageCommand;
+import org.springframework.format.annotation.DateTimeFormat;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+import jakarta.validation.constraints.FutureOrPresent;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,8 +22,17 @@ public class ReservedMessageDto {
 	@NoArgsConstructor
 	@AllArgsConstructor
 	public static class Request {
+
+		@NotBlank
 		private String content;
-		private String sendAt;
+
+		@NotNull
+		@FutureOrPresent
+		@JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Seoul")
+		@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
+		private LocalDateTime sendAt;
+
+		@NotBlank
 		private List<Long> customerIdList;
 	}
 

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -39,7 +40,7 @@ public class MessageTemplateController {
 	@PatchMapping("/api/message/template")
 	public ResponseEntity<ApiResponse<MessageTemplateDto.Response>> updateMessageTemplate(
 		HttpServletRequest request,
-		@RequestBody MessageTemplateDto.Request requestDto
+		@RequestBody @Valid MessageTemplateDto.Request requestDto
 	) {
 		MessageTemplateCommand command = messageTemplateService.updateMessageTemplate(
 			(Long)request.getAttribute("agentId"),

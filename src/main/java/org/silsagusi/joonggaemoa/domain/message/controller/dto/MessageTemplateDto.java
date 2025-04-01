@@ -2,6 +2,7 @@ package org.silsagusi.joonggaemoa.domain.message.controller.dto;
 
 import org.silsagusi.joonggaemoa.domain.message.service.command.MessageTemplateCommand;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,7 +14,11 @@ public class MessageTemplateDto {
 	@NoArgsConstructor
 	@AllArgsConstructor
 	public static class Request {
+
+		@NotBlank
 		private String category;
+
+		@NotBlank
 		private String content;
 	}
 

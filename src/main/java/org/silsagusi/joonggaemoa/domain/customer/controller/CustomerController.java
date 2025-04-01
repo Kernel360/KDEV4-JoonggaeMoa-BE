@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -30,7 +31,7 @@ public class CustomerController {
 	@PostMapping("/api/customers")
 	public ResponseEntity<ApiResponse<Void>> createCustomer(
 		HttpServletRequest request,
-		@RequestBody CustomerDto.Request requestDto
+		@RequestBody @Valid CustomerDto.Request requestDto
 	) {
 		customerService.createCustomer(
 			(Long)request.getAttribute("agentId"),
@@ -72,7 +73,7 @@ public class CustomerController {
 	@PatchMapping("/api/customers/{customerId}")
 	public ResponseEntity<ApiResponse<Void>> updateCustomer(
 		@PathVariable("customerId") Long customerId,
-		@RequestBody CustomerDto.Request requestDto
+		@RequestBody @Valid CustomerDto.Request requestDto
 	) {
 		customerService.updateCustomer(
 			customerId,
