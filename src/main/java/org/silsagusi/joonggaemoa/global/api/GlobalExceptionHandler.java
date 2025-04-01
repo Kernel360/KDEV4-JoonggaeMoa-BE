@@ -2,6 +2,7 @@ package org.silsagusi.joonggaemoa.global.api;
 
 import org.silsagusi.joonggaemoa.global.api.exception.CustomException;
 import org.silsagusi.joonggaemoa.global.api.exception.ErrorCode;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -33,5 +34,21 @@ public class GlobalExceptionHandler {
 		log.error("GlobalExceptionHandler catch Exception : {}", e.getMessage());
 		e.printStackTrace();
 		return ApiResponse.fail(new CustomException(ErrorCode.INTERNAL_SERVER_ERROR));
+	}
+
+	@ExceptionHandler(value = {DataIntegrityViolationException.class})
+	public ApiResponse<?> handleDataIntegrityViolationException(DataIntegrityViolationException e) {
+		log.error("GlobalExceptionHandler catch DataIntegrityViolationException : {}", e.getMessage());
+		String message = e.getMostSpecificCause().getMessage();
+
+		if (message.contains("UK_username")) {
+			return ApiResponse.fail(new CustomException(ErrorCode.CONFLICT_USERNAME));
+		} else if (message.contains("UK_phone")) {
+			return ApiResponse.fail(new CustomException(ErrorCode.CONFLICT_PHONE));
+		} else if (message.contains("UK_email")) {
+			return ApiResponse.fail(new CustomException(ErrorCode.CONFLICT_EMAIL));
+		}
+
+		return ApiResponse.fail(new CustomException(ErrorCode.CONFLICT));
 	}
 }

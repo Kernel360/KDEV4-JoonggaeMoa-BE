@@ -36,7 +36,8 @@ public class CustomerService {
 		String memo,
 		Boolean consent
 	) {
-		Agent agent = agentRepository.getOne(agentId);
+		Agent agent = agentRepository.findById(agentId)
+			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
 
 		Customer customer = new Customer(
 			name,
@@ -60,7 +61,8 @@ public class CustomerService {
 			XSSFWorkbook workbook = new XSSFWorkbook(file.getInputStream());
 
 			int sheetsLength = workbook.getNumberOfSheets();
-			Agent agent = agentRepository.getOne(agentId);
+			Agent agent = agentRepository.findById(agentId)
+				.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
 
 			for (int sheetIndex = 0; sheetIndex < sheetsLength; sheetIndex++) {
 				XSSFSheet workSheet = workbook.getSheetAt(sheetIndex);
@@ -93,11 +95,14 @@ public class CustomerService {
 			}
 
 		} catch (Exception e) {
-			throw new CustomException(ErrorCode.FILE_NOT_FOUND);
+			throw new CustomException(ErrorCode.FILE_UPLOAD_ERROR);
 		}
 	}
 
 	public void deleteCustomer(Long customerId) {
+		customerRepository.findById(customerId)
+			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_CUSTOMER));
+
 		customerRepository.deleteById(customerId);
 	}
 
@@ -112,7 +117,9 @@ public class CustomerService {
 		String memo,
 		Boolean consent
 	) {
-		Customer customer = customerRepository.getById(customerId);
+		Customer customer = customerRepository.findById(customerId)
+			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_CUSTOMER));
+
 		customer.updateCustomer(
 			(name == null || name.isBlank()) ? customer.getName() : name,
 			(birthday == null) ? customer.getBirthday() : birthday,
@@ -127,18 +134,21 @@ public class CustomerService {
 	}
 
 	public CustomerCommand getCustomerById(Long customerId) {
-		Customer customer = customerRepository.getById(customerId);
+		Customer customer = customerRepository.findById(customerId)
+			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_CUSTOMER));
+
 		return CustomerCommand.of(customer);
 	}
 
 	public List<CustomerCommand> getAllCustomers() {
 		List<Customer> customerList = customerRepository.findAll();
 		List<CustomerCommand> customerCommandList = customerList.stream()
-			.map(it -> CustomerCommand.of(it)).toList();
+			.map(CustomerCommand::of).toList();
 		return customerCommandList;
 	}
 
 	public Customer getCustomerByPhone(String phone) {
-		return customerRepository.findByPhone(phone);
+		return customerRepository.findByPhone(phone)
+			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_CUSTOMER));
 	}
 }

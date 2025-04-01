@@ -26,7 +26,7 @@ public class RefreshTokenService {
 
 		String storedToken = refreshTokenStore.getRefreshToken(username);
 		if (storedToken == null && !storedToken.equals(refreshToken)) {
-			throw new CustomException(ErrorCode.UNAUTHORIZED);
+			throw new CustomException(ErrorCode.INVALID_TOKEN);
 		}
 
 		Claims claims = jwtProvider.getClaims(storedToken);

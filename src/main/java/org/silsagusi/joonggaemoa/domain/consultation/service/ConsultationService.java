@@ -29,7 +29,7 @@ public class ConsultationService {
 		LocalDateTime date
 	) {
 		Customer customer = customerRepository.findById(customerId)
-			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
+			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_CUSTOMER));
 		Consultation consultation = new Consultation(
 			customer,
 			date,
@@ -78,13 +78,13 @@ public class ConsultationService {
 
 	public List<ConsultationCommand> getAllConsultations() {
 		List<Consultation> consultationList = consultationRepository.findAll();
-		return consultationList.stream().map(it -> ConsultationCommand.of(it)).toList();
+		return consultationList.stream().map(ConsultationCommand::of).toList();
 	}
 
 	public List<ConsultationCommand> getConsultationsByStatus(String consultationStatus) {
 		List<Consultation> consultationList = consultationRepository.findAllByConsultationStatus(
 			Consultation.ConsultationStatus.valueOf(consultationStatus));
-		return consultationList.stream().map(it -> ConsultationCommand.of(it)).toList();
+		return consultationList.stream().map(ConsultationCommand::of).toList();
 	}
 
 	public ConsultationCommand getConsultation(Long consultationId) {
@@ -106,6 +106,5 @@ public class ConsultationService {
 			.consultationCancelled(statusCountMap.getOrDefault(Consultation.ConsultationStatus.CANCELED, 0L))
 			.consultationCompleted(statusCountMap.getOrDefault(Consultation.ConsultationStatus.COMPLETED, 0L))
 			.build();
-
 	}
 }

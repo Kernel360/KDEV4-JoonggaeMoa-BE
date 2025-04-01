@@ -46,7 +46,7 @@ public class SurveyService {
 		List<QuestionCommand> questionCommandList
 	) {
 		Agent agent = agentRepository.findById(agentId)
-			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
+			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
 
 		Survey survey = new Survey(agent, title, description, new ArrayList<>());
 

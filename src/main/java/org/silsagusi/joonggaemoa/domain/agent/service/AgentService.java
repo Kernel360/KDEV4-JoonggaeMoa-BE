@@ -36,10 +36,6 @@ public class AgentService {
 		String region,
 		String businessNo
 	) {
-		if (agentRepository.findByUsername(username).isPresent()) {
-			throw new CustomException(ErrorCode.USERNAME_CONFLICT);
-		}
-
 		Agent agent = new Agent(
 			name,
 			phone,
@@ -58,21 +54,21 @@ public class AgentService {
 
 	public AgentCommand getAgentByNameAndPhone(String name, String phone) {
 		Agent agent = agentRepository.findByNameAndPhone(name, phone)
-			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
+			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
 
 		return AgentCommand.of(agent);
 	}
 
 	public AgentCommand getAgentById(Long id) {
 		Agent agent = agentRepository.getAgentById(id)
-			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
+			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
 
 		return AgentCommand.of(agent);
 	}
 
 	public void logout(String accessToken) {
 		if (Boolean.FALSE.equals(jwtProvider.validateToken(accessToken))) {
-			throw new CustomException(ErrorCode.UNAUTHORIZED);
+			return;
 		}
 		Claims claims = jwtProvider.getClaims(accessToken);
 		String username = claims.get("username", String.class);

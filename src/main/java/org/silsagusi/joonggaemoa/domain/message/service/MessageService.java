@@ -43,7 +43,7 @@ public class MessageService {
 	public void reserveMessage(String content, String sendAt, List<Long> customerIdList) {
 		customerIdList.stream()
 			.map(id -> customerRepository.findById(id)
-				.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT)))
+				.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_CUSTOMER)))
 			.map(customer -> new ReservedMessage(customer, LocalDateTime.parse(sendAt), content))
 			.forEach(reservedMessageRepository::save);
 	}

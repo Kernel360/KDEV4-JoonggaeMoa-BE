@@ -40,9 +40,9 @@ public class ContractService {
 	) throws IOException {
 
 		Customer customerLandlord = customerRepository.findById(landlordId)
-			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
+			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_CUSTOMER));
 		Customer customerTenant = customerRepository.findById(tenantId)
-			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
+			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_CUSTOMER));
 
 		String filename = fileUpload(file);
 
@@ -58,13 +58,13 @@ public class ContractService {
 
 	public List<ContractCommand> getAllContracts() {
 		List<Contract> contractList = contractRepository.findAll();
-		List<ContractCommand> contractCommandList = contractList.stream().map(it -> ContractCommand.of(it)).toList();
+		List<ContractCommand> contractCommandList = contractList.stream().map(ContractCommand::of).toList();
 		List<ContractCommand> s3ContractCommandList = contractCommandList.stream().map(
 			it -> {
 				try {
 					it.setUrl(getUrl(it.getUrl()));
 				} catch (IOException e) {
-					throw new RuntimeException(e);
+					throw new CustomException(ErrorCode.INVALID_FILE);
 				}
 				return it;
 			}).toList();
