@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -27,7 +28,7 @@ public class ContractController {
 
 	@PostMapping(value = "/api/contracts", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<ApiResponse<String>> createContract(
-		@RequestPart("contractData") ContractDto.Request requestDto,
+		@RequestPart("contractData") @Valid ContractDto.Request requestDto,
 		@RequestPart("file") MultipartFile file
 	) throws IOException {
 		contractService.createContract(

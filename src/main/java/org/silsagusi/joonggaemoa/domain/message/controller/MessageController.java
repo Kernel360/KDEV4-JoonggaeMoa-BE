@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -43,7 +44,7 @@ public class MessageController {
 
 	@PostMapping("/api/messages")
 	public ResponseEntity<ApiResponse<Void>> reserveMessage(
-		@RequestBody ReservedMessageDto.Request request
+		@RequestBody @Valid ReservedMessageDto.Request request
 	) {
 		messageService.reserveMessage(request.getContent(), request.getSendAt(), request.getCustomerIdList());
 
