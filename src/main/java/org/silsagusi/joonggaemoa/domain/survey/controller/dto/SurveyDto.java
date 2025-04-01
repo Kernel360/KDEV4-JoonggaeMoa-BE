@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.silsagusi.joonggaemoa.domain.survey.service.command.SurveyCommand;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,10 +15,29 @@ public class SurveyDto {
 	@Getter
 	@NoArgsConstructor
 	@AllArgsConstructor
-	public static class Request {
+	public static class CreateRequest {
+
+		@NotBlank
 		private String title;
+
+		@NotBlank
 		private String description;
-		private List<QuestionDto.Response> questionList;
+
+		private List<QuestionDto.CreateRequest> questionList;
+	}
+
+	@Getter
+	@NoArgsConstructor
+	@AllArgsConstructor
+	public static class UpdateRequest {
+
+		@NotBlank
+		private String title;
+
+		@NotBlank
+		private String description;
+
+		private List<QuestionDto.UpdateRequest> questionList;
 	}
 
 	@Getter

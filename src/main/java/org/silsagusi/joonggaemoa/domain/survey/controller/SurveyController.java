@@ -30,9 +30,9 @@ public class SurveyController {
 	@PostMapping("/api/surveys")
 	public ResponseEntity<ApiResponse<Void>> createSurvey(
 		HttpServletRequest request,
-		@RequestBody SurveyDto.Request requestDto
+		@RequestBody SurveyDto.CreateRequest createRequestDto
 	) {
-		List<QuestionCommand> questionCommandList = requestDto.getQuestionList()
+		List<QuestionCommand> questionCommandList = createRequestDto.getQuestionList()
 			.stream().map(it -> QuestionCommand.builder()
 				.content(it.getContent())
 				.type(it.getType())
@@ -43,8 +43,8 @@ public class SurveyController {
 
 		surveyService.createSurvey(
 			(Long)request.getAttribute("agentId"),
-			requestDto.getTitle(),
-			requestDto.getDescription(),
+			createRequestDto.getTitle(),
+			createRequestDto.getDescription(),
 			questionCommandList
 		);
 		return ResponseEntity.ok(ApiResponse.ok());
@@ -61,7 +61,7 @@ public class SurveyController {
 	@PatchMapping("/api/surveys/{surveyId}")
 	public ResponseEntity<ApiResponse<Void>> updateSurvey(
 		@PathVariable("surveyId") Long surveyId,
-		@RequestBody SurveyDto.Request requestDto
+		@RequestBody SurveyDto.UpdateRequest requestDto
 	) {
 		List<QuestionCommand> questionCommandList = requestDto.getQuestionList()
 			.stream().map(it -> QuestionCommand.builder()

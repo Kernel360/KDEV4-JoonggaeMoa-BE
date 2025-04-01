@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -23,7 +24,7 @@ public class AgentController {
 
 	@PostMapping("/api/agents/signup")
 	public ResponseEntity<ApiResponse<Void>> signup(
-		@RequestBody AgentDto.Request requestDto
+		@RequestBody @Valid AgentDto.Request requestDto
 	) {
 		agentService.signup(
 			requestDto.getUsername(),
@@ -40,7 +41,7 @@ public class AgentController {
 
 	@PostMapping("/api/agents/username")
 	public ResponseEntity<ApiResponse<FindUsernameDto.Response>> getUsername(
-		@RequestBody FindUsernameDto.Request requestDto) {
+		@RequestBody @Valid FindUsernameDto.Request requestDto) {
 		AgentCommand agentCommand = agentService.getAgentByNameAndPhone(
 			requestDto.getName(),
 			requestDto.getPhone()

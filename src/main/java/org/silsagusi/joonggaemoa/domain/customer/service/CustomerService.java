@@ -148,7 +148,6 @@ public class CustomerService {
 	}
 
 	public Customer getCustomerByPhone(String phone) {
-		return customerRepository.findByPhone(phone)
-			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_CUSTOMER));
+		return customerRepository.findByPhone(phone).orElseGet(null);
 	}
 }

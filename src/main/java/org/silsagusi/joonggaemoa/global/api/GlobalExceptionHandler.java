@@ -4,6 +4,7 @@ import org.silsagusi.joonggaemoa.global.api.exception.CustomException;
 import org.silsagusi.joonggaemoa.global.api.exception.ErrorCode;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.NoHandlerFoundException;
@@ -32,7 +33,6 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(value = {Exception.class})
 	public ApiResponse<?> handleException(Exception e) {
 		log.error("GlobalExceptionHandler catch Exception : {}", e.getMessage());
-		e.printStackTrace();
 		return ApiResponse.fail(new CustomException(ErrorCode.INTERNAL_SERVER_ERROR));
 	}
 
@@ -50,5 +50,11 @@ public class GlobalExceptionHandler {
 		}
 
 		return ApiResponse.fail(new CustomException(ErrorCode.CONFLICT));
+	}
+
+	@ExceptionHandler(value = {MethodArgumentNotValidException.class})
+	public ApiResponse<?> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+		log.error("GlobalExceptionHandler catch MethodArgumentNotValidException : {}", e.getMessage());
+		return ApiResponse.fail(new CustomException(ErrorCode.VALIDATION_FAILED));
 	}
 }
