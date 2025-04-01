@@ -1,7 +1,6 @@
 package org.silsagusi.joonggaemoa.domain.message.controller;
 
-import org.silsagusi.joonggaemoa.domain.message.controller.dto.MessageTemplateRequest;
-import org.silsagusi.joonggaemoa.domain.message.controller.dto.MessageTemplateResponse;
+import org.silsagusi.joonggaemoa.domain.message.controller.dto.MessageTemplateDto;
 import org.silsagusi.joonggaemoa.domain.message.service.MessageTemplateService;
 import org.silsagusi.joonggaemoa.domain.message.service.command.MessageTemplateCommand;
 import org.silsagusi.joonggaemoa.global.api.ApiResponse;
@@ -23,7 +22,7 @@ public class MessageTemplateController {
 	private final MessageTemplateService messageTemplateService;
 
 	@GetMapping("/api/message/template")
-	public ResponseEntity<ApiResponse<MessageTemplateResponse>> getMessageTemplate(
+	public ResponseEntity<ApiResponse<MessageTemplateDto.Response>> getMessageTemplate(
 		HttpServletRequest request,
 		@RequestParam String category
 	) {
@@ -32,22 +31,22 @@ public class MessageTemplateController {
 			category
 		);
 
-		MessageTemplateResponse responseDto = MessageTemplateResponse.of(command);
+		MessageTemplateDto.Response responseDto = MessageTemplateDto.Response.of(command);
 
 		return ResponseEntity.ok(ApiResponse.ok(responseDto));
 	}
 
 	@PatchMapping("/api/message/template")
-	public ResponseEntity<ApiResponse<MessageTemplateResponse>> updateMessageTemplate(
+	public ResponseEntity<ApiResponse<MessageTemplateDto.Response>> updateMessageTemplate(
 		HttpServletRequest request,
-		@RequestBody MessageTemplateRequest requestDto
+		@RequestBody MessageTemplateDto.Request requestDto
 	) {
 		MessageTemplateCommand command = messageTemplateService.updateMessageTemplate(
 			(Long)request.getAttribute("agentId"),
 			requestDto.getCategory(), requestDto.getContent()
 		);
 
-		MessageTemplateResponse responseDto = MessageTemplateResponse.of(command);
+		MessageTemplateDto.Response responseDto = MessageTemplateDto.Response.of(command);
 
 		return ResponseEntity.ok(ApiResponse.ok(responseDto));
 	}

@@ -2,9 +2,8 @@ package org.silsagusi.joonggaemoa.domain.message.controller;
 
 import java.util.List;
 
-import org.silsagusi.joonggaemoa.domain.message.controller.dto.MessageRequest;
-import org.silsagusi.joonggaemoa.domain.message.controller.dto.MessageResponse;
-import org.silsagusi.joonggaemoa.domain.message.controller.dto.ReservedMessageResponse;
+import org.silsagusi.joonggaemoa.domain.message.controller.dto.MessageDto;
+import org.silsagusi.joonggaemoa.domain.message.controller.dto.ReservedMessageDto;
 import org.silsagusi.joonggaemoa.domain.message.service.MessageService;
 import org.silsagusi.joonggaemoa.domain.message.service.command.MessageCommand;
 import org.silsagusi.joonggaemoa.domain.message.service.command.ReservedMessageCommand;
@@ -26,7 +25,7 @@ public class MessageController {
 	private final MessageService messageService;
 
 	@GetMapping("/api/messages")
-	public ResponseEntity<ApiResponse<List<MessageResponse>>> getMessage(
+	public ResponseEntity<ApiResponse<List<MessageDto.Response>>> getMessage(
 		HttpServletRequest request,
 		@RequestParam(required = false) Long lastMessageId
 	) {
@@ -35,8 +34,8 @@ public class MessageController {
 			lastMessageId
 		);
 
-		List<MessageResponse> responses = messageCommands.stream()
-			.map(MessageResponse::of)
+		List<MessageDto.Response> responses = messageCommands.stream()
+			.map(MessageDto.Response::of)
 			.toList();
 
 		return ResponseEntity.ok(ApiResponse.ok(responses));
@@ -44,7 +43,7 @@ public class MessageController {
 
 	@PostMapping("/api/messages")
 	public ResponseEntity<ApiResponse<Void>> reserveMessage(
-		@RequestBody MessageRequest request
+		@RequestBody ReservedMessageDto.Request request
 	) {
 		messageService.reserveMessage(request.getContent(), request.getSendAt(), request.getCustomerIdList());
 
@@ -52,7 +51,7 @@ public class MessageController {
 	}
 
 	@GetMapping("/api/reserved-message")
-	public ResponseEntity<ApiResponse<List<ReservedMessageResponse>>> getReservedMessage(
+	public ResponseEntity<ApiResponse<List<ReservedMessageDto.Response>>> getReservedMessage(
 		HttpServletRequest request,
 		@RequestParam(required = false) Long lastMessageId
 	) {
@@ -62,8 +61,8 @@ public class MessageController {
 			lastMessageId
 		);
 
-		List<ReservedMessageResponse> responses = commands.stream()
-			.map(ReservedMessageResponse::of)
+		List<ReservedMessageDto.Response> responses = commands.stream()
+			.map(ReservedMessageDto.Response::of)
 			.toList();
 
 		return ResponseEntity.ok(ApiResponse.ok(responses));

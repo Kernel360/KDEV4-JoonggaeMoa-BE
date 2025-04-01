@@ -79,25 +79,6 @@ public class ContractService {
 		return command;
 	}
 
-	public void updateContract(
-		Long contractId,
-		LocalDate createdAt,
-		LocalDate expiredAt,
-		MultipartFile file
-	) throws IOException {
-		Contract contract = contractRepository.findById(contractId)
-			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
-
-		String filename = fileUpload(file);
-
-		contract.update(
-			(createdAt == null) ? contract.getCreatedAt() : createdAt,
-			(expiredAt == null) ? contract.getExpiredAt() : expiredAt,
-			filename
-		);
-		contractRepository.save(contract);
-	}
-
 	public void deleteContract(Long contractId) {
 		contractRepository.deleteById(contractId);
 	}
