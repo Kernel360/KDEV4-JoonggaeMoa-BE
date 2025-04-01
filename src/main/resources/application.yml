@@ -21,7 +21,8 @@ spring:
 
   data:
     redis:
-      host: localhost
+      host: ${REDIS_HOST}
+      password: ${REDIS_PASSWORD}
       port: 6379
 
   batch:

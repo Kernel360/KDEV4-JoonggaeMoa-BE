@@ -104,7 +104,7 @@ public class SecurityConfig {
 		corsConfiguration.setAllowCredentials(true);
 
 		corsConfiguration.setAllowedOrigins(
-			List.of("http://localhost:5173")
+			List.of("http://localhost:5173", "http://joonggaemoa-fe.s3-website.ap-northeast-2.amazonaws.com/")
 		);
 
 		corsConfiguration.setAllowedMethods(Arrays.asList("GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"));
