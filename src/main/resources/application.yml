@@ -53,7 +53,9 @@ cloud:
     stack:
       auto: false
 
-
+springdoc:
+  swagger-ui:
+    path: /swagger-ui
 
 
 ---
