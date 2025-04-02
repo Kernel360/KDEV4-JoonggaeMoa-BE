@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.stream.Collectors;
 
 import org.silsagusi.joonggaemoa.domain.agent.controller.dto.LoginRequest;
+import org.silsagusi.joonggaemoa.global.api.exception.CustomException;
+import org.silsagusi.joonggaemoa.global.api.exception.ErrorCode;
 import org.silsagusi.joonggaemoa.global.auth.jwt.JwtProvider;
 import org.silsagusi.joonggaemoa.global.auth.jwt.RefreshTokenStore;
 import org.silsagusi.joonggaemoa.global.auth.userDetails.CustomUserDetails;
@@ -47,7 +49,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 		try {
 			requestDto = objectMapper.readValue(request.getInputStream(), LoginRequest.class);
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
+			throw new CustomException(ErrorCode.INVALID_CREDENTIALS);
 		}
 
 		UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
@@ -56,8 +59,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 		try {
 			return authenticationManager.authenticate(authToken);
 		} catch (AuthenticationException e) {
-			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-			return null;
+			log.error(e.getMessage());
+			throw new CustomException(ErrorCode.INVALID_CREDENTIALS);
 		}
 	}
 

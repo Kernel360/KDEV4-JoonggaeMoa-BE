@@ -4,6 +4,8 @@ import java.util.Date;
 
 import javax.crypto.SecretKey;
 
+import org.silsagusi.joonggaemoa.global.api.exception.CustomException;
+import org.silsagusi.joonggaemoa.global.api.exception.ErrorCode;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -101,6 +103,9 @@ public class JwtProvider {
 				.build()
 				.parseClaimsJws(token);
 			return true;
+		} catch (ExpiredJwtException e) {
+			log.warn("Expired JWT token: {}", e.getMessage());
+			throw new CustomException(ErrorCode.TOKEN_EXPIRED);
 		} catch (SecurityException e) {
 			log.warn("Invalid JWT signature: {}", e.getMessage());
 		} catch (MalformedJwtException e) {
@@ -109,9 +114,7 @@ public class JwtProvider {
 			log.warn("Unsupported JWT token: {}", e.getMessage());
 		} catch (IllegalArgumentException e) {
 			log.warn("JWT claims string is empty: {}", e.getMessage());
-		} catch (ExpiredJwtException e) {
-			log.warn("Expired JWT token: {}", e.getMessage());
 		}
-		return false;
+		throw new CustomException(ErrorCode.INVALID_TOKEN);
 	}
 }

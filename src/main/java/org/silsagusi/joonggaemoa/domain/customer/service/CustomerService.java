@@ -36,8 +36,8 @@ public class CustomerService {
             String memo,
             Boolean consent
     ) {
-        Agent agent = agentRepository.getOne(agentId);
-
+        Agent agent = agentRepository.findById(agentId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
         Customer customer = new Customer(
                 name,
                 birthday,
@@ -60,7 +60,8 @@ public class CustomerService {
             XSSFWorkbook workbook = new XSSFWorkbook(file.getInputStream());
 
             int sheetsLength = workbook.getNumberOfSheets();
-            Agent agent = agentRepository.getOne(agentId);
+            Agent agent = agentRepository.findById(agentId)
+                    .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
 
             for (int sheetIndex = 0; sheetIndex < sheetsLength; sheetIndex++) {
                 XSSFSheet workSheet = workbook.getSheetAt(sheetIndex);
@@ -93,11 +94,14 @@ public class CustomerService {
             }
 
         } catch (Exception e) {
-            throw new CustomException(ErrorCode.FILE_NOT_FOUND);
+            throw new CustomException(ErrorCode.FILE_UPLOAD_ERROR);
         }
     }
 
     public void deleteCustomer(Long customerId) {
+        customerRepository.findById(customerId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_CUSTOMER));
+
         customerRepository.deleteById(customerId);
     }
 
@@ -112,7 +116,9 @@ public class CustomerService {
             String memo,
             Boolean consent
     ) {
-        Customer customer = customerRepository.getById(customerId);
+        Customer customer = customerRepository.findById(customerId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_CUSTOMER));
+
         customer.updateCustomer(
                 (name == null || name.isBlank()) ? customer.getName() : name,
                 (birthday == null) ? customer.getBirthday() : birthday,
@@ -127,17 +133,19 @@ public class CustomerService {
     }
 
     public CustomerCommand getCustomerById(Long customerId) {
-        Customer customer = customerRepository.getById(customerId);
+        Customer customer = customerRepository.findById(customerId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_CUSTOMER));
+
         return CustomerCommand.of(customer);
     }
 
     public Page<CustomerCommand> getAllCustomers(Pageable pageable) {
         Page<Customer> customerPage = customerRepository.findAll(pageable);
-        Page<CustomerCommand> customerCommandPage = customerPage.map(it -> CustomerCommand.of(it));
+        Page<CustomerCommand> customerCommandPage = customerPage.map(CustomerCommand::of);
         return customerCommandPage;
     }
 
     public Customer getCustomerByPhone(String phone) {
-        return customerRepository.findByPhone(phone);
+        return customerRepository.findByPhone(phone).orElseGet(null);
     }
 }

@@ -23,19 +23,19 @@ public class ConsultationService {
     private final ConsultationRepository consultationRepository;
     private final CustomerRepository customerRepository;
 
+
     public void createConsultation(
             Long customerId,
             LocalDateTime date
     ) {
         Customer customer = customerRepository.findById(customerId)
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_CUSTOMER));
         Consultation consultation = new Consultation(
                 customer,
                 date,
                 Consultation.ConsultationStatus.CONFIRMED
         );
         consultationRepository.save(consultation);
-
     }
 
     public void updateConsultationStatus(Long consultationId, String consultationStatus) {
@@ -105,6 +105,6 @@ public class ConsultationService {
                 .consultationCancelled(statusCountMap.getOrDefault(Consultation.ConsultationStatus.CANCELED, 0L))
                 .consultationCompleted(statusCountMap.getOrDefault(Consultation.ConsultationStatus.COMPLETED, 0L))
                 .build();
-
     }
+    
 }

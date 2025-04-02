@@ -1,6 +1,7 @@
 package org.silsagusi.joonggaemoa.domain.customer.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.silsagusi.joonggaemoa.domain.customer.controller.dto.CustomerDto;
 import org.silsagusi.joonggaemoa.domain.customer.service.CustomerService;
@@ -13,16 +14,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+
 @RestController
 @RequiredArgsConstructor
 public class CustomerController {
 
     private final CustomerService customerService;
 
+
     @PostMapping("/api/customers")
     public ResponseEntity<ApiResponse<Void>> createCustomer(
             HttpServletRequest request,
-            @RequestBody CustomerDto.Request requestDto
+            @RequestBody @Valid CustomerDto.Request requestDto
     ) {
         customerService.createCustomer(
                 (Long) request.getAttribute("agentId"),
@@ -61,10 +64,11 @@ public class CustomerController {
         return ResponseEntity.ok(ApiResponse.ok());
     }
 
+
     @PatchMapping("/api/customers/{customerId}")
     public ResponseEntity<ApiResponse<Void>> updateCustomer(
             @PathVariable("customerId") Long customerId,
-            @RequestBody CustomerDto.Request requestDto
+            @RequestBody @Valid CustomerDto.Request requestDto
     ) {
         customerService.updateCustomer(
                 customerId,
@@ -80,6 +84,7 @@ public class CustomerController {
         return ResponseEntity.ok(ApiResponse.ok());
     }
 
+
     @GetMapping("/api/customers")
     public ResponseEntity<ApiResponse<Page<CustomerDto.Response>>> getAllCustomers(Pageable pageable) {
         Page<CustomerCommand> customerCommandList = customerService.getAllCustomers(pageable);
@@ -93,7 +98,6 @@ public class CustomerController {
             @PathVariable("customerId") Long customerId
     ) {
         CustomerCommand customerCommand = customerService.getCustomerById(customerId);
-
         return ResponseEntity.ok(ApiResponse.ok(CustomerDto.Response.of(customerCommand)));
     }
 

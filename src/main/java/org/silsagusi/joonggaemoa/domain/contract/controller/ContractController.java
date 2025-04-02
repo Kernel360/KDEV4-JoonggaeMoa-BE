@@ -1,5 +1,6 @@
 package org.silsagusi.joonggaemoa.domain.contract.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.silsagusi.joonggaemoa.domain.contract.controller.dto.ContractDto;
 import org.silsagusi.joonggaemoa.domain.contract.service.ContractService;
@@ -20,9 +21,10 @@ public class ContractController {
 
     private final ContractService contractService;
 
+
     @PostMapping(value = "/api/contracts", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResponse<String>> createContract(
-            @RequestPart("contractData") ContractDto.Request requestDto,
+            @RequestPart("contractData") @Valid ContractDto.Request requestDto,
             @RequestPart("file") MultipartFile file
     ) throws IOException {
         contractService.createContract(

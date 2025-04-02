@@ -1,6 +1,7 @@
 package org.silsagusi.joonggaemoa.domain.survey.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.silsagusi.joonggaemoa.domain.survey.controller.dto.AnswerDto;
 import org.silsagusi.joonggaemoa.domain.survey.controller.dto.SurveyDto;
@@ -22,12 +23,13 @@ public class SurveyController {
 
     private final SurveyService surveyService;
 
+
     @PostMapping("/api/surveys")
     public ResponseEntity<ApiResponse<Void>> createSurvey(
             HttpServletRequest request,
-            @RequestBody SurveyDto.Request requestDto
+            @RequestBody @Valid SurveyDto.CreateRequest createRequestDto
     ) {
-        List<QuestionCommand> questionCommandList = requestDto.getQuestionList()
+        List<QuestionCommand> questionCommandList = createRequestDto.getQuestionList()
                 .stream().map(it -> QuestionCommand.builder()
                         .content(it.getContent())
                         .type(it.getType())
@@ -38,8 +40,8 @@ public class SurveyController {
 
         surveyService.createSurvey(
                 (Long) request.getAttribute("agentId"),
-                requestDto.getTitle(),
-                requestDto.getDescription(),
+                createRequestDto.getTitle(),
+                createRequestDto.getDescription(),
                 questionCommandList
         );
         return ResponseEntity.ok(ApiResponse.ok());
@@ -56,7 +58,7 @@ public class SurveyController {
     @PatchMapping("/api/surveys/{surveyId}")
     public ResponseEntity<ApiResponse<Void>> updateSurvey(
             @PathVariable("surveyId") Long surveyId,
-            @RequestBody SurveyDto.Request requestDto
+            @RequestBody @Valid SurveyDto.UpdateRequest requestDto
     ) {
         List<QuestionCommand> questionCommandList = requestDto.getQuestionList()
                 .stream().map(it -> QuestionCommand.builder()
@@ -67,7 +69,6 @@ public class SurveyController {
                         .options(it.getOptions())
                         .build()
                 ).toList();
-
         surveyService.updateSurvey(
                 surveyId,
                 requestDto.getTitle(),
@@ -112,7 +113,7 @@ public class SurveyController {
     @PostMapping("/api/customers/surveys/{surveyId}/submit")
     public ResponseEntity<ApiResponse<Void>> submitSurveyAnswer(
             @PathVariable("surveyId") Long surveyId,
-            @RequestBody AnswerDto.Request requestDto
+            @RequestBody @Valid AnswerDto.Request requestDto
     ) {
         surveyService.submitSurveyAnswer(
                 surveyId,

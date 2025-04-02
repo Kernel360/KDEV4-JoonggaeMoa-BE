@@ -73,6 +73,7 @@ jobs:
 
       # create application-prod.yml
       - name: make application-prod.yml
+        if: contains(github.red, 'main')
         run: |
           cd ./src/main/resources
           touch ./application-prod.yml
@@ -124,7 +125,7 @@ jobs:
             
             # 새로운 컨테이너 pull, run
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/docker-joonggaemoa 
-            sudo docker run -d --name new-joonggaemoa -p 8080:8080 \
+            sudo docker run -d --name new-joonggaemoa -pq 8080:8080 \
               -e SPRING_PROFILES_ACTIVE=prod \
               ${{ secrets.DOCKER_USERNAME }}/docker-joonggaemoa 
             

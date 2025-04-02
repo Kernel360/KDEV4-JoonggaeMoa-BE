@@ -40,6 +40,7 @@ public class SurveyService {
     private final AnswerRepository answerRepository;
     private final ConsultationRepository consultationRepository;
 
+
     public void createSurvey(
             Long agentId,
             String title,
@@ -47,7 +48,7 @@ public class SurveyService {
             List<QuestionCommand> questionCommandList
     ) {
         Agent agent = agentRepository.findById(agentId)
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
 
         Survey survey = new Survey(agent, title, description, new ArrayList<>());
 
@@ -176,7 +177,7 @@ public class SurveyService {
 
         answerRepository.save(newAnswer);
     }
-
+    
     public Page<AnswerCommand> getAllAnswers(Pageable pageable) {
         Page<Answer> answerPage = answerRepository.findAll(pageable);
         return answerPage.map(AnswerCommand::of);

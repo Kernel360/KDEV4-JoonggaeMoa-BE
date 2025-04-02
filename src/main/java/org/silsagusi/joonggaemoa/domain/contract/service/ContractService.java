@@ -39,9 +39,10 @@ public class ContractService {
     ) throws IOException {
 
         Customer customerLandlord = customerRepository.findById(landlordId)
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_CUSTOMER));
         Customer customerTenant = customerRepository.findById(tenantId)
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_CUSTOMER));
+
 
         String filename = fileUpload(file);
 
@@ -97,6 +98,7 @@ public class ContractService {
 
         return filename;
     }
+
 
     public String getUrl(String fileName) throws IOException {
         return amazonS3.getUrl("joonggaemoa", fileName).toString();

@@ -1,5 +1,6 @@
 package org.silsagusi.joonggaemoa.domain.consultation.contorller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.silsagusi.joonggaemoa.domain.consultation.contorller.dto.ConsultationDto;
 import org.silsagusi.joonggaemoa.domain.consultation.contorller.dto.ConsultationStatusResponse;
@@ -19,9 +20,10 @@ public class ConsultationController {
 
     private final ConsultationService consultationService;
 
+
     @PostMapping("/api/consultations")
     public ResponseEntity<ApiResponse<Void>> createConsultation(
-            @RequestBody ConsultationDto.Request requestDto
+            @RequestBody @Valid ConsultationDto.Request requestDto
     ) {
         consultationService.createConsultation(
                 requestDto.getCustomerId(),
@@ -67,10 +69,11 @@ public class ConsultationController {
         return ResponseEntity.ok(ApiResponse.ok(consultationStatusResponse));
     }
 
+
     @PatchMapping("/api/consultations/{consultationId}")
     public ResponseEntity<ApiResponse<Void>> updateConsultation(
             @PathVariable("consultationId") Long consultationId,
-            @RequestBody UpdateConsultationRequest updateConsultationRequest
+            @RequestBody @Valid UpdateConsultationRequest updateConsultationRequest
     ) {
         consultationService.updateConsultation(
                 consultationId,

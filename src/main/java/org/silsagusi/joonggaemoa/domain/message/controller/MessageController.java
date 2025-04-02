@@ -1,6 +1,7 @@
 package org.silsagusi.joonggaemoa.domain.message.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.silsagusi.joonggaemoa.domain.message.controller.dto.MessageDto;
 import org.silsagusi.joonggaemoa.domain.message.controller.dto.ReservedMessageDto;
@@ -37,12 +38,12 @@ public class MessageController {
         return ResponseEntity.ok(ApiResponse.ok(responses));
     }
 
+
     @PostMapping("/api/messages")
     public ResponseEntity<ApiResponse<Void>> reserveMessage(
-            @RequestBody ReservedMessageDto.Request request
+            @RequestBody @Valid ReservedMessageDto.Request request
     ) {
         messageService.reserveMessage(request.getContent(), request.getSendAt(), request.getCustomerIdList());
-
         return ResponseEntity.ok(ApiResponse.ok());
     }
 
