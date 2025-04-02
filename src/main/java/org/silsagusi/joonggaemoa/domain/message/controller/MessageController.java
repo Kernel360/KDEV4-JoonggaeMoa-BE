@@ -1,70 +1,65 @@
 package org.silsagusi.joonggaemoa.domain.message.controller;
 
-import java.util.List;
-
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import org.silsagusi.joonggaemoa.domain.message.controller.dto.MessageDto;
 import org.silsagusi.joonggaemoa.domain.message.controller.dto.ReservedMessageDto;
 import org.silsagusi.joonggaemoa.domain.message.service.MessageService;
 import org.silsagusi.joonggaemoa.domain.message.service.command.MessageCommand;
 import org.silsagusi.joonggaemoa.domain.message.service.command.ReservedMessageCommand;
 import org.silsagusi.joonggaemoa.global.api.ApiResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import jakarta.servlet.http.HttpServletRequest;
-import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
 public class MessageController {
 
-	private final MessageService messageService;
+    private final MessageService messageService;
 
-	@GetMapping("/api/messages")
-	public ResponseEntity<ApiResponse<List<MessageDto.Response>>> getMessage(
-		HttpServletRequest request,
-		@RequestParam(required = false) Long lastMessageId
-	) {
-		List<MessageCommand> messageCommands = messageService.getMessage(
-			(Long)request.getAttribute("agentId"),
-			lastMessageId
-		);
+    @GetMapping("/api/messages")
+    public ResponseEntity<ApiResponse<Page<MessageDto.Response>>> getMessage(
+            HttpServletRequest request,
+            Pageable pageable
+            //@RequestParam(required = false) Long lastMessageId
+    ) {
+        Page<MessageCommand> messageCommandPage = messageService.getMessage(
+                (Long) request.getAttribute("agentId"), pageable
+        );
 
-		List<MessageDto.Response> responses = messageCommands.stream()
-			.map(MessageDto.Response::of)
-			.toList();
+        Page<MessageDto.Response> responses = messageCommandPage.map(MessageDto.Response::of);
 
-		return ResponseEntity.ok(ApiResponse.ok(responses));
-	}
+        return ResponseEntity.ok(ApiResponse.ok(responses));
+    }
 
-	@PostMapping("/api/messages")
-	public ResponseEntity<ApiResponse<Void>> reserveMessage(
-		@RequestBody ReservedMessageDto.Request request
-	) {
-		messageService.reserveMessage(request.getContent(), request.getSendAt(), request.getCustomerIdList());
+    @PostMapping("/api/messages")
+    public ResponseEntity<ApiResponse<Void>> reserveMessage(
+            @RequestBody ReservedMessageDto.Request request
+    ) {
+        messageService.reserveMessage(request.getContent(), request.getSendAt(), request.getCustomerIdList());
 
-		return ResponseEntity.ok(ApiResponse.ok());
-	}
+        return ResponseEntity.ok(ApiResponse.ok());
+    }
 
-	@GetMapping("/api/reserved-message")
-	public ResponseEntity<ApiResponse<List<ReservedMessageDto.Response>>> getReservedMessage(
-		HttpServletRequest request,
-		@RequestParam(required = false) Long lastMessageId
-	) {
+    @GetMapping("/api/reserved-message")
+    public ResponseEntity<ApiResponse<Page<ReservedMessageDto.Response>>> getReservedMessage(
+            HttpServletRequest request,
+            Pageable pageable
+    ) {
 
-		List<ReservedMessageCommand> commands = messageService.getReservedMessage(
-			(Long)request.getAttribute("agentId"),
-			lastMessageId
-		);
+        Page<ReservedMessageCommand> commandPage = messageService.getReservedMessage(
+                (Long) request.getAttribute("agentId"),
+                pageable
+        );
 
-		List<ReservedMessageDto.Response> responses = commands.stream()
-			.map(ReservedMessageDto.Response::of)
-			.toList();
+        Page<ReservedMessageDto.Response> responsePage = commandPage
+                .map(ReservedMessageDto.Response::of);
 
-		return ResponseEntity.ok(ApiResponse.ok(responses));
-	}
+        return ResponseEntity.ok(ApiResponse.ok(responsePage));
+    }
 }
