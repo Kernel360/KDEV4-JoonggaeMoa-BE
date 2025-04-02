@@ -38,7 +38,6 @@ public class CustomerService {
     ) {
         Agent agent = agentRepository.findById(agentId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
-
         Customer customer = new Customer(
                 name,
                 birthday,
@@ -59,7 +58,6 @@ public class CustomerService {
         //TODO: 엑셀 파일 타입 확인
         try {
             XSSFWorkbook workbook = new XSSFWorkbook(file.getInputStream());
-
 
             int sheetsLength = workbook.getNumberOfSheets();
             Agent agent = agentRepository.findById(agentId)

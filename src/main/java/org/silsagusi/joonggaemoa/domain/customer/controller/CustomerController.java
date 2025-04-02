@@ -98,7 +98,6 @@ public class CustomerController {
             @PathVariable("customerId") Long customerId
     ) {
         CustomerCommand customerCommand = customerService.getCustomerById(customerId);
-
         return ResponseEntity.ok(ApiResponse.ok(CustomerDto.Response.of(customerCommand)));
     }
 

@@ -177,7 +177,7 @@ public class SurveyService {
 
         answerRepository.save(newAnswer);
     }
-
+    
     public Page<AnswerCommand> getAllAnswers(Pageable pageable) {
         Page<Answer> answerPage = answerRepository.findAll(pageable);
         return answerPage.map(AnswerCommand::of);

@@ -106,5 +106,5 @@ public class ConsultationService {
                 .consultationCompleted(statusCountMap.getOrDefault(Consultation.ConsultationStatus.COMPLETED, 0L))
                 .build();
     }
-
+    
 }
