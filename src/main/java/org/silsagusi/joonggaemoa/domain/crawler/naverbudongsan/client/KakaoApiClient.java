@@ -31,7 +31,7 @@ public class KakaoApiClient {
      * @param latitude 위도 (y 좌표)
      * @return AddressResponseDto: 카카오 API 응답 DTO
      */
-    public AddressResponseDto getAddressByCoordinates(double longitude, double latitude) {
+    public AddressResponseDto getAddr(double longitude, double latitude) {
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/v2/local/geo/coord2address.json")

@@ -14,15 +14,39 @@ public class Complex {
     @Column(name = "complex_id")
     private Long id;
 
-    private String hscpNm; // 단지명
+    // house complex name 단지명
+    @Column(name = "name")
+    private String hscpNm;
 
-    private String hscpTypeNm; // 유형 (다세대, 연립)
+    // house type name 유형 (다세대, 연립)
+    @Column(name = "type")
+    private String hscpTypeNm;
 
-    private String useAprvYmd; // 준공일
+    // use approval date 준공일
+    @Column(name = "approved_at")
+    private String useAprvYmd;
 
-    public Complex(String hscpNm, String hscpTypeNm, String useAprvYmd) {
+
+
+    public Complex(
+
+            // house complex name 단지명
+            String hscpNm,
+
+            // house type name 유형 (다세대, 연립)
+            String hscpTypeNm,
+
+            // use approval date 준공일
+            String useAprvYmd
+    ) {
+
+        // house complex name 단지명
         this.hscpNm = hscpNm;
+
+        // house type name 유형 (다세대, 연립)
         this.hscpTypeNm = hscpTypeNm;
+
+        // use approval date 준공일
         this.useAprvYmd = useAprvYmd;
     }
 }

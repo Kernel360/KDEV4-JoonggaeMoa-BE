@@ -17,29 +17,79 @@ public class Article {
     private Long id;
 
     // article name 건물 이름
+    @Column(name = "name")
     private String atclNm;
 
-    // 법정동 코드
-    private String cortarNo;
-
-    // real estate type name 매물 유형
+    // real estate type name 건물 유형 (매물유형) (아파트, 오피스텔 등)
+    @Column(name = "type")
     private String rletTpNm;
 
     // trade type name 거래 유형 (매매, 전세, 월세, 단기임대)
+    @Column(name = "trade_type")
     private String tradTpNm;
 
-    // hangul price
+    // hangul price (2억 8000)
+    @Column(name = "price")
     private String hanPrc;
 
     // article confirmation date
+    @Column(name = "confirmed_at")
     private String atclCfmYmd;
+    // TODO : DATE type 으로 변경
 
-    public Article(String atclNm, String cortarNo, String rletTpNm, String tradTpNm, String hanPrc, String atclCfmYmd) {
+    // 위도
+    @Column(name = "latitude")
+    private double lat;
+
+    // 경도
+    @Column(name = "longitude")
+    private double lng;
+
+    // TODO : 위경도로 주소 조회
+
+    public Article(
+
+            //
+            String atclNm,
+
+            //
+            String rletTpNm,
+
+            //
+            String tradTpNm,
+
+            //
+            String hanPrc,
+
+            //
+            String atclCfmYmd,
+
+            //
+            double lat,
+
+            //
+            double lng
+    ) {
+
+        //
         this.atclNm = atclNm;
-        this.cortarNo = cortarNo;
+
+        //
         this.rletTpNm = rletTpNm;
+
+        //
         this.tradTpNm = tradTpNm;
+
+        //
         this.hanPrc = hanPrc;
+
+        //
         this.atclCfmYmd = atclCfmYmd;
+
+        //
+        this.lat = lat;
+
+        //
+        this.lng = lng;
     }
 }

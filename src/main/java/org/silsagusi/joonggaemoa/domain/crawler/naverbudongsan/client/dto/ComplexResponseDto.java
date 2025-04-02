@@ -6,35 +6,76 @@ import java.util.List;
 
 @Data
 public class ComplexResponseDto {
-    private List<CL> result;
+
+    private List<ComplexList> result;
+
     private boolean hasPaidPreSale;
+
     private boolean more;
+
     private boolean isPreSale;
 
     @Data
-    public static class CL {
-        private String hscpNo; // house complex number 단지번호
-        private String hscpNm; // house complex name 단지이름
-        private String hscpTypeCd; // house complex type code
-        private String hscpTypeNm; // house complex type name
-        private int totDongCnt; // total dong count
-        private int totHsehCnt; // total house eh? count
-        private int genHsehCnt; // generated? house eh? count
-        private String useAprvYmd; // use approval date
-        private int dealCnt; // deal count
+    public static class ComplexList {
+
+        // house complex number 단지번호
+        private String hscpNo;
+
+        // house complex name 단지명
+        private String hscpNm;
+
+        // house complex type code 단지종류코드 (A06, B02)
+        private String hscpTypeCd;
+
+        // house complex type name 단지종류 (다세대)
+        private String hscpTypeNm;
+
+        // total dong count 동수
+        private int totDongCnt;
+
+        // total household count 세대수
+        private int totHsehCnt;
+
+        // generated? household count ? (대부분 0)
+        private int genHsehCnt;
+
+        // use approval date 준공날짜
+        private String useAprvYmd;
+
+        // deal count 매매물건수
+        private int dealCnt;
+
+        // lease count 전세물건수
         private int leaseCnt;
+
+        // rental count 월세물건수
         private int rentCnt;
-        private int strmRentCnt; // strm? rent count
-        private int totalAtclCnt; // total article count
-        private String minSpc; // minimum space
-        private String maxSpc; // maximum space
-        private String isalePrcMin; // isale? price minimum
-        private String isalePrcMax; // isale? price maximum
-        private String isaleNotifSeq; // isale? notification sequence
-        private String isaleScheLabel; // isale? schedule label
-        private String isaleScheLabelPre; // isale? schedule label pre?
+
+        // short-term rental count 단기임대물건수
+        private int strmRentCnt;
+
+        // total article count 전체물건수
+        private int totalAtclCnt;
+
+        // minimum space 최소평수 [제곱미터]
+        private String minSpc;
+
+        // maximum space 최대평수 [제곱미터]
+        private String maxSpc;
+
+//        private String isalePrcMin;
+//        private String isalePrcMax;
+//        private String isaleNotifSeq;
+//        private String isaleScheLabel;
+//        private String isaleScheLabelPre;
+
+        // 임장여부
         private boolean tourExist;
+
+        // 내진설계여부
         private boolean isSeismic;
+
+        // 엘리베이터 대수
         private int totalElevatorCount;
     }
 }

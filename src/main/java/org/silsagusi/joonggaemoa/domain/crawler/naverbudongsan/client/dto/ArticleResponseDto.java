@@ -12,38 +12,96 @@ public class ArticleResponseDto {
     private boolean TIME;
     private int z;
     private int page;
-    private List<AL> body;
+    private List<ArticleList> body;
 
     @Data
-    public static class AL {
-        private String atclNo; // article number
-        private String cortarNo; // 법정동코드
-        private String atclNm; // article name
-        private String rletTpCd; // real estate type code 매물유형코드 (A1, B3 등)
-        private String uprRletTpCd; // 상위 real estate type code
-        private String rletTpNm; // real estate type name
-        private String tradTpCd; // trade type code
-        private String tradTpNm; // trade type name
-        private String vrfcTpCd; // VR fc? type code
-        private int prc; // price 매매가 / 전세
-        private int rentPrc; // rent price 월세
-        private String hanPrc; // hangul price
-        private String direction; // 방향 (남향, 북향 등)
-        private String atclCfmYmd; // article confirmation date
-//        private String repImgUrl; // representative image url
-//        private String repImgTpCd; // representative image type code
-//        private String repImgThumb; // representative image thumbnail
-        private double lat; // latitude
-        private double lng; // longitude
-//        private String atclFetrDesc; // article fetr? description
+    public static class ArticleList {
+
+        // article number
+        private String atclNo;
+
+        // 법정동코드
+        private String cortarNo;
+
+        // article name
+        private String atclNm;
+
+        // real estate type code 매물유형코드 (A1, B3 등)
+        private String rletTpCd;
+
+        // 상위 real estate type code
+        private String uprRletTpCd;
+
+        // real estate type name
+        private String rletTpNm;
+
+        // trade type code
+        private String tradTpCd;
+
+        // trade type name
+        private String tradTpNm;
+
+        // VR facility? type code  (NONE, S_VR)
+        private String vrfcTpCd;
+
+        // price 매매가/보증금
+        private int prc;
+
+        // rent price 월세
+        private int rentPrc;
+
+        // hangul price 매매가/보증금 한글로
+        private String hanPrc;
+
+        // 방향 (남향, 북향 등)
+        private String direction;
+
+        // article confirmation date
+        private String atclCfmYmd;
+
+        // representative image url
+        private String repImgUrl;
+
+        // representative image type code
+        private String repImgTpCd;
+
+        // representative image thumbnail url
+        private String repImgThumb;
+
+        // 위도
+        private double lat;
+
+        // 경도
+        private double lng;
+
+        // article fetr? description
+        private String atclFetrDesc;
+
+        // 태그 리스트
         private List<String> tagList;
-        private String cpid; // company id
-        private String cpNm; // company name
-        private String rltrNm; // real estate agent name
-        private String sbwyInfo; // subway info
-        private String tradePriceHan; // trade price in 한글
+
+        // company id
+        private String cpid;
+
+        // company name
+        private String cpNm;
+
+        // real estate agent name
+        private String rltrNm;
+
+        // subway info
+        private String sbwyInfo;
+
+        // trade price in hangul
+        private String tradePriceHan;
+
+        // trade rent price
         private int tradeRentPrice;
-        private boolean tradeCheckedByOwner; // 본인인증완료여부
-        private boolean isVrExposed; // VR촬영완료여부
+
+        // 본인인증완료여부
+        private boolean tradeCheckedByOwner;
+
+        // VR촬영완료여부
+        private boolean isVrExposed;
     }
 }
