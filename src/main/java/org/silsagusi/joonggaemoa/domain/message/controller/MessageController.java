@@ -38,7 +38,6 @@ public class MessageController {
         return ResponseEntity.ok(ApiResponse.ok(responses));
     }
 
-
     @PostMapping("/api/messages")
     public ResponseEntity<ApiResponse<Void>> reserveMessage(
             @RequestBody @Valid ReservedMessageDto.Request request

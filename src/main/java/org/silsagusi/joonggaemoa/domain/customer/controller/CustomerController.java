@@ -14,13 +14,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-
 @RestController
 @RequiredArgsConstructor
 public class CustomerController {
 
     private final CustomerService customerService;
-
 
     @PostMapping("/api/customers")
     public ResponseEntity<ApiResponse<Void>> createCustomer(
@@ -55,6 +53,7 @@ public class CustomerController {
 
         return ResponseEntity.ok(ApiResponse.ok());
     }
+
 
     @DeleteMapping("/api/customers/{customerId}")
     public ResponseEntity<ApiResponse<Void>> deleteCustomer(

@@ -21,7 +21,6 @@ public class ContractController {
 
     private final ContractService contractService;
 
-
     @PostMapping(value = "/api/contracts", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResponse<String>> createContract(
             @RequestPart("contractData") @Valid ContractDto.Request requestDto,

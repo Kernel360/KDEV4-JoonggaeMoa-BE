@@ -40,7 +40,6 @@ public class SurveyService {
     private final AnswerRepository answerRepository;
     private final ConsultationRepository consultationRepository;
 
-
     public void createSurvey(
             Long agentId,
             String title,
@@ -177,7 +176,7 @@ public class SurveyService {
 
         answerRepository.save(newAnswer);
     }
-    
+
     public Page<AnswerCommand> getAllAnswers(Pageable pageable) {
         Page<Answer> answerPage = answerRepository.findAll(pageable);
         return answerPage.map(AnswerCommand::of);

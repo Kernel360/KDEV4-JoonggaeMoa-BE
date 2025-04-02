@@ -20,7 +20,6 @@ public class ConsultationController {
 
     private final ConsultationService consultationService;
 
-
     @PostMapping("/api/consultations")
     public ResponseEntity<ApiResponse<Void>> createConsultation(
             @RequestBody @Valid ConsultationDto.Request requestDto
@@ -61,6 +60,7 @@ public class ConsultationController {
         return ResponseEntity.ok(ApiResponse.ok(consultationResponse));
     }
 
+
     @GetMapping("/api/consultations/status-inform")
     public ResponseEntity<ApiResponse<ConsultationStatusResponse>> getStatusInformation() {
         ConsultationStatusCommand consultationStatusCommand = consultationService.getStatusInformation();
@@ -68,7 +68,6 @@ public class ConsultationController {
                 consultationStatusCommand);
         return ResponseEntity.ok(ApiResponse.ok(consultationStatusResponse));
     }
-
 
     @PatchMapping("/api/consultations/{consultationId}")
     public ResponseEntity<ApiResponse<Void>> updateConsultation(

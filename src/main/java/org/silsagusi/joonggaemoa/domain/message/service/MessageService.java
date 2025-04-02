@@ -40,9 +40,11 @@ public class MessageService {
                 .forEach(reservedMessageRepository::save);
     }
 
+
     public Page<ReservedMessageCommand> getReservedMessage(Long agentId, Pageable pageable) {
         Page<ReservedMessage> reservedMessagePage = reservedMessageRepository.findAll(pageable);
         return reservedMessagePage.map(ReservedMessageCommand::of);
     }
+
 
 }

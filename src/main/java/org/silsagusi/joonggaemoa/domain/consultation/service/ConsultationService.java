@@ -23,7 +23,6 @@ public class ConsultationService {
     private final ConsultationRepository consultationRepository;
     private final CustomerRepository customerRepository;
 
-
     public void createConsultation(
             Long customerId,
             LocalDateTime date
@@ -75,6 +74,7 @@ public class ConsultationService {
         consultationRepository.save(consultation);
     }
 
+
     public List<ConsultationCommand> getAllConsultations() {
         List<Consultation> consultationList = consultationRepository.findAll();
         return consultationList.stream().map(ConsultationCommand::of).toList();
@@ -106,5 +106,5 @@ public class ConsultationService {
                 .consultationCompleted(statusCountMap.getOrDefault(Consultation.ConsultationStatus.COMPLETED, 0L))
                 .build();
     }
-    
+
 }

@@ -43,7 +43,6 @@ public class ContractService {
         Customer customerTenant = customerRepository.findById(tenantId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_CUSTOMER));
 
-
         String filename = fileUpload(file);
 
         Contract contract = new Contract(
