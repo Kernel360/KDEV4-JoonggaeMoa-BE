@@ -75,8 +75,8 @@ public class ConsultationService {
     }
 
 
-    public List<ConsultationCommand> getAllConsultations() {
-        List<Consultation> consultationList = consultationRepository.findAll();
+    public List<ConsultationCommand> getAllConsultationsByDate(LocalDateTime date) {
+        List<Consultation> consultationList = consultationRepository.findAllByDate(date);
         return consultationList.stream().map(ConsultationCommand::of).toList();
     }
 

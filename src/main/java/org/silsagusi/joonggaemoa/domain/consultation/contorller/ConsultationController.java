@@ -12,6 +12,7 @@ import org.silsagusi.joonggaemoa.global.api.ApiResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -33,8 +34,10 @@ public class ConsultationController {
     }
 
     @GetMapping("/api/consultations")
-    public ResponseEntity<ApiResponse<List<ConsultationDto.Response>>> getAllConsultation() {
-        List<ConsultationCommand> consultationCommandList = consultationService.getAllConsultations();
+    public ResponseEntity<ApiResponse<List<ConsultationDto.Response>>> getAllConsultation(
+            @RequestParam LocalDateTime date
+    ) {
+        List<ConsultationCommand> consultationCommandList = consultationService.getAllConsultationsByDate(date);
         List<ConsultationDto.Response> consultationResponseList = consultationCommandList.stream()
                 .map(ConsultationDto.Response::of).toList();
         return ResponseEntity.ok(ApiResponse.ok(consultationResponseList));
