@@ -73,6 +73,7 @@ jobs:
 
       # create application-prod.yml
       - name: make application-prod.yml
+
         run: |
           cd ./src/main/resources
           touch ./application-prod.yml

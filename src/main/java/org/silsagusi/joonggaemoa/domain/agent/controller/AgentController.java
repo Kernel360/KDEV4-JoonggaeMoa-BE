@@ -1,13 +1,11 @@
 package org.silsagusi.joonggaemoa.domain.agent.controller;
 
-import org.silsagusi.joonggaemoa.domain.agent.controller.dto.FindUsernameRequest;
-import org.silsagusi.joonggaemoa.domain.agent.controller.dto.FindUsernameResponse;
-import org.silsagusi.joonggaemoa.domain.agent.controller.dto.SignupRequest;
+import org.silsagusi.joonggaemoa.domain.agent.controller.dto.AgentDto;
+import org.silsagusi.joonggaemoa.domain.agent.controller.dto.FindUsernameDto;
 import org.silsagusi.joonggaemoa.domain.agent.service.AgentService;
 import org.silsagusi.joonggaemoa.domain.agent.service.command.AgentCommand;
 import org.silsagusi.joonggaemoa.global.api.ApiResponse;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -24,30 +23,32 @@ public class AgentController {
 	private final AgentService agentService;
 
 	@PostMapping("/api/agents/signup")
-	public ResponseEntity<ApiResponse<Void>> signup(@RequestBody SignupRequest signupRequestDto) {
+	public ResponseEntity<ApiResponse<Void>> signup(
+		@RequestBody @Valid AgentDto.Request requestDto
+	) {
 		agentService.signup(
-			signupRequestDto.getUsername(),
-			signupRequestDto.getPassword(),
-			signupRequestDto.getName(),
-			signupRequestDto.getPhone(),
-			signupRequestDto.getEmail(),
-			signupRequestDto.getOffice(),
-			signupRequestDto.getRegion(),
-			signupRequestDto.getBusinessNo());
+			requestDto.getUsername(),
+			requestDto.getPassword(),
+			requestDto.getName(),
+			requestDto.getPhone(),
+			requestDto.getEmail(),
+			requestDto.getOffice(),
+			requestDto.getRegion(),
+			requestDto.getBusinessNo());
 
 		return ResponseEntity.ok(ApiResponse.ok());
 	}
 
-	@GetMapping("/api/agents/username")
-	public ResponseEntity<ApiResponse<FindUsernameResponse>> getUsername(
-		@RequestBody FindUsernameRequest findUsernameRequestDto) {
+	@PostMapping("/api/agents/username")
+	public ResponseEntity<ApiResponse<FindUsernameDto.Response>> getUsername(
+		@RequestBody @Valid FindUsernameDto.Request requestDto) {
 		AgentCommand agentCommand = agentService.getAgentByNameAndPhone(
-			findUsernameRequestDto.getName(),
-			findUsernameRequestDto.getPhone()
+			requestDto.getName(),
+			requestDto.getPhone()
 		);
 
 		return ResponseEntity.ok(ApiResponse.ok(
-			new FindUsernameResponse(agentCommand.getUsername())
+			FindUsernameDto.Response.of(agentCommand)
 		));
 	}
 
