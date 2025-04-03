@@ -24,7 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class JwtProvider {
 
-	private static final long ACCESS_TOKEN_EXPIRATION_TIME = 5 * 1000L;
+	private static final long ACCESS_TOKEN_EXPIRATION_TIME = 24 * 60 * 60 * 1000L;
 	private static final long REFRESH_TOKEN_EXPIRATION_TIME = 24 * 60 * 60 * 1000L;
 
 	@Value("${jwt.secret}")
