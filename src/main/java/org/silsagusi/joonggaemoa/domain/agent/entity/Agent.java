@@ -2,6 +2,7 @@ package org.silsagusi.joonggaemoa.domain.agent.entity;
 
 import java.util.List;
 
+import org.hibernate.annotations.DynamicUpdate;
 import org.silsagusi.joonggaemoa.domain.customer.entity.Customer;
 
 import jakarta.persistence.Column;
@@ -18,6 +19,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@DynamicUpdate
 @Entity(name = "agents")
 @Getter
 public class Agent {
@@ -65,4 +67,16 @@ public class Agent {
 		this.businessNo = businessNo;
 		this.role = Role.ROLE_AGENT;
 	}
+
+	public void updateAgent(String name, String phone, String email, String username, String office, String region,
+		String businessNo) {
+		this.name = name;
+		this.phone = phone;
+		this.email = email;
+		this.username = username;
+		this.office = office;
+		this.region = region;
+		this.businessNo = businessNo;
+	}
+
 }
