@@ -53,7 +53,7 @@ public class CustomerController {
         return ResponseEntity.ok(ApiResponse.ok());
     }
 
-    @GetMapping("/api/customers/builk")
+    @GetMapping("/api/customers/bulk")
     public ResponseEntity<ApiResponse<String>> excelDownload() {
         String fileUploadResponse = customerService.excelDownload();
         return ResponseEntity.ok(ApiResponse.ok(fileUploadResponse));
