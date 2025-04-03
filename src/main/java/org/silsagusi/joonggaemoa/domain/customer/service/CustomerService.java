@@ -26,6 +26,8 @@ public class CustomerService {
     private final CustomerRepository customerRepository;
     private final AgentRepository agentRepository;
     private final AmazonS3 amazonS3;
+    private static String S3_BUCKET_NAME = "joonggaemoa";
+    private static String EXCEL_FORMAT_FILENAME = "format.xlsx";
 
     public void createCustomer(
             Long agentId,
@@ -152,6 +154,6 @@ public class CustomerService {
     }
 
     public String excelDownload() {
-        return amazonS3.getUrl("joonggaemoa", "format.xlsx").toString();
+        return amazonS3.getUrl(S3_BUCKET_NAME, EXCEL_FORMAT_FILENAME).toString();
     }
 }
