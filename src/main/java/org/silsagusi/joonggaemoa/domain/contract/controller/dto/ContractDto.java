@@ -41,8 +41,10 @@ public class ContractDto {
 	@Builder
 	public static class Response {
 		private Long id;
-		private Long landlordId;
-		private Long tenantId;
+		// private Long landlordId;
+		// private Long tenantId;
+		private String landlordName;
+		private String tenantName;
 		private LocalDate createdAt;
 		private LocalDate expiredAt;
 		private String url;
@@ -50,8 +52,10 @@ public class ContractDto {
 		public static Response of(ContractCommand command) {
 			return Response.builder()
 				.id(command.getId())
-				.landlordId(command.getLandlordId())
-				.tenantId(command.getTenantId())
+				// .landlordId(command.getLandlordId())
+				// .tenantId(command.getTenantId())
+				.landlordName(command.getLandlordName())
+				.tenantName(command.getTenantName())
 				.createdAt(command.getCreatedAt())
 				.expiredAt(command.getExpiredAt())
 				.url(command.getUrl())
