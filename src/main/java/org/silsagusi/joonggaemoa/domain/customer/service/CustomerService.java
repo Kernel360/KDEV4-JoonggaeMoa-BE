@@ -26,8 +26,8 @@ public class CustomerService {
     private final CustomerRepository customerRepository;
     private final AgentRepository agentRepository;
     private final AmazonS3 amazonS3;
-    private static String S3_BUCKET_NAME = "joonggaemoa";
-    private static String EXCEL_FORMAT_FILENAME = "format.xlsx";
+    private static final String S3_BUCKET_NAME = "joonggaemoa";
+    private static final String EXCEL_FORMAT_FILENAME = "format.xlsx";
 
     public void createCustomer(
             Long agentId,

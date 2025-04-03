@@ -29,7 +29,7 @@ public class ContractService {
     private final ContractRepository contractRepository;
     private final CustomerRepository customerRepository;
     private final AmazonS3 amazonS3;
-    private static String S3_BUCKET_NAME = "joonggaemoa";
+    private static final String S3_BUCKET_NAME = "joonggaemoa";
 
     public void createContract(
             Long landlordId,
