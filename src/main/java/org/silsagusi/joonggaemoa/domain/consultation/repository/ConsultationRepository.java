@@ -9,5 +9,5 @@ import java.util.List;
 public interface ConsultationRepository extends JpaRepository<Consultation, Long> {
     List<Consultation> findAllByConsultationStatus(Consultation.ConsultationStatus consultationStatus);
 
-    List<Consultation> findAllByDate(LocalDateTime date);
+    List<Consultation> findAllByDateBetween(LocalDateTime startdate, LocalDateTime endDate);
 }

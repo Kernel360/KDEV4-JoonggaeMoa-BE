@@ -12,6 +12,7 @@ import org.silsagusi.joonggaemoa.global.api.exception.ErrorCode;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -76,7 +77,10 @@ public class ConsultationService {
 
 
     public List<ConsultationCommand> getAllConsultationsByDate(LocalDateTime date) {
-        List<Consultation> consultationList = consultationRepository.findAllByDate(date);
+        LocalDateTime startOfDay = date.toLocalDate().atStartOfDay();
+        LocalDateTime endOfDay = date.toLocalDate().atTime(LocalTime.MAX);
+
+        List<Consultation> consultationList = consultationRepository.findAllByDateBetween(startOfDay, endOfDay);
         return consultationList.stream().map(ConsultationCommand::of).toList();
     }
 
