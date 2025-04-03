@@ -12,7 +12,7 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@RestControllerAdvice
+// @RestControllerAdvice
 public class GlobalExceptionHandler {
 
 	// 존재하지 않는 요청에 대한 예외
