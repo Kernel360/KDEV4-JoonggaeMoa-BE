@@ -1,5 +1,6 @@
 package org.silsagusi.joonggaemoa.domain.customer.service;
 
+import com.amazonaws.services.s3.AmazonS3;
 import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -24,6 +25,9 @@ public class CustomerService {
 
     private final CustomerRepository customerRepository;
     private final AgentRepository agentRepository;
+    private final AmazonS3 amazonS3;
+    private static final String S3_BUCKET_NAME = "joonggaemoa";
+    private static final String EXCEL_FORMAT_FILENAME = "format.xlsx";
 
     public void createCustomer(
             Long agentId,
@@ -147,5 +151,9 @@ public class CustomerService {
 
     public Customer getCustomerByPhone(String phone) {
         return customerRepository.findByPhone(phone).orElseGet(null);
+    }
+
+    public String excelDownload() {
+        return amazonS3.getUrl(S3_BUCKET_NAME, EXCEL_FORMAT_FILENAME).toString();
     }
 }

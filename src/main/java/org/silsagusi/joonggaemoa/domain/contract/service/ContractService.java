@@ -29,6 +29,7 @@ public class ContractService {
     private final ContractRepository contractRepository;
     private final CustomerRepository customerRepository;
     private final AmazonS3 amazonS3;
+    private static final String S3_BUCKET_NAME = "joonggaemoa";
 
     public void createContract(
             Long landlordId,
@@ -100,7 +101,7 @@ public class ContractService {
 
 
     public String getUrl(String fileName) throws IOException {
-        return amazonS3.getUrl("joonggaemoa", fileName).toString();
+        return amazonS3.getUrl(S3_BUCKET_NAME, fileName).toString();
     }
 
 }

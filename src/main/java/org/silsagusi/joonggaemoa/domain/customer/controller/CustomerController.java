@@ -45,13 +45,18 @@ public class CustomerController {
             HttpServletRequest request,
             @RequestParam("file") MultipartFile file
     ) {
-        //TODO: service<->controller command dto
         customerService.bulkCreateCustomer(
                 (Long) request.getAttribute("agentId"),
                 file
         );
 
         return ResponseEntity.ok(ApiResponse.ok());
+    }
+
+    @GetMapping("/api/customers/bulk")
+    public ResponseEntity<ApiResponse<String>> excelDownload() {
+        String fileUploadResponse = customerService.excelDownload();
+        return ResponseEntity.ok(ApiResponse.ok(fileUploadResponse));
     }
 
 
@@ -99,5 +104,6 @@ public class CustomerController {
         CustomerCommand customerCommand = customerService.getCustomerById(customerId);
         return ResponseEntity.ok(ApiResponse.ok(CustomerDto.Response.of(customerCommand)));
     }
+
 
 }
