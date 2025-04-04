@@ -18,11 +18,9 @@ public class AgentCommand {
 	private String phone;
 	private String email;
 	private String username;
-	private String password;
 	private String office;
 	private String region;
 	private String businessNo;
-	private String role;
 
 	public static AgentCommand of(Agent agent) {
 		return AgentCommand.builder()
@@ -31,11 +29,9 @@ public class AgentCommand {
 			.phone(agent.getPhone())
 			.email(agent.getEmail())
 			.username(agent.getUsername())
-			.password(agent.getPassword())
 			.office(agent.getOffice())
 			.region(agent.getRegion())
 			.businessNo(agent.getBusinessNo())
-			.role(agent.getRole() + "")
 			.build();
 	}
 }

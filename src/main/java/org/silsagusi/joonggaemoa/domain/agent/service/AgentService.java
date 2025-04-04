@@ -1,5 +1,6 @@
 package org.silsagusi.joonggaemoa.domain.agent.service;
 
+import org.silsagusi.joonggaemoa.domain.agent.controller.dto.AgentUpdateRequest;
 import org.silsagusi.joonggaemoa.domain.agent.entity.Agent;
 import org.silsagusi.joonggaemoa.domain.agent.repository.AgentRepository;
 import org.silsagusi.joonggaemoa.domain.agent.service.command.AgentCommand;
@@ -36,6 +37,16 @@ public class AgentService {
 		String region,
 		String businessNo
 	) {
+		if (agentRepository.existsByUsername(username)) {
+			throw new CustomException(ErrorCode.CONFLICT_USERNAME);
+		}
+		if (agentRepository.existsByPhone(phone)) {
+			throw new CustomException(ErrorCode.CONFLICT_PHONE);
+		}
+		if (agentRepository.existsByEmail(email)) {
+			throw new CustomException(ErrorCode.CONFLICT_EMAIL);
+		}
+
 		Agent agent = new Agent(
 			name,
 			phone,
@@ -49,18 +60,11 @@ public class AgentService {
 
 		agentRepository.save(agent);
 
-		messageTemplateService.createMessageTemplate(agent);
+		messageTemplateService.createDefaultMessageTemplate(agent);
 	}
 
 	public AgentCommand getAgentByNameAndPhone(String name, String phone) {
 		Agent agent = agentRepository.findByNameAndPhone(name, phone)
-			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
-
-		return AgentCommand.of(agent);
-	}
-
-	public AgentCommand getAgentById(Long id) {
-		Agent agent = agentRepository.getAgentById(id)
 			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
 
 		return AgentCommand.of(agent);
@@ -74,5 +78,32 @@ public class AgentService {
 		String username = claims.get("username", String.class);
 
 		refreshTokenStore.deleteRefreshToken(username);
+	}
+
+	public AgentCommand getAgent(Long agentId) {
+		Agent agent = agentRepository.findById(agentId)
+			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
+
+		return AgentCommand.of(agent);
+	}
+
+	public void updateAgent(Long agentId, AgentUpdateRequest requestDto) {
+		Agent agent = agentRepository.findById(agentId)
+			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
+
+		if (agentRepository.existsByUsername(requestDto.getUsername())) {
+			throw new CustomException(ErrorCode.CONFLICT_USERNAME);
+		}
+		if (agentRepository.existsByPhone(requestDto.getPhone())) {
+			throw new CustomException(ErrorCode.CONFLICT_PHONE);
+		}
+		if (agentRepository.existsByEmail(requestDto.getEmail())) {
+			throw new CustomException(ErrorCode.CONFLICT_EMAIL);
+		}
+
+		agent.updateAgent(requestDto.getName(), requestDto.getPhone(), requestDto.getEmail(), requestDto.getUsername(),
+			requestDto.getOffice(), requestDto.getRegion(), requestDto.getBusinessNo());
+
+		agentRepository.save(agent);
 	}
 }

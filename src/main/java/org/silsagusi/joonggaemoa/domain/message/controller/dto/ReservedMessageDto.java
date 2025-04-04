@@ -23,7 +23,7 @@ public class ReservedMessageDto {
 	@AllArgsConstructor
 	public static class Request {
 
-		@NotBlank
+		@NotBlank(message = "내용은 필수 값입니다.")
 		private String content;
 
 		@NotNull
@@ -32,8 +32,7 @@ public class ReservedMessageDto {
 		@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
 		private LocalDateTime sendAt;
 
-		@NotBlank
-		private List<Long> customerIdList;
+		private List<@NotNull Long> customerIdList;
 	}
 
 	@Getter
