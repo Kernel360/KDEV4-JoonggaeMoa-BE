@@ -20,7 +20,7 @@ public class ComplexController {
     @GetMapping("/api/naverbudongsan/complexes")
     public ResponseEntity<ApiResponse<List<ComplexResponse>>> getComplexes() {
         List<ComplexResponse> complexResponseList = complexService.getComplex().stream()
-                .map(ComplexResponse::of).toList();
+                .map(complex -> new ComplexResponse()).toList();
         return ResponseEntity.ok(ApiResponse.ok(complexResponseList));
     }
 }

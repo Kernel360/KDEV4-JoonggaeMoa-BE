@@ -1,11 +1,11 @@
-package org.silsagusi.joonggaemoa.request.kakao.client.dto;
+package org.silsagusi.joonggaemoa.request.kakao.service;
 
 import lombok.Data;
 import java.util.List;
 
 @Data
 // 카카오 API 응답 DTO
-public class AddressResponseDto {
+public class AddressResponse {
 
     // meta: 응답된 주소 개수 등의 메타 정보
     private Meta meta;

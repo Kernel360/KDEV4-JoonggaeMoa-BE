@@ -12,7 +12,7 @@ public class NaverLandScheduler {
     private final NaverLandRequestService naverLandRequestService;
 
     // 기본값: 30분마다 실행
-    @Scheduled(cron = "0 */40 * * * *")
+    @Scheduled(initialDelay = 0, fixedDelay = 1800000)
     public void crawlNaverLand() throws InterruptedException {
         naverLandRequestService.scrap();
     }

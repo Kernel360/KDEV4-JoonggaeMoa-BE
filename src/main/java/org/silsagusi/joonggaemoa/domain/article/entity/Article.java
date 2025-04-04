@@ -44,49 +44,14 @@ public class Article {
     @Column(name = "longitude")
     private Double lng;
 
-    public Article(
-
-            //
-            String atclNm,
-
-            //
-            String rletTpNm,
-
-            //
-            String tradTpNm,
-
-            //
-            String hanPrc,
-
-            //
-            String atclCfmYmd,
-
-            //
-            Double lat,
-
-            //
-            Double lng
-    ) {
-
-        //
+    public Article(String atclNm, String rletTpNm, String tradTpNm,
+            String hanPrc, String atclCfmYmd, Double lat, Double lng) {
         this.atclNm = atclNm;
-
-        //
         this.rletTpNm = rletTpNm;
-
-        //
         this.tradTpNm = tradTpNm;
-
-        //
         this.hanPrc = hanPrc;
-
-        //
         this.atclCfmYmd = atclCfmYmd;
-
-        //
         this.lat = lat;
-
-        //
         this.lng = lng;
     }
 }

@@ -1,4 +1,4 @@
-package org.silsagusi.joonggaemoa.request.naverland.client.dto;
+package org.silsagusi.joonggaemoa.request.naverland.service.dto;
 
 import lombok.Data;
 import org.silsagusi.joonggaemoa.domain.article.service.ArticleResponse;
@@ -23,7 +23,7 @@ public class ClientArticleResponse {
     private List<ArticleList> body;
 
     @Data
-    public static class ArticleList extends ArticleResponse {
+    public static class ArticleList {
 
         // article number
         private String atclNo;

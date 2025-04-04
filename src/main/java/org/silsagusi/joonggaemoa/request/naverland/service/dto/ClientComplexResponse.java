@@ -1,4 +1,4 @@
-package org.silsagusi.joonggaemoa.request.naverland.client.dto;
+package org.silsagusi.joonggaemoa.request.naverland.service.dto;
 
 import lombok.Data;
 import org.silsagusi.joonggaemoa.domain.article.service.ComplexResponse;
@@ -17,7 +17,7 @@ public class ClientComplexResponse {
     private boolean isPreSale;
 
     @Data
-    public static class ComplexList extends ComplexResponse {
+    public static class ComplexList {
 
         // house complex number 단지번호
         private String hscpNo;

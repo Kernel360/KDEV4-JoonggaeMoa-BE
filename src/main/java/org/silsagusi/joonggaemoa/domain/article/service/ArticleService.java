@@ -1,8 +1,8 @@
 package org.silsagusi.joonggaemoa.domain.article.service;
 
 import lombok.RequiredArgsConstructor;
+import org.silsagusi.joonggaemoa.domain.article.entity.Article;
 import org.silsagusi.joonggaemoa.domain.article.repository.ArticleRepository;
-import org.silsagusi.joonggaemoa.request.naverland.client.dto.ClientArticleResponse;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,7 +13,7 @@ public class ArticleService {
 
     private final ArticleRepository articleRepository;
 
-    public List<ClientArticleResponse.ArticleList> getArticle() {
+    public List<Article> getArticle() {
         return articleRepository.findAll();
     }
 }

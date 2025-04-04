@@ -28,25 +28,9 @@ public class Complex {
     @Column(name = "approved_at")
     private String useAprvYmd;
 
-    public Complex(
-
-            // house complex name 단지명
-            String hscpNm,
-
-            // house type name 유형 (다세대, 연립)
-            String hscpTypeNm,
-
-            // use approval date 준공일
-            String useAprvYmd
-    ) {
-
-        // house complex name 단지명
+    public Complex(String hscpNm, String hscpTypeNm, String useAprvYmd) {
         this.hscpNm = hscpNm;
-
-        // house type name 유형 (다세대, 연립)
         this.hscpTypeNm = hscpTypeNm;
-
-        // use approval date 준공일
         this.useAprvYmd = useAprvYmd;
     }
 }

@@ -1,10 +1,10 @@
-package org.silsagusi.joonggaemoa.domain.consultation.contorller;
+package org.silsagusi.joonggaemoa.domain.consultation.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.silsagusi.joonggaemoa.domain.consultation.contorller.dto.ConsultationDto;
+import org.silsagusi.joonggaemoa.domain.consultation.controller.dto.ConsultationDto;
 import org.silsagusi.joonggaemoa.domain.consultation.contorller.dto.ConsultationMonthInformResponse;
-import org.silsagusi.joonggaemoa.domain.consultation.contorller.dto.UpdateConsultationRequest;
+import org.silsagusi.joonggaemoa.domain.consultation.controller.dto.UpdateConsultationRequest;
 import org.silsagusi.joonggaemoa.domain.consultation.service.ConsultationService;
 import org.silsagusi.joonggaemoa.domain.consultation.service.command.ConsultationCommand;
 import org.silsagusi.joonggaemoa.domain.consultation.service.command.ConsultationMonthInformCommand;

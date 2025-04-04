@@ -19,7 +19,7 @@ public class ArticleController {
     @GetMapping("/api/naverbudongsan/articles")
     public ResponseEntity<ApiResponse<List<ArticleResponse>>> getArticles() {
         List<ArticleResponse> articleResponseList = articleService.getArticle().stream()
-                .map(ArticleResponse::of).toList();
+                .map(article -> new ArticleResponse()).toList();
         return ResponseEntity.ok(ApiResponse.ok(articleResponseList));
     }
 
