@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.stream.Collectors;
 
 import org.silsagusi.joonggaemoa.domain.agent.controller.dto.LoginRequest;
+import org.silsagusi.joonggaemoa.global.api.ApiResponse;
 import org.silsagusi.joonggaemoa.global.api.exception.CustomException;
 import org.silsagusi.joonggaemoa.global.api.exception.ErrorCode;
 import org.silsagusi.joonggaemoa.global.auth.jwt.JwtProvider;
@@ -60,7 +61,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 			return authenticationManager.authenticate(authToken);
 		} catch (AuthenticationException e) {
 			log.error(e.getMessage());
-			throw new CustomException(ErrorCode.INVALID_CREDENTIALS);
+			throw e;
 		}
 	}
 
@@ -91,5 +92,19 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 		response.addHeader("Authorization", "Bearer " + accessToken);
 		response.addHeader("Set-Cookie", cookie.toString());
 		response.addHeader("agentId", id + "");
+	}
+
+	@Override
+	protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
+		AuthenticationException failed) throws IOException, ServletException {
+		response.setContentType("application/json");
+		response.setCharacterEncoding("UTF-8");
+		response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+
+		String body = objectMapper.writeValueAsString(
+			ApiResponse.fail(new CustomException(ErrorCode.INVALID_CREDENTIALS)));
+
+		response.getWriter().write(body);
+		response.getWriter().flush();
 	}
 }
