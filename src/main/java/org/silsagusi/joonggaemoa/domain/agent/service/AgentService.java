@@ -1,5 +1,6 @@
 package org.silsagusi.joonggaemoa.domain.agent.service;
 
+import org.silsagusi.joonggaemoa.domain.agent.controller.dto.AgentUpdateRequest;
 import org.silsagusi.joonggaemoa.domain.agent.entity.Agent;
 import org.silsagusi.joonggaemoa.domain.agent.repository.AgentRepository;
 import org.silsagusi.joonggaemoa.domain.agent.service.command.AgentCommand;
@@ -59,13 +60,6 @@ public class AgentService {
 		return AgentCommand.of(agent);
 	}
 
-	public AgentCommand getAgentById(Long id) {
-		Agent agent = agentRepository.getAgentById(id)
-			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
-
-		return AgentCommand.of(agent);
-	}
-
 	public void logout(String accessToken) {
 		if (Boolean.FALSE.equals(jwtProvider.validateToken(accessToken))) {
 			return;
@@ -74,5 +68,24 @@ public class AgentService {
 		String username = claims.get("username", String.class);
 
 		refreshTokenStore.deleteRefreshToken(username);
+	}
+
+	public AgentCommand getAgent(Long agentId) {
+		Agent agent = agentRepository.findById(agentId)
+			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
+
+		return AgentCommand.of(agent);
+	}
+
+	public void updateAgent(Long agentId, AgentUpdateRequest requestDto) {
+		Agent agent = agentRepository.findById(agentId)
+			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
+
+		System.out.println(requestDto);
+
+		agent.updateAgent(requestDto.getName(), requestDto.getPhone(), requestDto.getEmail(), requestDto.getUsername(),
+			requestDto.getOffice(), requestDto.getRegion(), requestDto.getBusinessNo());
+
+		agentRepository.save(agent);
 	}
 }
