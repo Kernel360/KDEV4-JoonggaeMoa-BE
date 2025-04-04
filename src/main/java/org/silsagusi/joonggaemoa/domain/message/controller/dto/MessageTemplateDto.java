@@ -16,7 +16,7 @@ public class MessageTemplateDto {
 	public static class Request {
 
 		@NotBlank
-		private String category;
+		private String title;
 
 		@NotBlank
 		private String content;
@@ -25,12 +25,14 @@ public class MessageTemplateDto {
 	@Getter
 	@Builder
 	public static class Response {
-		private String category;
+		private Long id;
+		private String title;
 		private String content;
 
 		public static Response of(MessageTemplateCommand command) {
 			return Response.builder()
-				.category(command.getCategory())
+				.id(command.getId())
+				.title(command.getTitle())
 				.content(command.getContent())
 				.build();
 		}

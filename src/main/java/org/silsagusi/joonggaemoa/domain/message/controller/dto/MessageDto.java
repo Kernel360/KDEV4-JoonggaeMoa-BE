@@ -13,6 +13,7 @@ public class MessageDto {
 		private Long id;
 		private Long customerId;
 		private String customerName;
+		private String customerPhone;
 		private String content;
 		private String createdAt;
 		private String sendStatus;
@@ -22,6 +23,7 @@ public class MessageDto {
 				.id(command.getId())
 				.customerId(command.getCustomerId())
 				.customerName(command.getCustomerName())
+				.customerPhone(command.getCustomerPhone())
 				.content(command.getContent())
 				.createdAt(command.getCreatedAt())
 				.sendStatus(command.getSendStatus())

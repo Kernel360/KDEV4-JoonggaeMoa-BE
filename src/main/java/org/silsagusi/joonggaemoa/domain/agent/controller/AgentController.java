@@ -1,11 +1,14 @@
 package org.silsagusi.joonggaemoa.domain.agent.controller;
 
 import org.silsagusi.joonggaemoa.domain.agent.controller.dto.AgentDto;
+import org.silsagusi.joonggaemoa.domain.agent.controller.dto.AgentUpdateRequest;
 import org.silsagusi.joonggaemoa.domain.agent.controller.dto.FindUsernameDto;
 import org.silsagusi.joonggaemoa.domain.agent.service.AgentService;
 import org.silsagusi.joonggaemoa.domain.agent.service.command.AgentCommand;
 import org.silsagusi.joonggaemoa.global.api.ApiResponse;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -62,6 +65,28 @@ public class AgentController {
 		refreshTokenCookie.setPath("/");
 		refreshTokenCookie.setMaxAge(0);
 		response.addCookie(refreshTokenCookie);
+
+		return ResponseEntity.ok(ApiResponse.ok());
+	}
+
+	@GetMapping("/api/agents")
+	public ResponseEntity<ApiResponse<AgentDto.Response>> getAgent(
+		HttpServletRequest request
+	) {
+		AgentCommand command = agentService.getAgent((Long)request.getAttribute("agentId"));
+
+		return ResponseEntity.ok(ApiResponse.ok(AgentDto.Response.of(command)));
+	}
+
+	@PatchMapping("/api/agents")
+	public ResponseEntity<ApiResponse<Void>> updateAgent(
+		HttpServletRequest request,
+		@RequestBody @Valid AgentUpdateRequest requestDto
+	) {
+		agentService.updateAgent(
+			(Long)request.getAttribute("agentId"),
+			requestDto
+		);
 
 		return ResponseEntity.ok(ApiResponse.ok());
 	}

@@ -40,4 +40,9 @@ public class ReservedMessage extends BaseEntity {
 		this.sendAt = sendAt;
 		this.content = content;
 	}
+
+	public void updateReservedMessage(LocalDateTime sendAt, String content) {
+		this.sendAt = sendAt;
+		this.content = content;
+	}
 }
