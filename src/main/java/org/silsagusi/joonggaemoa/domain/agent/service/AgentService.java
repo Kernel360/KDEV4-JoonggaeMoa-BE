@@ -27,6 +27,7 @@ public class AgentService {
 	private final RefreshTokenStore refreshTokenStore;
 	private final MessageTemplateService messageTemplateService;
 
+	@Transactional
 	public void signup(
 		String username,
 		String password,

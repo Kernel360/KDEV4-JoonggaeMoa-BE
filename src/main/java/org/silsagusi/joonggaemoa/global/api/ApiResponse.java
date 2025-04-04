@@ -37,6 +37,6 @@ public class ApiResponse<T> {
 	}
 
 	public static <T> ApiResponse<T> fail(final CustomException e) {
-		return new ApiResponse<>(e.getErrorCode().getHttpStatus(), false, null, ExceptionDto.of(e.getErrorCode()));
+		return new ApiResponse<>(HttpStatus.BAD_REQUEST, false, null, ExceptionDto.of(e.getErrorCode()));
 	}
 }
