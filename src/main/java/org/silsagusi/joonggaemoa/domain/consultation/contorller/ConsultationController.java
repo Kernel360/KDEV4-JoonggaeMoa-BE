@@ -3,11 +3,11 @@ package org.silsagusi.joonggaemoa.domain.consultation.contorller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.silsagusi.joonggaemoa.domain.consultation.contorller.dto.ConsultationDto;
-import org.silsagusi.joonggaemoa.domain.consultation.contorller.dto.ConsultationStatusResponse;
+import org.silsagusi.joonggaemoa.domain.consultation.contorller.dto.ConsultationMonthInformResponse;
 import org.silsagusi.joonggaemoa.domain.consultation.contorller.dto.UpdateConsultationRequest;
 import org.silsagusi.joonggaemoa.domain.consultation.service.ConsultationService;
 import org.silsagusi.joonggaemoa.domain.consultation.service.command.ConsultationCommand;
-import org.silsagusi.joonggaemoa.domain.consultation.service.command.ConsultationStatusCommand;
+import org.silsagusi.joonggaemoa.domain.consultation.service.command.ConsultationMonthInformCommand;
 import org.silsagusi.joonggaemoa.global.api.ApiResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,22 +33,11 @@ public class ConsultationController {
 
     }
 
-    @GetMapping("/api/consultations")
-    public ResponseEntity<ApiResponse<List<ConsultationDto.Response>>> getAllConsultation(
+    @GetMapping("/api/consultations/date")
+    public ResponseEntity<ApiResponse<List<ConsultationDto.Response>>> getAllConsultationsByDate(
         @RequestParam LocalDateTime date
     ) {
         List<ConsultationCommand> consultationCommandList = consultationService.getAllConsultationsByDate(date);
-        List<ConsultationDto.Response> consultationResponseList = consultationCommandList.stream()
-            .map(ConsultationDto.Response::of).toList();
-        return ResponseEntity.ok(ApiResponse.ok(consultationResponseList));
-    }
-
-    @GetMapping("/api/consultations/status")
-    public ResponseEntity<ApiResponse<List<ConsultationDto.Response>>> getAllConsultationByStatus(
-        @RequestParam String consultationStatus
-    ) {
-        List<ConsultationCommand> consultationCommandList = consultationService.getConsultationsByStatus(
-            consultationStatus);
         List<ConsultationDto.Response> consultationResponseList = consultationCommandList.stream()
             .map(ConsultationDto.Response::of).toList();
         return ResponseEntity.ok(ApiResponse.ok(consultationResponseList));
@@ -63,21 +52,13 @@ public class ConsultationController {
         return ResponseEntity.ok(ApiResponse.ok(consultationResponse));
     }
 
-
-    @GetMapping("/api/consultations/status-inform")
-    public ResponseEntity<ApiResponse<ConsultationStatusResponse>> getStatusInformation() {
-        ConsultationStatusCommand consultationStatusCommand = consultationService.getStatusInformation();
-        ConsultationStatusResponse consultationStatusResponse = ConsultationStatusResponse.of(
-            consultationStatusCommand);
-        return ResponseEntity.ok(ApiResponse.ok(consultationStatusResponse));
-    }
-
-    @GetMapping("/api/consultations/date-count")
-    public ResponseEntity<ApiResponse<List<Integer>>> getDateCount(
-        @RequestParam String date //date형식: yyyy-MM
+    @GetMapping("/api/consultations/month-inform")
+    public ResponseEntity<ApiResponse<ConsultationMonthInformResponse>> getMonthInform(
+        @RequestParam String month //date형식: yyyy-MM
     ) {
-        List<Integer> countList = consultationService.getDateCount(date);
-        return ResponseEntity.ok(ApiResponse.ok(countList));
+        ConsultationMonthInformCommand consultationMonthInformCommand = consultationService.getMonthInformation(month);
+        ConsultationMonthInformResponse consultationMonthInformResponse = ConsultationMonthInformResponse.of(consultationMonthInformCommand);
+        return ResponseEntity.ok(ApiResponse.ok(consultationMonthInformResponse));
     }
 
     @PatchMapping("/api/consultations/{consultationId}")

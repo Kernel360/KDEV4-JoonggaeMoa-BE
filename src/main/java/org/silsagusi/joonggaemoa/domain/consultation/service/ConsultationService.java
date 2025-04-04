@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.silsagusi.joonggaemoa.domain.consultation.entity.Consultation;
 import org.silsagusi.joonggaemoa.domain.consultation.repository.ConsultationRepository;
 import org.silsagusi.joonggaemoa.domain.consultation.service.command.ConsultationCommand;
-import org.silsagusi.joonggaemoa.domain.consultation.service.command.ConsultationStatusCommand;
+import org.silsagusi.joonggaemoa.domain.consultation.service.command.ConsultationMonthInformCommand;
 import org.silsagusi.joonggaemoa.domain.customer.entity.Customer;
 import org.silsagusi.joonggaemoa.domain.customer.repository.CustomerRepository;
 import org.silsagusi.joonggaemoa.global.api.exception.CustomException;
@@ -88,38 +88,26 @@ public class ConsultationService {
         return consultationList.stream().map(ConsultationCommand::of).toList();
     }
 
-    public List<ConsultationCommand> getConsultationsByStatus(String consultationStatus) {
-        List<Consultation> consultationList = consultationRepository.findAllByConsultationStatus(
-            Consultation.ConsultationStatus.valueOf(consultationStatus));
-        return consultationList.stream().map(ConsultationCommand::of).toList();
-    }
-
     public ConsultationCommand getConsultation(Long consultationId) {
         Consultation consultation = consultationRepository.findById(consultationId)
             .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
         return ConsultationCommand.of(consultation);
     }
 
-    public ConsultationStatusCommand getStatusInformation() {
-        List<Consultation> consultations = consultationRepository.findAll();
+    public ConsultationMonthInformCommand getMonthInformation(String date) {
+
+        YearMonth yearMonth = YearMonth.parse(date);
+        LocalDateTime startOfMonth = yearMonth.atDay(1).atTime(LocalTime.MIN);
+        LocalDateTime endOfMonth = yearMonth.atEndOfMonth().atTime(LocalTime.MAX);
+        int days = yearMonth.lengthOfMonth();
+
+        // status information
+        List<Consultation> consultations = consultationRepository.findAllByDateBetween(startOfMonth, endOfMonth);
 
         Map<Consultation.ConsultationStatus, Long> statusCountMap = consultations.stream()
             .collect(Collectors.groupingBy(Consultation::getConsultationStatus, Collectors.counting()));
 
-        return ConsultationStatusCommand.builder()
-            .consultationAll((long) consultations.size())
-            .consultationWaiting(statusCountMap.getOrDefault(Consultation.ConsultationStatus.WAITING, 0L))
-            .consultationConfirmed(statusCountMap.getOrDefault(Consultation.ConsultationStatus.CONFIRMED, 0L))
-            .consultationCancelled(statusCountMap.getOrDefault(Consultation.ConsultationStatus.CANCELED, 0L))
-            .consultationCompleted(statusCountMap.getOrDefault(Consultation.ConsultationStatus.COMPLETED, 0L))
-            .build();
-    }
-
-    public List<Integer> getDateCount(String date) {
-
-        YearMonth yearMonth = YearMonth.parse(date);
-        int days = yearMonth.lengthOfMonth();
-        
+        // date count information
         List<Integer> dailyCount = new ArrayList<>(Collections.nCopies(days, 0));
 
         for (int i = 0; i < days; i++) {
@@ -130,7 +118,13 @@ public class ConsultationService {
             dailyCount.set(i, consultationRepository.countByDateBetween(startOfDay, endOfDay));
         }
 
-        return dailyCount;
-
+        return ConsultationMonthInformCommand.builder()
+            .consultationAll((long) consultations.size())
+            .consultationWaiting(statusCountMap.getOrDefault(Consultation.ConsultationStatus.WAITING, 0L))
+            .consultationConfirmed(statusCountMap.getOrDefault(Consultation.ConsultationStatus.CONFIRMED, 0L))
+            .consultationCancelled(statusCountMap.getOrDefault(Consultation.ConsultationStatus.CANCELED, 0L))
+            .consultationCompleted(statusCountMap.getOrDefault(Consultation.ConsultationStatus.COMPLETED, 0L))
+            .daysCount(dailyCount)
+            .build();
     }
 }
