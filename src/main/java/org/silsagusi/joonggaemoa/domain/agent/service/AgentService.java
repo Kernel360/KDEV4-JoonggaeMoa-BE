@@ -37,6 +37,16 @@ public class AgentService {
 		String region,
 		String businessNo
 	) {
+		if (agentRepository.existsByUsername(username)) {
+			throw new CustomException(ErrorCode.CONFLICT_USERNAME);
+		}
+		if (agentRepository.existsByPhone(phone)) {
+			throw new CustomException(ErrorCode.CONFLICT_PHONE);
+		}
+		if (agentRepository.existsByEmail(email)) {
+			throw new CustomException(ErrorCode.CONFLICT_EMAIL);
+		}
+
 		Agent agent = new Agent(
 			name,
 			phone,
@@ -81,7 +91,15 @@ public class AgentService {
 		Agent agent = agentRepository.findById(agentId)
 			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
 
-		System.out.println(requestDto);
+		if (agentRepository.existsByUsername(requestDto.getUsername())) {
+			throw new CustomException(ErrorCode.CONFLICT_USERNAME);
+		}
+		if (agentRepository.existsByPhone(requestDto.getPhone())) {
+			throw new CustomException(ErrorCode.CONFLICT_PHONE);
+		}
+		if (agentRepository.existsByEmail(requestDto.getEmail())) {
+			throw new CustomException(ErrorCode.CONFLICT_EMAIL);
+		}
 
 		agent.updateAgent(requestDto.getName(), requestDto.getPhone(), requestDto.getEmail(), requestDto.getUsername(),
 			requestDto.getOffice(), requestDto.getRegion(), requestDto.getBusinessNo());

@@ -12,4 +12,9 @@ public interface AgentRepository extends JpaRepository<Agent, Long> {
 
 	Optional<Agent> findByNameAndPhone(String name, String phone);
 
+	boolean existsByUsername(String username);
+
+	boolean existsByPhone(String phone);
+
+	boolean existsByEmail(String email);
 }
