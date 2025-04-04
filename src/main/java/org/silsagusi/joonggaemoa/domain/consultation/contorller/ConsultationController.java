@@ -23,11 +23,11 @@ public class ConsultationController {
 
     @PostMapping("/api/consultations")
     public ResponseEntity<ApiResponse<Void>> createConsultation(
-            @RequestBody @Valid ConsultationDto.Request requestDto
+        @RequestBody @Valid ConsultationDto.Request requestDto
     ) {
         consultationService.createConsultation(
-                requestDto.getCustomerId(),
-                requestDto.getDate()
+            requestDto.getCustomerId(),
+            requestDto.getDate()
         );
         return ResponseEntity.ok(ApiResponse.ok());
 
@@ -35,28 +35,28 @@ public class ConsultationController {
 
     @GetMapping("/api/consultations")
     public ResponseEntity<ApiResponse<List<ConsultationDto.Response>>> getAllConsultation(
-            @RequestParam LocalDateTime date
+        @RequestParam LocalDateTime date
     ) {
         List<ConsultationCommand> consultationCommandList = consultationService.getAllConsultationsByDate(date);
         List<ConsultationDto.Response> consultationResponseList = consultationCommandList.stream()
-                .map(ConsultationDto.Response::of).toList();
+            .map(ConsultationDto.Response::of).toList();
         return ResponseEntity.ok(ApiResponse.ok(consultationResponseList));
     }
 
     @GetMapping("/api/consultations/status")
     public ResponseEntity<ApiResponse<List<ConsultationDto.Response>>> getAllConsultationByStatus(
-            @RequestParam String consultationStatus
+        @RequestParam String consultationStatus
     ) {
         List<ConsultationCommand> consultationCommandList = consultationService.getConsultationsByStatus(
-                consultationStatus);
+            consultationStatus);
         List<ConsultationDto.Response> consultationResponseList = consultationCommandList.stream()
-                .map(ConsultationDto.Response::of).toList();
+            .map(ConsultationDto.Response::of).toList();
         return ResponseEntity.ok(ApiResponse.ok(consultationResponseList));
     }
 
     @GetMapping("/api/consultations/{consultationId}")
     public ResponseEntity<ApiResponse<ConsultationDto.Response>> getConsultation(
-            @PathVariable("consultationId") Long consultationId
+        @PathVariable("consultationId") Long consultationId
     ) {
         ConsultationCommand consultationCommand = consultationService.getConsultation(consultationId);
         ConsultationDto.Response consultationResponse = ConsultationDto.Response.of(consultationCommand);
@@ -68,33 +68,41 @@ public class ConsultationController {
     public ResponseEntity<ApiResponse<ConsultationStatusResponse>> getStatusInformation() {
         ConsultationStatusCommand consultationStatusCommand = consultationService.getStatusInformation();
         ConsultationStatusResponse consultationStatusResponse = ConsultationStatusResponse.of(
-                consultationStatusCommand);
+            consultationStatusCommand);
         return ResponseEntity.ok(ApiResponse.ok(consultationStatusResponse));
+    }
+
+    @GetMapping("/api/consultations/date-count")
+    public ResponseEntity<ApiResponse<List<Integer>>> getDateCount(
+        @RequestParam String date //date형식: yyyy-MM
+    ) {
+        List<Integer> countList = consultationService.getDateCount(date);
+        return ResponseEntity.ok(ApiResponse.ok(countList));
     }
 
     @PatchMapping("/api/consultations/{consultationId}")
     public ResponseEntity<ApiResponse<Void>> updateConsultation(
-            @PathVariable("consultationId") Long consultationId,
-            @RequestBody @Valid UpdateConsultationRequest updateConsultationRequest
+        @PathVariable("consultationId") Long consultationId,
+        @RequestBody @Valid UpdateConsultationRequest updateConsultationRequest
     ) {
         consultationService.updateConsultation(
-                consultationId,
-                updateConsultationRequest.getDate(),
-                updateConsultationRequest.getPurpose(),
-                updateConsultationRequest.getInterestProperty(),
-                updateConsultationRequest.getInterestLocation(),
-                updateConsultationRequest.getContractType(),
-                updateConsultationRequest.getAssetStatus(),
-                updateConsultationRequest.getMemo(),
-                updateConsultationRequest.getConsultationStatus()
+            consultationId,
+            updateConsultationRequest.getDate(),
+            updateConsultationRequest.getPurpose(),
+            updateConsultationRequest.getInterestProperty(),
+            updateConsultationRequest.getInterestLocation(),
+            updateConsultationRequest.getContractType(),
+            updateConsultationRequest.getAssetStatus(),
+            updateConsultationRequest.getMemo(),
+            updateConsultationRequest.getConsultationStatus()
         );
         return ResponseEntity.ok(ApiResponse.ok());
     }
 
     @PatchMapping("/api/consultations/{consultationId}/status")
     public ResponseEntity<ApiResponse<Void>> updateConsultationStatus(
-            @PathVariable("consultationId") Long consultationId,
-            @RequestParam String consultationStatus
+        @PathVariable("consultationId") Long consultationId,
+        @RequestParam String consultationStatus
     ) {
         consultationService.updateConsultationStatus(consultationId, consultationStatus);
         return ResponseEntity.ok(ApiResponse.ok());
