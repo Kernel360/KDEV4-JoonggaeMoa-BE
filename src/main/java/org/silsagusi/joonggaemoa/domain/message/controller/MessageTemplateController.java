@@ -1,5 +1,7 @@
 package org.silsagusi.joonggaemoa.domain.message.controller;
 
+import java.util.List;
+
 import org.silsagusi.joonggaemoa.domain.message.controller.dto.MessageTemplateDto;
 import org.silsagusi.joonggaemoa.domain.message.service.MessageTemplateService;
 import org.silsagusi.joonggaemoa.domain.message.service.command.MessageTemplateCommand;
@@ -8,8 +10,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,45 +25,55 @@ public class MessageTemplateController {
 
 	private final MessageTemplateService messageTemplateService;
 
-	@GetMapping("/api/message/template")
-	public ResponseEntity<ApiResponse<MessageTemplateDto.Response>> getMessageTemplate(
-		HttpServletRequest request,
-		@RequestParam String category
+	@GetMapping("/api/messages/templates")
+	public ResponseEntity<ApiResponse<List<MessageTemplateDto.Response>>> getMessageTemplates(
+		HttpServletRequest request
 	) {
-		MessageTemplateCommand command = messageTemplateService.getMessageTemplate(
-			(Long)request.getAttribute("agentId"),
-			category
+		List<MessageTemplateCommand> commandList = messageTemplateService.getMessageTemplate(
+			(Long)request.getAttribute("agentId")
 		);
 
-		MessageTemplateDto.Response responseDto = MessageTemplateDto.Response.of(command);
+		List<MessageTemplateDto.Response> responseList = commandList.stream()
+			.map(MessageTemplateDto.Response::of)
+			.toList();
 
-		return ResponseEntity.ok(ApiResponse.ok(responseDto));
+		return ResponseEntity.ok(ApiResponse.ok(responseList));
 	}
 
-	@PatchMapping("/api/message/template")
-	public ResponseEntity<ApiResponse<MessageTemplateDto.Response>> updateMessageTemplate(
+	@PostMapping("/api/messages/templates")
+	public ResponseEntity<ApiResponse<Void>> createMessageTemplate(
 		HttpServletRequest request,
 		@RequestBody @Valid MessageTemplateDto.Request requestDto
 	) {
-		MessageTemplateCommand command = messageTemplateService.updateMessageTemplate(
+		messageTemplateService.createMessageTemplate(
 			(Long)request.getAttribute("agentId"),
-			requestDto.getCategory(), requestDto.getContent()
+			requestDto
 		);
 
-		MessageTemplateDto.Response responseDto = MessageTemplateDto.Response.of(command);
-
-		return ResponseEntity.ok(ApiResponse.ok(responseDto));
+		return ResponseEntity.ok(ApiResponse.ok());
 	}
 
-	@DeleteMapping("/api/message/template")
-	public ResponseEntity<ApiResponse<Void>> deleteMessageTemplate(
+	@PatchMapping("/api/messages/templates/{templateId}")
+	public ResponseEntity<ApiResponse<Void>> updateMessageTemplate(
 		HttpServletRequest request,
-		@RequestParam String category
+		@PathVariable(name = "templateId") Long templateId,
+		@RequestBody @Valid MessageTemplateDto.Request requestDto
 	) {
-		messageTemplateService.deleteMessageTemplate(
+		messageTemplateService.updateMessageTemplate(
 			(Long)request.getAttribute("agentId"),
-			category
+			templateId,
+			requestDto.getTitle(),
+			requestDto.getContent()
 		);
+
+		return ResponseEntity.ok(ApiResponse.ok());
+	}
+
+	@DeleteMapping("/api/messages/templates/{templateId}")
+	public ResponseEntity<ApiResponse<Void>> deleteMessageTemplate(
+		@PathVariable(name = "templateId") Long templateId
+	) {
+		messageTemplateService.deleteMessageTemplate(templateId);
 
 		return ResponseEntity.ok(ApiResponse.ok());
 	}

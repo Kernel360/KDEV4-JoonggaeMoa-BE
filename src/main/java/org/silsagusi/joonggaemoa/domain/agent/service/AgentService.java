@@ -49,7 +49,7 @@ public class AgentService {
 
 		agentRepository.save(agent);
 
-		messageTemplateService.createMessageTemplate(agent);
+		messageTemplateService.createDefaultMessageTemplate(agent);
 	}
 
 	public AgentCommand getAgentByNameAndPhone(String name, String phone) {

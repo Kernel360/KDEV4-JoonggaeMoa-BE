@@ -4,8 +4,6 @@ import org.silsagusi.joonggaemoa.domain.agent.entity.Agent;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -14,7 +12,6 @@ import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity(name = "message_templates")
@@ -29,19 +26,22 @@ public class MessageTemplate {
 	@ManyToOne(fetch = FetchType.LAZY)
 	private Agent agent;
 
-	@Enumerated(EnumType.STRING)
-	private Category category;
+	private String title;
 
-	@Setter
 	private String content;
 
-	public MessageTemplate(Agent agent, Category category, String content) {
+	public MessageTemplate(Agent agent, String title, String content) {
 		this.agent = agent;
-		this.category = category;
+		this.title = title;
 		this.content = content;
 	}
 
-	public static MessageTemplate create(Agent agent, Category category, String content) {
-		return new MessageTemplate(agent, category, content);
+	public static MessageTemplate create(Agent agent, String title, String content) {
+		return new MessageTemplate(agent, title, content);
+	}
+
+	public void updateMessageTemplate(String title, String content) {
+		this.title = title;
+		this.content = content;
 	}
 }

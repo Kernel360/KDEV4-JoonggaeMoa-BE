@@ -1,8 +1,10 @@
 package org.silsagusi.joonggaemoa.domain.message.service;
 
+import java.util.List;
+
 import org.silsagusi.joonggaemoa.domain.agent.entity.Agent;
 import org.silsagusi.joonggaemoa.domain.agent.repository.AgentRepository;
-import org.silsagusi.joonggaemoa.domain.message.entity.Category;
+import org.silsagusi.joonggaemoa.domain.message.controller.dto.MessageTemplateDto;
 import org.silsagusi.joonggaemoa.domain.message.entity.MessageTemplate;
 import org.silsagusi.joonggaemoa.domain.message.repository.MessageTemplateRepository;
 import org.silsagusi.joonggaemoa.domain.message.service.command.MessageTemplateCommand;
@@ -19,52 +21,57 @@ public class MessageTemplateService {
 	private final AgentRepository agentRepository;
 	private final MessageTemplateRepository messageTemplateRepository;
 
-	public void createMessageTemplate(Agent agent) {
+	public void createDefaultMessageTemplate(Agent agent) {
 
-		MessageTemplate messageTemplate1 = MessageTemplate.create(agent, Category.BIRTHDAY, "");
-		MessageTemplate messageTemplate2 = MessageTemplate.create(agent, Category.EXPIRATION, "");
-		MessageTemplate messageTemplate3 = MessageTemplate.create(agent, Category.WELCOME, "");
+		MessageTemplate messageTemplate1 = MessageTemplate.create(agent, "생일 축하", "생일 축하드립니다");
+		MessageTemplate messageTemplate2 = MessageTemplate.create(agent, "계약 기한 만료", "곧 계약 기한 만료입니다");
+		MessageTemplate messageTemplate3 = MessageTemplate.create(agent, "가입 환영", "가입을 환영합니다");
 
 		messageTemplateRepository.save(messageTemplate1);
 		messageTemplateRepository.save(messageTemplate2);
 		messageTemplateRepository.save(messageTemplate3);
 	}
 
-	public MessageTemplateCommand getMessageTemplate(Long agentId, String category) {
+	public void createMessageTemplate(Long agentId, MessageTemplateDto.Request request) {
 		Agent agent = agentRepository.findById(agentId)
-			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
+			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
 
-		MessageTemplate messageTemplate = messageTemplateRepository.findByAgentAndCategory(agent,
-				Category.valueOf(category))
-			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
-
-		return MessageTemplateCommand.of(messageTemplate);
-	}
-
-	public MessageTemplateCommand updateMessageTemplate(Long agentId, String category, String content) {
-		Agent agent = agentRepository.findById(agentId)
-			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
-
-		MessageTemplate messageTemplate = messageTemplateRepository.findByAgentAndCategory(agent,
-				Category.valueOf(category))
-			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
-
-		messageTemplate.setContent(content);
-		MessageTemplate savedMessageTemplate = messageTemplateRepository.save(messageTemplate);
-
-		return MessageTemplateCommand.of(savedMessageTemplate);
-	}
-
-	public void deleteMessageTemplate(Long agentId, String category) {
-		Agent agent = agentRepository.findById(agentId)
-			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
-
-		MessageTemplate messageTemplate = messageTemplateRepository.findByAgentAndCategory(agent,
-				Category.valueOf(category))
-			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
-
-		messageTemplate.setContent("");
+		MessageTemplate messageTemplate = MessageTemplate.create(agent, request.getTitle(), request.getContent());
 
 		messageTemplateRepository.save(messageTemplate);
+	}
+
+	public List<MessageTemplateCommand> getMessageTemplate(Long agentId) {
+		Agent agent = agentRepository.findById(agentId)
+			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
+
+		List<MessageTemplate> messageTemplateList = messageTemplateRepository.findByAgent(agent);
+
+		return messageTemplateList.stream()
+			.map(MessageTemplateCommand::of)
+			.toList();
+	}
+
+	public void updateMessageTemplate(Long agentId, Long templateId, String title, String content) {
+		Agent agent = agentRepository.findById(agentId)
+			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
+
+		MessageTemplate messageTemplate = messageTemplateRepository.findById(templateId)
+			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
+
+		if (!messageTemplate.getAgent().equals(agent)) {
+			throw new CustomException(ErrorCode.FORBIDDEN);
+		}
+
+		messageTemplate.updateMessageTemplate(title, content);
+
+		messageTemplateRepository.save(messageTemplate);
+	}
+
+	public void deleteMessageTemplate(Long templateId) {
+		MessageTemplate messageTemplate = messageTemplateRepository.findById(templateId)
+			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
+
+		messageTemplateRepository.delete(messageTemplate);
 	}
 }
