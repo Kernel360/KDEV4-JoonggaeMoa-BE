@@ -3,46 +3,24 @@ package org.silsagusi.joonggaemoa.domain.contract.controller.dto;
 import java.time.LocalDate;
 
 import org.silsagusi.joonggaemoa.domain.contract.service.command.ContractCommand;
-import org.springframework.format.annotation.DateTimeFormat;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-
-import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
-public class ContractDto {
-
-	@Getter
-	@NoArgsConstructor
-	@AllArgsConstructor
-	public static class Request {
-
-		@NotNull
-		private Long landlordId;
-
-		@NotNull
-		private Long tenantId;
-
-		@NotNull
-		@JsonFormat(pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
-		@DateTimeFormat(pattern = "yyyy-MM-dd")
-		private LocalDate createdAt;
-
-		@NotNull
-		@JsonFormat(pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
-		@DateTimeFormat(pattern = "yyyy-MM-dd")
-		private LocalDate expiredAt;
-	}
+public class ContractDetailDto {
 
 	@Getter
 	@Builder
 	public static class Response {
 		private Long id;
+		private Long landlordId;
+		private Long tenantId;
 		private String landlordName;
 		private String tenantName;
+		private String landlordPhone;
+		private String tenantPhone;
+		private String landlordEmail;
+		private String tenantEmail;
 		private LocalDate createdAt;
 		private LocalDate expiredAt;
 		private String url;
@@ -50,8 +28,14 @@ public class ContractDto {
 		public static Response of(ContractCommand command) {
 			return Response.builder()
 				.id(command.getId())
+				.landlordId(command.getLandlordId())
+				.tenantId(command.getTenantId())
 				.landlordName(command.getLandlordName())
 				.tenantName(command.getTenantName())
+				.landlordPhone(command.getLandlordPhone())
+				.tenantPhone(command.getTenantPhone())
+				.landlordEmail(command.getLandlordEmail())
+				.tenantEmail(command.getTenantEmail())
 				.createdAt(command.getCreatedAt())
 				.expiredAt(command.getExpiredAt())
 				.url(command.getUrl())
