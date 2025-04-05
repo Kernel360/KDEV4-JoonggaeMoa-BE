@@ -3,6 +3,7 @@ package org.silsagusi.joonggaemoa.domain.notify.service;
 
 import lombok.RequiredArgsConstructor;
 import org.silsagusi.joonggaemoa.domain.notify.entity.Notification;
+import org.silsagusi.joonggaemoa.domain.notify.entity.NotificationType;
 import org.silsagusi.joonggaemoa.domain.notify.repository.EmitterRepository;
 import org.silsagusi.joonggaemoa.domain.notify.repository.NotificationRepository;
 import org.springframework.stereotype.Service;
@@ -25,12 +26,12 @@ public class NotificationService {
         emitter.onCompletion(() -> emitterRepository.remove(agentId));
         emitter.onTimeout(() -> emitterRepository.remove(agentId));
 
-        notify(agentId, "Connection", "Connection Success! agentId: " + agentId);
+        notify(agentId, NotificationType.CONNECTION, "Connection Success! agentId: " + agentId);
 
         return emitter;
     }
 
-    public void notify(Long agentId, String type, String content) {
+    public void notify(Long agentId, NotificationType type, String content) {
         Notification notification = new Notification(
             agentId, type, content
         );
