@@ -19,7 +19,6 @@ public class Notification extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private NotificationType type;
     private String content;
-    private boolean read = false;
 
     public Notification(Long agentId, NotificationType type, String content) {
         this.agentId = agentId;
