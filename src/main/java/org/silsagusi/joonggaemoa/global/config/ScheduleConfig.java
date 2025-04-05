@@ -10,6 +10,7 @@ import org.springframework.batch.core.configuration.JobRegistry;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +26,7 @@ public class ScheduleConfig {
 
 	private final ReservedMessageRepository reservedMessageRepository;
 
-	// @Scheduled(cron = "0 0 * * * *", zone = "Asia/Seoul")
+	@Scheduled(cron = "0/30 * * * * *", zone = "Asia/Seoul")
 	public void sendMessages() throws Exception {
 		log.info("Sending messages schedule start");
 

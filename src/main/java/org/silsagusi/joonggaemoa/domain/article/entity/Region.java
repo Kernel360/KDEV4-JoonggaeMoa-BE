@@ -1,6 +1,10 @@
 package org.silsagusi.joonggaemoa.domain.article.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -11,36 +15,36 @@ import lombok.ToString;
 @Getter
 public class Region {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "region_id", nullable = false)
-    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "region_id", nullable = false)
+	private Long id;
 
-    // 법정동 코드
-    @Column(name = "cortar_no")
-    private String cortarNo;
+	// 법정동 코드
+	@Column(name = "cortar_no")
+	private String cortarNo;
 
-    // 화면 정가운데 위도
-    @Column(name = "latitude")
-    private Double centerLat;
+	// 화면 정가운데 위도
+	@Column(name = "latitude")
+	private Double centerLat;
 
-    // 화면 정가운데 경도
-    @Column(name = "longitude")
-    private Double centerLon;
+	// 화면 정가운데 경도
+	@Column(name = "longitude")
+	private Double centerLon;
 
-    // 법정동명
-    @Column(name = "area")
-    private String cortarName;
+	// 법정동명
+	@Column(name = "area")
+	private String cortarName;
 
-    // 법정동 유형
-    @Column(name = "type")
-    private String cortarType;
+	// 법정동 유형
+	@Column(name = "type")
+	private String cortarType;
 
-    public Region(String cortarNo, Double centerLat, Double centerLon, String cortarName, String cortarType) {
-        this.cortarNo = cortarNo;
-        this.cortarName = cortarName;
-        this.centerLat = centerLat;
-        this.centerLon = centerLon;
-        this.cortarType = cortarType;
-    }
+	public Region(String cortarNo, Double centerLat, Double centerLon, String cortarName, String cortarType) {
+		this.cortarNo = cortarNo;
+		this.centerLat = centerLat;
+		this.centerLon = centerLon;
+		this.cortarName = cortarName;
+		this.cortarType = cortarType;
+	}
 }

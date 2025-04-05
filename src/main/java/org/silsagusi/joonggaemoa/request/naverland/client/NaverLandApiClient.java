@@ -2,6 +2,7 @@ package org.silsagusi.joonggaemoa.request.naverland.client;
 
 import org.silsagusi.joonggaemoa.request.naverland.service.dto.ClientArticleResponse;
 import org.silsagusi.joonggaemoa.request.naverland.service.dto.ClientComplexResponse;
+import org.silsagusi.joonggaemoa.request.naverland.service.dto.ClientRegionResponse;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -13,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 public class NaverLandApiClient {
 
 	private final WebClient naverWebClient;
+	private final WebClient naverRegionWebClient;
 
 	/* 매물 유형 (real estate type code)
 	 * 아파트 : APT
@@ -82,4 +84,14 @@ public class NaverLandApiClient {
 		return fetchList("/cluster/ajax/complexList", lat, lon, cortarNo, page, ClientComplexResponse.class);
 	}
 
+	public ClientRegionResponse fetchRegionList(String cortarNo) {
+		return naverRegionWebClient.get()
+			.uri(uriBuilder -> uriBuilder.path("/api/regions/list")
+				.queryParam("cortarNo", cortarNo)
+				.build())
+			.accept(MediaType.APPLICATION_JSON)
+			.retrieve()
+			.bodyToMono(ClientRegionResponse.class)
+			.block();
+	}
 }

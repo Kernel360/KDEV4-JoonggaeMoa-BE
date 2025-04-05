@@ -44,26 +44,26 @@ public class SmsBatchJogConfig {
 	private final SmsUtil smsUtil;
 
 	@Bean
-	public Job createJob(Step step) {
+	public Job createJob(Step smsStep) {
 		return new JobBuilder(JOB_NAME, jobRepository)
-			.start(step)
+			.start(smsStep)
 			.build();
 	}
 
 	@Bean
 	@JobScope
-	public Step createStep() {
+	public Step smsStep() {
 		return new StepBuilder(JOB_NAME + "Step1", jobRepository)
 			.<ReservedMessage, Message>chunk(CHUNK_SIZE, platformTransactionManager)
-			.reader(reader())
-			.processor(processor())
-			.writer(writer())
+			.reader(smsReader())
+			.processor(smsProcessor())
+			.writer(smsWriter())
 			.build();
 	}
 
 	@Bean
 	@StepScope
-	public RepositoryItemReader<ReservedMessage> reader() {
+	public RepositoryItemReader<ReservedMessage> smsReader() {
 		return new RepositoryItemReaderBuilder<ReservedMessage>()
 			.name("reservedMessageReader")
 			.pageSize(CHUNK_SIZE)
@@ -76,7 +76,7 @@ public class SmsBatchJogConfig {
 
 	@Bean
 	@StepScope
-	public ItemProcessor<ReservedMessage, Message> processor() {
+	public ItemProcessor<ReservedMessage, Message> smsProcessor() {
 		return reservedMessage -> {
 			log.info("Processing reserved message: {}", reservedMessage);
 			if (reservedMessage == null) {
@@ -107,7 +107,7 @@ public class SmsBatchJogConfig {
 
 	@Bean
 	@StepScope
-	public ItemWriter<Message> writer() {
+	public ItemWriter<Message> smsWriter() {
 		return items -> {
 			try {
 				if (items == null || items.isEmpty()) {
