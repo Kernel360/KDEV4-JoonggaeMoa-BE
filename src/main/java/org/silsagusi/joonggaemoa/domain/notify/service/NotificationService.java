@@ -6,10 +6,14 @@ import org.silsagusi.joonggaemoa.domain.notify.entity.Notification;
 import org.silsagusi.joonggaemoa.domain.notify.entity.NotificationType;
 import org.silsagusi.joonggaemoa.domain.notify.repository.EmitterRepository;
 import org.silsagusi.joonggaemoa.domain.notify.repository.NotificationRepository;
+import org.silsagusi.joonggaemoa.domain.notify.service.command.NotificationCommand;
+import org.silsagusi.joonggaemoa.global.api.exception.CustomException;
+import org.silsagusi.joonggaemoa.global.api.exception.ErrorCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
+import java.util.List;
 
 @RequiredArgsConstructor
 @Service
@@ -55,4 +59,15 @@ public class NotificationService {
 
     }
 
+    public List<NotificationCommand> getNotification(Long agentId) {
+        List<Notification> notificationList = notificationRepository.findByAgentIdAndIsReadFalse(agentId);
+        return notificationList.stream().map(NotificationCommand::of).toList();
+    }
+
+    public void markRead(Long notificationId) {
+        Notification notification = notificationRepository.findById(notificationId)
+            .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
+        notification.markRead();
+        notificationRepository.save(notification);
+    }
 }

@@ -19,6 +19,7 @@ public class Notification extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private NotificationType type;
     private String content;
+    private Boolean isRead = false;
 
     public Notification(Long agentId, NotificationType type, String content) {
         this.agentId = agentId;
@@ -26,5 +27,7 @@ public class Notification extends BaseEntity {
         this.content = content;
     }
 
-
+    public void markRead() {
+        this.isRead = true;
+    }
 }
