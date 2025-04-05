@@ -39,7 +39,7 @@ public class ScheduleConfig {
         jobLauncher.run(jobRegistry.getJob("smsJob1"), jobParameters);
     }
 
-    @Scheduled(cron = "*/10 * * * * *", zone = "Asia/Seoul")
+    @Scheduled(cron = "*/30 * * * * *", zone = "Asia/Seoul")
     public void notifyContractExpiry() throws Exception {
         log.info("Checking contract expiration schedule start");
 
@@ -50,6 +50,20 @@ public class ScheduleConfig {
             .toJobParameters();
 
         jobLauncher.run(jobRegistry.getJob("contractExpireNotifyJob"), jobParameters);
+    }
+
+    @Scheduled(cron = "*/10 * * * * *", zone = "Asia/Seoul") // 매일 오전 9시
+    public void notifyTodayConsultations() throws Exception {
+        log.info("Checking today's consultation schedule start");
+
+        String date = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+
+        JobParameters jobParameters = new JobParametersBuilder()
+            .addString("date", date)
+            .addLong("timestamp", System.currentTimeMillis())
+            .toJobParameters();
+
+        jobLauncher.run(jobRegistry.getJob("todayConsultationNotifyJob"), jobParameters);
     }
 
 
