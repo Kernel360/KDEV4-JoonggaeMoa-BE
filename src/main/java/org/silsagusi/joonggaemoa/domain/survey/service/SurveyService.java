@@ -9,6 +9,8 @@ import org.silsagusi.joonggaemoa.domain.consultation.repository.ConsultationRepo
 import org.silsagusi.joonggaemoa.domain.customer.entity.Customer;
 import org.silsagusi.joonggaemoa.domain.customer.repository.CustomerRepository;
 import org.silsagusi.joonggaemoa.domain.customer.service.CustomerService;
+import org.silsagusi.joonggaemoa.domain.notify.entity.NotificationType;
+import org.silsagusi.joonggaemoa.domain.notify.service.NotificationService;
 import org.silsagusi.joonggaemoa.domain.survey.entity.Answer;
 import org.silsagusi.joonggaemoa.domain.survey.entity.Question;
 import org.silsagusi.joonggaemoa.domain.survey.entity.QuestionAnswerPair;
@@ -39,32 +41,33 @@ public class SurveyService {
     private final CustomerRepository customerRepository;
     private final AnswerRepository answerRepository;
     private final ConsultationRepository consultationRepository;
+    private final NotificationService notificationService;
 
     public void createSurvey(
-            Long agentId,
-            String title,
-            String description,
-            List<QuestionCommand> questionCommandList
+        Long agentId,
+        String title,
+        String description,
+        List<QuestionCommand> questionCommandList
     ) {
         Agent agent = agentRepository.findById(agentId)
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
+            .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
 
         Survey survey = new Survey(agent, title, description, new ArrayList<>());
 
         List<Question> questionList = questionCommandList.stream()
-                .map(
-                        it -> {
-                            Question question = new Question(
-                                    survey,
-                                    it.getContent(),
-                                    it.getType(),
-                                    it.getIsRequired(),
-                                    it.getOptions()
-                            );
-                            survey.getQuestionList().add(question);
-                            return question;
-                        }
-                ).toList();
+            .map(
+                it -> {
+                    Question question = new Question(
+                        survey,
+                        it.getContent(),
+                        it.getType(),
+                        it.getIsRequired(),
+                        it.getOptions()
+                    );
+                    survey.getQuestionList().add(question);
+                    return question;
+                }
+            ).toList();
 
         surveyRepository.save(survey);
         questionRepository.saveAll(questionList);
@@ -74,38 +77,38 @@ public class SurveyService {
     @Transactional
     public void deleteSurvey(Long surveyId) {
         Survey survey = surveyRepository.findById(surveyId)
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
+            .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
         questionRepository.deleteAll(survey.getQuestionList());
         surveyRepository.delete(survey);
     }
 
     @Transactional
     public void updateSurvey(
-            Long surveyId,
-            String title,
-            String description,
-            List<QuestionCommand> questionCommandList
+        Long surveyId,
+        String title,
+        String description,
+        List<QuestionCommand> questionCommandList
     ) {
         Survey survey = surveyRepository.findById(surveyId)
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
+            .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
 
         survey.updateSurveyTitleDescription(
-                (title == null || title.isBlank()) ? survey.getTitle() : title,
-                (description == null || description.isBlank()) ? survey.getDescription() : description
+            (title == null || title.isBlank()) ? survey.getTitle() : title,
+            (description == null || description.isBlank()) ? survey.getDescription() : description
         );
 
         questionRepository.deleteAll(survey.getQuestionList());
         survey.getQuestionList().clear();
 
         List<Question> updateQuestions = questionCommandList.stream()
-                .map(it -> new Question(
-                                survey,
-                                it.getContent(),
-                                it.getType(),
-                                it.getIsRequired(),
-                                it.getOptions()
-                        )
-                ).toList();
+            .map(it -> new Question(
+                    survey,
+                    it.getContent(),
+                    it.getType(),
+                    it.getIsRequired(),
+                    it.getOptions()
+                )
+            ).toList();
 
         survey.getQuestionList().addAll(updateQuestions);
         questionRepository.saveAll(updateQuestions);
@@ -120,32 +123,32 @@ public class SurveyService {
 
     public SurveyCommand findById(Long surveyId) {
         Survey survey = surveyRepository.findById(surveyId)
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
+            .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
         return SurveyCommand.of(survey);
     }
 
     public void submitSurveyAnswer(
-            Long surveyId,
-            String name,
-            String email,
-            String phone,
-            Boolean consent,
-            List<String> questions,
-            List<List<String>> answers
+        Long surveyId,
+        String name,
+        String email,
+        String phone,
+        Boolean consent,
+        List<String> questions,
+        List<List<String>> answers
     ) {
         Survey survey = surveyRepository.findById(surveyId)
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
+            .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
         Agent agent = survey.getAgent();
 
         // 고객인지 판별(휴대폰 번호) 후 고객 데이터 추가
         Customer customer = customerService.getCustomerByPhone(phone);
         if (customer == null) {
             Customer newCustomer = new Customer(
-                    name,
-                    phone,
-                    email,
-                    consent,
-                    agent
+                name,
+                phone,
+                email,
+                consent,
+                agent
             );
             customerRepository.save(newCustomer);
             customer = newCustomer;
@@ -153,8 +156,8 @@ public class SurveyService {
 
         // 상담 추가
         Consultation consultation = new Consultation(
-                customer,
-                Consultation.ConsultationStatus.WAITING
+            customer,
+            Consultation.ConsultationStatus.WAITING
         );
         consultationRepository.save(consultation);
 
@@ -162,19 +165,26 @@ public class SurveyService {
         List<QuestionAnswerPair> pairList = new ArrayList<>();
         for (int i = 0; i < questions.size(); i++) {
             QuestionAnswerPair pair = new QuestionAnswerPair(
-                    questions.get(i),
-                    answers.get(i)
+                questions.get(i),
+                answers.get(i)
             );
             pairList.add(pair);
         }
 
         Answer newAnswer = new Answer(
-                customer,
-                survey,
-                pairList
+            customer,
+            survey,
+            pairList
         );
 
         answerRepository.save(newAnswer);
+
+        //응답 완료 시 알림
+        notificationService.notify(
+            agent.getId(),
+            NotificationType.SURVEY,
+            customer.getName() + "님이 [" + survey.getTitle() + "] 설문에 응답했습니다."
+        );
     }
 
     public Page<AnswerCommand> getAllAnswers(Pageable pageable) {

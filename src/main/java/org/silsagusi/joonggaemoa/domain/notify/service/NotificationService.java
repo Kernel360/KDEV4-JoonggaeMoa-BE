@@ -32,9 +32,15 @@ public class NotificationService {
     }
 
     public void notify(Long agentId, NotificationType type, String content) {
+
         Notification notification = new Notification(
             agentId, type, content
         );
+
+        if (type != NotificationType.CONNECTION) {
+            notificationRepository.save(notification);
+        }
+
 
         SseEmitter emitter = emitterRepository.get(agentId);
         if (emitter != null) {
