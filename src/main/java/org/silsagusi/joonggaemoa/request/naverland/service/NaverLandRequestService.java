@@ -120,7 +120,7 @@ public class NaverLandRequestService {
 
 			// 2~5초 랜덤 딜레이
 			Thread.sleep((long)(Math.random() * 5000 + 2000));
-		} while (hasMore && page < 10); // 최대 페이지 제한 (optional)
+		} while (hasMore);
 
 		// 마지막 페이지까지 완료된 경우
 		if (!hasMore) {

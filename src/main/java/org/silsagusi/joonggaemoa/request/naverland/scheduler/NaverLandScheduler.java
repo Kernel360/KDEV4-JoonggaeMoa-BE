@@ -29,11 +29,13 @@ public class NaverLandScheduler {
 	private final JobLauncher jobLauncher;
 	private final JobRegistry jobRegistry;
 
-	private static final String JOB_NAME = "naverArticleJob";
+	private static final String SCRAP_JOB_NAME = "naverArticleJob";
+	private static final String RESET_SCRAP_JOB_NAME = "scrapStatusResetJob";
+
 	private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
 	// 기본값: 30분마다 실행
-	@Scheduled(cron = "0/20 * * * * *")
+	@Scheduled(cron = "0 0/30 * * * *")
 	public void crawlNaverLand() throws
 		InterruptedException,
 		NoSuchJobException,
@@ -50,6 +52,21 @@ public class NaverLandScheduler {
 			.addString("date", date)
 			.toJobParameters();
 
-		jobLauncher.run(jobRegistry.getJob(JOB_NAME), jobParameters);
+		jobLauncher.run(jobRegistry.getJob(SCRAP_JOB_NAME), jobParameters);
+	}
+
+	// 새벽 2시에 초기화
+	@Scheduled(cron = "0 0 2 * * ?")
+	public void runResetJob() throws
+		NoSuchJobException,
+		JobInstanceAlreadyCompleteException,
+		JobExecutionAlreadyRunningException,
+		JobParametersInvalidException,
+		JobRestartException {
+		JobParameters jobParameters = new JobParametersBuilder()
+			.addLong("timeStamp", System.currentTimeMillis())
+			.toJobParameters();
+
+		jobLauncher.run(jobRegistry.getJob(RESET_SCRAP_JOB_NAME), jobParameters);
 	}
 }

@@ -55,14 +55,14 @@ public class NaverArticleBatchJobConfig {
 	@Bean
 	@StepScope
 	public ItemReader<RegionScrapStatus> scrapStatusReader() {
-		return new IteratorItemReader<>(regionScrapStatusRepository.findTop10ByCompletedFalseOrderByIdAsc());
+		return new IteratorItemReader<>(regionScrapStatusRepository.findTop50ByCompletedFalseOrderByIdAsc());
 	}
 
 	@Bean
 	@StepScope
 	public ItemProcessor<RegionScrapStatus, RegionScrapStatus> scrapStatusProcessor() {
 		return scrapStatus -> {
-			log.info("Fetching articles for regoin: {}", scrapStatus);
+			log.info("Fetching articles for regoin: {}", scrapStatus.getRegion().getCortarNo());
 			naverLandRequestService.scrapArticles(scrapStatus);
 			return scrapStatus;
 		};
