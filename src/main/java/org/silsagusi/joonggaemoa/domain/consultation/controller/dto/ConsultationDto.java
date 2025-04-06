@@ -1,4 +1,4 @@
-package org.silsagusi.joonggaemoa.domain.consultation.contorller.dto;
+package org.silsagusi.joonggaemoa.domain.consultation.controller.dto;
 
 import java.time.LocalDateTime;
 

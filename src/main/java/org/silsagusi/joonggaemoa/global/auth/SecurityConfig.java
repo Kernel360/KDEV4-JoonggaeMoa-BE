@@ -74,8 +74,9 @@ public class SecurityConfig {
 			.addFilterBefore(new JwtAuthorizationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class)
 
 			.authorizeHttpRequests(auth -> auth
-				.requestMatchers(AUTH_WHITELIST).permitAll()
-				.anyRequest().authenticated()
+//				.requestMatchers(AUTH_WHITELIST).permitAll()
+//				.anyRequest().authenticated()
+							.anyRequest().permitAll()
 			)
 
 			.exceptionHandling(configurer -> configurer

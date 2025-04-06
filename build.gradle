@@ -33,29 +33,29 @@ dependencies {
     // Validation
     implementation 'org.springframework.boot:spring-boot-starter-validation'
 
-    // springdoc openapi
-    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.6'
+    // SpringDoc OpenAPI
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2'
 
     // DB
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     runtimeOnly 'com.mysql:mysql-connector-j'
 
-    // redis
+    // Redis
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
-    //batch
+    // Batch
     implementation 'org.springframework.boot:spring-boot-starter-batch'
 
     // Lombok
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
 
-    //Jwt
+    // JWT
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
     implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
     implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 
-    // sms
+    // SMS
     implementation 'net.nurigo:sdk:4.3.0'
 
     // Test
@@ -64,12 +64,18 @@ dependencies {
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     testImplementation 'org.springframework.batch:spring-batch-test'
 
-    //Apache poi
+    // Apache POI
     implementation group: 'org.apache.poi', name: 'poi', version: '5.3.0'
     implementation group: 'org.apache.poi', name: 'poi-ooxml', version: '5.3.0'
 
-    //AWS S3
+    // WebFlux
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
+    // AWS S3
     implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+
+    // native library for DNS resolution on macOS
+    implementation 'io.netty:netty-resolver-dns-native-macos:4.1.68.Final:osx-aarch_64'
 
 }
 
