@@ -19,10 +19,10 @@ public class ClientArticleResponse {
 
 	private Integer page;
 
-	private List<Article> body;
+	private List<Body> bodies;
 
 	@Data
-	public static class Article {
+	public static class Body {
 
 		// article number
 		private String atclNo;

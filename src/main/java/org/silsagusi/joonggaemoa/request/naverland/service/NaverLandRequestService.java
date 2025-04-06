@@ -110,7 +110,7 @@ public class NaverLandRequestService {
 				region.getCortarNo()
 			);
 
-			List<Article> articles = mapToArticles(response.getBody());
+			List<Article> articles = mapToArticles(response.getBodies());
 			articleRepository.saveAll(articles);
 
 			page++;
@@ -120,7 +120,7 @@ public class NaverLandRequestService {
 
 			// 2~5초 랜덤 딜레이
 			Thread.sleep((long)(Math.random() * 5000 + 2000));
-		} while (hasMore);
+		} while (hasMore && page <= 10);
 
 		// 마지막 페이지까지 완료된 경우
 		if (!hasMore) {
@@ -128,16 +128,9 @@ public class NaverLandRequestService {
 		}
 	}
 
-	private List<Article> mapToArticles(List<ClientArticleResponse.Article> articles) {
-		return articles.stream().map(article -> new Article(
-			article.getAtclNm(),
-			article.getRletTpNm(),
-			article.getTradTpNm(),
-			article.getHanPrc(),
-			article.getAtclCfmYmd(),
-			article.getLat(),
-			article.getLng()
-		)).toList();
+	private List<Article> mapToArticles(List<ClientArticleResponse.Body> bodies) {
+		return bodies.stream()
+			.map(Article::createFrom)
+			.toList();
 	}
-
 }
