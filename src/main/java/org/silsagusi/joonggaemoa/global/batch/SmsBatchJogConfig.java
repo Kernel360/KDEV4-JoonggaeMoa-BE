@@ -1,8 +1,7 @@
 package org.silsagusi.joonggaemoa.global.batch;
 
-import java.time.LocalDateTime;
-import java.util.Map;
-
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.silsagusi.joonggaemoa.domain.agent.entity.Agent;
 import org.silsagusi.joonggaemoa.domain.customer.entity.Customer;
 import org.silsagusi.joonggaemoa.domain.message.entity.Message;
@@ -26,102 +25,102 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.Sort;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.time.LocalDateTime;
+import java.util.Map;
 
 @Slf4j
 @Configuration
 @RequiredArgsConstructor
 public class SmsBatchJogConfig {
 
-	private static final String JOB_NAME = "smsJob1";
-	private static final int CHUNK_SIZE = 10;
+    private static final String JOB_NAME = "smsJob1";
+    private static final int CHUNK_SIZE = 10;
 
-	private final JobRepository jobRepository;
-	private final PlatformTransactionManager platformTransactionManager;
-	private final ReservedMessageRepository reservedMessageRepository;
-	private final MessageRepository messageRepository;
-	private final SmsUtil smsUtil;
+    private final JobRepository jobRepository;
+    private final PlatformTransactionManager platformTransactionManager;
+    private final ReservedMessageRepository reservedMessageRepository;
+    private final MessageRepository messageRepository;
+    private final SmsUtil smsUtil;
 
-	@Bean
-	public Job createJob(Step smsStep) {
-		return new JobBuilder(JOB_NAME, jobRepository)
-			.start(smsStep)
-			.build();
-	}
+    @Bean
+    public Job createJob(Step messageSendStep) {
+        return new JobBuilder(JOB_NAME, jobRepository)
+            .start(messageSendStep)
+            .build();
+    }
 
-	@Bean
-	@JobScope
-	public Step smsStep() {
-		return new StepBuilder(JOB_NAME + "Step1", jobRepository)
-			.<ReservedMessage, Message>chunk(CHUNK_SIZE, platformTransactionManager)
-			.reader(smsReader())
-			.processor(smsProcessor())
-			.writer(smsWriter())
-			.build();
-	}
+    @Bean
+    @JobScope
+    public Step messageSendStep() {
+        return new StepBuilder(JOB_NAME + "Step1", jobRepository)
+            .<ReservedMessage, Message>chunk(CHUNK_SIZE, platformTransactionManager)
+            .reader(reader())
+            .processor(processor())
+            .writer(writer())
+            .build();
+    }
 
-	@Bean
-	@StepScope
-	public RepositoryItemReader<ReservedMessage> smsReader() {
-		return new RepositoryItemReaderBuilder<ReservedMessage>()
-			.name("reservedMessageReader")
-			.pageSize(CHUNK_SIZE)
-			.methodName("findPendingMessages")
-			.arguments(LocalDateTime.now(), LocalDateTime.now().plusHours(1))
-			.repository(reservedMessageRepository)
-			.sorts(Map.of("id", Sort.Direction.DESC))
-			.build();
-	}
+    @Bean
+    @StepScope
+    public RepositoryItemReader<ReservedMessage> reader() {
+        return new RepositoryItemReaderBuilder<ReservedMessage>()
+            .name("reservedMessageReader")
+            .pageSize(CHUNK_SIZE)
+            .methodName("findPendingMessages")
+            .arguments(LocalDateTime.now(), LocalDateTime.now().plusHours(1))
+            .repository(reservedMessageRepository)
+            .sorts(Map.of("id", Sort.Direction.DESC))
+            .build();
+    }
 
-	@Bean
-	@StepScope
-	public ItemProcessor<ReservedMessage, Message> smsProcessor() {
-		return reservedMessage -> {
-			log.info("Processing reserved message: {}", reservedMessage);
-			if (reservedMessage == null) {
-				log.warn("Reserved message is null");
-				return null;
-			}
+    @Bean
+    @StepScope
+    public ItemProcessor<ReservedMessage, Message> processor() {
+        return reservedMessage -> {
+            log.info("Processing reserved message: {}", reservedMessage);
+            if (reservedMessage == null) {
+                log.warn("Reserved message is null");
+                return null;
+            }
 
-			try {
-				if (reservedMessage.getCustomer() == null || reservedMessage.getContent() == null) {
-					log.error("Reserved message content is null");
-					return null;
-				}
+            try {
+                if (reservedMessage.getCustomer() == null || reservedMessage.getContent() == null) {
+                    log.error("Reserved message content is null");
+                    return null;
+                }
 
-				Customer customer = reservedMessage.getCustomer();
-				Agent agent = customer.getAgent();
-				String text = reservedMessage.getContent();
-				LocalDateTime sendAt = reservedMessage.getSendAt();
+                Customer customer = reservedMessage.getCustomer();
+                Agent agent = customer.getAgent();
+                String text = reservedMessage.getContent();
+                LocalDateTime sendAt = reservedMessage.getSendAt();
 
-				// smsUtil.sendMessage(agent.getPhone(), customer.getPhone(), text, sendAt);
+                // smsUtil.sendMessage(agent.getPhone(), customer.getPhone(), text, sendAt);
 
-				return new Message(reservedMessage.getCustomer(), reservedMessage.getContent());
-			} catch (Exception e) {
-				log.error("Error processing reserved message", e);
-				return null;
-			}
-		};
-	}
+                return new Message(reservedMessage.getCustomer(), reservedMessage.getContent());
+            } catch (Exception e) {
+                log.error("Error processing reserved message", e);
+                return null;
+            }
+        };
+    }
 
-	@Bean
-	@StepScope
-	public ItemWriter<Message> smsWriter() {
-		return items -> {
-			try {
-				if (items == null || items.isEmpty()) {
-					log.warn("Items is null");
-					return;
-				}
+    @Bean
+    @StepScope
+    public ItemWriter<Message> writer() {
+        return items -> {
+            try {
+                if (items == null || items.isEmpty()) {
+                    log.warn("Items is null");
+                    return;
+                }
 
-				log.info("Writing {} messages", items.size());
-				messageRepository.saveAll(items);
-				log.info("Successfully writing messages");
-			} catch (Exception e) {
-				log.error("Error writing messages", e);
-				throw e;
-			}
-		};
-	}
+                log.info("Writing {} messages", items.size());
+                messageRepository.saveAll(items);
+                log.info("Successfully writing messages");
+            } catch (Exception e) {
+                log.error("Error writing messages", e);
+                throw e;
+            }
+        };
+    }
 }
