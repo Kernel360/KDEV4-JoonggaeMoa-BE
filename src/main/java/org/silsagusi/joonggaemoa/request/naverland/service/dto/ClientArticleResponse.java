@@ -19,7 +19,7 @@ public class ClientArticleResponse {
 
 	private Integer page;
 
-	private List<Body> bodies;
+	private List<Body> body;
 
 	@Data
 	public static class Body {

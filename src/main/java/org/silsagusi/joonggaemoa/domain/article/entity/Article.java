@@ -7,9 +7,12 @@ import org.silsagusi.joonggaemoa.request.naverland.service.dto.ClientArticleResp
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,6 +26,10 @@ public class Article {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "article_id", nullable = false)
 	private Long id;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "region_id", nullable = false)
+	private Region region;
 
 	@Column(name = "cortar_no", nullable = false)
 	private String cortarNo;
@@ -38,10 +45,7 @@ public class Article {
 	@Column(name = "trade_type")
 	private String tradeType;
 
-	@Column(name = "price_hangul")
-	private String priceHangul;
-
-	private String price; // 문자열 그대로 유지 시
+	private String price;
 
 	@Column(name = "rent_price")
 	private Integer rentPrice;
@@ -74,15 +78,14 @@ public class Article {
 	private String agentName;
 
 	public Article(String cortarNo, String articleNo, String name, String realEstateType, String tradeType,
-		String priceHangul, String price, Integer rentPrice, String confirmedAt,
-		Double latitude, Double longitude, String imageUrl, String direction,
-		List<String> tags, String subwayInfo, String companyId, String companyName, String agentName) {
+		String price, Integer rentPrice, String confirmedAt, Double latitude, Double longitude, String imageUrl,
+		String direction, List<String> tags, String subwayInfo, String companyId, String companyName,
+		String agentName, Region region) {
 		this.cortarNo = cortarNo;
 		this.articleNo = articleNo;
 		this.name = name;
 		this.realEstateType = realEstateType;
 		this.tradeType = tradeType;
-		this.priceHangul = priceHangul;
 		this.price = price;
 		this.rentPrice = rentPrice;
 		this.confirmedAt = confirmedAt;
@@ -95,16 +98,16 @@ public class Article {
 		this.companyId = companyId;
 		this.companyName = companyName;
 		this.agentName = agentName;
+		this.region = region;
 	}
 
-	public static Article createFrom(ClientArticleResponse.Body body) {
+	public static Article createFrom(ClientArticleResponse.Body body, Region region) {
 		return new Article(
 			body.getCortarNo(),
 			body.getAtclNo(),
 			body.getAtclNm(),
 			body.getRletTpNm(),
 			body.getTradTpNm(),
-			body.getHanPrc(),
 			body.getPrc() != null ? body.getPrc().toString() : null,
 			body.getRentPrc(),
 			body.getAtclCfmYmd(),
@@ -116,7 +119,8 @@ public class Article {
 			body.getSbwyInfo(),
 			body.getCpid(),
 			body.getCpNm(),
-			body.getRltrNm()
+			body.getRltrNm(),
+			region
 		);
 	}
 }

@@ -110,7 +110,7 @@ public class NaverLandRequestService {
 				region.getCortarNo()
 			);
 
-			List<Article> articles = mapToArticles(response.getBodies());
+			List<Article> articles = mapToArticles(response.getBody(), region);
 			articleRepository.saveAll(articles);
 
 			page++;
@@ -128,9 +128,9 @@ public class NaverLandRequestService {
 		}
 	}
 
-	private List<Article> mapToArticles(List<ClientArticleResponse.Body> bodies) {
+	private List<Article> mapToArticles(List<ClientArticleResponse.Body> bodies, Region region) {
 		return bodies.stream()
-			.map(Article::createFrom)
+			.map(body -> Article.createFrom(body, region))
 			.toList();
 	}
 }

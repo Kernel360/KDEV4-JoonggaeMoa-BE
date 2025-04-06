@@ -1,8 +1,5 @@
 package org.silsagusi.joonggaemoa.request.naverland.scheduler;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import org.silsagusi.joonggaemoa.request.naverland.service.NaverLandRequestService;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
@@ -31,12 +28,11 @@ public class NaverLandScheduler {
 
 	private static final String SCRAP_JOB_NAME = "naverArticleJob";
 	private static final String RESET_SCRAP_JOB_NAME = "scrapStatusResetJob";
-
-	private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
+	private static final String TIME_STAMP = "timeStamp";
 
 	// 기본값: 30분마다 실행
-	@Scheduled(cron = "0 0/30 * * * *")
-	public void crawlNaverLand() throws
+	@Scheduled(initialDelay = 5000, fixedRate = 1800000) // 1800000ms = 30분
+	public void scrapNaverLand() throws
 		InterruptedException,
 		NoSuchJobException,
 		JobInstanceAlreadyCompleteException,
@@ -45,11 +41,8 @@ public class NaverLandScheduler {
 		JobRestartException {
 		// naverLandRequestService.scrap();
 
-		SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
-		String date = dateFormat.format(new Date());
-
 		JobParameters jobParameters = new JobParametersBuilder()
-			.addString("date", date)
+			.addLong(TIME_STAMP, System.currentTimeMillis())
 			.toJobParameters();
 
 		jobLauncher.run(jobRegistry.getJob(SCRAP_JOB_NAME), jobParameters);
@@ -57,14 +50,14 @@ public class NaverLandScheduler {
 
 	// 새벽 2시에 초기화
 	@Scheduled(cron = "0 0 2 * * ?")
-	public void runResetJob() throws
+	public void resetJob() throws
 		NoSuchJobException,
 		JobInstanceAlreadyCompleteException,
 		JobExecutionAlreadyRunningException,
 		JobParametersInvalidException,
 		JobRestartException {
 		JobParameters jobParameters = new JobParametersBuilder()
-			.addLong("timeStamp", System.currentTimeMillis())
+			.addLong(TIME_STAMP, System.currentTimeMillis())
 			.toJobParameters();
 
 		jobLauncher.run(jobRegistry.getJob(RESET_SCRAP_JOB_NAME), jobParameters);
