@@ -1,5 +1,7 @@
 package org.silsagusi.joonggaemoa.domain.message.entity;
 
+import java.time.LocalDateTime;
+
 import org.silsagusi.joonggaemoa.domain.customer.entity.Customer;
 import org.silsagusi.joonggaemoa.global.BaseEntity;
 
@@ -36,16 +38,24 @@ public class Message extends BaseEntity {
 	@Enumerated(EnumType.STRING)
 	private SendStatus sendStatus;
 
-	private String responseCode;
+	private LocalDateTime sendAt;
 
 	private String errorMessage;
 
-	private String smsMessageId;
-
-	private String smsGroupId;
-
-	public Message(Customer customer, String content) {
+	public Message(Customer customer, String content, LocalDateTime sendAt) {
 		this.customer = customer;
 		this.content = content;
+		this.sendStatus = SendStatus.PENDING;
+		this.sendAt = sendAt;
+		this.errorMessage = null;
+	}
+
+	public void updateMessage(LocalDateTime sendAt, String content) {
+		this.sendAt = sendAt;
+		this.content = content;
+	}
+
+	public void updateSendStatus(SendStatus sendStatus) {
+		this.sendStatus = sendStatus;
 	}
 }
