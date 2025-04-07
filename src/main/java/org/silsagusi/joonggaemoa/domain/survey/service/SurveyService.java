@@ -29,7 +29,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -78,15 +77,21 @@ public class SurveyService {
 	}
 
 	@Transactional
-	public void deleteSurvey(String surveyId) {
+	public void deleteSurvey(Long agentId, String surveyId) {
 		Survey survey = surveyRepository.findById(surveyId)
 			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
+
+		if (!survey.getAgent().getId().equals(agentId)) {
+			throw new CustomException(ErrorCode.FORBIDDEN);
+		}
+
 		questionRepository.deleteAll(survey.getQuestionList());
 		surveyRepository.delete(survey);
 	}
 
 	@Transactional
 	public void updateSurvey(
+		Long agentId,
 		String surveyId,
 		String title,
 		String description,
@@ -198,7 +203,6 @@ public class SurveyService {
 			customer.getName() + "님이 [" + survey.getTitle() + "] 설문에 응답했습니다."
 		);
 	}
-
 
 	public Page<AnswerCommand> getAllAnswers(Long agentId, Pageable pageable) {
 		Page<Answer> answerPage = answerRepository.findAllByCustomer_AgentId(agentId, pageable);

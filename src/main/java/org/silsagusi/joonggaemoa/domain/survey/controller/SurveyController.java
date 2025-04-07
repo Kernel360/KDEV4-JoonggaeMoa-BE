@@ -56,7 +56,7 @@ public class SurveyController {
 	@DeleteMapping("/api/surveys/{surveyId}")
 	public ResponseEntity<ApiResponse<Void>> deleteSurvey(
 		HttpServletRequest request,
-		@PathVariable("surveyId") Long surveyId
+		@PathVariable("surveyId") String surveyId
 	) {
 		surveyService.deleteSurvey(
 			(Long)request.getAttribute("agentId"),
@@ -68,6 +68,7 @@ public class SurveyController {
 	@PatchMapping("/api/surveys/{surveyId}")
 	public ResponseEntity<ApiResponse<Void>> updateSurvey(
 		HttpServletRequest request,
+		@PathVariable String surveyId,
 		@RequestBody @Valid SurveyDto.UpdateRequest requestDto
 	) {
 		List<QuestionCommand> questionCommandList = requestDto.getQuestionList()
