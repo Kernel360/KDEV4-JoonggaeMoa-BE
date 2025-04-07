@@ -11,7 +11,7 @@ import lombok.Data;
 @Builder
 public class QuestionCommand {
 	private Long id;
-	private Long surveyId;
+	private String surveyId;
 	private String content;
 	private String type;
 	private Boolean isRequired;
