@@ -1,11 +1,9 @@
 package org.silsagusi.joonggaemoa.domain.message.controller;
 
 import org.silsagusi.joonggaemoa.domain.message.controller.dto.MessageDto;
-import org.silsagusi.joonggaemoa.domain.message.controller.dto.ReservedMessageDto;
-import org.silsagusi.joonggaemoa.domain.message.controller.dto.ReservedMessageUpdateRequest;
+import org.silsagusi.joonggaemoa.domain.message.controller.dto.MessageUpdateRequest;
 import org.silsagusi.joonggaemoa.domain.message.service.MessageService;
 import org.silsagusi.joonggaemoa.domain.message.service.command.MessageCommand;
-import org.silsagusi.joonggaemoa.domain.message.service.command.ReservedMessageCommand;
 import org.silsagusi.joonggaemoa.global.api.ApiResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -30,33 +28,37 @@ public class MessageController {
 
 	@GetMapping("/api/messages")
 	public ResponseEntity<ApiResponse<Page<MessageDto.Response>>> getMessagePage(
+		HttpServletRequest request,
 		Pageable pageable
 	) {
-		Page<MessageCommand> messageCommandPage = messageService.getMessagePage(pageable);
+		Page<MessageCommand> messageCommandPage = messageService.getMessagePage(
+			(Long)request.getAttribute("agentId"),
+			pageable
+		);
 
 		Page<MessageDto.Response> responses = messageCommandPage.map(MessageDto.Response::of);
 
 		return ResponseEntity.ok(ApiResponse.ok(responses));
 	}
 
-	@PostMapping("/api/reserved-messages")
-	public ResponseEntity<ApiResponse<Void>> createReserveMessage(
-		@RequestBody @Valid ReservedMessageDto.Request requestDto
+	@PostMapping("/api/messages")
+	public ResponseEntity<ApiResponse<Void>> createMessage(
+		@RequestBody @Valid MessageDto.Request requestDto
 	) {
-		messageService.createReservedMessage(requestDto.getContent(), requestDto.getSendAt(),
+		messageService.createMessage(requestDto.getContent(), requestDto.getSendAt(),
 			requestDto.getCustomerIdList());
 		return ResponseEntity.ok(ApiResponse.ok());
 	}
 
-	@PatchMapping("/api/reserved-messages/{reservedMessageId}")
-	public ResponseEntity<ApiResponse<Void>> updateReserveMessage(
+	@PatchMapping("/api/messages/{messageId}")
+	public ResponseEntity<ApiResponse<Void>> updateMessage(
 		HttpServletRequest request,
-		@PathVariable Long reservedMessageId,
-		@RequestBody @Valid ReservedMessageUpdateRequest requestDto
+		@PathVariable Long messageId,
+		@RequestBody @Valid MessageUpdateRequest requestDto
 	) {
-		messageService.updateReservedMessage(
+		messageService.updateMessage(
 			(Long)request.getAttribute("agentId"),
-			reservedMessageId,
+			messageId,
 			requestDto.getSendAt(),
 			requestDto.getContent()
 		);
@@ -65,34 +67,38 @@ public class MessageController {
 	}
 
 	@GetMapping("/api/reserved-messages")
-	public ResponseEntity<ApiResponse<Page<ReservedMessageDto.Response>>> getReservedMessagePage(
+	public ResponseEntity<ApiResponse<Page<MessageDto.Response>>> getReservedMessagePage(
+		HttpServletRequest request,
 		Pageable pageable
 	) {
-		Page<ReservedMessageCommand> commandPage = messageService.getReservedMessagePage(pageable);
+		Page<MessageCommand> commandPage = messageService.getReservedMessagePage(
+			(Long)request.getAttribute("agentId"),
+			pageable
+		);
 
-		Page<ReservedMessageDto.Response> responsePage = commandPage
-			.map(ReservedMessageDto.Response::of);
+		Page<MessageDto.Response> responsePage = commandPage
+			.map(MessageDto.Response::of);
 
 		return ResponseEntity.ok(ApiResponse.ok(responsePage));
 	}
 
-	@GetMapping("/api/reserved-messages/{reservedMessageId}")
-	public ResponseEntity<ApiResponse<ReservedMessageDto.Response>> getReservedMessage(
-		@PathVariable Long reservedMessageId
+	@GetMapping("/api/reserved-messages/{messageId}")
+	public ResponseEntity<ApiResponse<MessageDto.Response>> getReservedMessage(
+		@PathVariable Long messageId
 	) {
-		ReservedMessageCommand command = messageService.getReservedMessage(reservedMessageId);
+		MessageCommand command = messageService.getReservedMessage(messageId);
 
-		return ResponseEntity.ok(ApiResponse.ok(ReservedMessageDto.Response.of(command)));
+		return ResponseEntity.ok(ApiResponse.ok(MessageDto.Response.of(command)));
 	}
 
-	@DeleteMapping("/api/reserved-messages/{reservedMessageId}")
+	@DeleteMapping("/api/reserved-messages/{messageId}")
 	public ResponseEntity<ApiResponse<Void>> deleteReservedMessage(
 		HttpServletRequest request,
-		@PathVariable Long reservedMessageId
+		@PathVariable Long messageId
 	) {
 		messageService.deleteReservedMessage(
 			(Long)request.getAttribute("agentId"),
-			reservedMessageId
+			messageId
 		);
 
 		return ResponseEntity.ok(ApiResponse.ok());
