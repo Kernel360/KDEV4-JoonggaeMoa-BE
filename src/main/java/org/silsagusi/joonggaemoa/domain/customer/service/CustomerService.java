@@ -103,7 +103,7 @@ public class CustomerService {
 			throw new CustomException(ErrorCode.FILE_UPLOAD_ERROR);
 		}
 	}
-
+  
 	public void deleteCustomer(Long agentId, Long customerId) {
 		Customer customer = customerRepository.findById(customerId)
 			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_CUSTOMER));
@@ -133,7 +133,6 @@ public class CustomerService {
 		if (!customer.getAgent().getId().equals(agentId)) {
 			throw new CustomException(ErrorCode.FORBIDDEN);
 		}
-
 		customer.updateCustomer(
 			(name == null || name.isBlank()) ? customer.getName() : name,
 			(birthday == null) ? customer.getBirthday() : birthday,

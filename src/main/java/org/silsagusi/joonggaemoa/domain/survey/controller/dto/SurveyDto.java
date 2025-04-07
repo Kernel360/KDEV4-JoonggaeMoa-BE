@@ -20,7 +20,6 @@ public class SurveyDto {
 		@NotBlank
 		private String title;
 
-		@NotBlank
 		private String description;
 
 		private List<QuestionDto.CreateRequest> questionList;
@@ -43,10 +42,11 @@ public class SurveyDto {
 	@Getter
 	@Builder
 	public static class Response {
-		private Long id;
+		private String id;
 		private String title;
 		private String description;
 		private List<QuestionDto.Response> questionList;
+		private String createdAt;
 
 		public static Response of(SurveyCommand surveyCommand) {
 			List<QuestionDto.Response> questionResponseList = surveyCommand.getQuestionList()
@@ -57,6 +57,7 @@ public class SurveyDto {
 				.title(surveyCommand.getTitle())
 				.description(surveyCommand.getDescription())
 				.questionList(questionResponseList)
+				.createdAt(surveyCommand.getCreatedAt())
 				.build();
 		}
 	}

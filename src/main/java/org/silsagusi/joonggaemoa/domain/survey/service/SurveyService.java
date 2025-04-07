@@ -27,6 +27,7 @@ import org.silsagusi.joonggaemoa.global.api.exception.ErrorCode;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -44,6 +45,7 @@ public class SurveyService {
 	private final ConsultationRepository consultationRepository;
 	private final NotificationService notificationService;
 
+	@Transactional
 	public void createSurvey(
 		Long agentId,
 		String title,
@@ -76,22 +78,16 @@ public class SurveyService {
 	}
 
 	@Transactional
-	public void deleteSurvey(Long agentId, Long surveyId) {
+	public void deleteSurvey(String surveyId) {
 		Survey survey = surveyRepository.findById(surveyId)
 			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
-
-		if (!survey.getAgent().getId().equals(agentId)) {
-			throw new CustomException(ErrorCode.FORBIDDEN);
-		}
-
 		questionRepository.deleteAll(survey.getQuestionList());
 		surveyRepository.delete(survey);
 	}
 
 	@Transactional
 	public void updateSurvey(
-		Long agentId,
-		Long surveyId,
+		String surveyId,
 		String title,
 		String description,
 		List<QuestionCommand> questionCommandList
@@ -102,7 +98,6 @@ public class SurveyService {
 		if (!survey.getAgent().getId().equals(agentId)) {
 			throw new CustomException(ErrorCode.FORBIDDEN);
 		}
-
 		survey.updateSurveyTitleDescription(
 			(title == null || title.isBlank()) ? survey.getTitle() : title,
 			(description == null || description.isBlank()) ? survey.getDescription() : description
@@ -127,19 +122,25 @@ public class SurveyService {
 
 	}
 
+	@Transactional(readOnly = true)
 	public Page<SurveyCommand> getAllSurveys(Long agentId, Pageable pageable) {
-		Page<Survey> surveyPage = surveyRepository.findAllByAgentId(agentId, pageable);
+		Agent agent = agentRepository.findById(agentId)
+			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
+
+		Page<Survey> surveyPage = surveyRepository.findAllByAgent(agent, pageable);
 		return surveyPage.map(SurveyCommand::of);
 	}
 
-	public SurveyCommand findById(Long surveyId) {
+	@Transactional(readOnly = true)
+	public SurveyCommand findById(String surveyId) {
 		Survey survey = surveyRepository.findById(surveyId)
 			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
 		return SurveyCommand.of(survey);
 	}
 
+	@Transactional
 	public void submitSurveyAnswer(
-		Long surveyId,
+		String surveyId,
 		String name,
 		String email,
 		String phone,
@@ -197,6 +198,7 @@ public class SurveyService {
 			customer.getName() + "님이 [" + survey.getTitle() + "] 설문에 응답했습니다."
 		);
 	}
+
 
 	public Page<AnswerCommand> getAllAnswers(Long agentId, Pageable pageable) {
 		Page<Answer> answerPage = answerRepository.findAllByCustomer_AgentId(agentId, pageable);

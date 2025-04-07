@@ -68,7 +68,6 @@ public class SurveyController {
 	@PatchMapping("/api/surveys/{surveyId}")
 	public ResponseEntity<ApiResponse<Void>> updateSurvey(
 		HttpServletRequest request,
-		@PathVariable("surveyId") Long surveyId,
 		@RequestBody @Valid SurveyDto.UpdateRequest requestDto
 	) {
 		List<QuestionCommand> questionCommandList = requestDto.getQuestionList()
@@ -106,7 +105,7 @@ public class SurveyController {
 
 	@GetMapping("/api/surveys/{surveyId}")
 	public ResponseEntity<ApiResponse<SurveyDto.Response>> getSurvey(
-		@PathVariable("surveyId") Long surveyId
+		@PathVariable("surveyId") String surveyId
 	) {
 		SurveyCommand surveyCommand = surveyService.findById(surveyId);
 		return ResponseEntity.ok(ApiResponse.ok(SurveyDto.Response.of(surveyCommand)));
@@ -128,7 +127,7 @@ public class SurveyController {
 	// 고객용 api
 	@GetMapping("/api/customers/surveys/{surveyId}")
 	public ResponseEntity<ApiResponse<SurveyDto.Response>> getSurveyForCustomer(
-		@PathVariable("surveyId") Long surveyId
+		@PathVariable("surveyId") String surveyId
 	) {
 		SurveyCommand surveyCommand = surveyService.findById(surveyId);
 		return ResponseEntity.ok(ApiResponse.ok(SurveyDto.Response.of(surveyCommand)));
@@ -136,7 +135,7 @@ public class SurveyController {
 
 	@PostMapping("/api/customers/surveys/{surveyId}/submit")
 	public ResponseEntity<ApiResponse<Void>> submitSurveyAnswer(
-		@PathVariable("surveyId") Long surveyId,
+		@PathVariable("surveyId") String surveyId,
 		@RequestBody @Valid AnswerDto.Request requestDto
 	) {
 		surveyService.submitSurveyAnswer(
