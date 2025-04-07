@@ -1,4 +1,4 @@
-package org.silsagusi.joonggaemoa.request.kakao.service;
+package org.silsagusi.joonggaemoa.request.kakao.service.dto;
 
 import lombok.Data;
 import java.util.List;
@@ -85,10 +85,10 @@ public class AddressResponse {
         // mountain_yn: 산 여부 (Y/N)
         private String mountain_yn;
 
-        // main_address_no: 주 주소 번호
+        // main_address_no: 주 주소 번호 ('-' 기호 앞 번지수)
         private String main_address_no;
 
-        // sub_address_no: 부 주소 번호
+        // sub_address_no: 부 주소 번호 ('-' 기호 뒤 번지수)
         private String sub_address_no;
 
         // zip_code: 우편번호 (지번 기준)

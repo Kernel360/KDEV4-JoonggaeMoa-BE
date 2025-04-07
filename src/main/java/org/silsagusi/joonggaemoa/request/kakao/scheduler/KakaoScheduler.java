@@ -1,6 +1,7 @@
-package org.silsagusi.joonggaemoa.request.naverland.scheduler;
+package org.silsagusi.joonggaemoa.request.kakao.scheduler;
 
-import org.silsagusi.joonggaemoa.request.naverland.service.NaverLandRequestService;
+import lombok.RequiredArgsConstructor;
+import org.silsagusi.joonggaemoa.request.kakao.service.KakaoRequestService;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.JobParametersInvalidException;
@@ -14,25 +15,23 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import lombok.RequiredArgsConstructor;
-
 @Component
 @EnableScheduling
 @RequiredArgsConstructor
-public class NaverLandScheduler {
+public class KakaoScheduler {
 
-	private final NaverLandRequestService naverLandRequestService;
+	private final KakaoRequestService kakaoRequestService;
 
 	private final JobLauncher jobLauncher;
 	private final JobRegistry jobRegistry;
 
-	private static final String SCRAP_JOB_NAME = "naverArticleJob";
+	private static final String SCRAP_JOB_NAME = "kakaoCoordToAddrJob";
 	private static final String RESET_SCRAP_JOB_NAME = "scrapStatusResetJob";
 	private static final String TIME_STAMP = "timeStamp";
 
 	// 기본값: 30분마다 실행
-	@Scheduled(initialDelay = 5000, fixedRate = 1800000) // 1800000ms = 30분
-	public void scrapNaverLand() throws
+	@Scheduled(initialDelay = 20000, fixedRate = 1800000) // 1800000ms = 30분
+	public void scrapKakao() throws
 		InterruptedException,
 		NoSuchJobException,
 		JobInstanceAlreadyCompleteException,
@@ -41,8 +40,8 @@ public class NaverLandScheduler {
 		JobRestartException {
 
 		JobParameters jobParameters = new JobParametersBuilder()
-			.addLong(TIME_STAMP, System.currentTimeMillis())
-			.toJobParameters();
+		.addLong(TIME_STAMP, System.currentTimeMillis())
+		.toJobParameters();
 
 		jobLauncher.run(jobRegistry.getJob(SCRAP_JOB_NAME), jobParameters);
 	}

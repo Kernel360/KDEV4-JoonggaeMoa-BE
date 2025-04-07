@@ -62,7 +62,7 @@ public class NaverArticleBatchJobConfig {
 	@StepScope
 	public ItemProcessor<RegionScrapStatus, RegionScrapStatus> scrapStatusProcessor() {
 		return scrapStatus -> {
-			log.info("Fetching articles for regoin: {}", scrapStatus.getRegion().getCortarNo());
+			log.info("Fetching articles for region: {}", scrapStatus.getRegion().getCortarNo());
 			naverLandRequestService.scrapArticles(scrapStatus);
 			return scrapStatus;
 		};
