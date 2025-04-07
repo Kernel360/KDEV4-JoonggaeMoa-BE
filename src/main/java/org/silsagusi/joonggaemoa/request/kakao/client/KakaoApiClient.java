@@ -1,6 +1,6 @@
 package org.silsagusi.joonggaemoa.request.kakao.client;
 
-import org.silsagusi.joonggaemoa.request.kakao.service.AddressResponse;
+import org.silsagusi.joonggaemoa.request.kakao.service.dto.AddressResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
