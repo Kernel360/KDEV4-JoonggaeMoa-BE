@@ -1,16 +1,5 @@
 package org.silsagusi.joonggaemoa.domain.consultation.service;
 
-import lombok.RequiredArgsConstructor;
-import org.silsagusi.joonggaemoa.domain.consultation.entity.Consultation;
-import org.silsagusi.joonggaemoa.domain.consultation.repository.ConsultationRepository;
-import org.silsagusi.joonggaemoa.domain.consultation.service.command.ConsultationCommand;
-import org.silsagusi.joonggaemoa.domain.consultation.service.command.ConsultationMonthInformCommand;
-import org.silsagusi.joonggaemoa.domain.customer.entity.Customer;
-import org.silsagusi.joonggaemoa.domain.customer.repository.CustomerRepository;
-import org.silsagusi.joonggaemoa.global.api.exception.CustomException;
-import org.silsagusi.joonggaemoa.global.api.exception.ErrorCode;
-import org.springframework.stereotype.Service;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -21,110 +10,135 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.silsagusi.joonggaemoa.domain.consultation.entity.Consultation;
+import org.silsagusi.joonggaemoa.domain.consultation.repository.ConsultationRepository;
+import org.silsagusi.joonggaemoa.domain.consultation.service.command.ConsultationCommand;
+import org.silsagusi.joonggaemoa.domain.consultation.service.command.ConsultationMonthInformCommand;
+import org.silsagusi.joonggaemoa.domain.customer.entity.Customer;
+import org.silsagusi.joonggaemoa.domain.customer.repository.CustomerRepository;
+import org.silsagusi.joonggaemoa.global.api.exception.CustomException;
+import org.silsagusi.joonggaemoa.global.api.exception.ErrorCode;
+import org.springframework.stereotype.Service;
+
+import lombok.RequiredArgsConstructor;
+
 @Service
 @RequiredArgsConstructor
 public class ConsultationService {
 
-    private final ConsultationRepository consultationRepository;
-    private final CustomerRepository customerRepository;
+	private final ConsultationRepository consultationRepository;
+	private final CustomerRepository customerRepository;
 
-    public void createConsultation(
-        Long customerId,
-        LocalDateTime date
-    ) {
-        Customer customer = customerRepository.findById(customerId)
-            .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_CUSTOMER));
-        Consultation consultation = new Consultation(
-            customer,
-            date,
-            Consultation.ConsultationStatus.CONFIRMED
-        );
-        consultationRepository.save(consultation);
-    }
+	public void createConsultation(
+		Long customerId,
+		LocalDateTime date
+	) {
+		Customer customer = customerRepository.findById(customerId)
+			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_CUSTOMER));
+		Consultation consultation = new Consultation(
+			customer,
+			date,
+			Consultation.ConsultationStatus.CONFIRMED
+		);
+		consultationRepository.save(consultation);
+	}
 
-    public void updateConsultationStatus(Long consultationId, String consultationStatus) {
-        Consultation consultation = consultationRepository.findById(consultationId)
-            .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
-        consultation.updateStatus(Consultation.ConsultationStatus.valueOf(consultationStatus));
-        consultationRepository.save(consultation);
-    }
+	public void updateConsultationStatus(Long agentId, Long consultationId, String consultationStatus) {
+		Consultation consultation = consultationRepository.findById(consultationId)
+			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
 
-    public void updateConsultation(
-        Long consultationId,
-        LocalDateTime date,
-        String purpose,
-        String interestProperty,
-        String interestLocation,
-        String contractType,
-        String assetStatus,
-        String memo,
-        String consultationStatus
-    ) {
-        Consultation consultation = consultationRepository.findById(consultationId)
-            .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
-        consultation.updateConsultation(
-            (date == null) ? consultation.getDate() : date,
-            (purpose == null || purpose.isBlank()) ? consultation.getPurpose() : purpose,
-            (interestProperty == null || interestProperty.isBlank()) ? consultation.getInterestProperty() :
-                interestProperty,
-            (interestLocation == null || interestLocation.isBlank()) ? consultation.getInterestLocation() :
-                interestLocation,
-            (contractType == null || contractType.isBlank()) ? consultation.getContractType() : contractType,
-            (assetStatus == null || assetStatus.isBlank()) ? consultation.getAssetStatus() : assetStatus,
-            (memo == null || memo.isBlank()) ? consultation.getMemo() : memo,
-            (consultationStatus == null) ? consultation.getConsultationStatus() :
-                Consultation.ConsultationStatus.valueOf(consultationStatus)
+		if (!consultation.getCustomer().getAgent().getId().equals(agentId)) {
+			throw new CustomException(ErrorCode.FORBIDDEN);
+		}
 
-        );
-        consultationRepository.save(consultation);
-    }
+		consultation.updateStatus(Consultation.ConsultationStatus.valueOf(consultationStatus));
+		consultationRepository.save(consultation);
+	}
 
+	public void updateConsultation(
+		Long agentId,
+		Long consultationId,
+		LocalDateTime date,
+		String purpose,
+		String interestProperty,
+		String interestLocation,
+		String contractType,
+		String assetStatus,
+		String memo,
+		String consultationStatus
+	) {
+		Consultation consultation = consultationRepository.findById(consultationId)
+			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
 
-    public List<ConsultationCommand> getAllConsultationsByDate(LocalDateTime date) {
-        LocalDateTime startOfDay = date.toLocalDate().atStartOfDay();
-        LocalDateTime endOfDay = date.toLocalDate().atTime(LocalTime.MAX);
+		if (!consultation.getCustomer().getAgent().getId().equals(agentId)) {
+			throw new CustomException(ErrorCode.FORBIDDEN);
+		}
 
-        List<Consultation> consultationList = consultationRepository.findAllByDateBetween(startOfDay, endOfDay);
-        return consultationList.stream().map(ConsultationCommand::of).toList();
-    }
+		consultation.updateConsultation(
+			(date == null) ? consultation.getDate() : date,
+			(purpose == null || purpose.isBlank()) ? consultation.getPurpose() : purpose,
+			(interestProperty == null || interestProperty.isBlank()) ? consultation.getInterestProperty() :
+				interestProperty,
+			(interestLocation == null || interestLocation.isBlank()) ? consultation.getInterestLocation() :
+				interestLocation,
+			(contractType == null || contractType.isBlank()) ? consultation.getContractType() : contractType,
+			(assetStatus == null || assetStatus.isBlank()) ? consultation.getAssetStatus() : assetStatus,
+			(memo == null || memo.isBlank()) ? consultation.getMemo() : memo,
+			(consultationStatus == null) ? consultation.getConsultationStatus() :
+				Consultation.ConsultationStatus.valueOf(consultationStatus)
 
-    public ConsultationCommand getConsultation(Long consultationId) {
-        Consultation consultation = consultationRepository.findById(consultationId)
-            .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
-        return ConsultationCommand.of(consultation);
-    }
+		);
+		consultationRepository.save(consultation);
+	}
 
-    public ConsultationMonthInformCommand getMonthInformation(String date) {
+	public List<ConsultationCommand> getAllConsultationsByDate(Long agentId, LocalDateTime date) {
+		LocalDateTime startOfDay = date.toLocalDate().atStartOfDay();
+		LocalDateTime endOfDay = date.toLocalDate().atTime(LocalTime.MAX);
 
-        YearMonth yearMonth = YearMonth.parse(date);
-        LocalDateTime startOfMonth = yearMonth.atDay(1).atTime(LocalTime.MIN);
-        LocalDateTime endOfMonth = yearMonth.atEndOfMonth().atTime(LocalTime.MAX);
-        int days = yearMonth.lengthOfMonth();
+		List<Consultation> consultationList = consultationRepository.findAllByCustomer_AgentIdAndDateBetween(agentId,
+			startOfDay, endOfDay);
+		return consultationList.stream().map(ConsultationCommand::of).toList();
+	}
 
-        // status information
-        List<Consultation> consultations = consultationRepository.findAllByDateBetween(startOfMonth, endOfMonth);
+	public ConsultationCommand getConsultation(Long consultationId) {
+		Consultation consultation = consultationRepository.findById(consultationId)
+			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
+		return ConsultationCommand.of(consultation);
+	}
 
-        Map<Consultation.ConsultationStatus, Long> statusCountMap = consultations.stream()
-            .collect(Collectors.groupingBy(Consultation::getConsultationStatus, Collectors.counting()));
+	public ConsultationMonthInformCommand getMonthInformation(Long agentId, String date) {
 
-        // date count information
-        List<Integer> dailyCount = new ArrayList<>(Collections.nCopies(days, 0));
+		YearMonth yearMonth = YearMonth.parse(date);
+		LocalDateTime startOfMonth = yearMonth.atDay(1).atTime(LocalTime.MIN);
+		LocalDateTime endOfMonth = yearMonth.atEndOfMonth().atTime(LocalTime.MAX);
+		int days = yearMonth.lengthOfMonth();
 
-        for (int i = 0; i < days; i++) {
-            LocalDate localDate = yearMonth.atDay(i + 1);
+		// status information
+		List<Consultation> consultations = consultationRepository.findAllByCustomer_AgentIdAndDateBetween(agentId,
+			startOfMonth, endOfMonth);
 
-            LocalDateTime startOfDay = localDate.atTime(LocalTime.MIN);
-            LocalDateTime endOfDay = localDate.atTime(LocalTime.MAX);
-            dailyCount.set(i, consultationRepository.countByDateBetween(startOfDay, endOfDay));
-        }
+		Map<Consultation.ConsultationStatus, Long> statusCountMap = consultations.stream()
+			.collect(Collectors.groupingBy(Consultation::getConsultationStatus, Collectors.counting()));
 
-        return ConsultationMonthInformCommand.builder()
-            .consultationAll((long) consultations.size())
-            .consultationWaiting(statusCountMap.getOrDefault(Consultation.ConsultationStatus.WAITING, 0L))
-            .consultationConfirmed(statusCountMap.getOrDefault(Consultation.ConsultationStatus.CONFIRMED, 0L))
-            .consultationCancelled(statusCountMap.getOrDefault(Consultation.ConsultationStatus.CANCELED, 0L))
-            .consultationCompleted(statusCountMap.getOrDefault(Consultation.ConsultationStatus.COMPLETED, 0L))
-            .daysCount(dailyCount)
-            .build();
-    }
+		// date count information
+		List<Integer> dailyCount = new ArrayList<>(Collections.nCopies(days, 0));
+
+		for (int i = 0; i < days; i++) {
+			LocalDate localDate = yearMonth.atDay(i + 1);
+
+			LocalDateTime startOfDay = localDate.atTime(LocalTime.MIN);
+			LocalDateTime endOfDay = localDate.atTime(LocalTime.MAX);
+			dailyCount.set(i,
+				consultationRepository.countByCustomer_AgentIdAndDateBetween(agentId, startOfDay, endOfDay));
+		}
+
+		return ConsultationMonthInformCommand.builder()
+			.consultationAll((long)consultations.size())
+			.consultationWaiting(statusCountMap.getOrDefault(Consultation.ConsultationStatus.WAITING, 0L))
+			.consultationConfirmed(statusCountMap.getOrDefault(Consultation.ConsultationStatus.CONFIRMED, 0L))
+			.consultationCancelled(statusCountMap.getOrDefault(Consultation.ConsultationStatus.CANCELED, 0L))
+			.consultationCompleted(statusCountMap.getOrDefault(Consultation.ConsultationStatus.COMPLETED, 0L))
+			.daysCount(dailyCount)
+			.build();
+	}
 }

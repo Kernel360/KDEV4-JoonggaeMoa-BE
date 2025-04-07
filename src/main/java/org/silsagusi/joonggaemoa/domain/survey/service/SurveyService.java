@@ -1,7 +1,8 @@
 package org.silsagusi.joonggaemoa.domain.survey.service;
 
-import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.silsagusi.joonggaemoa.domain.agent.entity.Agent;
 import org.silsagusi.joonggaemoa.domain.agent.repository.AgentRepository;
 import org.silsagusi.joonggaemoa.domain.consultation.entity.Consultation;
@@ -27,168 +28,178 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class SurveyService {
 
-    private final SurveyRepository surveyRepository;
-    private final AgentRepository agentRepository;
-    private final QuestionRepository questionRepository;
-    private final CustomerService customerService;
-    private final CustomerRepository customerRepository;
-    private final AnswerRepository answerRepository;
-    private final ConsultationRepository consultationRepository;
-    private final NotificationService notificationService;
+	private final SurveyRepository surveyRepository;
+	private final AgentRepository agentRepository;
+	private final QuestionRepository questionRepository;
+	private final CustomerService customerService;
+	private final CustomerRepository customerRepository;
+	private final AnswerRepository answerRepository;
+	private final ConsultationRepository consultationRepository;
+	private final NotificationService notificationService;
 
-    public void createSurvey(
-        Long agentId,
-        String title,
-        String description,
-        List<QuestionCommand> questionCommandList
-    ) {
-        Agent agent = agentRepository.findById(agentId)
-            .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
+	public void createSurvey(
+		Long agentId,
+		String title,
+		String description,
+		List<QuestionCommand> questionCommandList
+	) {
+		Agent agent = agentRepository.findById(agentId)
+			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
 
-        Survey survey = new Survey(agent, title, description, new ArrayList<>());
+		Survey survey = new Survey(agent, title, description, new ArrayList<>());
 
-        List<Question> questionList = questionCommandList.stream()
-            .map(
-                it -> {
-                    Question question = new Question(
-                        survey,
-                        it.getContent(),
-                        it.getType(),
-                        it.getIsRequired(),
-                        it.getOptions()
-                    );
-                    survey.getQuestionList().add(question);
-                    return question;
-                }
-            ).toList();
+		List<Question> questionList = questionCommandList.stream()
+			.map(
+				it -> {
+					Question question = new Question(
+						survey,
+						it.getContent(),
+						it.getType(),
+						it.getIsRequired(),
+						it.getOptions()
+					);
+					survey.getQuestionList().add(question);
+					return question;
+				}
+			).toList();
 
-        surveyRepository.save(survey);
-        questionRepository.saveAll(questionList);
+		surveyRepository.save(survey);
+		questionRepository.saveAll(questionList);
 
-    }
+	}
 
-    @Transactional
-    public void deleteSurvey(Long surveyId) {
-        Survey survey = surveyRepository.findById(surveyId)
-            .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
-        questionRepository.deleteAll(survey.getQuestionList());
-        surveyRepository.delete(survey);
-    }
+	@Transactional
+	public void deleteSurvey(Long agentId, Long surveyId) {
+		Survey survey = surveyRepository.findById(surveyId)
+			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
 
-    @Transactional
-    public void updateSurvey(
-        Long surveyId,
-        String title,
-        String description,
-        List<QuestionCommand> questionCommandList
-    ) {
-        Survey survey = surveyRepository.findById(surveyId)
-            .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
+		if (!survey.getAgent().getId().equals(agentId)) {
+			throw new CustomException(ErrorCode.FORBIDDEN);
+		}
 
-        survey.updateSurveyTitleDescription(
-            (title == null || title.isBlank()) ? survey.getTitle() : title,
-            (description == null || description.isBlank()) ? survey.getDescription() : description
-        );
+		questionRepository.deleteAll(survey.getQuestionList());
+		surveyRepository.delete(survey);
+	}
 
-        questionRepository.deleteAll(survey.getQuestionList());
-        survey.getQuestionList().clear();
+	@Transactional
+	public void updateSurvey(
+		Long agentId,
+		Long surveyId,
+		String title,
+		String description,
+		List<QuestionCommand> questionCommandList
+	) {
+		Survey survey = surveyRepository.findById(surveyId)
+			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
 
-        List<Question> updateQuestions = questionCommandList.stream()
-            .map(it -> new Question(
-                    survey,
-                    it.getContent(),
-                    it.getType(),
-                    it.getIsRequired(),
-                    it.getOptions()
-                )
-            ).toList();
+		if (!survey.getAgent().getId().equals(agentId)) {
+			throw new CustomException(ErrorCode.FORBIDDEN);
+		}
 
-        survey.getQuestionList().addAll(updateQuestions);
-        questionRepository.saveAll(updateQuestions);
-        surveyRepository.save(survey);
+		survey.updateSurveyTitleDescription(
+			(title == null || title.isBlank()) ? survey.getTitle() : title,
+			(description == null || description.isBlank()) ? survey.getDescription() : description
+		);
 
-    }
+		questionRepository.deleteAll(survey.getQuestionList());
+		survey.getQuestionList().clear();
 
-    public Page<SurveyCommand> getAllSurveys(Pageable pageable) {
-        Page<Survey> surveyPage = surveyRepository.findAll(pageable);
-        return surveyPage.map(SurveyCommand::of);
-    }
+		List<Question> updateQuestions = questionCommandList.stream()
+			.map(it -> new Question(
+					survey,
+					it.getContent(),
+					it.getType(),
+					it.getIsRequired(),
+					it.getOptions()
+				)
+			).toList();
 
-    public SurveyCommand findById(Long surveyId) {
-        Survey survey = surveyRepository.findById(surveyId)
-            .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
-        return SurveyCommand.of(survey);
-    }
+		survey.getQuestionList().addAll(updateQuestions);
+		questionRepository.saveAll(updateQuestions);
+		surveyRepository.save(survey);
 
-    public void submitSurveyAnswer(
-        Long surveyId,
-        String name,
-        String email,
-        String phone,
-        Boolean consent,
-        List<String> questions,
-        List<List<String>> answers
-    ) {
-        Survey survey = surveyRepository.findById(surveyId)
-            .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
-        Agent agent = survey.getAgent();
+	}
 
-        // 고객인지 판별(휴대폰 번호) 후 고객 데이터 추가
-        Customer customer = customerService.getCustomerByPhone(phone);
-        if (customer == null) {
-            Customer newCustomer = new Customer(
-                name,
-                phone,
-                email,
-                consent,
-                agent
-            );
-            customerRepository.save(newCustomer);
-            customer = newCustomer;
-        }
+	public Page<SurveyCommand> getAllSurveys(Long agentId, Pageable pageable) {
+		Page<Survey> surveyPage = surveyRepository.findAllByAgentId(agentId, pageable);
+		return surveyPage.map(SurveyCommand::of);
+	}
 
-        // 상담 추가
-        Consultation consultation = new Consultation(
-            customer,
-            Consultation.ConsultationStatus.WAITING
-        );
-        consultationRepository.save(consultation);
+	public SurveyCommand findById(Long surveyId) {
+		Survey survey = surveyRepository.findById(surveyId)
+			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
+		return SurveyCommand.of(survey);
+	}
 
-        // 응답 추가
-        List<QuestionAnswerPair> pairList = new ArrayList<>();
-        for (int i = 0; i < questions.size(); i++) {
-            QuestionAnswerPair pair = new QuestionAnswerPair(
-                questions.get(i),
-                answers.get(i)
-            );
-            pairList.add(pair);
-        }
+	public void submitSurveyAnswer(
+		Long surveyId,
+		String name,
+		String email,
+		String phone,
+		Boolean consent,
+		List<String> questions,
+		List<List<String>> answers
+	) {
+		Survey survey = surveyRepository.findById(surveyId)
+			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
+		Agent agent = survey.getAgent();
 
-        Answer newAnswer = new Answer(
-            customer,
-            survey,
-            pairList
-        );
+		// 고객인지 판별(휴대폰 번호) 후 고객 데이터 추가
+		Customer customer = customerService.getCustomerByPhone(phone);
+		if (customer == null) {
+			Customer newCustomer = new Customer(
+				name,
+				phone,
+				email,
+				consent,
+				agent
+			);
+			customerRepository.save(newCustomer);
+			customer = newCustomer;
+		}
 
-        answerRepository.save(newAnswer);
+		// 상담 추가
+		Consultation consultation = new Consultation(
+			customer,
+			Consultation.ConsultationStatus.WAITING
+		);
+		consultationRepository.save(consultation);
 
-        //응답 완료 시 알림
-        notificationService.notify(
-            agent.getId(),
-            NotificationType.SURVEY,
-            customer.getName() + "님이 [" + survey.getTitle() + "] 설문에 응답했습니다."
-        );
-    }
+		// 응답 추가
+		List<QuestionAnswerPair> pairList = new ArrayList<>();
+		for (int i = 0; i < questions.size(); i++) {
+			QuestionAnswerPair pair = new QuestionAnswerPair(
+				questions.get(i),
+				answers.get(i)
+			);
+			pairList.add(pair);
+		}
 
-    public Page<AnswerCommand> getAllAnswers(Pageable pageable) {
-        Page<Answer> answerPage = answerRepository.findAll(pageable);
-        return answerPage.map(AnswerCommand::of);
-    }
+		Answer newAnswer = new Answer(
+			customer,
+			survey,
+			pairList
+		);
+
+		answerRepository.save(newAnswer);
+
+		//응답 완료 시 알림
+		notificationService.notify(
+			agent.getId(),
+			NotificationType.SURVEY,
+			customer.getName() + "님이 [" + survey.getTitle() + "] 설문에 응답했습니다."
+		);
+	}
+
+	public Page<AnswerCommand> getAllAnswers(Long agentId, Pageable pageable) {
+		Page<Answer> answerPage = answerRepository.findAllByCustomer_AgentId(agentId, pageable);
+		return answerPage.map(AnswerCommand::of);
+	}
 }

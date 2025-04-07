@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -44,25 +45,39 @@ public class ContractController {
 	}
 
 	@GetMapping("/api/contracts")
-	public ResponseEntity<ApiResponse<Page<ContractDto.Response>>> getAllContracts(Pageable pageable) {
-		Page<ContractCommand> contractCommandPage = contractService.getAllContracts(pageable);
+	public ResponseEntity<ApiResponse<Page<ContractDto.Response>>> getAllContracts(
+		HttpServletRequest request,
+		Pageable pageable
+	) {
+		Page<ContractCommand> contractCommandPage = contractService.getAllContracts(
+			(Long)request.getAttribute("agentId"),
+			pageable
+		);
 		Page<ContractDto.Response> contractResponsePage = contractCommandPage.map(ContractDto.Response::of);
 		return ResponseEntity.ok(ApiResponse.ok(contractResponsePage));
 	}
 
 	@GetMapping("/api/contracts/{contractId}")
 	public ResponseEntity<ApiResponse<ContractDetailDto.Response>> getContract(
+		HttpServletRequest request,
 		@PathVariable("contractId") Long contractId
 	) throws IOException {
-		ContractCommand contractCommand = contractService.getContractById(contractId);
+		ContractCommand contractCommand = contractService.getContractById(
+			(Long)request.getAttribute("agentId"),
+			contractId
+		);
 		return ResponseEntity.ok(ApiResponse.ok(ContractDetailDto.Response.of(contractCommand)));
 	}
 
 	@DeleteMapping("/api/contracts/{contractId}")
 	public ResponseEntity<ApiResponse<Void>> deleteContract(
+		HttpServletRequest request,
 		@PathVariable("contractId") Long contractId
 	) {
-		contractService.deleteContract(contractId);
+		contractService.deleteContract(
+			(Long)request.getAttribute("agentId"),
+			contractId
+		);
 		return ResponseEntity.ok(ApiResponse.ok());
 	}
 }

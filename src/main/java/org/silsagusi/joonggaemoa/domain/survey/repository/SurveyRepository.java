@@ -6,5 +6,5 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface SurveyRepository extends JpaRepository<Survey, Long> {
-    Page<Survey> findAll(Pageable pageable);
+	Page<Survey> findAllByAgentId(Long agentId, Pageable pageable);
 }
