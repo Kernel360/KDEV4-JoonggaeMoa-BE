@@ -29,7 +29,7 @@ public class MessageTemplateController {
 	public ResponseEntity<ApiResponse<List<MessageTemplateDto.Response>>> getMessageTemplates(
 		HttpServletRequest request
 	) {
-		List<MessageTemplateCommand> commandList = messageTemplateService.getMessageTemplate(
+		List<MessageTemplateCommand> commandList = messageTemplateService.getMessageTemplateList(
 			(Long)request.getAttribute("agentId")
 		);
 
@@ -71,9 +71,13 @@ public class MessageTemplateController {
 
 	@DeleteMapping("/api/messages/templates/{templateId}")
 	public ResponseEntity<ApiResponse<Void>> deleteMessageTemplate(
+		HttpServletRequest request,
 		@PathVariable(name = "templateId") Long templateId
 	) {
-		messageTemplateService.deleteMessageTemplate(templateId);
+		messageTemplateService.deleteMessageTemplate(
+			(Long)request.getAttribute("agentId"),
+			templateId
+		);
 
 		return ResponseEntity.ok(ApiResponse.ok());
 	}

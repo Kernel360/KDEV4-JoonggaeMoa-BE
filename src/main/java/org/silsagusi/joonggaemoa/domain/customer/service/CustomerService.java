@@ -103,15 +103,20 @@ public class CustomerService {
 			throw new CustomException(ErrorCode.FILE_UPLOAD_ERROR);
 		}
 	}
-
-	public void deleteCustomer(Long customerId) {
-		customerRepository.findById(customerId)
+  
+	public void deleteCustomer(Long agentId, Long customerId) {
+		Customer customer = customerRepository.findById(customerId)
 			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_CUSTOMER));
 
-		customerRepository.deleteById(customerId);
+		if (customer.getAgent().getId().equals(agentId)) {
+			throw new CustomException(ErrorCode.FORBIDDEN);
+		}
+
+		customerRepository.delete(customer);
 	}
 
 	public void updateCustomer(
+		Long agentId,
 		Long customerId,
 		String name,
 		LocalDate birthday,
@@ -125,6 +130,9 @@ public class CustomerService {
 		Customer customer = customerRepository.findById(customerId)
 			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_CUSTOMER));
 
+		if (!customer.getAgent().getId().equals(agentId)) {
+			throw new CustomException(ErrorCode.FORBIDDEN);
+		}
 		customer.updateCustomer(
 			(name == null || name.isBlank()) ? customer.getName() : name,
 			(birthday == null) ? customer.getBirthday() : birthday,
@@ -138,22 +146,28 @@ public class CustomerService {
 		customerRepository.save(customer);
 	}
 
-	public CustomerCommand getCustomerById(Long customerId) {
+	public CustomerCommand getCustomerById(Long agentId, Long customerId) {
 		Customer customer = customerRepository.findById(customerId)
 			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_CUSTOMER));
+
+		if (!customer.getAgent().getId().equals(agentId)) {
+			throw new CustomException(ErrorCode.FORBIDDEN);
+		}
 
 		return CustomerCommand.of(customer);
 	}
 
-	public Page<CustomerCommand> getAllCustomers(Pageable pageable) {
-		Page<Customer> customerPage = customerRepository.findAll(pageable);
+	public Page<CustomerCommand> getAllCustomers(Long agentId, Pageable pageable) {
+		Agent agent = agentRepository.findById(agentId)
+			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
+
+		Page<Customer> customerPage = customerRepository.findAllByAgent(agent, pageable);
 		Page<CustomerCommand> customerCommandPage = customerPage.map(CustomerCommand::of);
 		return customerCommandPage;
 	}
 
 	public Customer getCustomerByPhone(String phone) {
-		return customerRepository.findByPhone(phone)
-			.orElseGet(() -> null);
+		return customerRepository.findByPhone(phone).orElseGet(null);
 	}
 
 	public String excelDownload() {

@@ -77,15 +77,21 @@ public class SurveyService {
 	}
 
 	@Transactional
-	public void deleteSurvey(String surveyId) {
+	public void deleteSurvey(Long agentId, String surveyId) {
 		Survey survey = surveyRepository.findById(surveyId)
 			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
+
+		if (!survey.getAgent().getId().equals(agentId)) {
+			throw new CustomException(ErrorCode.FORBIDDEN);
+		}
+
 		questionRepository.deleteAll(survey.getQuestionList());
 		surveyRepository.delete(survey);
 	}
 
 	@Transactional
 	public void updateSurvey(
+		Long agentId,
 		String surveyId,
 		String title,
 		String description,
@@ -94,6 +100,9 @@ public class SurveyService {
 		Survey survey = surveyRepository.findById(surveyId)
 			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
 
+		if (!survey.getAgent().getId().equals(agentId)) {
+			throw new CustomException(ErrorCode.FORBIDDEN);
+		}
 		survey.updateSurveyTitleDescription(
 			(title == null || title.isBlank()) ? survey.getTitle() : title,
 			(description == null || description.isBlank()) ? survey.getDescription() : description
@@ -195,9 +204,8 @@ public class SurveyService {
 		);
 	}
 
-	@Transactional(readOnly = true)
-	public Page<AnswerCommand> getAllAnswers(Pageable pageable) {
-		Page<Answer> answerPage = answerRepository.findAll(pageable);
+	public Page<AnswerCommand> getAllAnswers(Long agentId, Pageable pageable) {
+		Page<Answer> answerPage = answerRepository.findAllByCustomer_AgentId(agentId, pageable);
 		return answerPage.map(AnswerCommand::of);
 	}
 }

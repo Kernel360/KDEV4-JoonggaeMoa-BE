@@ -55,15 +55,20 @@ public class SurveyController {
 
 	@DeleteMapping("/api/surveys/{surveyId}")
 	public ResponseEntity<ApiResponse<Void>> deleteSurvey(
+		HttpServletRequest request,
 		@PathVariable("surveyId") String surveyId
 	) {
-		surveyService.deleteSurvey(surveyId);
+		surveyService.deleteSurvey(
+			(Long)request.getAttribute("agentId"),
+			surveyId
+		);
 		return ResponseEntity.ok(ApiResponse.ok());
 	}
 
 	@PatchMapping("/api/surveys/{surveyId}")
 	public ResponseEntity<ApiResponse<Void>> updateSurvey(
-		@PathVariable("surveyId") String surveyId,
+		HttpServletRequest request,
+		@PathVariable String surveyId,
 		@RequestBody @Valid SurveyDto.UpdateRequest requestDto
 	) {
 		List<QuestionCommand> questionCommandList = requestDto.getQuestionList()
@@ -76,6 +81,7 @@ public class SurveyController {
 				.build()
 			).toList();
 		surveyService.updateSurvey(
+			(Long)request.getAttribute("agentId"),
 			surveyId,
 			requestDto.getTitle(),
 			requestDto.getDescription(),
@@ -107,8 +113,14 @@ public class SurveyController {
 	}
 
 	@GetMapping("/api/surveys/answer")
-	public ResponseEntity<ApiResponse<Page<AnswerDto.Response>>> getSurveyAnswers(Pageable pageable) {
-		Page<AnswerCommand> answerCommandPage = surveyService.getAllAnswers(pageable);
+	public ResponseEntity<ApiResponse<Page<AnswerDto.Response>>> getSurveyAnswers(
+		HttpServletRequest request,
+		Pageable pageable
+	) {
+		Page<AnswerCommand> answerCommandPage = surveyService.getAllAnswers(
+			(Long)request.getAttribute("agentId"),
+			pageable
+		);
 		Page<AnswerDto.Response> answerResponsePage = answerCommandPage.map(AnswerDto.Response::of);
 		return ResponseEntity.ok(ApiResponse.ok(answerResponsePage));
 	}
