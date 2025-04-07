@@ -60,7 +60,8 @@ public class NotificationService {
     }
 
     public List<NotificationCommand> getNotification(Long agentId) {
-        List<Notification> notificationList = notificationRepository.findByAgentIdAndIsReadFalse(agentId);
+        List<Notification> notificationList = notificationRepository.findAll();
+        //List<Notification> notificationList = notificationRepository.findByAgentIdAndIsReadFalse(agentId);
         return notificationList.stream().map(NotificationCommand::of).toList();
     }
 

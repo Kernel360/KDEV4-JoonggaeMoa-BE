@@ -14,6 +14,7 @@ public class NotificationDto {
         private Long id;
         private NotificationType type;
         private String content;
+        private boolean isRead;
 
 
         public static Response of(NotificationCommand command) {
@@ -21,6 +22,7 @@ public class NotificationDto {
                 .id(command.getId())
                 .type(command.getType())
                 .content(command.getContent())
+                .isRead(command.getIsRead())
                 .build();
         }
     }
