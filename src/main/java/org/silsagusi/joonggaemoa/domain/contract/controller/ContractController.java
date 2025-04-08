@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import org.silsagusi.joonggaemoa.domain.contract.controller.dto.ContractDetailDto;
 import org.silsagusi.joonggaemoa.domain.contract.controller.dto.ContractDto;
+import org.silsagusi.joonggaemoa.domain.contract.controller.dto.ContractSummaryResponse;
 import org.silsagusi.joonggaemoa.domain.contract.service.ContractService;
 import org.silsagusi.joonggaemoa.domain.contract.service.command.ContractCommand;
 import org.silsagusi.joonggaemoa.global.api.ApiResponse;
@@ -79,5 +80,16 @@ public class ContractController {
 			contractId
 		);
 		return ResponseEntity.ok(ApiResponse.ok());
+	}
+
+	@GetMapping("/api/dashboard/contract-summary")
+	public ResponseEntity<ApiResponse<ContractSummaryResponse>> getContractSummary(
+		HttpServletRequest request
+	) {
+		return ResponseEntity.ok(ApiResponse.ok(
+			contractService.getContractSummary(
+				(Long)request.getAttribute("agentId")
+			)
+		));
 	}
 }

@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 import org.silsagusi.joonggaemoa.domain.agent.repository.AgentRepository;
+import org.silsagusi.joonggaemoa.domain.contract.controller.dto.ContractSummaryResponse;
 import org.silsagusi.joonggaemoa.domain.contract.entity.Contract;
 import org.silsagusi.joonggaemoa.domain.contract.repository.ContractRepository;
 import org.silsagusi.joonggaemoa.domain.contract.service.command.ContractCommand;
@@ -116,6 +117,26 @@ public class ContractService {
 
 	public String getUrl(String fileName) throws IOException {
 		return amazonS3.getUrl(S3_BUCKET_NAME, fileName).toString();
+	}
+
+	public ContractSummaryResponse getContractSummary(Long agentId) {
+		LocalDate today = LocalDate.now();
+		LocalDate sevenDaysAgo = today.minusDays(7);
+
+		long todayCount = contractRepository.countInProgress(agentId, today);
+		long sevenDaysAgoCount = contractRepository.countInProgress(agentId, sevenDaysAgo);
+
+		System.out.println(sevenDaysAgo);
+		System.out.println(sevenDaysAgoCount);
+
+		double rate;
+		if (sevenDaysAgoCount == 0) {
+			rate = todayCount == 0 ? 0 : 100;
+		} else {
+			rate = ((double)(todayCount - sevenDaysAgoCount) / sevenDaysAgoCount) * 100;
+		}
+
+		return new ContractSummaryResponse(todayCount, rate);
 	}
 
 }
