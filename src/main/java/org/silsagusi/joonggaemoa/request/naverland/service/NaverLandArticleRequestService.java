@@ -18,7 +18,7 @@ import java.util.Objects;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class NaverLandRequestService {
+public class NaverLandArticleRequestService {
 
 	private final NaverLandApiClient naverLandApiClient;
 	private final ArticleRepository articleRepository;
@@ -45,8 +45,8 @@ public class NaverLandRequestService {
 
 			hasMore = response.isMore();
 
-			// 2~7초 랜덤 딜레이
-			Thread.sleep((long)(Math.random() * 5000 + 2000));
+			// 3~7초 랜덤 딜레이
+			Thread.sleep((long)(3000 + Math.random() * 4000));
 		} while (hasMore && page <= 10);
 
 		// 마지막 페이지까지 완료된 경우
@@ -60,12 +60,11 @@ public class NaverLandRequestService {
 			.map(body -> {
 				AddressDto addr = addressLookupService.lookupAddress(body.getLat(), body.getLng());
 
-				if (addr == null || addr.getLotAddress() == null) {
-					log.warn("주소 정보 없음: lat={}, lon={}", body.getLat(), body.getLng());
+				if (addr == null) {
 					return null;
 				}
 
-				return Article.createFrom(body, region, addr.toLotAddress(), addr.toRoadAddress());
+				return Article.createFrom(body, region, addr);
 			})
 			.filter(Objects::nonNull)
 			.toList();
