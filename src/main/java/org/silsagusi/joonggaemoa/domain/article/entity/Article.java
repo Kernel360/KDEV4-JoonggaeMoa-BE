@@ -1,9 +1,12 @@
 package org.silsagusi.joonggaemoa.domain.article.entity;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.silsagusi.joonggaemoa.request.naverland.service.dto.ClientArticleResponse;
 
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
@@ -51,7 +54,7 @@ public class Article {
 	private Integer rentPrice;
 
 	@Column(name = "confirmed_at")
-	private String confirmedAt;
+	private LocalDate confirmedAt;
 
 	private Double latitude;
 
@@ -63,6 +66,8 @@ public class Article {
 	private String direction;
 
 	@ElementCollection
+	@CollectionTable(name = "article_tags", joinColumns = @JoinColumn(name = "article_tags_id"))
+	@Column(name = "tag")
 	private List<String> tags;
 
 	@Column(name = "subway_info")
@@ -77,12 +82,8 @@ public class Article {
 	@Column(name = "agent_name")
 	private String agentName;
 
-	String 지번;
-
-	String 도로명;
-
 	public Article(String cortarNo, String articleNo, String name, String realEstateType, String tradeType,
-		String price, Integer rentPrice, String confirmedAt, Double latitude, Double longitude, String imageUrl,
+		String price, Integer rentPrice, LocalDate confirmedAt, Double latitude, Double longitude, String imageUrl,
 		String direction, List<String> tags, String subwayInfo, String companyId, String companyName,
 		String agentName, Region region) {
 		this.cortarNo = cortarNo;
@@ -114,7 +115,8 @@ public class Article {
 			body.getTradTpNm(),
 			body.getPrc() != null ? body.getPrc().toString() : null,
 			body.getRentPrc(),
-			body.getAtclCfmYmd(),
+			body.getAtclCfmYmd() != null ?
+				LocalDate.parse(body.getAtclCfmYmd(), DateTimeFormatter.ofPattern("yy.MM.dd.")) : null,
 			body.getLat(),
 			body.getLng(),
 			body.getRepImgUrl(),

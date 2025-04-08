@@ -1,5 +1,6 @@
 package org.silsagusi.joonggaemoa.domain.article.service.dto;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.silsagusi.joonggaemoa.domain.article.entity.Article;
@@ -22,7 +23,7 @@ public class ArticleResponse {
 	private String tradeType;
 	private String price;
 	private Integer rentPrice;
-	private String confirmedAt;
+	private LocalDate confirmedAt;
 	private Double latitude;
 	private Double longitude;
 	private String imageUrl;
