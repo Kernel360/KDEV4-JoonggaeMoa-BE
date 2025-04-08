@@ -54,7 +54,7 @@ public class QuestionDto {
 	@Builder
 	public static class Response {
 		private Long id;
-		private Long surveyId;
+		private String surveyId;
 		private String content;
 		private String type;
 		private Boolean isRequired;

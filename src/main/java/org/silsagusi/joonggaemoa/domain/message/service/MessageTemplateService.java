@@ -41,11 +41,8 @@ public class MessageTemplateService {
 		messageTemplateRepository.save(messageTemplate);
 	}
 
-	public List<MessageTemplateCommand> getMessageTemplate(Long agentId) {
-		Agent agent = agentRepository.findById(agentId)
-			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
-
-		List<MessageTemplate> messageTemplateList = messageTemplateRepository.findByAgent(agent);
+	public List<MessageTemplateCommand> getMessageTemplateList(Long agentId) {
+		List<MessageTemplate> messageTemplateList = messageTemplateRepository.findByAgentId(agentId);
 
 		return messageTemplateList.stream()
 			.map(MessageTemplateCommand::of)
@@ -53,13 +50,10 @@ public class MessageTemplateService {
 	}
 
 	public void updateMessageTemplate(Long agentId, Long templateId, String title, String content) {
-		Agent agent = agentRepository.findById(agentId)
-			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
-
 		MessageTemplate messageTemplate = messageTemplateRepository.findById(templateId)
 			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
 
-		if (!messageTemplate.getAgent().equals(agent)) {
+		if (!messageTemplate.getAgent().getId().equals(agentId)) {
 			throw new CustomException(ErrorCode.FORBIDDEN);
 		}
 
@@ -68,9 +62,13 @@ public class MessageTemplateService {
 		messageTemplateRepository.save(messageTemplate);
 	}
 
-	public void deleteMessageTemplate(Long templateId) {
+	public void deleteMessageTemplate(Long agentId, Long templateId) {
 		MessageTemplate messageTemplate = messageTemplateRepository.findById(templateId)
 			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
+
+		if (!messageTemplate.getAgent().getId().equals(agentId)) {
+			throw new CustomException(ErrorCode.FORBIDDEN);
+		}
 
 		messageTemplateRepository.delete(messageTemplate);
 	}

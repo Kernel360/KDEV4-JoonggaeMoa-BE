@@ -24,9 +24,9 @@ import lombok.NoArgsConstructor;
 public class Survey extends BaseEntity {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "survey_id")
-	private Long id;
+	@GeneratedValue(strategy = GenerationType.UUID)
+	@Column(name = "survey_id", columnDefinition = "CHAR(36)")
+	private String id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "agent_id")
@@ -42,7 +42,7 @@ public class Survey extends BaseEntity {
 	public Survey(Agent agent, String title, String description, List<Question> questionList) {
 		this.agent = agent;
 		this.title = title;
-		this.description = description;
+		this.description = description.isEmpty() ? "" : description;
 		this.questionList = questionList;
 	}
 

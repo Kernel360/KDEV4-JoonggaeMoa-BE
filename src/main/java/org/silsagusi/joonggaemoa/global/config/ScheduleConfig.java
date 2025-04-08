@@ -2,69 +2,75 @@ package org.silsagusi.joonggaemoa.global.config;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.silsagusi.joonggaemoa.domain.message.repository.ReservedMessageRepository;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.configuration.JobRegistry;
 import org.springframework.batch.core.launch.JobLauncher;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
 @Slf4j
 @Configuration
 @EnableScheduling
+@EnableAsync
 @RequiredArgsConstructor
 public class ScheduleConfig {
 
     private final JobLauncher jobLauncher;
     private final JobRegistry jobRegistry;
+    private static final String TIME_STAMP = "timeStamp";
+    private static final String TIME_ZONE = "Asia/Seoul";
 
-    private final ReservedMessageRepository reservedMessageRepository;
-
-    // @Scheduled(cron = "0 0 * * * *", zone = "Asia/Seoul")
-    public void sendMessages() throws Exception {
-        log.info("Sending messages schedule start");
-
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String date = dateFormat.format(new Date());
-
-        JobParameters jobParameters = new JobParametersBuilder()
-            .addString("date", date)
-            .toJobParameters();
-
-        jobLauncher.run(jobRegistry.getJob("smsJob1"), jobParameters);
+    @Bean
+    public ThreadPoolTaskScheduler taskScheduler() {
+        ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();
+        scheduler.setPoolSize(5); // 작업 수
+        scheduler.setThreadNamePrefix("scheduler-thread");
+        scheduler.initialize();
+        return scheduler;
     }
 
-    @Scheduled(cron = "0 0 * * * *", zone = "Asia/Seoul")
+    @Async
+    @Scheduled(cron = "0 0/30 * * * *", zone = TIME_ZONE)
+    public void sendMessages() throws Exception {
+        log.info("Sending message schedule start");
+
+        JobParameters jobParameters = new JobParametersBuilder()
+            .addLong(TIME_STAMP, System.currentTimeMillis())
+            .toJobParameters();
+
+        jobLauncher.run(jobRegistry.getJob("messageSendingJob"), jobParameters);
+
+    }
+
+    @Async
+    @Scheduled(cron = "0 0/30 * * * *", zone = TIME_ZONE)
+    public void notifyTodayConsultations() throws Exception {
+        log.info("Checking today's consultation schedule start");
+
+        JobParameters jobParameters = new JobParametersBuilder()
+            .addLong(TIME_STAMP, System.currentTimeMillis())
+            .toJobParameters();
+
+        jobLauncher.run(jobRegistry.getJob("todayConsultationNotifyJob"), jobParameters);
+
+    }
+
+    @Async
+    @Scheduled(cron = "0 0 * * * *", zone = TIME_ZONE)
     public void notifyContractExpiry() throws Exception {
         log.info("Checking contract expiration schedule start");
 
-        String date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
-
         JobParameters jobParameters = new JobParametersBuilder()
-            .addString("date", date)
+            .addString(TIME_STAMP, String.valueOf(System.currentTimeMillis()))
             .toJobParameters();
 
         jobLauncher.run(jobRegistry.getJob("contractExpireNotifyJob"), jobParameters);
     }
-
-    @Scheduled(cron = "0 0 * * * *", zone = "Asia/Seoul")
-    public void notifyTodayConsultations() throws Exception {
-        log.info("Checking today's consultation schedule start");
-
-        String date = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
-
-        JobParameters jobParameters = new JobParametersBuilder()
-            .addString("date", date)
-            .addLong("timestamp", System.currentTimeMillis())
-            .toJobParameters();
-
-        jobLauncher.run(jobRegistry.getJob("todayConsultationNotifyJob"), jobParameters);
-    }
-
 
 }

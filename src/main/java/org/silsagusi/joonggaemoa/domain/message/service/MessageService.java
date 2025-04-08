@@ -7,11 +7,9 @@ import org.silsagusi.joonggaemoa.domain.agent.entity.Agent;
 import org.silsagusi.joonggaemoa.domain.agent.repository.AgentRepository;
 import org.silsagusi.joonggaemoa.domain.customer.repository.CustomerRepository;
 import org.silsagusi.joonggaemoa.domain.message.entity.Message;
-import org.silsagusi.joonggaemoa.domain.message.entity.ReservedMessage;
+import org.silsagusi.joonggaemoa.domain.message.entity.SendStatus;
 import org.silsagusi.joonggaemoa.domain.message.repository.MessageRepository;
-import org.silsagusi.joonggaemoa.domain.message.repository.ReservedMessageRepository;
 import org.silsagusi.joonggaemoa.domain.message.service.command.MessageCommand;
-import org.silsagusi.joonggaemoa.domain.message.service.command.ReservedMessageCommand;
 import org.silsagusi.joonggaemoa.global.api.exception.CustomException;
 import org.silsagusi.joonggaemoa.global.api.exception.ErrorCode;
 import org.springframework.data.domain.Page;
@@ -26,65 +24,70 @@ public class MessageService {
 
 	private final CustomerRepository customerRepository;
 	private final MessageRepository messageRepository;
-	private final ReservedMessageRepository reservedMessageRepository;
 	private final AgentRepository agentRepository;
 
-	public Page<MessageCommand> getMessagePage(Pageable pageable) {
-
-		Page<Message> messagePage = messageRepository.findAll(pageable);
+	public Page<MessageCommand> getMessagePage(Long agentId, Pageable pageable) {
+		Page<Message> messagePage = messageRepository.findAllByCustomerAgent_Id(agentId, pageable);
 
 		return messagePage.map(MessageCommand::of);
 	}
 
-	public void createReservedMessage(String content, LocalDateTime sendAt, List<Long> customerIdList) {
+	public void createMessage(String content, LocalDateTime sendAt, List<Long> customerIdList) {
 		customerIdList.stream()
 			.map(id -> customerRepository.findById(id)
 				.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_CUSTOMER)))
-			.map(customer -> new ReservedMessage(customer, sendAt, content))
-			.forEach(reservedMessageRepository::save);
+			.map(customer -> new Message(customer, content, sendAt))
+			.forEach(messageRepository::save);
 	}
 
-	public void updateReservedMessage(Long agentId, Long reservedMessageId, LocalDateTime sendAt,
-		String content) {
+	public void updateMessage(Long agentId, Long messageId, LocalDateTime sendAt, String content) {
 		Agent agent = agentRepository.findById(agentId)
 			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
 
-		ReservedMessage reservedMessage = reservedMessageRepository.findById(reservedMessageId)
+		Message message = messageRepository.findById(messageId)
 			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
 
-		if (!agent.equals(reservedMessage.getCustomer().getAgent())) {
+		if (!agent.equals(message.getCustomer().getAgent())) {
 			throw new CustomException(ErrorCode.UNAUTHORIZED);
 		}
 
-		reservedMessage.updateReservedMessage(sendAt, content);
+		if (message.getSendStatus() != SendStatus.PENDING) {
+			throw new CustomException(ErrorCode.BAD_REQUEST);
+		}
 
-		reservedMessageRepository.save(reservedMessage);
+		message.updateMessage(sendAt, content);
+
+		messageRepository.save(message);
 	}
 
-	public Page<ReservedMessageCommand> getReservedMessagePage(Pageable pageable) {
-		Page<ReservedMessage> reservedMessagePage = reservedMessageRepository.findAll(pageable);
-		return reservedMessagePage.map(ReservedMessageCommand::of);
+	public Page<MessageCommand> getReservedMessagePage(Long agentId, Pageable pageable) {
+		Page<Message> messagePage = messageRepository.findAllByCustomerAgent_IdAndSendStatus(agentId,
+			SendStatus.PENDING, pageable);
+		return messagePage.map(MessageCommand::of);
 	}
 
-	public ReservedMessageCommand getReservedMessage(Long reservedMessageId) {
-		ReservedMessage reservedMessage = reservedMessageRepository.findById(reservedMessageId)
+	public MessageCommand getReservedMessage(Long messageId) {
+		Message message = messageRepository.findById(messageId)
 			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
 
-		return ReservedMessageCommand.of(reservedMessage);
-
+		return MessageCommand.of(message);
 	}
 
-	public void deleteReservedMessage(Long agentId, Long reservedMessageId) {
+	public void deleteReservedMessage(Long agentId, Long messageId) {
 		Agent agent = agentRepository.findById(agentId)
 			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
 
-		ReservedMessage reservedMessage = reservedMessageRepository.findById(reservedMessageId)
+		Message message = messageRepository.findById(messageId)
 			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
 
-		if (!agent.equals(reservedMessage.getCustomer().getAgent())) {
+		if (!agent.equals(message.getCustomer().getAgent())) {
 			throw new CustomException(ErrorCode.UNAUTHORIZED);
 		}
 
-		reservedMessageRepository.delete(reservedMessage);
+		if (message.getSendStatus() != SendStatus.PENDING) {
+			throw new CustomException(ErrorCode.BAD_REQUEST);
+		}
+
+		messageRepository.delete(message);
 	}
 }

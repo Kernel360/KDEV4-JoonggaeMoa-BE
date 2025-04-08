@@ -1,31 +1,35 @@
 package org.silsagusi.joonggaemoa.domain.notify.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.silsagusi.joonggaemoa.domain.notify.controller.dto.NotificationDto;
 import org.silsagusi.joonggaemoa.domain.notify.service.NotificationService;
 import org.silsagusi.joonggaemoa.domain.notify.service.command.NotificationCommand;
 import org.silsagusi.joonggaemoa.global.api.ApiResponse;
+import org.silsagusi.joonggaemoa.global.auth.jwt.JwtProvider;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.List;
 
+@Slf4j
 @RequiredArgsConstructor
 @RestController
 public class NotificationController {
 
     private final NotificationService notificationService;
+    private final JwtProvider jwtProvider;
 
     @GetMapping("/api/notification/subscribe")
     public SseEmitter subscribe(
-        HttpServletRequest request
+        @RequestParam("agentId") Long agentId
     ) {
-        SseEmitter sseEmitter = notificationService.subscribe((Long) request.getAttribute("agentId"));
+        SseEmitter sseEmitter = notificationService.subscribe(agentId);
         return sseEmitter;
     }
 
@@ -41,7 +45,7 @@ public class NotificationController {
 
     @PatchMapping("/api/notification/read")
     public ResponseEntity<ApiResponse<List<Void>>> readNotification(
-        @PathParam("notificationId") Long notificationId
+        @RequestParam("notificationId") Long notificationId
     ) {
         notificationService.markRead(notificationId);
         return ResponseEntity.ok(ApiResponse.ok());

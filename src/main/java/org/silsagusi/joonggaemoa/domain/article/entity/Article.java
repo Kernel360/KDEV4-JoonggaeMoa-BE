@@ -68,6 +68,10 @@ public class Article {
 	@Column(name = "agent_name")
 	private String agentName;
 
+	String 지번;
+
+	String 도로명;
+
 	public Article(String cortarNo, String articleNo, String name, String realEstateType, String tradeType,
 		String price, Integer rentPrice, String confirmedAt, Double latitude, Double longitude, String imageUrl,
 		String direction, List<String> tags, String subwayInfo, String companyId, String companyName,

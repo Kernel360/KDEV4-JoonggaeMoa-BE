@@ -43,7 +43,7 @@ public class AgentController {
 	}
 
 	@PostMapping("/api/agents/username")
-	public ResponseEntity<ApiResponse<FindUsernameDto.Response>> getUsername(
+	public ResponseEntity<ApiResponse<FindUsernameDto.Response>> findUsername(
 		@RequestBody @Valid FindUsernameDto.Request requestDto) {
 		AgentCommand agentCommand = agentService.getAgentByNameAndPhone(
 			requestDto.getName(),
