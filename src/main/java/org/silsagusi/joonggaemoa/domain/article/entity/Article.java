@@ -1,21 +1,13 @@
 package org.silsagusi.joonggaemoa.domain.article.entity;
 
-import java.util.List;
-
-import org.silsagusi.joonggaemoa.request.naverland.service.dto.ClientArticleResponse;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.silsagusi.joonggaemoa.request.naverland.service.dto.AddressResponse;
+import org.silsagusi.joonggaemoa.request.naverland.service.dto.ClientArticleResponse;
+
+import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity(name = "articles")
@@ -31,33 +23,28 @@ public class Article {
 	@JoinColumn(name = "region_id", nullable = false)
 	private Region region;
 
-	@Column(name = "cortar_no", nullable = false)
+	@Column(nullable = false)
 	private String cortarNo;
 
-	@Column(name = "article_no", nullable = false)
+	@Column(nullable = false)
 	private String articleNo;
 
 	private String name;
 
-	@Column(name = "real_estate_type")
 	private String realEstateType;
 
-	@Column(name = "trade_type")
 	private String tradeType;
 
 	private String price;
 
-	@Column(name = "rent_price")
 	private Integer rentPrice;
 
-	@Column(name = "confirmed_at")
 	private String confirmedAt;
 
 	private Double latitude;
 
 	private Double longitude;
 
-	@Column(name = "image_url")
 	private String imageUrl;
 
 	private String direction;
@@ -65,26 +52,49 @@ public class Article {
 	@ElementCollection
 	private List<String> tags;
 
-	@Column(name = "subway_info")
 	private String subwayInfo;
 
-	@Column(name = "company_id")
 	private String companyId;
 
-	@Column(name = "company_name")
 	private String companyName;
 
-	@Column(name = "agent_name")
 	private String agentName;
 
-	String 지번;
+	@Column(name = "lot_address")
+	private String lotAddressName;
 
-	String 도로명;
+	@Column(name = "road_address")
+	private String roadAddressName;
+
+	private String city;
+
+	private String district;
+
+	private String town;
+
+	private String mainAddressNo;
+
+	private String subAddressNo;
+
+	private String roadName;
+
+	private String mainBuildingNo;
+
+	private String subBuildingNo;
+
+	private String buildingName;
+
+	@Column(name = "zip_code")
+	private String zoneNo;
 
 	public Article(String cortarNo, String articleNo, String name, String realEstateType, String tradeType,
-		String price, Integer rentPrice, String confirmedAt, Double latitude, Double longitude, String imageUrl,
-		String direction, List<String> tags, String subwayInfo, String companyId, String companyName,
-		String agentName, Region region) {
+	               String price, Integer rentPrice, String confirmedAt, Double latitude, Double longitude,
+	               String imageUrl, String direction, List<String> tags, String subwayInfo,
+	               String companyId, String companyName, String agentName, Region region,
+	               String lotAddressName, String roadAddressName, String city, String district, String town,
+	               String mainAddressNo, String subAddressNo,
+	               String roadName, String mainBuildingNo, String subBuildingNo, String buildingName, String zoneNo
+	) {
 		this.cortarNo = cortarNo;
 		this.articleNo = articleNo;
 		this.name = name;
@@ -103,9 +113,21 @@ public class Article {
 		this.companyName = companyName;
 		this.agentName = agentName;
 		this.region = region;
+		this.lotAddressName = lotAddressName;
+		this.roadAddressName = roadAddressName;
+		this.city = city;
+		this.district = district;
+		this.town = town;
+		this.mainAddressNo = mainAddressNo;
+		this.subAddressNo = subAddressNo;
+		this.roadName = roadName;
+		this.mainBuildingNo = mainBuildingNo;
+		this.subBuildingNo = subBuildingNo;
+		this.buildingName = buildingName;
+		this.zoneNo = zoneNo;
 	}
 
-	public static Article createFrom(ClientArticleResponse.Body body, Region region) {
+	public static Article createFrom(ClientArticleResponse.Body body, Region region, AddressResponse addressResponse) {
 		return new Article(
 			body.getCortarNo(),
 			body.getAtclNo(),
@@ -124,7 +146,19 @@ public class Article {
 			body.getCpid(),
 			body.getCpNm(),
 			body.getRltrNm(),
-			region
+			region,
+			addressResponse.getLotAddress(),
+			addressResponse.getRoadAddress(),
+			addressResponse.getCity(),
+			addressResponse.getDistrict(),
+			addressResponse.getRegion(),
+			addressResponse.getMainAddressNo(),
+			addressResponse.getSubAddressNo(),
+			addressResponse.getRoadName(),
+			addressResponse.getMainBuildingNo(),
+			addressResponse.getSubBuildingNo(),
+			addressResponse.getBuildingName(),
+			addressResponse.getZoneNo()
 		);
 	}
 }

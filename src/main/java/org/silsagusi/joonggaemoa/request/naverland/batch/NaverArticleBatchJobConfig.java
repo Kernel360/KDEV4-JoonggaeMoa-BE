@@ -2,7 +2,7 @@ package org.silsagusi.joonggaemoa.request.naverland.batch;
 
 import org.silsagusi.joonggaemoa.domain.article.entity.RegionScrapStatus;
 import org.silsagusi.joonggaemoa.domain.article.repository.RegionScrapStatusRepository;
-import org.silsagusi.joonggaemoa.request.naverland.service.NaverLandRequestService;
+import org.silsagusi.joonggaemoa.request.naverland.service.NaverLandArticleRequestService;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobScope;
@@ -32,7 +32,7 @@ public class NaverArticleBatchJobConfig {
 	private final JobRepository jobRepository;
 	private final PlatformTransactionManager transactionManager;
 	private final RegionScrapStatusRepository regionScrapStatusRepository;
-	private final NaverLandRequestService naverLandRequestService;
+	private final NaverLandArticleRequestService naverLandArticleRequestService;
 
 	@Bean
 	public Job naverArticleJob(Step naverArticleStep) {
@@ -58,12 +58,13 @@ public class NaverArticleBatchJobConfig {
 		return new IteratorItemReader<>(regionScrapStatusRepository.findTop50ByCompletedFalseOrderByIdAsc());
 	}
 
+
 	@Bean
 	@StepScope
 	public ItemProcessor<RegionScrapStatus, RegionScrapStatus> scrapStatusProcessor() {
 		return scrapStatus -> {
-			log.info("Fetching articles for regoin: {}", scrapStatus.getRegion().getCortarNo());
-			naverLandRequestService.scrapArticles(scrapStatus);
+			log.info("Fetching articles for region: {}", scrapStatus.getRegion().getCortarNo());
+			naverLandArticleRequestService.scrapArticles(scrapStatus);
 			return scrapStatus;
 		};
 	}

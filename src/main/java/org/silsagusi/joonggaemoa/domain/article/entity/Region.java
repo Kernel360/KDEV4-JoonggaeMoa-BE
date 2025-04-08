@@ -1,5 +1,7 @@
 package org.silsagusi.joonggaemoa.domain.article.entity;
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -13,6 +15,7 @@ import lombok.ToString;
 @ToString
 @Entity(name = "regions")
 @Getter
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class Region {
 
 	@Id
@@ -21,7 +24,6 @@ public class Region {
 	private Long id;
 
 	// 법정동 코드
-	@Column(name = "cortar_no")
 	private String cortarNo;
 
 	// 화면 정가운데 위도
