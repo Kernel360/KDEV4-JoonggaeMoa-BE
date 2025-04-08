@@ -1,9 +1,9 @@
-package org.silsagusi.joonggaemoa.global.address.dto;
+package org.silsagusi.joonggaemoa.request.naverland.service.dto;
 
 import lombok.Getter;
 
 @Getter
-public class AddressDto {
+public class AddressResponse {
 	private final String lotAddress;
 	private final String roadAddress;
 	private final String city;
@@ -17,7 +17,7 @@ public class AddressDto {
 	private final String buildingName;
 	private final String zoneNo;
 
-	public AddressDto(
+	public AddressResponse(
 		String lotAddress,
 		String roadAddress,
 		String city,

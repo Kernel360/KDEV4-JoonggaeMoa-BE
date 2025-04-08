@@ -6,7 +6,7 @@ import org.silsagusi.joonggaemoa.domain.article.entity.Article;
 import org.silsagusi.joonggaemoa.domain.article.entity.Region;
 import org.silsagusi.joonggaemoa.domain.article.entity.RegionScrapStatus;
 import org.silsagusi.joonggaemoa.domain.article.repository.ArticleRepository;
-import org.silsagusi.joonggaemoa.global.address.dto.AddressDto;
+import org.silsagusi.joonggaemoa.request.naverland.service.dto.AddressResponse;
 import org.silsagusi.joonggaemoa.request.naverland.client.NaverLandApiClient;
 import org.silsagusi.joonggaemoa.request.naverland.service.dto.ClientArticleResponse;
 import org.springframework.stereotype.Service;
@@ -58,7 +58,7 @@ public class NaverLandArticleRequestService {
 	private List<Article> mapToArticles(List<ClientArticleResponse.Body> bodies, Region region) {
 		return bodies.stream()
 			.map(body -> {
-				AddressDto addr = addressLookupService.lookupAddress(body.getLat(), body.getLng());
+				AddressResponse addr = addressLookupService.lookupAddress(body.getLat(), body.getLng());
 
 				if (addr == null) {
 					return null;
