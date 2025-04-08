@@ -2,6 +2,7 @@ package org.silsagusi.joonggaemoa.domain.notify.service;
 
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.silsagusi.joonggaemoa.domain.notify.entity.Notification;
 import org.silsagusi.joonggaemoa.domain.notify.entity.NotificationType;
 import org.silsagusi.joonggaemoa.domain.notify.repository.EmitterRepository;
@@ -15,6 +16,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import java.io.IOException;
 import java.util.List;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class NotificationService {
@@ -36,6 +38,14 @@ public class NotificationService {
     }
 
     public void notify(Long agentId, NotificationType type, String content) {
+
+        boolean alreadyNotified = notificationRepository.existsByAgentIdAndTypeAndContent(agentId, type, content);
+
+
+        if (alreadyNotified) {
+            log.info("이미 같은 알림이 전송됨: agentId={}, content={}", agentId, content);
+            return;
+        }
 
         Notification notification = new Notification(
             agentId, type, content
