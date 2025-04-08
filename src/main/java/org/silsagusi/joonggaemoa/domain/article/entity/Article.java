@@ -1,13 +1,25 @@
 package org.silsagusi.joonggaemoa.domain.article.entity;
 
-import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+
 import org.silsagusi.joonggaemoa.request.naverland.service.dto.AddressResponse;
 import org.silsagusi.joonggaemoa.request.naverland.service.dto.ClientArticleResponse;
 
-import java.util.List;
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity(name = "articles")
@@ -154,7 +166,7 @@ public class Article {
 		this.zoneNo = zoneNo;
 	}
 
-	public static Article createFrom(ClientArticleResponse.Body body, Region region, AddressDto addressDto) {
+	public static Article createFrom(ClientArticleResponse.Body body, Region region, AddressResponse addressResponse) {
 		return new Article(
 			body.getCortarNo(),
 			body.getAtclNo(),
@@ -174,18 +186,18 @@ public class Article {
 			body.getCpNm(),
 			body.getRltrNm(),
 			region,
-			addressDto.getLotAddress(),
-			addressDto.getRoadAddress(),
-			addressDto.getCity(),
-			addressDto.getDistrict(),
-			addressDto.getRegion(),
-			addressDto.getMainAddressNo(),
-			addressDto.getSubAddressNo(),
-			addressDto.getRoadName(),
-			addressDto.getMainBuildingNo(),
-			addressDto.getSubBuildingNo(),
-			addressDto.getBuildingName(),
-			addressDto.getZoneNo()
+			addressResponse.getLotAddress(),
+			addressResponse.getRoadAddress(),
+			addressResponse.getCity(),
+			addressResponse.getDistrict(),
+			addressResponse.getRegion(),
+			addressResponse.getMainAddressNo(),
+			addressResponse.getSubAddressNo(),
+			addressResponse.getRoadName(),
+			addressResponse.getMainBuildingNo(),
+			addressResponse.getSubBuildingNo(),
+			addressResponse.getBuildingName(),
+			addressResponse.getZoneNo()
 		);
 	}
 

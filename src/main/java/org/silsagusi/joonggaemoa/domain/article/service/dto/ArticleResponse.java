@@ -5,14 +5,10 @@ import java.util.List;
 
 import org.silsagusi.joonggaemoa.domain.article.entity.Article;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
 public class ArticleResponse {
 	private Long id;
@@ -34,7 +30,6 @@ public class ArticleResponse {
 	private String companyId;
 	private String companyName;
 	private String agentName;
-
 	private String cortarName;
 
 	public static ArticleResponse of(Article article) {
@@ -47,9 +42,10 @@ public class ArticleResponse {
 			.tradeType(article.getTradeType())
 			.price(article.getPrice())
 			.rentPrice(article.getRentPrice())
+			.lotAddressName(article.getLotAddressName())
+			.roadAddressName(article.getRoadAddressName())
+			.zipCode(article.getZoneNo())
 			.confirmedAt(article.getConfirmedAt())
-			.latitude(article.getLatitude())
-			.longitude(article.getLongitude())
 			.imageUrl(article.getImageUrl())
 			.direction(article.getDirection())
 			.tags(article.getTags())
