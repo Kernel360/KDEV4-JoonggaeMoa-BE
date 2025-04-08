@@ -1,20 +1,17 @@
 package org.silsagusi.joonggaemoa.domain.article.entity;
 
-import com.fasterxml.jackson.databind.PropertyNamingStrategies;
-import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.silsagusi.joonggaemoa.global.address.dto.AddressDto;
 import org.silsagusi.joonggaemoa.request.naverland.service.dto.ClientArticleResponse;
-import org.silsagusi.joonggaemoa.request.naverland.service.dto.Coord2AddressResponse;
 
 import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity(name = "articles")
 @Getter
-@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class Article {
 
 	@Id
@@ -63,21 +60,17 @@ public class Article {
 
 	private String agentName;
 
-	String 지번;
-
-	String 도로명;
-
 	@Column(name = "lot_address")
-	private String addressName;
+	private String lotAddressName;
 
-	@Column(name = "city")
-	private String region1DepthName;
+	@Column(name = "road_address")
+	private String roadAddressName;
 
-	@Column(name = "district")
-	private String region2DepthName;
+	private String city;
 
-	@Column(name = "section")
-	private String region3DepthName;
+	private String district;
+
+	private String town;
 
 	private String mainAddressNo;
 
@@ -91,13 +84,14 @@ public class Article {
 
 	private String buildingName;
 
+	@Column(name = "zip_code")
 	private String zoneNo;
 
 	public Article(String cortarNo, String articleNo, String name, String realEstateType, String tradeType,
 	               String price, Integer rentPrice, String confirmedAt, Double latitude, Double longitude,
 	               String imageUrl, String direction, List<String> tags, String subwayInfo,
 	               String companyId, String companyName, String agentName, Region region,
-	               String addressName, String region1DepthName, String region2DepthName, String region3DepthName,
+	               String lotAddressName, String roadAddressName, String city, String district, String town,
 	               String mainAddressNo, String subAddressNo,
 	               String roadName, String mainBuildingNo, String subBuildingNo, String buildingName, String zoneNo
 	) {
@@ -119,10 +113,11 @@ public class Article {
 		this.companyName = companyName;
 		this.agentName = agentName;
 		this.region = region;
-		this.addressName = addressName;
-		this.region1DepthName = region1DepthName;
-		this.region2DepthName = region2DepthName;
-		this.region3DepthName = region3DepthName;
+		this.lotAddressName = lotAddressName;
+		this.roadAddressName = roadAddressName;
+		this.city = city;
+		this.district = district;
+		this.town = town;
 		this.mainAddressNo = mainAddressNo;
 		this.subAddressNo = subAddressNo;
 		this.roadName = roadName;
@@ -132,9 +127,7 @@ public class Article {
 		this.zoneNo = zoneNo;
 	}
 
-	public static Article createFrom(ClientArticleResponse.Body body, Region region,
-		Coord2AddressResponse.Address addr, Coord2AddressResponse.RoadAddress roadAddr
-		) {
+	public static Article createFrom(ClientArticleResponse.Body body, Region region, AddressDto addressDto) {
 		return new Article(
 			body.getCortarNo(),
 			body.getAtclNo(),
@@ -154,17 +147,18 @@ public class Article {
 			body.getCpNm(),
 			body.getRltrNm(),
 			region,
-			addr.getAddressName(),
-			addr.getRegion1DepthName(),
-			addr.getRegion2DepthName(),
-			addr.getRegion3DepthName(),
-			addr.getMainAddressNo(),
-			addr.getSubAddressNo(),
-			roadAddr.getRoadName(),
-			roadAddr.getMainBuildingNo(),
-			roadAddr.getSubBuildingNo(),
-			roadAddr.getBuildingName(),
-			roadAddr.getZoneNo()
-			);
+			addressDto.getLotAddress(),
+			addressDto.getRoadAddress(),
+			addressDto.getCity(),
+			addressDto.getDistrict(),
+			addressDto.getRegion(),
+			addressDto.getMainAddressNo(),
+			addressDto.getSubAddressNo(),
+			addressDto.getRoadName(),
+			addressDto.getMainBuildingNo(),
+			addressDto.getSubBuildingNo(),
+			addressDto.getBuildingName(),
+			addressDto.getZoneNo()
+		);
 	}
 }

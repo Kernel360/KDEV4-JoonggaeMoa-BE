@@ -1,26 +1,47 @@
 package org.silsagusi.joonggaemoa.global.address.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.silsagusi.joonggaemoa.request.naverland.service.dto.Coord2AddressResponse;
 
 @Getter
-@AllArgsConstructor
 public class AddressDto {
-	private String lotAddress;
-	private String roadAddress;
+	private final String lotAddress;
+	private final String roadAddress;
+	private final String city;
+	private final String district;
+	private final String region;
+	private final String mainAddressNo;
+	private final String subAddressNo;
+	private final String roadName;
+	private final String mainBuildingNo;
+	private final String subBuildingNo;
+	private final String buildingName;
+	private final String zoneNo;
 
-	public Coord2AddressResponse.Address toLotAddress() {
-		Coord2AddressResponse.Address addr = new Coord2AddressResponse.Address();
-		addr.setAddressName(this.lotAddress);
-		return addr;
-	}
-
-	public Coord2AddressResponse.RoadAddress toRoadAddress() {
-		if (this.roadAddress == null) return null;
-
-		Coord2AddressResponse.RoadAddress roadAddr = new Coord2AddressResponse.RoadAddress();
-		roadAddr.setAddressName(this.roadAddress);
-		return roadAddr;
+	public AddressDto(
+		String lotAddress,
+		String roadAddress,
+		String city,
+		String district,
+		String region,
+		String mainAddressNo,
+		String subAddressNo,
+		String roadName,
+		String mainBuildingNo,
+		String subBuildingNo,
+		String buildingName,
+		String zoneNo
+	) {
+		this.lotAddress = lotAddress;
+		this.roadAddress = roadAddress;
+		this.city = city;
+		this.district = district;
+		this.region = region;
+		this.mainAddressNo = mainAddressNo;
+		this.subAddressNo = subAddressNo;
+		this.roadName = roadName;
+		this.mainBuildingNo = mainBuildingNo;
+		this.subBuildingNo = subBuildingNo;
+		this.buildingName = buildingName;
+		this.zoneNo = zoneNo;
 	}
 }

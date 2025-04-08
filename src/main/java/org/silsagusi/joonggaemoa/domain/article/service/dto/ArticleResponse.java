@@ -23,8 +23,9 @@ public class ArticleResponse {
 	private String price;
 	private Integer rentPrice;
 	private String confirmedAt;
-	private Double latitude;
-	private Double longitude;
+	private String lotAddressName;
+	private String roadAddressName;
+	private String zipCode;
 	private String imageUrl;
 	private String direction;
 	private List<String> tags;
@@ -32,7 +33,6 @@ public class ArticleResponse {
 	private String companyId;
 	private String companyName;
 	private String agentName;
-
 	private String cortarName;
 
 	public static ArticleResponse of(Article article) {
@@ -46,8 +46,9 @@ public class ArticleResponse {
 			.price(article.getPrice())
 			.rentPrice(article.getRentPrice())
 			.confirmedAt(article.getConfirmedAt())
-			.latitude(article.getLatitude())
-			.longitude(article.getLongitude())
+			.lotAddressName(article.getLotAddressName())
+			.roadAddressName(article.getRoadAddressName())
+			.zipCode(article.getZoneNo())
 			.imageUrl(article.getImageUrl())
 			.direction(article.getDirection())
 			.tags(article.getTags())

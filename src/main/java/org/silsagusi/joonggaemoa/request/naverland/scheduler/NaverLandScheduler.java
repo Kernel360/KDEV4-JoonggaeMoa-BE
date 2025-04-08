@@ -1,6 +1,5 @@
 package org.silsagusi.joonggaemoa.request.naverland.scheduler;
 
-import org.silsagusi.joonggaemoa.request.naverland.service.NaverLandRequestService;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.JobParametersInvalidException;
@@ -21,8 +20,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class NaverLandScheduler {
 
-	private final NaverLandRequestService naverLandRequestService;
-
 	private final JobLauncher jobLauncher;
 	private final JobRegistry jobRegistry;
 
@@ -33,7 +30,6 @@ public class NaverLandScheduler {
 	// 기본값: 30분마다 실행
 	@Scheduled(initialDelay = 5000, fixedRate = 1800000) // 1800000ms = 30분
 	public void scrapNaverLand() throws
-		InterruptedException,
 		NoSuchJobException,
 		JobInstanceAlreadyCompleteException,
 		JobExecutionAlreadyRunningException,
