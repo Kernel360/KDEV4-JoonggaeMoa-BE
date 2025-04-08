@@ -1,5 +1,6 @@
 package org.silsagusi.joonggaemoa.domain.customer.repository;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import org.silsagusi.joonggaemoa.domain.agent.entity.Agent;
@@ -13,4 +14,6 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
 	Optional<Customer> findByPhone(String phone);
 
 	Page<Customer> findAllByAgent(Agent agent, Pageable pageable);
+
+	Long countByAgentIdAndCreatedAtBetween(Long agentId, LocalDateTime start, LocalDateTime end);
 }

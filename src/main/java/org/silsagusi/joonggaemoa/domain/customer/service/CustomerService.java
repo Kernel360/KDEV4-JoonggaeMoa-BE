@@ -1,12 +1,16 @@
 package org.silsagusi.joonggaemoa.domain.customer.service;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.silsagusi.joonggaemoa.domain.agent.entity.Agent;
 import org.silsagusi.joonggaemoa.domain.agent.repository.AgentRepository;
+import org.silsagusi.joonggaemoa.domain.customer.controller.dto.CustomerSummaryResponse;
 import org.silsagusi.joonggaemoa.domain.customer.entity.Customer;
 import org.silsagusi.joonggaemoa.domain.customer.repository.CustomerRepository;
 import org.silsagusi.joonggaemoa.domain.customer.service.command.CustomerCommand;
@@ -103,7 +107,7 @@ public class CustomerService {
 			throw new CustomException(ErrorCode.FILE_UPLOAD_ERROR);
 		}
 	}
-  
+
 	public void deleteCustomer(Long agentId, Long customerId) {
 		Customer customer = customerRepository.findById(customerId)
 			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_CUSTOMER));
@@ -172,5 +176,32 @@ public class CustomerService {
 
 	public String excelDownload() {
 		return amazonS3.getUrl(S3_BUCKET_NAME, EXCEL_FORMAT_FILENAME).toString();
+	}
+
+	public CustomerSummaryResponse getCustomerSummary(Long agentId) {
+		LocalDateTime now = LocalDateTime.now();
+
+		LocalDate today = LocalDate.now();
+		LocalDate thisWeekStart = today.with(DayOfWeek.MONDAY);
+		LocalDateTime thisWeekStartTime = thisWeekStart.atStartOfDay();
+
+		LocalDate lastWeekStart = thisWeekStart.minusWeeks(1);
+		LocalDate lastWeekEnd = thisWeekStart.minusDays(1);
+		LocalDateTime lastWeekStartTime = lastWeekStart.atStartOfDay();
+		LocalDateTime lastWeekEndTime = lastWeekEnd.atTime(LocalTime.MAX);
+
+		Long thisWeekCount = customerRepository.countByAgentIdAndCreatedAtBetween(agentId, thisWeekStartTime, now);
+		Long lastWeekCount = customerRepository.countByAgentIdAndCreatedAtBetween(agentId, lastWeekStartTime,
+			lastWeekEndTime);
+
+		double changeRate;
+		if (lastWeekCount == 0) {
+			changeRate = thisWeekCount == 0 ? 0 : 100;
+		} else {
+			changeRate = ((double)(thisWeekCount - lastWeekCount) / lastWeekCount) * 100;
+		}
+
+		return new CustomerSummaryResponse(thisWeekCount, changeRate);
+
 	}
 }

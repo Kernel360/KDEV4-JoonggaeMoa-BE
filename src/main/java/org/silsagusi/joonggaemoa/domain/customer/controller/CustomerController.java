@@ -1,6 +1,7 @@
 package org.silsagusi.joonggaemoa.domain.customer.controller;
 
 import org.silsagusi.joonggaemoa.domain.customer.controller.dto.CustomerDto;
+import org.silsagusi.joonggaemoa.domain.customer.controller.dto.CustomerSummaryResponse;
 import org.silsagusi.joonggaemoa.domain.customer.service.CustomerService;
 import org.silsagusi.joonggaemoa.domain.customer.service.command.CustomerCommand;
 import org.silsagusi.joonggaemoa.global.api.ApiResponse;
@@ -126,4 +127,14 @@ public class CustomerController {
 		return ResponseEntity.ok(ApiResponse.ok(CustomerDto.Response.of(customerCommand)));
 	}
 
+	@GetMapping("/api/dashboard/customer-summary")
+	public ResponseEntity<ApiResponse<CustomerSummaryResponse>> getCustomerSummary(
+		HttpServletRequest request
+	) {
+		return ResponseEntity.ok(ApiResponse.ok(
+			customerService.getCustomerSummary(
+				(Long)request.getAttribute("agentId")
+			)
+		));
+	}
 }
