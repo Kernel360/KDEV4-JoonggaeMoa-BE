@@ -2,8 +2,8 @@ package org.silsagusi.joonggaemoa.request.naverland.service;
 
 import org.silsagusi.joonggaemoa.request.naverland.service.dto.AddressResponse;
 
-public abstract class AbstractAddressLookupService {
+public interface AbstractAddressLookupService {
 
-	public abstract AddressResponse lookupAddress(double latitude, double longitude);
+	AddressResponse lookupAddress(double latitude, double longitude);
 
 }

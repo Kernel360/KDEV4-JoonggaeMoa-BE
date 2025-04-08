@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class KakaoAddressLookupService extends AbstractAddressLookupService {
+public class KakaoAddressLookupService implements AbstractAddressLookupService {
 
 	private final KakaoApiClient kakaoApiClient;
 
