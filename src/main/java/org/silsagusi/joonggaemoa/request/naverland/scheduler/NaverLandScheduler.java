@@ -29,7 +29,6 @@ public class NaverLandScheduler {
 
 	// 기본값: 30분마다 실행
 	@Scheduled(initialDelay = 5000, fixedRate = 1800000) // 1800000ms = 30분
-
 	public void scrapNaverLand() throws
 		NoSuchJobException,
 		JobInstanceAlreadyCompleteException,

@@ -19,10 +19,10 @@ public class ArticleResponse {
 	private String tradeType;
 	private String price;
 	private Integer rentPrice;
+	private String confirmedAt;
 	private String lotAddressName;
 	private String roadAddressName;
 	private String zipCode;
-	private LocalDate confirmedAt;
 	private String imageUrl;
 	private String direction;
 	private List<String> tags;
@@ -46,6 +46,9 @@ public class ArticleResponse {
 			.roadAddressName(article.getRoadAddressName())
 			.zipCode(article.getZoneNo())
 			.confirmedAt(article.getConfirmedAt())
+			.lotAddressName(article.getLotAddressName())
+			.roadAddressName(article.getRoadAddressName())
+			.zipCode(article.getZoneNo())
 			.imageUrl(article.getImageUrl())
 			.direction(article.getDirection())
 			.tags(article.getTags())

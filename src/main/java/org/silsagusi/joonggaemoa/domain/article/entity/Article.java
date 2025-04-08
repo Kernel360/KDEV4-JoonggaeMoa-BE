@@ -1,5 +1,6 @@
 package org.silsagusi.joonggaemoa.domain.article.entity;
 
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -20,6 +21,10 @@ import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.silsagusi.joonggaemoa.request.naverland.service.dto.AddressResponse;
+import org.silsagusi.joonggaemoa.request.naverland.service.dto.ClientArticleResponse;
+
+import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity(name = "articles")
