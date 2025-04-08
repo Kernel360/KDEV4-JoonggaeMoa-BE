@@ -19,7 +19,7 @@ public class ArticleResponse {
 	private String tradeType;
 	private String price;
 	private Integer rentPrice;
-	private String confirmedAt;
+	private LocalDate confirmedAt;
 	private String lotAddressName;
 	private String roadAddressName;
 	private String zipCode;
