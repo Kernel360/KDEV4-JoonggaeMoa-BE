@@ -9,7 +9,6 @@ import java.util.List;
 
 // 카카오 API 응답 DTO
 @Data
-@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class Coord2AddressResponse {
 
 	// meta: 응답된 주소 개수 등의 메타 정보

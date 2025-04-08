@@ -2,8 +2,7 @@ package org.silsagusi.joonggaemoa.request.naverland.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.silsagusi.joonggaemoa.global.address.AbstractAddressLookupService;
-import org.silsagusi.joonggaemoa.global.address.dto.AddressDto;
+import org.silsagusi.joonggaemoa.request.naverland.service.dto.AddressResponse;
 import org.silsagusi.joonggaemoa.request.naverland.client.KakaoApiClient;
 import org.silsagusi.joonggaemoa.request.naverland.service.dto.Coord2AddressResponse;
 import org.springframework.stereotype.Service;
@@ -16,7 +15,7 @@ public class KakaoAddressLookupService extends AbstractAddressLookupService {
 	private final KakaoApiClient kakaoApiClient;
 
 	@Override
-	public AddressDto lookupAddress(double latitude, double longitude)
+	public AddressResponse lookupAddress(double latitude, double longitude)
 		throws NullPointerException {
 
 		// Call Kakao API client to fetch address JSON
@@ -42,7 +41,7 @@ public class KakaoAddressLookupService extends AbstractAddressLookupService {
 
 			if ( doc.getRoadAddress() == null ) {
 				log.warn("도로명 주소 정보 없음: lat={}, lon={}", latitude, longitude);
-				return new AddressDto(lotAddress, null,
+				return new AddressResponse(lotAddress, null,
 					city, district, town, mainAddressNo, subAddressNo,
 					null, null, null, null, null);
 			} else {
@@ -53,7 +52,7 @@ public class KakaoAddressLookupService extends AbstractAddressLookupService {
 				String buildingName = doc.getRoadAddress().getBuildingName();
 				String zoneNo = doc.getRoadAddress().getZoneNo();
 
-				return new AddressDto(lotAddress, roadAddress,
+				return new AddressResponse(lotAddress, roadAddress,
 					city, district, town, mainAddressNo, subAddressNo,
 					roadName, mainBuildingNo, subBuildingNo, buildingName, zoneNo);
 			}
