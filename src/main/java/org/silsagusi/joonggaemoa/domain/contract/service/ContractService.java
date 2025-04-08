@@ -126,9 +126,6 @@ public class ContractService {
 		long todayCount = contractRepository.countInProgress(agentId, today);
 		long sevenDaysAgoCount = contractRepository.countInProgress(agentId, sevenDaysAgo);
 
-		System.out.println(sevenDaysAgo);
-		System.out.println(sevenDaysAgoCount);
-
 		double rate;
 		if (sevenDaysAgoCount == 0) {
 			rate = todayCount == 0 ? 0 : 100;
@@ -138,5 +135,4 @@ public class ContractService {
 
 		return new ContractSummaryResponse(todayCount, rate);
 	}
-
 }

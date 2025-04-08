@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.silsagusi.joonggaemoa.domain.consultation.controller.dto.ConsultationSummaryResponse;
 import org.silsagusi.joonggaemoa.domain.consultation.entity.Consultation;
 import org.silsagusi.joonggaemoa.domain.consultation.repository.ConsultationRepository;
 import org.silsagusi.joonggaemoa.domain.consultation.service.command.ConsultationCommand;
@@ -140,5 +141,14 @@ public class ConsultationService {
 			.consultationCompleted(statusCountMap.getOrDefault(Consultation.ConsultationStatus.COMPLETED, 0L))
 			.daysCount(dailyCount)
 			.build();
+	}
+
+	public ConsultationSummaryResponse getConsultationSummary(Long agentId) {
+		LocalDate today = LocalDate.now();
+
+		int total = consultationRepository.countTodayConsultations(agentId, today);
+		int remain = consultationRepository.countTodayRemaining(agentId, today);
+
+		return new ConsultationSummaryResponse(total, remain);
 	}
 }
