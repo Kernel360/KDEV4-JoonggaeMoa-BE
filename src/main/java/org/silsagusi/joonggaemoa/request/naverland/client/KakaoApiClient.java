@@ -1,6 +1,6 @@
-package org.silsagusi.joonggaemoa.request.kakao.client;
+package org.silsagusi.joonggaemoa.request.naverland.client;
 
-import org.silsagusi.joonggaemoa.request.kakao.service.dto.AddressResponse;
+import org.silsagusi.joonggaemoa.request.naverland.service.dto.Coord2AddressResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -29,9 +29,9 @@ public class KakaoApiClient {
      * 주어진 좌표(경도, 위도)를 기반으로 주소 데이터를 조회한다.
      * @param longitude 경도 (x 좌표)
      * @param latitude 위도 (y 좌표)
-     * @return AddressResponse: 카카오 API 응답 DTO
+     * @return Coord2AddressResponse: 카카오 API 응답 DTO
      */
-    public AddressResponse getAddr(double longitude, double latitude) {
+    public Coord2AddressResponse getAddr(double longitude, double latitude) {
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/v2/local/geo/coord2address.json")
@@ -40,7 +40,7 @@ public class KakaoApiClient {
                         .queryParam("input_coord", "WGS84") // 입력 좌표 체계
                         .build())
                 .retrieve()
-                .bodyToMono(AddressResponse.class)
+                .bodyToMono(Coord2AddressResponse.class)
                 .block(); // 블로킹 방식으로 결과 반환
     }
 }

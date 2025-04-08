@@ -1,20 +1,19 @@
 package org.silsagusi.joonggaemoa.request.naverland.service;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.silsagusi.joonggaemoa.domain.article.entity.Article;
 import org.silsagusi.joonggaemoa.domain.article.entity.Region;
 import org.silsagusi.joonggaemoa.domain.article.entity.RegionScrapStatus;
 import org.silsagusi.joonggaemoa.domain.article.repository.ArticleRepository;
-import org.silsagusi.joonggaemoa.domain.article.repository.ComplexRepository;
-import org.silsagusi.joonggaemoa.domain.article.repository.RegionRepository;
+import org.silsagusi.joonggaemoa.global.address.dto.AddressDto;
 import org.silsagusi.joonggaemoa.request.naverland.client.NaverLandApiClient;
 import org.silsagusi.joonggaemoa.request.naverland.service.dto.ClientArticleResponse;
 import org.springframework.stereotype.Service;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +22,7 @@ public class NaverLandRequestService {
 
 	private final NaverLandApiClient naverLandApiClient;
 	private final ArticleRepository articleRepository;
+	private final KakaoAddressLookupService addressLookupService;
 
 	public void scrapArticles(RegionScrapStatus scrapStatus) throws InterruptedException {
 		Region region = scrapStatus.getRegion();
@@ -57,7 +57,17 @@ public class NaverLandRequestService {
 
 	private List<Article> mapToArticles(List<ClientArticleResponse.Body> bodies, Region region) {
 		return bodies.stream()
-			.map(body -> Article.createFrom(body, region))
+			.map(body -> {
+				AddressDto addr = addressLookupService.lookupAddress(body.getLat(), body.getLng());
+
+				if (addr == null || addr.getLotAddress() == null) {
+					log.warn("주소 정보 없음: lat={}, lon={}", body.getLat(), body.getLng());
+					return null;
+				}
+
+				return Article.createFrom(body, region, addr.toLotAddress(), addr.toRoadAddress());
+			})
+			.filter(Objects::nonNull)
 			.toList();
 	}
 }

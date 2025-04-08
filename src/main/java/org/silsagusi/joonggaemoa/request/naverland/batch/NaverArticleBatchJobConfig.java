@@ -58,6 +58,7 @@ public class NaverArticleBatchJobConfig {
 		return new IteratorItemReader<>(regionScrapStatusRepository.findTop50ByCompletedFalseOrderByIdAsc());
 	}
 
+
 	@Bean
 	@StepScope
 	public ItemProcessor<RegionScrapStatus, RegionScrapStatus> scrapStatusProcessor() {

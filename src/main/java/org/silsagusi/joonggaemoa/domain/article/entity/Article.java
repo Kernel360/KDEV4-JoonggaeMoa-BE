@@ -1,16 +1,20 @@
 package org.silsagusi.joonggaemoa.domain.article.entity;
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.silsagusi.joonggaemoa.request.naverland.service.dto.ClientArticleResponse;
+import org.silsagusi.joonggaemoa.request.naverland.service.dto.Coord2AddressResponse;
 
 import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity(name = "articles")
 @Getter
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class Article {
 
 	@Id
@@ -22,33 +26,28 @@ public class Article {
 	@JoinColumn(name = "region_id", nullable = false)
 	private Region region;
 
-	@Column(name = "cortar_no", nullable = false)
+	@Column(nullable = false)
 	private String cortarNo;
 
-	@Column(name = "article_no", nullable = false)
+	@Column(nullable = false)
 	private String articleNo;
 
 	private String name;
 
-	@Column(name = "real_estate_type")
 	private String realEstateType;
 
-	@Column(name = "trade_type")
 	private String tradeType;
 
 	private String price;
 
-	@Column(name = "rent_price")
 	private Integer rentPrice;
 
-	@Column(name = "confirmed_at")
 	private String confirmedAt;
 
 	private Double latitude;
 
 	private Double longitude;
 
-	@Column(name = "image_url")
 	private String imageUrl;
 
 	private String direction;
@@ -56,26 +55,52 @@ public class Article {
 	@ElementCollection
 	private List<String> tags;
 
-	@Column(name = "subway_info")
 	private String subwayInfo;
 
-	@Column(name = "company_id")
 	private String companyId;
 
-	@Column(name = "company_name")
 	private String companyName;
 
-	@Column(name = "agent_name")
 	private String agentName;
 
 	String 지번;
 
 	String 도로명;
 
+	@Column(name = "lot_address")
+	private String addressName;
+
+	@Column(name = "city")
+	private String region1DepthName;
+
+	@Column(name = "district")
+	private String region2DepthName;
+
+	@Column(name = "section")
+	private String region3DepthName;
+
+	private String mainAddressNo;
+
+	private String subAddressNo;
+
+	private String roadName;
+
+	private String mainBuildingNo;
+
+	private String subBuildingNo;
+
+	private String buildingName;
+
+	private String zoneNo;
+
 	public Article(String cortarNo, String articleNo, String name, String realEstateType, String tradeType,
-		String price, Integer rentPrice, String confirmedAt, Double latitude, Double longitude, String imageUrl,
-		String direction, List<String> tags, String subwayInfo, String companyId, String companyName,
-		String agentName, Region region) {
+	               String price, Integer rentPrice, String confirmedAt, Double latitude, Double longitude,
+	               String imageUrl, String direction, List<String> tags, String subwayInfo,
+	               String companyId, String companyName, String agentName, Region region,
+	               String addressName, String region1DepthName, String region2DepthName, String region3DepthName,
+	               String mainAddressNo, String subAddressNo,
+	               String roadName, String mainBuildingNo, String subBuildingNo, String buildingName, String zoneNo
+	) {
 		this.cortarNo = cortarNo;
 		this.articleNo = articleNo;
 		this.name = name;
@@ -94,9 +119,22 @@ public class Article {
 		this.companyName = companyName;
 		this.agentName = agentName;
 		this.region = region;
+		this.addressName = addressName;
+		this.region1DepthName = region1DepthName;
+		this.region2DepthName = region2DepthName;
+		this.region3DepthName = region3DepthName;
+		this.mainAddressNo = mainAddressNo;
+		this.subAddressNo = subAddressNo;
+		this.roadName = roadName;
+		this.mainBuildingNo = mainBuildingNo;
+		this.subBuildingNo = subBuildingNo;
+		this.buildingName = buildingName;
+		this.zoneNo = zoneNo;
 	}
 
-	public static Article createFrom(ClientArticleResponse.Body body, Region region) {
+	public static Article createFrom(ClientArticleResponse.Body body, Region region,
+		Coord2AddressResponse.Address addr, Coord2AddressResponse.RoadAddress roadAddr
+		) {
 		return new Article(
 			body.getCortarNo(),
 			body.getAtclNo(),
@@ -115,7 +153,18 @@ public class Article {
 			body.getCpid(),
 			body.getCpNm(),
 			body.getRltrNm(),
-			region
-		);
+			region,
+			addr.getAddressName(),
+			addr.getRegion1DepthName(),
+			addr.getRegion2DepthName(),
+			addr.getRegion3DepthName(),
+			addr.getMainAddressNo(),
+			addr.getSubAddressNo(),
+			roadAddr.getRoadName(),
+			roadAddr.getMainBuildingNo(),
+			roadAddr.getSubBuildingNo(),
+			roadAddr.getBuildingName(),
+			roadAddr.getZoneNo()
+			);
 	}
 }
