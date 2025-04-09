@@ -1,19 +1,17 @@
 package org.silsagusi.joonggaemoa.request.naverland.batch;
 
+import java.util.List;
+
 import org.silsagusi.joonggaemoa.domain.article.entity.RegionScrapStatus;
 import org.silsagusi.joonggaemoa.domain.article.repository.RegionScrapStatusRepository;
 import org.silsagusi.joonggaemoa.request.naverland.service.NaverLandArticleRequestService;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobScope;
-import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
-import org.springframework.batch.item.ItemProcessor;
-import org.springframework.batch.item.ItemReader;
-import org.springframework.batch.item.ItemWriter;
-import org.springframework.batch.item.support.IteratorItemReader;
+import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -27,7 +25,6 @@ import lombok.extern.slf4j.Slf4j;
 public class NaverArticleBatchJobConfig {
 
 	private static final String JOB_NAME = "naverArticleJob";
-	private static final int CHUNK_SIZE = 20;
 
 	private final JobRepository jobRepository;
 	private final PlatformTransactionManager transactionManager;
@@ -45,34 +42,13 @@ public class NaverArticleBatchJobConfig {
 	@JobScope
 	public Step naverArticleStep() {
 		return new StepBuilder(JOB_NAME + "Step", jobRepository)
-			.<RegionScrapStatus, RegionScrapStatus>chunk(CHUNK_SIZE, transactionManager)
-			.reader(scrapStatusReader())
-			.processor(scrapStatusProcessor())
-			.writer(scrapStatusWriter())
+			.tasklet((contribution, chunkContext) -> {
+				List<RegionScrapStatus> regions = regionScrapStatusRepository.findTop50ByCompletedFalseOrderByIdAsc();
+				for (RegionScrapStatus status : regions) {
+					naverLandArticleRequestService.scrapArticles(status);
+				}
+				return RepeatStatus.FINISHED;
+			}, transactionManager)
 			.build();
-	}
-
-	@Bean
-	@StepScope
-	public ItemReader<RegionScrapStatus> scrapStatusReader() {
-		return new IteratorItemReader<>(regionScrapStatusRepository.findTop50ByCompletedFalseOrderByIdAsc());
-		// return new IteratorItemReader<>(regionScrapStatusRepository.findTop1ByCompletedFalseOrderByIdAsc());
-	}
-
-
-	@Bean
-	@StepScope
-	public ItemProcessor<RegionScrapStatus, RegionScrapStatus> scrapStatusProcessor() {
-		return scrapStatus -> {
-			log.info("Fetching articles for region: {}", scrapStatus.getRegion().getCortarNo());
-			naverLandArticleRequestService.scrapArticles(scrapStatus);
-			return scrapStatus;
-		};
-	}
-
-	@Bean
-	@StepScope
-	public ItemWriter<RegionScrapStatus> scrapStatusWriter() {
-		return regionScrapStatusRepository::saveAll;
 	}
 }

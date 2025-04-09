@@ -1,11 +1,16 @@
 package org.silsagusi.joonggaemoa.domain.article.entity;
 
-import jakarta.persistence.*;
+import java.time.LocalDateTime;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity(name = "region_scrap_statuses")
@@ -26,6 +31,10 @@ public class RegionScrapStatus {
 
 	private LocalDateTime lastScrapedAt;
 
+	private Boolean failed;
+
+	private String errorMessage;
+
 	public RegionScrapStatus(Region region, Integer lastScrapedPage, Boolean completed, LocalDateTime lastScrapedAt) {
 		this.region = region;
 		this.lastScrapedPage = lastScrapedPage;
@@ -40,5 +49,10 @@ public class RegionScrapStatus {
 
 	public void updateCompleted(Boolean completed) {
 		this.completed = completed;
+	}
+
+	public void updateFailed(Boolean failed, String errorMessage) {
+		this.failed = failed;
+		this.errorMessage = errorMessage;
 	}
 }

@@ -1,19 +1,22 @@
 package org.silsagusi.joonggaemoa.request.naverland.service;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
+import org.silsagusi.joonggaemoa.domain.article.dataProvider.ArticleDataProvider;
 import org.silsagusi.joonggaemoa.domain.article.entity.Article;
 import org.silsagusi.joonggaemoa.domain.article.entity.Region;
 import org.silsagusi.joonggaemoa.domain.article.entity.RegionScrapStatus;
-import org.silsagusi.joonggaemoa.domain.article.repository.ArticleRepository;
-import org.silsagusi.joonggaemoa.request.naverland.service.dto.AddressResponse;
 import org.silsagusi.joonggaemoa.request.naverland.client.NaverLandApiClient;
+import org.silsagusi.joonggaemoa.request.naverland.service.dto.AddressResponse;
 import org.silsagusi.joonggaemoa.request.naverland.service.dto.ClientArticleResponse;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Objects;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
@@ -21,37 +24,46 @@ import java.util.Objects;
 public class NaverLandArticleRequestService {
 
 	private final NaverLandApiClient naverLandApiClient;
-	private final ArticleRepository articleRepository;
 	private final KakaoAddressLookupService addressLookupService;
+	private final ArticleDataProvider articleDataProvider;
 
+	@Async("scrapExecutor")
 	public void scrapArticles(RegionScrapStatus scrapStatus) throws InterruptedException {
-		Region region = scrapStatus.getRegion();
-		int page = scrapStatus.getLastScrapedPage();
-		boolean hasMore;
+		List<Article> articles = new ArrayList<>();
 
-		do {
-			ClientArticleResponse response = naverLandApiClient.fetchArticleList(
-				String.valueOf(page),
-				region.getCenterLat().toString(),
-				region.getCenterLon().toString(),
-				region.getCortarNo()
-			);
+		try {
+			Region region = scrapStatus.getRegion();
+			int page = scrapStatus.getLastScrapedPage();
+			boolean hasMore;
 
-			List<Article> articles = mapToArticles(response.getBody(), region);
-			articleRepository.saveAll(articles);
+			do {
+				ClientArticleResponse response = naverLandApiClient.fetchArticleList(
+					String.valueOf(page),
+					region.getCenterLat().toString(),
+					region.getCenterLon().toString(),
+					region.getCortarNo()
+				);
 
-			page++;
-			scrapStatus.updatePage(page, LocalDateTime.now());
+				articles.addAll(mapToArticles(response.getBody(), region));
 
-			hasMore = response.isMore();
+				page++;
+				scrapStatus.updatePage(page, LocalDateTime.now());
 
-			// 3~7초 랜덤 딜레이
-			Thread.sleep((long)(3000 + Math.random() * 4000));
-		} while (hasMore && page <= 10);
+				hasMore = response.isMore();
 
-		// 마지막 페이지까지 완료된 경우
-		if (!hasMore) {
-			scrapStatus.updateCompleted(true);
+				// 3~7초 랜덤 딜레이
+				Thread.sleep((long)(3000 + Math.random() * 4000));
+			} while (hasMore && page <= 10);
+
+			// 마지막 페이지까지 완료된 경우
+			if (!hasMore) {
+				scrapStatus.updateCompleted(true);
+			}
+		} catch (Exception e) {
+			log.error("스크랩 실패 : {}", scrapStatus.getRegion().getCortarNo(), e);
+			scrapStatus.updateFailed(true, e.getMessage());
+		} finally {
+			articleDataProvider.saveArticles(articles);
 		}
 	}
 

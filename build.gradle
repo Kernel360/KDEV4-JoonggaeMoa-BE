@@ -58,6 +58,9 @@ dependencies {
     // SMS
     implementation 'net.nurigo:sdk:4.3.0'
 
+    // caffeine
+    implementation 'com.github.ben-manes.caffeine:caffeine'
+
     // Test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
