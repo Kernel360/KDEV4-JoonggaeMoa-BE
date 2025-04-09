@@ -1,11 +1,13 @@
 package org.silsagusi.joonggaemoa.request.naverland.service;
 
+import org.silsagusi.joonggaemoa.request.naverland.client.KakaoApiClient;
+import org.silsagusi.joonggaemoa.request.naverland.service.dto.AddressResponse;
+import org.silsagusi.joonggaemoa.request.naverland.service.dto.Coord2AddressResponse;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.stereotype.Service;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.silsagusi.joonggaemoa.request.naverland.service.dto.AddressResponse;
-import org.silsagusi.joonggaemoa.request.naverland.client.KakaoApiClient;
-import org.silsagusi.joonggaemoa.request.naverland.service.dto.Coord2AddressResponse;
-import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
@@ -15,6 +17,7 @@ public class KakaoAddressLookupService implements AbstractAddressLookupService {
 	private final KakaoApiClient kakaoApiClient;
 
 	@Override
+	@Cacheable(value = "addressCache", key = "#latitude + ':' + #longitude")
 	public AddressResponse lookupAddress(double latitude, double longitude)
 		throws NullPointerException {
 
@@ -28,7 +31,7 @@ public class KakaoAddressLookupService implements AbstractAddressLookupService {
 
 		Coord2AddressResponse.Document doc = response.getDocuments().get(0);
 
-		if ( doc.getAddress() == null ) {
+		if (doc.getAddress() == null) {
 			log.warn("주소 정보 없음: lat={}, lon={}", latitude, longitude);
 			return null;  // Return null or handle as needed
 		} else {
@@ -39,7 +42,7 @@ public class KakaoAddressLookupService implements AbstractAddressLookupService {
 			String mainAddressNo = doc.getAddress().getMainAddressNo();
 			String subAddressNo = doc.getAddress().getSubAddressNo();
 
-			if ( doc.getRoadAddress() == null ) {
+			if (doc.getRoadAddress() == null) {
 				log.warn("도로명 주소 정보 없음: lat={}, lon={}", latitude, longitude);
 				return new AddressResponse(lotAddress, null,
 					city, district, town, mainAddressNo, subAddressNo,
