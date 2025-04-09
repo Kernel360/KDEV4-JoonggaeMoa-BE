@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.silsagusi.joonggaemoa.domain.consultation.contorller.dto.ConsultationMonthInformResponse;
 import org.silsagusi.joonggaemoa.domain.consultation.controller.dto.ConsultationDto;
+import org.silsagusi.joonggaemoa.domain.consultation.controller.dto.ConsultationSummaryResponse;
 import org.silsagusi.joonggaemoa.domain.consultation.controller.dto.UpdateConsultationRequest;
 import org.silsagusi.joonggaemoa.domain.consultation.service.ConsultationService;
 import org.silsagusi.joonggaemoa.domain.consultation.service.command.ConsultationCommand;
@@ -111,4 +112,14 @@ public class ConsultationController {
 		return ResponseEntity.ok(ApiResponse.ok());
 	}
 
+	@GetMapping("/api/dashboard/consultation-summary")
+	public ResponseEntity<ApiResponse<ConsultationSummaryResponse>> getConsultationSummary(
+		HttpServletRequest request
+	) {
+		return ResponseEntity.ok(ApiResponse.ok(
+			consultationService.getConsultationSummary(
+				(Long)request.getAttribute("agentId")
+			)
+		));
+	}
 }

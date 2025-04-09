@@ -38,7 +38,6 @@ public class DataDBConfig {
 
 		HashMap<String, Object> properties = new HashMap<>();
 		properties.put("hibernate.hbm2ddl.auto", "create-drop");
-		properties.put("hibernate.show_sql", true);
 		em.setJpaPropertyMap(properties);
 
 		return em;

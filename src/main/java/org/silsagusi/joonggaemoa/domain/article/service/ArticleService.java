@@ -1,10 +1,17 @@
 package org.silsagusi.joonggaemoa.domain.article.service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.silsagusi.joonggaemoa.domain.article.entity.Article;
+import org.silsagusi.joonggaemoa.domain.article.entity.projection.RealEstateTypeRatioProjection;
+import org.silsagusi.joonggaemoa.domain.article.entity.projection.TradeTypeRatioProjection;
 import org.silsagusi.joonggaemoa.domain.article.repository.ArticleRepository;
 import org.silsagusi.joonggaemoa.domain.article.service.dto.ArticleResponse;
+import org.silsagusi.joonggaemoa.domain.article.service.dto.RealEstateTypeSummaryResponse;
+import org.silsagusi.joonggaemoa.domain.article.service.dto.TradeTypeSummaryResponse;
+import org.silsagusi.joonggaemoa.global.api.exception.CustomException;
+import org.silsagusi.joonggaemoa.global.api.exception.ErrorCode;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -55,5 +62,47 @@ public class ArticleService {
 
 		Page<Article> articlePage = articleRepository.findAll(spec, pageable);
 		return articlePage.map(ArticleResponse::of);
+	}
+
+	public List<RealEstateTypeSummaryResponse> getRealEstateTypeSummary(String period) {
+		LocalDate from = calculateStartDate(period);
+
+		List<RealEstateTypeRatioProjection> realEstateTypeRatioProjections = articleRepository.countByRealEstateTypeSince(
+			from);
+
+		long realEstateTotalCount = realEstateTypeRatioProjections.stream()
+			.mapToLong(RealEstateTypeRatioProjection::getCount)
+			.sum();
+		return realEstateTypeRatioProjections.stream()
+			.map(it -> RealEstateTypeSummaryResponse.builder()
+				.type(it.getType())
+				.ratio((it.getCount() * 100.0) / realEstateTotalCount)
+				.build())
+			.toList();
+	}
+
+	public List<TradeTypeSummaryResponse> getTradeTypeSummary(String period) {
+		LocalDate from = calculateStartDate(period);
+
+		List<TradeTypeRatioProjection> tradeTypeRatioProjections = articleRepository.countByTradeTypeSince(from);
+
+		long tradeTotalCount = tradeTypeRatioProjections.stream().mapToLong(TradeTypeRatioProjection::getCount).sum();
+		return tradeTypeRatioProjections.stream()
+			.map(it -> TradeTypeSummaryResponse.builder()
+				.type(it.getType())
+				.ratio((it.getCount() * 100.0) / tradeTotalCount)
+				.build())
+			.toList();
+	}
+
+	private LocalDate calculateStartDate(String period) {
+		LocalDate now = LocalDate.now();
+
+		return switch (period) {
+			case "daily" -> now.minusDays(1);
+			case "weekly" -> now.minusWeeks(1);
+			case "monthly" -> now.minusMonths(1);
+			default -> throw new CustomException(ErrorCode.VALIDATION_FAILED);
+		};
 	}
 }

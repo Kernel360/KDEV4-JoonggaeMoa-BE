@@ -1,17 +1,14 @@
 package org.silsagusi.joonggaemoa.domain.article.service.dto;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.silsagusi.joonggaemoa.domain.article.entity.Article;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
 public class ArticleResponse {
 	private Long id;
@@ -22,7 +19,7 @@ public class ArticleResponse {
 	private String tradeType;
 	private String price;
 	private Integer rentPrice;
-	private String confirmedAt;
+	private LocalDate confirmedAt;
 	private String lotAddressName;
 	private String roadAddressName;
 	private String zipCode;
@@ -45,6 +42,9 @@ public class ArticleResponse {
 			.tradeType(article.getTradeType())
 			.price(article.getPrice())
 			.rentPrice(article.getRentPrice())
+			.lotAddressName(article.getLotAddressName())
+			.roadAddressName(article.getRoadAddressName())
+			.zipCode(article.getZoneNo())
 			.confirmedAt(article.getConfirmedAt())
 			.lotAddressName(article.getLotAddressName())
 			.roadAddressName(article.getRoadAddressName())

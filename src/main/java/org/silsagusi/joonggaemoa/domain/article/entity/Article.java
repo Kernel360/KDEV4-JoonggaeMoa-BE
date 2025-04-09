@@ -1,6 +1,23 @@
 package org.silsagusi.joonggaemoa.domain.article.entity;
 
-import jakarta.persistence.*;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+
+import org.silsagusi.joonggaemoa.request.naverland.service.dto.AddressResponse;
+import org.silsagusi.joonggaemoa.request.naverland.service.dto.ClientArticleResponse;
+
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -39,7 +56,8 @@ public class Article {
 
 	private Integer rentPrice;
 
-	private String confirmedAt;
+	@Column(name = "confirmed_at")
+	private LocalDate confirmedAt;
 
 	private Double latitude;
 
@@ -50,6 +68,8 @@ public class Article {
 	private String direction;
 
 	@ElementCollection
+	@CollectionTable(name = "article_tags", joinColumns = @JoinColumn(name = "article_tags_id"))
+	@Column(name = "tag")
 	private List<String> tags;
 
 	private String subwayInfo;
@@ -87,13 +107,37 @@ public class Article {
 	@Column(name = "zip_code")
 	private String zoneNo;
 
-	public Article(String cortarNo, String articleNo, String name, String realEstateType, String tradeType,
-	               String price, Integer rentPrice, String confirmedAt, Double latitude, Double longitude,
-	               String imageUrl, String direction, List<String> tags, String subwayInfo,
-	               String companyId, String companyName, String agentName, Region region,
-	               String lotAddressName, String roadAddressName, String city, String district, String town,
-	               String mainAddressNo, String subAddressNo,
-	               String roadName, String mainBuildingNo, String subBuildingNo, String buildingName, String zoneNo
+	public Article(
+		String cortarNo,
+		String articleNo,
+		String name,
+		String realEstateType,
+		String tradeType,
+		String price,
+		Integer rentPrice,
+		LocalDate confirmedAt,
+		Double latitude,
+		Double longitude,
+		String imageUrl,
+		String direction,
+		List<String> tags,
+		String subwayInfo,
+		String companyId,
+		String companyName,
+		String agentName,
+		Region region,
+		String lotAddressName,
+		String roadAddressName,
+		String city,
+		String district,
+		String town,
+		String mainAddressNo,
+		String subAddressNo,
+		String roadName,
+		String mainBuildingNo,
+		String subBuildingNo,
+		String buildingName,
+		String zoneNo
 	) {
 		this.cortarNo = cortarNo;
 		this.articleNo = articleNo;
@@ -136,7 +180,7 @@ public class Article {
 			body.getTradTpNm(),
 			body.getPrc() != null ? body.getPrc().toString() : null,
 			body.getRentPrc(),
-			body.getAtclCfmYmd(),
+			parseConfirmedAt(body.getAtclCfmYmd()),
 			body.getLat(),
 			body.getLng(),
 			body.getRepImgUrl(),
@@ -160,5 +204,19 @@ public class Article {
 			addressResponse.getBuildingName(),
 			addressResponse.getZoneNo()
 		);
+	}
+
+	private static LocalDate parseConfirmedAt(String dateStr) {
+		if (dateStr == null || dateStr.isEmpty())
+			return null;
+		try {
+			return LocalDate.parse(dateStr, DateTimeFormatter.ofPattern("yy.MM.dd."));
+		} catch (Exception e) {
+			try {
+				return LocalDate.parse(dateStr, DateTimeFormatter.ofPattern("yyyyMMdd"));
+			} catch (Exception ignored) {
+				return null;
+			}
+		}
 	}
 }

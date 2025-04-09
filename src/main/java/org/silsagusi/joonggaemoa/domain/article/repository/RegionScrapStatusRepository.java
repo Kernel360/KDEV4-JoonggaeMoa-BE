@@ -14,6 +14,8 @@ public interface RegionScrapStatusRepository extends JpaRepository<RegionScrapSt
 
 	List<RegionScrapStatus> findTop50ByCompletedFalseOrderByIdAsc();
 
+	List<RegionScrapStatus> findTop1ByCompletedFalseOrderByIdAsc();
+
 	@Modifying
 	@Transactional
 	@Query("update region_scrap_statuses s set s.completed = false, s.lastScrapedPage = 1 "

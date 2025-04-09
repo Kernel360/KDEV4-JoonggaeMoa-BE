@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.silsagusi.joonggaemoa.domain.article.service.ArticleService;
 import org.silsagusi.joonggaemoa.domain.article.service.dto.ArticleResponse;
+import org.silsagusi.joonggaemoa.domain.article.service.dto.RealEstateTypeSummaryResponse;
+import org.silsagusi.joonggaemoa.domain.article.service.dto.TradeTypeSummaryResponse;
 import org.silsagusi.joonggaemoa.global.api.ApiResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -30,6 +32,24 @@ public class ArticleController {
 	) {
 		return ResponseEntity.ok(ApiResponse.ok(
 			articleService.getAllArticles(pageable, realEstateType, tradeType, minPrice, maxPrice)
+		));
+	}
+
+	@GetMapping("/api/dashboard/real-estate-type-summary")
+	public ResponseEntity<ApiResponse<List<RealEstateTypeSummaryResponse>>> getRealEstateTypeSummary(
+		@RequestParam String period                            // period = [daily, weekly, monthly]
+	) {
+		return ResponseEntity.ok(ApiResponse.ok(
+			articleService.getRealEstateTypeSummary(period)
+		));
+	}
+
+	@GetMapping("/api/dashboard/trade-type-summary")
+	public ResponseEntity<ApiResponse<List<TradeTypeSummaryResponse>>> getTradeTypeSummary(
+		@RequestParam String period
+	) {
+		return ResponseEntity.ok(ApiResponse.ok(
+			articleService.getTradeTypeSummary(period)
 		));
 	}
 }

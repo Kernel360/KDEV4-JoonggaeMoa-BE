@@ -1,6 +1,7 @@
 package org.silsagusi.joonggaemoa.domain.customer.entity;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import org.silsagusi.joonggaemoa.domain.agent.entity.Agent;
 
@@ -44,6 +45,9 @@ public class Customer {
 
 	private Boolean consent;
 
+	@Column(name = "created_at")
+	private LocalDateTime createdAt;
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "agent_id", nullable = false)
 	private Agent agent;
@@ -68,6 +72,7 @@ public class Customer {
 		this.memo = memo;
 		this.consent = consent;
 		this.agent = agent;
+		createdAt = LocalDateTime.now();
 	}
 
 	public Customer(
