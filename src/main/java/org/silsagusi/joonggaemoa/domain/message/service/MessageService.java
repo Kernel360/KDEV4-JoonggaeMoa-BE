@@ -36,8 +36,14 @@ public class MessageService {
 		customerIdList.stream()
 			.map(id -> customerRepository.findById(id)
 				.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_CUSTOMER)))
-			.map(customer -> new Message(customer, content, sendAt))
+			.map(customer -> new Message(customer, convertContent(content, customer.getName()), sendAt))
 			.forEach(messageRepository::save);
+	}
+
+	private String convertContent(String content, String customerName) {
+		if (content == null || customerName == null)
+			return content;
+		return content.replace("${이름}", customerName);
 	}
 
 	public void updateMessage(Long agentId, Long messageId, LocalDateTime sendAt, String content) {
