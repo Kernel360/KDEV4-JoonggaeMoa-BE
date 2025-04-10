@@ -145,6 +145,8 @@ public class SurveyController {
 			requestDto.getEmail(),
 			requestDto.getPhone(),
 			requestDto.getConsent(),
+			requestDto.getApplyConsultation(),
+			requestDto.getConsultAt(),
 			requestDto.getQuestions(),
 			requestDto.getAnswers()
 		);

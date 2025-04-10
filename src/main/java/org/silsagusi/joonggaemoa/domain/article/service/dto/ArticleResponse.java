@@ -40,7 +40,7 @@ public class ArticleResponse {
 			.name(article.getName())
 			.realEstateType(article.getRealEstateType())
 			.tradeType(article.getTradeType())
-			.price(article.getPrice())
+			.price(article.getPrice() + "")
 			.rentPrice(article.getRentPrice())
 			.lotAddressName(article.getLotAddressName())
 			.roadAddressName(article.getRoadAddressName())

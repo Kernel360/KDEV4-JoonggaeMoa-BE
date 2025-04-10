@@ -48,6 +48,15 @@ public class CustomerService {
 	) {
 		Agent agent = agentRepository.findById(agentId)
 			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
+
+		if (customerRepository.existsByAgentAndPhone(agent, phone)) {
+			throw new CustomException(ErrorCode.CONFLICT_PHONE);
+		}
+
+		if (customerRepository.existsByAgentAndEmail(agent, email)) {
+			throw new CustomException(ErrorCode.CONFLICT_EMAIL);
+		}
+
 		Customer customer = new Customer(
 			name,
 			birthday,
@@ -112,7 +121,7 @@ public class CustomerService {
 		Customer customer = customerRepository.findById(customerId)
 			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_CUSTOMER));
 
-		if (customer.getAgent().getId().equals(agentId)) {
+		if (!customer.getAgent().getId().equals(agentId)) {
 			throw new CustomException(ErrorCode.FORBIDDEN);
 		}
 
@@ -157,7 +166,6 @@ public class CustomerService {
 		if (!customer.getAgent().getId().equals(agentId)) {
 			throw new CustomException(ErrorCode.FORBIDDEN);
 		}
-
 		return CustomerCommand.of(customer);
 	}
 
@@ -171,7 +179,7 @@ public class CustomerService {
 	}
 
 	public Customer getCustomerByPhone(String phone) {
-		return customerRepository.findByPhone(phone).orElseGet(null);
+		return customerRepository.findByPhone(phone).orElse(null);
 	}
 
 	public String excelDownload() {
