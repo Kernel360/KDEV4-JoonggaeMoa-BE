@@ -1,5 +1,6 @@
 package org.silsagusi.joonggaemoa.domain.survey.service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -150,6 +151,8 @@ public class SurveyService {
 		String email,
 		String phone,
 		Boolean consent,
+		Boolean applyConsultation,
+		LocalDateTime consultAt,
 		List<String> questions,
 		List<List<String>> answers
 	) {
@@ -171,12 +174,15 @@ public class SurveyService {
 			customer = newCustomer;
 		}
 
-		// 상담 추가
-		Consultation consultation = new Consultation(
-			customer,
-			Consultation.ConsultationStatus.WAITING
-		);
-		consultationRepository.save(consultation);
+		if (applyConsultation) {
+			// 상담 추가
+			Consultation consultation = new Consultation(
+				customer,
+				consultAt,
+				Consultation.ConsultationStatus.WAITING
+			);
+			consultationRepository.save(consultation);
+		}
 
 		// 응답 추가
 		List<QuestionAnswerPair> pairList = new ArrayList<>();
@@ -189,6 +195,8 @@ public class SurveyService {
 		}
 
 		Answer newAnswer = new Answer(
+			applyConsultation,
+			consultAt,
 			customer,
 			survey,
 			pairList

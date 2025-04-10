@@ -171,7 +171,7 @@ public class CustomerService {
 	}
 
 	public Customer getCustomerByPhone(String phone) {
-		return customerRepository.findByPhone(phone).orElseGet(null);
+		return customerRepository.findByPhone(phone).orElseGet(() -> null);
 	}
 
 	public String excelDownload() {
