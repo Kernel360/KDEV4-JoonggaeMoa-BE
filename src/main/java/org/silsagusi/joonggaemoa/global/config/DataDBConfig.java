@@ -33,12 +33,11 @@ public class DataDBConfig {
 		LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
 
 		em.setDataSource(dataSource());
-		em.setPackagesToScan(new String[] {"org.silsagusi.joonggaemoa.domain"});
+		em.setPackagesToScan("org.silsagusi.joonggaemoa.domain");
 		em.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
 
 		HashMap<String, Object> properties = new HashMap<>();
 		properties.put("hibernate.hbm2ddl.auto", "create-drop");
-		properties.put("hibernate.show_sql", true);
 		em.setJpaPropertyMap(properties);
 
 		return em;

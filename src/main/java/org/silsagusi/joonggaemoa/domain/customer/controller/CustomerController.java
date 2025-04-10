@@ -1,13 +1,12 @@
 package org.silsagusi.joonggaemoa.domain.customer.controller;
 
-import java.util.List;
-
-import org.silsagusi.joonggaemoa.domain.customer.controller.dto.CreateCustomerRequest;
-import org.silsagusi.joonggaemoa.domain.customer.controller.dto.CustomerResponse;
-import org.silsagusi.joonggaemoa.domain.customer.controller.dto.UpdateCustomerRequest;
+import org.silsagusi.joonggaemoa.domain.customer.controller.dto.CustomerDto;
+import org.silsagusi.joonggaemoa.domain.customer.controller.dto.CustomerSummaryResponse;
 import org.silsagusi.joonggaemoa.domain.customer.service.CustomerService;
 import org.silsagusi.joonggaemoa.domain.customer.service.command.CustomerCommand;
 import org.silsagusi.joonggaemoa.global.api.ApiResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -32,18 +32,18 @@ public class CustomerController {
 	@PostMapping("/api/customers")
 	public ResponseEntity<ApiResponse<Void>> createCustomer(
 		HttpServletRequest request,
-		@RequestBody CreateCustomerRequest createCustomerRequestDto
+		@RequestBody @Valid CustomerDto.Request requestDto
 	) {
 		customerService.createCustomer(
 			(Long)request.getAttribute("agentId"),
-			createCustomerRequestDto.getName(),
-			createCustomerRequestDto.getBirthday(),
-			createCustomerRequestDto.getPhone(),
-			createCustomerRequestDto.getEmail(),
-			createCustomerRequestDto.getJob(),
-			createCustomerRequestDto.getIsVip(),
-			createCustomerRequestDto.getMemo(),
-			createCustomerRequestDto.getConsent()
+			requestDto.getName(),
+			requestDto.getBirthday(),
+			requestDto.getPhone(),
+			requestDto.getEmail(),
+			requestDto.getJob(),
+			requestDto.getIsVip(),
+			requestDto.getMemo(),
+			requestDto.getConsent()
 		);
 
 		return ResponseEntity.ok(ApiResponse.ok());
@@ -54,7 +54,6 @@ public class CustomerController {
 		HttpServletRequest request,
 		@RequestParam("file") MultipartFile file
 	) {
-		//TODO: service<->controller command dto
 		customerService.bulkCreateCustomer(
 			(Long)request.getAttribute("agentId"),
 			file
@@ -63,49 +62,79 @@ public class CustomerController {
 		return ResponseEntity.ok(ApiResponse.ok());
 	}
 
+	@GetMapping("/api/customers/bulk")
+	public ResponseEntity<ApiResponse<String>> excelDownload() {
+		String fileUploadResponse = customerService.excelDownload();
+		return ResponseEntity.ok(ApiResponse.ok(fileUploadResponse));
+	}
+
 	@DeleteMapping("/api/customers/{customerId}")
 	public ResponseEntity<ApiResponse<Void>> deleteCustomer(
+		HttpServletRequest request,
 		@PathVariable("customerId") Long customerId
 	) {
-		customerService.deleteCustomer(customerId);
+		customerService.deleteCustomer(
+			(Long)request.getAttribute("agentId"),
+			customerId
+		);
 		return ResponseEntity.ok(ApiResponse.ok());
 	}
 
 	@PatchMapping("/api/customers/{customerId}")
 	public ResponseEntity<ApiResponse<Void>> updateCustomer(
+		HttpServletRequest request,
 		@PathVariable("customerId") Long customerId,
-		@RequestBody UpdateCustomerRequest updateCustomerRequest
+		@RequestBody @Valid CustomerDto.Request requestDto
 	) {
 		customerService.updateCustomer(
+			(Long)request.getAttribute("agentId"),
 			customerId,
-			updateCustomerRequest.getName(),
-			updateCustomerRequest.getBirthday(),
-			updateCustomerRequest.getPhone(),
-			updateCustomerRequest.getEmail(),
-			updateCustomerRequest.getJob(),
-			updateCustomerRequest.getIsVip(),
-			updateCustomerRequest.getMemo(),
-			updateCustomerRequest.getConsent()
+			requestDto.getName(),
+			requestDto.getBirthday(),
+			requestDto.getPhone(),
+			requestDto.getEmail(),
+			requestDto.getJob(),
+			requestDto.getIsVip(),
+			requestDto.getMemo(),
+			requestDto.getConsent()
 		);
 		return ResponseEntity.ok(ApiResponse.ok());
 	}
 
 	@GetMapping("/api/customers")
-	public ResponseEntity<ApiResponse<List<CustomerResponse>>> getAllCustomers() {
-		List<CustomerCommand> customerCommandList = customerService.getAllCustomers();
-		List<CustomerResponse> customerResponseList = customerCommandList.stream()
-			.map(CustomerResponse::of).toList();
+	public ResponseEntity<ApiResponse<Page<CustomerDto.Response>>> getAllCustomers(
+		HttpServletRequest request,
+		Pageable pageable
+	) {
+		Page<CustomerCommand> customerCommandList = customerService.getAllCustomers(
+			(Long)request.getAttribute("agentId"),
+			pageable
+		);
+		Page<CustomerDto.Response> customerResponseList = customerCommandList.map(CustomerDto.Response::of);
 
 		return ResponseEntity.ok(ApiResponse.ok(customerResponseList));
 	}
 
 	@GetMapping("/api/customers/{customerId}")
-	public ResponseEntity<ApiResponse<CustomerResponse>> getCustomer(
+	public ResponseEntity<ApiResponse<CustomerDto.Response>> getCustomer(
+		HttpServletRequest request,
 		@PathVariable("customerId") Long customerId
 	) {
-		CustomerCommand customerCommand = customerService.getCustomerById(customerId);
-
-		return ResponseEntity.ok(ApiResponse.ok(CustomerResponse.of(customerCommand)));
+		CustomerCommand customerCommand = customerService.getCustomerById(
+			(Long)request.getAttribute("agentId"),
+			customerId
+		);
+		return ResponseEntity.ok(ApiResponse.ok(CustomerDto.Response.of(customerCommand)));
 	}
 
+	@GetMapping("/api/dashboard/customer-summary")
+	public ResponseEntity<ApiResponse<CustomerSummaryResponse>> getCustomerSummary(
+		HttpServletRequest request
+	) {
+		return ResponseEntity.ok(ApiResponse.ok(
+			customerService.getCustomerSummary(
+				(Long)request.getAttribute("agentId")
+			)
+		));
+	}
 }

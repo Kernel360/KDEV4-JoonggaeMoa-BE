@@ -10,6 +10,8 @@ import org.silsagusi.joonggaemoa.domain.consultation.repository.ConsultationRepo
 import org.silsagusi.joonggaemoa.domain.customer.entity.Customer;
 import org.silsagusi.joonggaemoa.domain.customer.repository.CustomerRepository;
 import org.silsagusi.joonggaemoa.domain.customer.service.CustomerService;
+import org.silsagusi.joonggaemoa.domain.notify.entity.NotificationType;
+import org.silsagusi.joonggaemoa.domain.notify.service.NotificationService;
 import org.silsagusi.joonggaemoa.domain.survey.entity.Answer;
 import org.silsagusi.joonggaemoa.domain.survey.entity.Question;
 import org.silsagusi.joonggaemoa.domain.survey.entity.QuestionAnswerPair;
@@ -22,9 +24,11 @@ import org.silsagusi.joonggaemoa.domain.survey.service.command.QuestionCommand;
 import org.silsagusi.joonggaemoa.domain.survey.service.command.SurveyCommand;
 import org.silsagusi.joonggaemoa.global.api.exception.CustomException;
 import org.silsagusi.joonggaemoa.global.api.exception.ErrorCode;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -38,7 +42,9 @@ public class SurveyService {
 	private final CustomerRepository customerRepository;
 	private final AnswerRepository answerRepository;
 	private final ConsultationRepository consultationRepository;
+	private final NotificationService notificationService;
 
+	@Transactional
 	public void createSurvey(
 		Long agentId,
 		String title,
@@ -46,7 +52,7 @@ public class SurveyService {
 		List<QuestionCommand> questionCommandList
 	) {
 		Agent agent = agentRepository.findById(agentId)
-			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
+			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
 
 		Survey survey = new Survey(agent, title, description, new ArrayList<>());
 
@@ -71,16 +77,22 @@ public class SurveyService {
 	}
 
 	@Transactional
-	public void deleteSurvey(Long surveyId) {
+	public void deleteSurvey(Long agentId, String surveyId) {
 		Survey survey = surveyRepository.findById(surveyId)
 			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
+
+		if (!survey.getAgent().getId().equals(agentId)) {
+			throw new CustomException(ErrorCode.FORBIDDEN);
+		}
+
 		questionRepository.deleteAll(survey.getQuestionList());
 		surveyRepository.delete(survey);
 	}
 
 	@Transactional
 	public void updateSurvey(
-		Long surveyId,
+		Long agentId,
+		String surveyId,
 		String title,
 		String description,
 		List<QuestionCommand> questionCommandList
@@ -88,6 +100,9 @@ public class SurveyService {
 		Survey survey = surveyRepository.findById(surveyId)
 			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
 
+		if (!survey.getAgent().getId().equals(agentId)) {
+			throw new CustomException(ErrorCode.FORBIDDEN);
+		}
 		survey.updateSurveyTitleDescription(
 			(title == null || title.isBlank()) ? survey.getTitle() : title,
 			(description == null || description.isBlank()) ? survey.getDescription() : description
@@ -112,19 +127,25 @@ public class SurveyService {
 
 	}
 
-	public List<SurveyCommand> getAllSurveys() {
-		List<Survey> surveyList = surveyRepository.findAll();
-		return surveyList.stream().map(SurveyCommand::of).toList();
+	@Transactional(readOnly = true)
+	public Page<SurveyCommand> getAllSurveys(Long agentId, Pageable pageable) {
+		Agent agent = agentRepository.findById(agentId)
+			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
+
+		Page<Survey> surveyPage = surveyRepository.findAllByAgent(agent, pageable);
+		return surveyPage.map(SurveyCommand::of);
 	}
 
-	public SurveyCommand findById(Long surveyId) {
+	@Transactional(readOnly = true)
+	public SurveyCommand findById(String surveyId) {
 		Survey survey = surveyRepository.findById(surveyId)
 			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
 		return SurveyCommand.of(survey);
 	}
 
+	@Transactional
 	public void submitSurveyAnswer(
-		Long surveyId,
+		String surveyId,
 		String name,
 		String email,
 		String phone,
@@ -174,10 +195,17 @@ public class SurveyService {
 		);
 
 		answerRepository.save(newAnswer);
+
+		//응답 완료 시 알림
+		notificationService.notify(
+			agent.getId(),
+			NotificationType.SURVEY,
+			customer.getName() + "님이 [" + survey.getTitle() + "] 설문에 응답했습니다."
+		);
 	}
 
-	public List<AnswerCommand> getAllAnswers() {
-		List<Answer> answerList = answerRepository.findAll();
-		return answerList.stream().map(AnswerCommand::of).toList();
+	public Page<AnswerCommand> getAllAnswers(Long agentId, Pageable pageable) {
+		Page<Answer> answerPage = answerRepository.findAllByCustomer_AgentId(agentId, pageable);
+		return answerPage.map(AnswerCommand::of);
 	}
 }

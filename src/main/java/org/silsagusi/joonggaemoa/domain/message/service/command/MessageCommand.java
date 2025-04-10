@@ -16,6 +16,7 @@ public class MessageCommand {
 	private Long id;
 	private Long customerId;
 	private String customerName;
+	private String customerPhone;
 	private String content;
 	private String createdAt;
 	private String sendStatus;
@@ -25,6 +26,7 @@ public class MessageCommand {
 			.id(message.getId())
 			.customerId(message.getCustomer().getId())
 			.customerName(message.getCustomer().getName())
+			.customerPhone(message.getCustomer().getPhone())
 			.content(message.getContent())
 			.createdAt(message.getCreatedAt())
 			.sendStatus(String.valueOf(message.getSendStatus()))

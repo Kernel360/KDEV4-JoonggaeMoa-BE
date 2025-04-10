@@ -1,12 +1,12 @@
 package org.silsagusi.joonggaemoa.global.auth.jwt;
 
+import org.silsagusi.joonggaemoa.domain.agent.entity.Agent;
+import org.silsagusi.joonggaemoa.domain.agent.repository.AgentRepository;
 import org.silsagusi.joonggaemoa.global.api.exception.CustomException;
 import org.silsagusi.joonggaemoa.global.api.exception.ErrorCode;
 import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Service;
 
-import io.jsonwebtoken.Claims;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
@@ -16,27 +16,25 @@ public class RefreshTokenService {
 
 	private final JwtProvider jwtProvider;
 	private final RefreshTokenStore refreshTokenStore;
+	private final AgentRepository agentRepository;
 
-	public void refreshToken(String refreshToken, HttpServletRequest request, HttpServletResponse response) {
-		if (Boolean.FALSE.equals(jwtProvider.validateToken(refreshToken))) {
-			throw new CustomException(ErrorCode.UNAUTHORIZED);
-		}
+	public void refreshToken(String refreshToken, HttpServletResponse response) {
 
 		String username = jwtProvider.getSubject(refreshToken);
 
 		String storedToken = refreshTokenStore.getRefreshToken(username);
 		if (storedToken == null && !storedToken.equals(refreshToken)) {
-			throw new CustomException(ErrorCode.UNAUTHORIZED);
+			throw new CustomException(ErrorCode.INVALID_TOKEN);
 		}
 
-		Claims claims = jwtProvider.getClaims(storedToken);
+		Long agentId = Long.valueOf(jwtProvider.getTokenId(refreshToken));
 
-		String accessToken = request.getHeader("Authorization").substring(7);
-		Long id = Long.valueOf(jwtProvider.getTokenId(accessToken));
+		Agent agent = agentRepository.findById(agentId)
+			.orElseThrow(() -> new CustomException(ErrorCode.INVALID_TOKEN));
 
-		String newAccessToken = jwtProvider.generateAccessToken(id, claims.get("username", String.class),
-			claims.get("role", String.class));
-		String newRefreshToken = jwtProvider.generateRefreshToken(username);
+		String newAccessToken = jwtProvider.generateAccessToken(agent.getId(), agent.getUsername(),
+			agent.getRole() + "");
+		String newRefreshToken = jwtProvider.generateRefreshToken(agent.getId(), agent.getUsername());
 
 		refreshTokenStore.deleteRefreshToken(refreshToken);
 		refreshTokenStore.saveRefreshToken(username, newRefreshToken, jwtProvider.getExpirationTime(newRefreshToken));

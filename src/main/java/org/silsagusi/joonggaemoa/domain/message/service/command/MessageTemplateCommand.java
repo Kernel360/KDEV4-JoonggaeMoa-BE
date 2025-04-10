@@ -13,12 +13,14 @@ import lombok.NoArgsConstructor;
 @Builder
 public class MessageTemplateCommand {
 
-	private String category;
+	private Long id;
+	private String title;
 	private String content;
 
 	public static MessageTemplateCommand of(MessageTemplate messageTemplate) {
 		return MessageTemplateCommand.builder()
-			.category(String.valueOf(messageTemplate.getCategory()))
+			.id(messageTemplate.getId())
+			.title(messageTemplate.getTitle())
 			.content(messageTemplate.getContent())
 			.build();
 	}

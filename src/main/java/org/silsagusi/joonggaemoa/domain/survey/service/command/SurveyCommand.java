@@ -10,11 +10,12 @@ import lombok.Getter;
 @Getter
 @Builder
 public class SurveyCommand {
-	private Long id;
+	private String id;
 	private Long agentId;
 	private String title;
 	private String description;
 	private List<QuestionCommand> questionList;
+	private String createdAt;
 
 	public static SurveyCommand of(Survey survey) {
 		List<QuestionCommand> questionCommandList = survey.getQuestionList()
@@ -26,6 +27,7 @@ public class SurveyCommand {
 			.title(survey.getTitle())
 			.description(survey.getDescription())
 			.questionList(questionCommandList)
+			.createdAt(survey.getCreatedAt())
 			.build();
 	}
 

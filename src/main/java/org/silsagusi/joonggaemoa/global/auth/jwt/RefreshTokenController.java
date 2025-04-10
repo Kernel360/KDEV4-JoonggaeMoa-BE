@@ -30,7 +30,7 @@ public class RefreshTokenController {
 			return ResponseEntity.status(401).body(ApiResponse.fail(new CustomException(ErrorCode.UNAUTHORIZED)));
 		}
 
-		refreshTokenService.refreshToken(refreshToken.getValue(), request, response);
+		refreshTokenService.refreshToken(refreshToken.getValue(), response);
 
 		return ResponseEntity.ok(ApiResponse.ok());
 	}
