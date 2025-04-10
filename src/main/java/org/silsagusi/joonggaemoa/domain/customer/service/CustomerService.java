@@ -164,7 +164,6 @@ public class CustomerService {
         if (!customer.getAgent().getId().equals(agentId)) {
             throw new CustomException(ErrorCode.FORBIDDEN);
         }
-
         return CustomerCommand.of(customer);
     }
 

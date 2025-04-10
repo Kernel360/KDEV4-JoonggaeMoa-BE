@@ -3,8 +3,10 @@ package org.silsagusi.joonggaemoa.domain.article.controller;
 import java.util.List;
 
 import org.silsagusi.joonggaemoa.domain.article.service.ArticleService;
+import org.silsagusi.joonggaemoa.domain.article.service.RegionService;
 import org.silsagusi.joonggaemoa.domain.article.service.dto.ArticleResponse;
 import org.silsagusi.joonggaemoa.domain.article.service.dto.RealEstateTypeSummaryResponse;
+import org.silsagusi.joonggaemoa.domain.article.service.dto.RegionResponse;
 import org.silsagusi.joonggaemoa.domain.article.service.dto.TradeTypeSummaryResponse;
 import org.silsagusi.joonggaemoa.global.api.ApiResponse;
 import org.springframework.data.domain.Page;
@@ -21,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 public class ArticleController {
 
 	private final ArticleService articleService;
+	private final RegionService regionService;
 
 	@GetMapping("/api/articles")
 	public ResponseEntity<ApiResponse<Page<ArticleResponse>>> getArticles(
@@ -32,6 +35,13 @@ public class ArticleController {
 	) {
 		return ResponseEntity.ok(ApiResponse.ok(
 			articleService.getAllArticles(pageable, realEstateType, tradeType, minPrice, maxPrice)
+		));
+	}
+
+	@GetMapping("/api/regions")
+	public ResponseEntity<ApiResponse<List<RegionResponse>>> getRegions() {
+		return ResponseEntity.ok(ApiResponse.ok(
+			regionService.getAllRegions()
 		));
 	}
 
