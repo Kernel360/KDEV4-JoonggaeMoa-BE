@@ -45,6 +45,7 @@ public class MessageDto {
 		private String content;
 		private String createdAt;
 		private String sendStatus;
+		private LocalDateTime sendAt;
 
 		public static Response of(MessageCommand command) {
 			return Response.builder()
@@ -55,6 +56,7 @@ public class MessageDto {
 				.content(command.getContent())
 				.createdAt(command.getCreatedAt())
 				.sendStatus(command.getSendStatus())
+				.sendAt(command.getSendAt())
 				.build();
 		}
 	}
