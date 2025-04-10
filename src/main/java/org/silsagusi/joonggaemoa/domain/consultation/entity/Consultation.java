@@ -70,14 +70,6 @@ public class Consultation {
 		this.consultationStatus = consultationStatus;
 	}
 
-	public Consultation(
-		Customer customer,
-		ConsultationStatus consultationStatus
-	) {
-		this.customer = customer;
-		this.consultationStatus = consultationStatus;
-	}
-
 	public void updateStatus(ConsultationStatus consultationStatus) {
 		this.consultationStatus = consultationStatus;
 	}

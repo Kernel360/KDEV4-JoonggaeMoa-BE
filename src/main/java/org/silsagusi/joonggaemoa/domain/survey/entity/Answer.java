@@ -1,5 +1,6 @@
 package org.silsagusi.joonggaemoa.domain.survey.entity;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.silsagusi.joonggaemoa.domain.customer.entity.Customer;
@@ -29,6 +30,10 @@ public class Answer extends BaseEntity {
 	@Column(name = "answer_id")
 	private Long id;
 
+	private Boolean applyConsultation;
+
+	private LocalDateTime consultAt;
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "customer_id")
 	private Customer customer;
@@ -42,10 +47,14 @@ public class Answer extends BaseEntity {
 	private List<QuestionAnswerPair> questionAnswerPairs;
 
 	public Answer(
+		Boolean applyConsultation,
+		LocalDateTime consultAt,
 		Customer customer,
 		Survey survey,
 		List<QuestionAnswerPair> questionAnswerPairs
 	) {
+		this.applyConsultation = applyConsultation;
+		this.consultAt = consultAt;
 		this.customer = customer;
 		this.survey = survey;
 		this.questionAnswerPairs = questionAnswerPairs;

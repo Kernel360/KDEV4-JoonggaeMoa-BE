@@ -1,11 +1,16 @@
 package org.silsagusi.joonggaemoa.domain.survey.controller.dto;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.silsagusi.joonggaemoa.domain.customer.controller.dto.CustomerDto;
 import org.silsagusi.joonggaemoa.domain.survey.service.command.AnswerCommand;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -35,8 +40,16 @@ public class AnswerDto {
 		@NotNull
 		private Boolean consent;
 
+		@NotNull
+		private Boolean applyConsultation;
+
+		@Future
+		@JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Seoul")
+		@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
+		private LocalDateTime consultAt;
+
 		private List<@NotBlank String> questions;
-		
+
 		private List<List<@NotBlank String>> answers;
 	}
 

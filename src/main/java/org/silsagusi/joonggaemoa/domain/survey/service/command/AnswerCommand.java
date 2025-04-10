@@ -1,5 +1,6 @@
 package org.silsagusi.joonggaemoa.domain.survey.service.command;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.silsagusi.joonggaemoa.domain.customer.service.command.CustomerCommand;
@@ -11,6 +12,8 @@ import lombok.Getter;
 @Getter
 @Builder
 public class AnswerCommand {
+	private Boolean applyConsultation;
+	private LocalDateTime consultAt;
 	private CustomerCommand customer;
 	private SurveyCommand survey;
 	private List<QuestionAnswerCommand> answers;
@@ -21,6 +24,8 @@ public class AnswerCommand {
 			.map(it -> QuestionAnswerCommand.of(it)).toList();
 
 		return AnswerCommand.builder()
+			.applyConsultation(answer.getApplyConsultation())
+			.consultAt(answer.getConsultAt())
 			.customer(CustomerCommand.of(answer.getCustomer()))
 			.survey(SurveyCommand.of(answer.getSurvey()))
 			.answers(questionAnswerCommandList)
