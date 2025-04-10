@@ -1,10 +1,7 @@
 package org.silsagusi.joonggaemoa.domain.customer.service;
 
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-
+import com.amazonaws.services.s3.AmazonS3;
+import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -21,187 +18,188 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.amazonaws.services.s3.AmazonS3;
-
-import lombok.RequiredArgsConstructor;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Service
 @RequiredArgsConstructor
 public class CustomerService {
 
-	private final CustomerRepository customerRepository;
-	private final AgentRepository agentRepository;
-	private final AmazonS3 amazonS3;
-	private static final String S3_BUCKET_NAME = "joonggaemoa";
-	private static final String EXCEL_FORMAT_FILENAME = "format.xlsx";
+    private final CustomerRepository customerRepository;
+    private final AgentRepository agentRepository;
+    private final AmazonS3 amazonS3;
+    private static final String S3_BUCKET_NAME = "joonggaemoa";
+    private static final String EXCEL_FORMAT_FILENAME = "format.xlsx";
 
-	public void createCustomer(
-		Long agentId,
-		String name,
-		LocalDate birthday,
-		String phone,
-		String email,
-		String job,
-		Boolean isVip,
-		String memo,
-		Boolean consent
-	) {
-		Agent agent = agentRepository.findById(agentId)
-			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
-		Customer customer = new Customer(
-			name,
-			birthday,
-			phone,
-			email,
-			job,
-			isVip,
-			memo,
-			consent,
-			agent
-		);
+    public void createCustomer(
+        Long agentId,
+        String name,
+        LocalDate birthday,
+        String phone,
+        String email,
+        String job,
+        Boolean isVip,
+        String memo,
+        Boolean consent
+    ) {
+        Agent agent = agentRepository.findById(agentId)
+            .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
+        Customer customer = new Customer(
+            name,
+            birthday,
+            phone,
+            email,
+            job,
+            isVip,
+            memo,
+            consent,
+            agent
+        );
 
-		customerRepository.save(customer);
+        customerRepository.save(customer);
 
-	}
+    }
 
-	public void bulkCreateCustomer(Long agentId, MultipartFile file) {
-		//TODO: 엑셀 파일 타입 확인
-		try {
-			XSSFWorkbook workbook = new XSSFWorkbook(file.getInputStream());
+    public void bulkCreateCustomer(Long agentId, MultipartFile file) {
+        //TODO: 엑셀 파일 타입 확인
+        try {
+            XSSFWorkbook workbook = new XSSFWorkbook(file.getInputStream());
 
-			int sheetsLength = workbook.getNumberOfSheets();
-			Agent agent = agentRepository.findById(agentId)
-				.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
+            int sheetsLength = workbook.getNumberOfSheets();
+            Agent agent = agentRepository.findById(agentId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
 
-			for (int sheetIndex = 0; sheetIndex < sheetsLength; sheetIndex++) {
-				XSSFSheet workSheet = workbook.getSheetAt(sheetIndex);
+            for (int sheetIndex = 0; sheetIndex < sheetsLength; sheetIndex++) {
+                XSSFSheet workSheet = workbook.getSheetAt(sheetIndex);
 
-				for (int i = 1; i < workSheet.getLastRowNum(); i++) {
-					try {
+                for (int i = 1; i < workSheet.getLastRowNum(); i++) {
+                    try {
 
-						Row row = workSheet.getRow(i);
-						if (row == null)
-							continue;
-						Customer customer = new Customer(
-							row.getCell(0).getStringCellValue(),
-							row.getCell(1).getLocalDateTimeCellValue().toLocalDate(),
-							row.getCell(2).getStringCellValue(),
-							row.getCell(3).getStringCellValue(),
-							row.getCell(4).getStringCellValue(),
-							row.getCell(5).getBooleanCellValue(),
-							row.getCell(6).getStringCellValue(),
-							row.getCell(7).getBooleanCellValue(),
-							agent
-						);
+                        Row row = workSheet.getRow(i);
+                        if (row == null)
+                            continue;
+                        Customer customer = new Customer(
+                            row.getCell(0).getStringCellValue(),
+                            row.getCell(1).getLocalDateTimeCellValue().toLocalDate(),
+                            row.getCell(2).getStringCellValue(),
+                            row.getCell(3).getStringCellValue(),
+                            row.getCell(4).getStringCellValue(),
+                            row.getCell(5).getBooleanCellValue(),
+                            row.getCell(6).getStringCellValue(),
+                            row.getCell(7).getBooleanCellValue(),
+                            agent
+                        );
 
-						customerRepository.save(customer);
+                        customerRepository.save(customer);
 
-					} catch (Exception innerException) {
-						System.err.println("Error processiong row " + (i) + ": " + innerException.getMessage());
-						throw innerException;
-					}
-				}
-			}
+                    } catch (Exception innerException) {
+                        System.err.println("Error processiong row " + (i) + ": " + innerException.getMessage());
+                        throw innerException;
+                    }
+                }
+            }
 
-		} catch (Exception e) {
-			throw new CustomException(ErrorCode.FILE_UPLOAD_ERROR);
-		}
-	}
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.FILE_UPLOAD_ERROR);
+        }
+    }
 
-	public void deleteCustomer(Long agentId, Long customerId) {
-		Customer customer = customerRepository.findById(customerId)
-			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_CUSTOMER));
+    public void deleteCustomer(Long agentId, Long customerId) {
+        Customer customer = customerRepository.findById(customerId)
+            .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_CUSTOMER));
 
-		if (customer.getAgent().getId().equals(agentId)) {
-			throw new CustomException(ErrorCode.FORBIDDEN);
-		}
+        if (!customer.getAgent().getId().equals(agentId)) {
+            throw new CustomException(ErrorCode.FORBIDDEN);
+        }
 
-		customerRepository.delete(customer);
-	}
+        customerRepository.delete(customer);
+    }
 
-	public void updateCustomer(
-		Long agentId,
-		Long customerId,
-		String name,
-		LocalDate birthday,
-		String phone,
-		String email,
-		String job,
-		Boolean isVip,
-		String memo,
-		Boolean consent
-	) {
-		Customer customer = customerRepository.findById(customerId)
-			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_CUSTOMER));
+    public void updateCustomer(
+        Long agentId,
+        Long customerId,
+        String name,
+        LocalDate birthday,
+        String phone,
+        String email,
+        String job,
+        Boolean isVip,
+        String memo,
+        Boolean consent
+    ) {
+        Customer customer = customerRepository.findById(customerId)
+            .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_CUSTOMER));
 
-		if (!customer.getAgent().getId().equals(agentId)) {
-			throw new CustomException(ErrorCode.FORBIDDEN);
-		}
-		customer.updateCustomer(
-			(name == null || name.isBlank()) ? customer.getName() : name,
-			(birthday == null) ? customer.getBirthday() : birthday,
-			(phone == null || phone.isBlank()) ? customer.getPhone() : phone,
-			(email == null || email.isBlank()) ? customer.getEmail() : email,
-			(job == null || job.isBlank()) ? customer.getJob() : job,
-			(isVip == null) ? customer.getIsVip() : isVip,
-			(memo == null || memo.isBlank()) ? customer.getMemo() : memo,
-			(consent == null) ? customer.getConsent() : consent
-		);
-		customerRepository.save(customer);
-	}
+        if (!customer.getAgent().getId().equals(agentId)) {
+            throw new CustomException(ErrorCode.FORBIDDEN);
+        }
+        customer.updateCustomer(
+            (name == null || name.isBlank()) ? customer.getName() : name,
+            (birthday == null) ? customer.getBirthday() : birthday,
+            (phone == null || phone.isBlank()) ? customer.getPhone() : phone,
+            (email == null || email.isBlank()) ? customer.getEmail() : email,
+            (job == null || job.isBlank()) ? customer.getJob() : job,
+            (isVip == null) ? customer.getIsVip() : isVip,
+            (memo == null || memo.isBlank()) ? customer.getMemo() : memo,
+            (consent == null) ? customer.getConsent() : consent
+        );
+        customerRepository.save(customer);
+    }
 
-	public CustomerCommand getCustomerById(Long agentId, Long customerId) {
-		Customer customer = customerRepository.findById(customerId)
-			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_CUSTOMER));
+    public CustomerCommand getCustomerById(Long agentId, Long customerId) {
+        Customer customer = customerRepository.findById(customerId)
+            .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_CUSTOMER));
 
-		if (!customer.getAgent().getId().equals(agentId)) {
-			throw new CustomException(ErrorCode.FORBIDDEN);
-		}
+        if (!customer.getAgent().getId().equals(agentId)) {
+            throw new CustomException(ErrorCode.FORBIDDEN);
+        }
 
-		return CustomerCommand.of(customer);
-	}
+        return CustomerCommand.of(customer);
+    }
 
-	public Page<CustomerCommand> getAllCustomers(Long agentId, Pageable pageable) {
-		Agent agent = agentRepository.findById(agentId)
-			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
+    public Page<CustomerCommand> getAllCustomers(Long agentId, Pageable pageable) {
+        Agent agent = agentRepository.findById(agentId)
+            .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
 
-		Page<Customer> customerPage = customerRepository.findAllByAgent(agent, pageable);
-		Page<CustomerCommand> customerCommandPage = customerPage.map(CustomerCommand::of);
-		return customerCommandPage;
-	}
+        Page<Customer> customerPage = customerRepository.findAllByAgent(agent, pageable);
+        Page<CustomerCommand> customerCommandPage = customerPage.map(CustomerCommand::of);
+        return customerCommandPage;
+    }
 
-	public Customer getCustomerByPhone(String phone) {
-		return customerRepository.findByPhone(phone).orElseGet(null);
-	}
+    public Customer getCustomerByPhone(String phone) {
+        return customerRepository.findByPhone(phone).orElseGet(null);
+    }
 
-	public String excelDownload() {
-		return amazonS3.getUrl(S3_BUCKET_NAME, EXCEL_FORMAT_FILENAME).toString();
-	}
+    public String excelDownload() {
+        return amazonS3.getUrl(S3_BUCKET_NAME, EXCEL_FORMAT_FILENAME).toString();
+    }
 
-	public CustomerSummaryResponse getCustomerSummary(Long agentId) {
-		LocalDateTime now = LocalDateTime.now();
+    public CustomerSummaryResponse getCustomerSummary(Long agentId) {
+        LocalDateTime now = LocalDateTime.now();
 
-		LocalDate today = LocalDate.now();
-		LocalDate thisWeekStart = today.with(DayOfWeek.MONDAY);
-		LocalDateTime thisWeekStartTime = thisWeekStart.atStartOfDay();
+        LocalDate today = LocalDate.now();
+        LocalDate thisWeekStart = today.with(DayOfWeek.MONDAY);
+        LocalDateTime thisWeekStartTime = thisWeekStart.atStartOfDay();
 
-		LocalDate lastWeekStart = thisWeekStart.minusWeeks(1);
-		LocalDate lastWeekEnd = thisWeekStart.minusDays(1);
-		LocalDateTime lastWeekStartTime = lastWeekStart.atStartOfDay();
-		LocalDateTime lastWeekEndTime = lastWeekEnd.atTime(LocalTime.MAX);
+        LocalDate lastWeekStart = thisWeekStart.minusWeeks(1);
+        LocalDate lastWeekEnd = thisWeekStart.minusDays(1);
+        LocalDateTime lastWeekStartTime = lastWeekStart.atStartOfDay();
+        LocalDateTime lastWeekEndTime = lastWeekEnd.atTime(LocalTime.MAX);
 
-		Long thisWeekCount = customerRepository.countByAgentIdAndCreatedAtBetween(agentId, thisWeekStartTime, now);
-		Long lastWeekCount = customerRepository.countByAgentIdAndCreatedAtBetween(agentId, lastWeekStartTime,
-			lastWeekEndTime);
+        Long thisWeekCount = customerRepository.countByAgentIdAndCreatedAtBetween(agentId, thisWeekStartTime, now);
+        Long lastWeekCount = customerRepository.countByAgentIdAndCreatedAtBetween(agentId, lastWeekStartTime,
+            lastWeekEndTime);
 
-		double changeRate;
-		if (lastWeekCount == 0) {
-			changeRate = thisWeekCount == 0 ? 0 : 100;
-		} else {
-			changeRate = ((double)(thisWeekCount - lastWeekCount) / lastWeekCount) * 100;
-		}
+        double changeRate;
+        if (lastWeekCount == 0) {
+            changeRate = thisWeekCount == 0 ? 0 : 100;
+        } else {
+            changeRate = ((double) (thisWeekCount - lastWeekCount) / lastWeekCount) * 100;
+        }
 
-		return new CustomerSummaryResponse(thisWeekCount, changeRate);
+        return new CustomerSummaryResponse(thisWeekCount, changeRate);
 
-	}
+    }
 }
