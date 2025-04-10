@@ -1,6 +1,5 @@
 package org.silsagusi.joonggaemoa.domain.article.entity;
 
-
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -21,10 +20,6 @@ import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.silsagusi.joonggaemoa.request.naverland.service.dto.AddressResponse;
-import org.silsagusi.joonggaemoa.request.naverland.service.dto.ClientArticleResponse;
-
-import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity(name = "articles")
@@ -52,7 +47,7 @@ public class Article {
 
 	private String tradeType;
 
-	private String price;
+	private Integer price;
 
 	private Integer rentPrice;
 
@@ -113,7 +108,7 @@ public class Article {
 		String name,
 		String realEstateType,
 		String tradeType,
-		String price,
+		Integer price,
 		Integer rentPrice,
 		LocalDate confirmedAt,
 		Double latitude,
@@ -178,7 +173,7 @@ public class Article {
 			body.getAtclNm(),
 			body.getRletTpNm(),
 			body.getTradTpNm(),
-			body.getPrc() != null ? body.getPrc().toString() : null,
+			body.getPrc(),
 			body.getRentPrc(),
 			parseConfirmedAt(body.getAtclCfmYmd()),
 			body.getLat(),

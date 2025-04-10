@@ -18,7 +18,9 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ArticleService {
@@ -33,8 +35,8 @@ public class ArticleService {
 		Pageable pageable,
 		List<String> realEstateType,
 		List<String> tradeType,
-		Long minPrice,
-		Long maxPrice
+		String minPrice,
+		String maxPrice
 	) {
 		Specification<Article> spec = Specification.where(null);
 
@@ -47,14 +49,16 @@ public class ArticleService {
 		}
 
 		if (minPrice != null) {
+			int pri = Integer.parseInt(minPrice);
 			spec = spec.and(
-				((root, query, criteriaBuilder) -> criteriaBuilder.greaterThan(root.get(PRICE), minPrice)));
+				((root, query, criteriaBuilder) -> criteriaBuilder.greaterThan(root.get(PRICE), pri)));
 		}
 
 		if (maxPrice != null) {
+			int pri = Integer.parseInt(maxPrice);
 			spec = spec.and((root, query, criteriaBuilder) ->
 				criteriaBuilder.and(
-					criteriaBuilder.lessThan(root.get(PRICE), maxPrice),
+					criteriaBuilder.lessThan(root.get(PRICE), pri),
 					criteriaBuilder.greaterThan(root.get(PRICE), 0)
 				)
 			);
