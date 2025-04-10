@@ -17,7 +17,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class MessageService {
@@ -28,6 +30,10 @@ public class MessageService {
 
 	public Page<MessageCommand> getMessagePage(Long agentId, Pageable pageable) {
 		Page<Message> messagePage = messageRepository.findAllByCustomerAgent_Id(agentId, pageable);
+
+		messagePage.forEach(message -> {
+			log.info("메세지 대상의 이름 : {}", message.getCustomer().getName());
+		});
 
 		return messagePage.map(MessageCommand::of);
 	}
@@ -69,6 +75,15 @@ public class MessageService {
 	public Page<MessageCommand> getReservedMessagePage(Long agentId, Pageable pageable) {
 		Page<Message> messagePage = messageRepository.findAllByCustomerAgent_IdAndSendStatus(agentId,
 			SendStatus.PENDING, pageable);
+
+		log.info("Agent ID: {}, SendStatus: {}, Page: {}", agentId, pageable, messagePage);
+		log.info("Retrieved message count: {}", messagePage.getTotalElements());
+		log.info("Page number: {}, Page size: {}, Total pages: {}",
+			messagePage.getNumber(), messagePage.getSize(), messagePage.getTotalPages());
+		messagePage.forEach(message -> {
+			log.info("메세지 대상의 이름 : {}", message.getCustomer().getName());
+		});
+
 		return messagePage.map(MessageCommand::of);
 	}
 
