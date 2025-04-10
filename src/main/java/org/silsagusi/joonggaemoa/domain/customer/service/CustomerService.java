@@ -46,6 +46,15 @@ public class CustomerService {
     ) {
         Agent agent = agentRepository.findById(agentId)
             .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
+
+        if (customerRepository.existsByAgentAndPhone(agent, phone)) {
+            throw new CustomException(ErrorCode.CONFLICT_PHONE);
+        }
+
+        if (customerRepository.existsByAgentAndEmail(agent, email)) {
+            throw new CustomException(ErrorCode.CONFLICT_EMAIL);
+        }
+
         Customer customer = new Customer(
             name,
             birthday,
