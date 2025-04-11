@@ -29,7 +29,7 @@ public class MessageService {
 	private final AgentRepository agentRepository;
 
 	public Page<MessageCommand> getMessagePage(Long agentId, Pageable pageable) {
-		Page<Message> messagePage = messageRepository.findAllByCustomerAgent_Id(agentId, pageable);
+		Page<Message> messagePage = messageRepository.findAllByCustomer_Agent_Id(agentId, pageable);
 
 		messagePage.forEach(message -> {
 			log.info("메세지 대상의 이름 : {}", message.getCustomer().getName());
@@ -73,7 +73,7 @@ public class MessageService {
 	}
 
 	public Page<MessageCommand> getReservedMessagePage(Long agentId, Pageable pageable) {
-		Page<Message> messagePage = messageRepository.findAllByCustomerAgent_IdAndSendStatus(agentId,
+		Page<Message> messagePage = messageRepository.findAllByCustomer_Agent_IdAndSendStatus(agentId,
 			SendStatus.PENDING, pageable);
 
 		log.info("Agent ID: {}, SendStatus: {}, Page: {}", agentId, pageable, messagePage);
