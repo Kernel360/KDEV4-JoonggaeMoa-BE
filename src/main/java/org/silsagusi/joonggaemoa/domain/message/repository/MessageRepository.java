@@ -12,10 +12,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface MessageRepository extends JpaRepository<Message, Long> {
 
 	@EntityGraph(attributePaths = {"customer", "customer.agent"})
-	Page<Message> findAllByCustomerAgent_Id(Long agentId, Pageable pageable);
+	Page<Message> findAllByCustomer_Agent_Id(Long agentId, Pageable pageable);
 
 	@EntityGraph(attributePaths = {"customer", "customer.agent"})
-	Page<Message> findAllByCustomerAgent_IdAndSendStatus(Long agentId, SendStatus sendStatus, Pageable pageable);
+	Page<Message> findAllByCustomer_Agent_IdAndSendStatus(Long agentId, SendStatus sendStatus, Pageable pageable);
 
 	Page<Message> findBySendStatusAndSendAtBetween(
 		SendStatus status,
