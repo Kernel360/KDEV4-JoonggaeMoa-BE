@@ -1,9 +1,9 @@
-package org.silsagusi.joonggaemoa.domain.message.controller.dto;
+package org.silsagusi.joonggaemoa.domain.message.service.dto;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.silsagusi.joonggaemoa.domain.message.service.command.MessageCommand;
+import org.silsagusi.joonggaemoa.domain.message.entity.Message;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -47,16 +47,16 @@ public class MessageDto {
 		private String sendStatus;
 		private LocalDateTime sendAt;
 
-		public static Response of(MessageCommand command) {
+		public static Response of(Message message) {
 			return Response.builder()
-				.id(command.getId())
-				.customerId(command.getCustomerId())
-				.customerName(command.getCustomerName())
-				.customerPhone(command.getCustomerPhone())
-				.content(command.getContent())
-				.createdAt(command.getCreatedAt())
-				.sendStatus(command.getSendStatus())
-				.sendAt(command.getSendAt())
+				.id(message.getId())
+				.customerId(message.getCustomer().getId())
+				.customerName(message.getCustomer().getName())
+				.customerPhone(message.getCustomer().getPhone())
+				.content(message.getContent())
+				.createdAt(message.getCreatedAt())
+				.sendStatus(message.getSendStatus() + "")
+				.sendAt(message.getSendAt())
 				.build();
 		}
 	}

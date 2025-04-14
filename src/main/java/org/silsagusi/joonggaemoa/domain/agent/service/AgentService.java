@@ -1,11 +1,10 @@
 package org.silsagusi.joonggaemoa.domain.agent.service;
 
-import io.jsonwebtoken.Claims;
-import lombok.RequiredArgsConstructor;
-import org.silsagusi.joonggaemoa.domain.agent.controller.dto.AgentUpdateRequest;
 import org.silsagusi.joonggaemoa.domain.agent.entity.Agent;
 import org.silsagusi.joonggaemoa.domain.agent.repository.AgentRepository;
-import org.silsagusi.joonggaemoa.domain.agent.service.command.AgentCommand;
+import org.silsagusi.joonggaemoa.domain.agent.service.dto.AgentDto;
+import org.silsagusi.joonggaemoa.domain.agent.service.dto.AgentUpdateRequest;
+import org.silsagusi.joonggaemoa.domain.agent.service.dto.FindUsernameDto;
 import org.silsagusi.joonggaemoa.domain.message.service.MessageTemplateService;
 import org.silsagusi.joonggaemoa.global.api.exception.CustomException;
 import org.silsagusi.joonggaemoa.global.api.exception.ErrorCode;
@@ -15,89 +14,82 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import io.jsonwebtoken.Claims;
+import lombok.RequiredArgsConstructor;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class AgentService {
 
-    private final JwtProvider jwtProvider;
-    private final AgentRepository agentRepository;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
-    private final RefreshTokenStore refreshTokenStore;
-    private final MessageTemplateService messageTemplateService;
+	private final JwtProvider jwtProvider;
+	private final AgentRepository agentRepository;
+	private final BCryptPasswordEncoder bCryptPasswordEncoder;
+	private final RefreshTokenStore refreshTokenStore;
+	private final MessageTemplateService messageTemplateService;
 
-    @Transactional
-    public void signup(
-        String username,
-        String password,
-        String name,
-        String phone,
-        String email,
-        String office,
-        String region,
-        String businessNo
-    ) {
+	@Transactional
+	public void signup(AgentDto.Request requestDto) {
 
-        if (agentRepository.existsByUsername(username)) {
-            throw new CustomException(ErrorCode.CONFLICT_USERNAME);
-        }
+		if (agentRepository.existsByUsername(requestDto.getUsername())) {
+			throw new CustomException(ErrorCode.CONFLICT_USERNAME);
+		}
 
-        if (agentRepository.existsByPhone(phone)) {
-            throw new CustomException(ErrorCode.CONFLICT_PHONE);
-        }
+		if (agentRepository.existsByPhone(requestDto.getPhone())) {
+			throw new CustomException(ErrorCode.CONFLICT_PHONE);
+		}
 
-        if (agentRepository.existsByEmail(email)) {
-            throw new CustomException(ErrorCode.CONFLICT_EMAIL);
-        }
+		if (agentRepository.existsByEmail(requestDto.getEmail())) {
+			throw new CustomException(ErrorCode.CONFLICT_EMAIL);
+		}
 
+		Agent agent = new Agent(
+			requestDto.getName(),
+			requestDto.getPhone(),
+			requestDto.getEmail(),
+			requestDto.getUsername(),
+			bCryptPasswordEncoder.encode(requestDto.getPassword()),
+			requestDto.getOffice(),
+			requestDto.getRegion(),
+			requestDto.getBusinessNo()
+		);
 
-        Agent agent = new Agent(
-            name,
-            phone,
-            email,
-            username,
-            bCryptPasswordEncoder.encode(password),
-            office,
-            region,
-            businessNo
-        );
+		agentRepository.save(agent);
 
-        agentRepository.save(agent);
+		messageTemplateService.createDefaultMessageTemplate(agent);
+	}
 
-        messageTemplateService.createDefaultMessageTemplate(agent);
-    }
+	public FindUsernameDto.Response getAgentByNameAndPhone(FindUsernameDto.Request requestDto) {
+		Agent agent = agentRepository.findByNameAndPhone(requestDto.getName(), requestDto.getPhone())
+			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
 
-    public AgentCommand getAgentByNameAndPhone(String name, String phone) {
-        Agent agent = agentRepository.findByNameAndPhone(name, phone)
-            .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
+		return FindUsernameDto.Response.of(agent);
+	}
 
-        return AgentCommand.of(agent);
-    }
+	public void logout(String accessToken) {
+		if (Boolean.FALSE.equals(jwtProvider.validateToken(accessToken))) {
+			return;
+		}
+		Claims claims = jwtProvider.getClaims(accessToken);
+		String username = claims.get("username", String.class);
 
-    public void logout(String accessToken) {
-        if (Boolean.FALSE.equals(jwtProvider.validateToken(accessToken))) {
-            return;
-        }
-        Claims claims = jwtProvider.getClaims(accessToken);
-        String username = claims.get("username", String.class);
+		refreshTokenStore.deleteRefreshToken(username);
+	}
 
-        refreshTokenStore.deleteRefreshToken(username);
-    }
+	public AgentDto.Response getAgent(Long agentId) {
+		Agent agent = agentRepository.findById(agentId)
+			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
 
-    public AgentCommand getAgent(Long agentId) {
-        Agent agent = agentRepository.findById(agentId)
-            .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
+		return AgentDto.Response.of(agent);
+	}
 
-        return AgentCommand.of(agent);
-    }
+	public void updateAgent(Long agentId, AgentUpdateRequest requestDto) {
+		Agent agent = agentRepository.findById(agentId)
+			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
 
-    public void updateAgent(Long agentId, AgentUpdateRequest requestDto) {
-        Agent agent = agentRepository.findById(agentId)
-            .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
+		agent.updateAgent(requestDto.getName(), requestDto.getPhone(), requestDto.getEmail(), requestDto.getUsername(),
+			requestDto.getOffice(), requestDto.getRegion(), requestDto.getBusinessNo());
 
-        agent.updateAgent(requestDto.getName(), requestDto.getPhone(), requestDto.getEmail(), requestDto.getUsername(),
-            requestDto.getOffice(), requestDto.getRegion(), requestDto.getBusinessNo());
-
-        agentRepository.save(agent);
-    }
+		agentRepository.save(agent);
+	}
 }

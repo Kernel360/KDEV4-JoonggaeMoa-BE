@@ -4,10 +4,10 @@ import java.util.List;
 
 import org.silsagusi.joonggaemoa.domain.agent.entity.Agent;
 import org.silsagusi.joonggaemoa.domain.agent.repository.AgentRepository;
-import org.silsagusi.joonggaemoa.domain.message.controller.dto.MessageTemplateDto;
 import org.silsagusi.joonggaemoa.domain.message.entity.MessageTemplate;
 import org.silsagusi.joonggaemoa.domain.message.repository.MessageTemplateRepository;
 import org.silsagusi.joonggaemoa.domain.message.service.command.MessageTemplateCommand;
+import org.silsagusi.joonggaemoa.domain.message.service.dto.MessageTemplateDto;
 import org.silsagusi.joonggaemoa.global.api.exception.CustomException;
 import org.silsagusi.joonggaemoa.global.api.exception.ErrorCode;
 import org.springframework.stereotype.Service;

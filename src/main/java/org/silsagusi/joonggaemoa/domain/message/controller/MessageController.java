@@ -1,9 +1,8 @@
 package org.silsagusi.joonggaemoa.domain.message.controller;
 
-import org.silsagusi.joonggaemoa.domain.message.controller.dto.MessageDto;
-import org.silsagusi.joonggaemoa.domain.message.controller.dto.MessageUpdateRequest;
 import org.silsagusi.joonggaemoa.domain.message.service.MessageService;
-import org.silsagusi.joonggaemoa.domain.message.service.command.MessageCommand;
+import org.silsagusi.joonggaemoa.domain.message.service.dto.MessageDto;
+import org.silsagusi.joonggaemoa.domain.message.service.dto.MessageUpdateRequest;
 import org.silsagusi.joonggaemoa.global.api.ApiResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -31,22 +30,19 @@ public class MessageController {
 		HttpServletRequest request,
 		Pageable pageable
 	) {
-		Page<MessageCommand> messageCommandPage = messageService.getMessagePage(
+		Page<MessageDto.Response> messagePage = messageService.getMessagePage(
 			(Long)request.getAttribute("agentId"),
 			pageable
 		);
 
-		Page<MessageDto.Response> responses = messageCommandPage.map(MessageDto.Response::of);
-
-		return ResponseEntity.ok(ApiResponse.ok(responses));
+		return ResponseEntity.ok(ApiResponse.ok(messagePage));
 	}
 
 	@PostMapping("/api/messages")
 	public ResponseEntity<ApiResponse<Void>> createMessage(
 		@RequestBody @Valid MessageDto.Request requestDto
 	) {
-		messageService.createMessage(requestDto.getContent(), requestDto.getSendAt(),
-			requestDto.getCustomerIdList());
+		messageService.createMessage(requestDto);
 		return ResponseEntity.ok(ApiResponse.ok());
 	}
 
@@ -59,8 +55,7 @@ public class MessageController {
 		messageService.updateMessage(
 			(Long)request.getAttribute("agentId"),
 			messageId,
-			requestDto.getSendAt(),
-			requestDto.getContent()
+			requestDto
 		);
 
 		return ResponseEntity.ok(ApiResponse.ok());
@@ -71,13 +66,10 @@ public class MessageController {
 		HttpServletRequest request,
 		Pageable pageable
 	) {
-		Page<MessageCommand> commandPage = messageService.getReservedMessagePage(
+		Page<MessageDto.Response> responsePage = messageService.getReservedMessagePage(
 			(Long)request.getAttribute("agentId"),
 			pageable
 		);
-
-		Page<MessageDto.Response> responsePage = commandPage
-			.map(MessageDto.Response::of);
 
 		return ResponseEntity.ok(ApiResponse.ok(responsePage));
 	}
@@ -86,9 +78,9 @@ public class MessageController {
 	public ResponseEntity<ApiResponse<MessageDto.Response>> getReservedMessage(
 		@PathVariable Long messageId
 	) {
-		MessageCommand command = messageService.getReservedMessage(messageId);
+		MessageDto.Response response = messageService.getReservedMessage(messageId);
 
-		return ResponseEntity.ok(ApiResponse.ok(MessageDto.Response.of(command)));
+		return ResponseEntity.ok(ApiResponse.ok(response));
 	}
 
 	@DeleteMapping("/api/reserved-messages/{messageId}")

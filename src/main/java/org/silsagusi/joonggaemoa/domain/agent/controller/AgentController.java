@@ -1,10 +1,9 @@
 package org.silsagusi.joonggaemoa.domain.agent.controller;
 
-import org.silsagusi.joonggaemoa.domain.agent.controller.dto.AgentDto;
-import org.silsagusi.joonggaemoa.domain.agent.controller.dto.AgentUpdateRequest;
-import org.silsagusi.joonggaemoa.domain.agent.controller.dto.FindUsernameDto;
 import org.silsagusi.joonggaemoa.domain.agent.service.AgentService;
-import org.silsagusi.joonggaemoa.domain.agent.service.command.AgentCommand;
+import org.silsagusi.joonggaemoa.domain.agent.service.dto.AgentDto;
+import org.silsagusi.joonggaemoa.domain.agent.service.dto.AgentUpdateRequest;
+import org.silsagusi.joonggaemoa.domain.agent.service.dto.FindUsernameDto;
 import org.silsagusi.joonggaemoa.global.api.ApiResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,15 +28,7 @@ public class AgentController {
 	public ResponseEntity<ApiResponse<Void>> signup(
 		@RequestBody @Valid AgentDto.Request requestDto
 	) {
-		agentService.signup(
-			requestDto.getUsername(),
-			requestDto.getPassword(),
-			requestDto.getName(),
-			requestDto.getPhone(),
-			requestDto.getEmail(),
-			requestDto.getOffice(),
-			requestDto.getRegion(),
-			requestDto.getBusinessNo());
+		agentService.signup(requestDto);
 
 		return ResponseEntity.ok(ApiResponse.ok());
 	}
@@ -45,14 +36,9 @@ public class AgentController {
 	@PostMapping("/api/agents/username")
 	public ResponseEntity<ApiResponse<FindUsernameDto.Response>> findUsername(
 		@RequestBody @Valid FindUsernameDto.Request requestDto) {
-		AgentCommand agentCommand = agentService.getAgentByNameAndPhone(
-			requestDto.getName(),
-			requestDto.getPhone()
-		);
+		FindUsernameDto.Response response = agentService.getAgentByNameAndPhone(requestDto);
 
-		return ResponseEntity.ok(ApiResponse.ok(
-			FindUsernameDto.Response.of(agentCommand)
-		));
+		return ResponseEntity.ok(ApiResponse.ok(response));
 	}
 
 	@PostMapping("/api/agents/logout")
@@ -73,9 +59,9 @@ public class AgentController {
 	public ResponseEntity<ApiResponse<AgentDto.Response>> getAgent(
 		HttpServletRequest request
 	) {
-		AgentCommand command = agentService.getAgent((Long)request.getAttribute("agentId"));
+		AgentDto.Response response = agentService.getAgent((Long)request.getAttribute("agentId"));
 
-		return ResponseEntity.ok(ApiResponse.ok(AgentDto.Response.of(command)));
+		return ResponseEntity.ok(ApiResponse.ok(response));
 	}
 
 	@PatchMapping("/api/agents")

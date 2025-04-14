@@ -2,9 +2,9 @@ package org.silsagusi.joonggaemoa.domain.message.controller;
 
 import java.util.List;
 
-import org.silsagusi.joonggaemoa.domain.message.controller.dto.MessageTemplateDto;
 import org.silsagusi.joonggaemoa.domain.message.service.MessageTemplateService;
 import org.silsagusi.joonggaemoa.domain.message.service.command.MessageTemplateCommand;
+import org.silsagusi.joonggaemoa.domain.message.service.dto.MessageTemplateDto;
 import org.silsagusi.joonggaemoa.global.api.ApiResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;

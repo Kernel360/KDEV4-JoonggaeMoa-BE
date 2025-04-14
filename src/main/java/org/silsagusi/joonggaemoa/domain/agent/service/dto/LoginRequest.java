@@ -1,4 +1,4 @@
-package org.silsagusi.joonggaemoa.domain.agent.controller.dto;
+package org.silsagusi.joonggaemoa.domain.agent.service.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;

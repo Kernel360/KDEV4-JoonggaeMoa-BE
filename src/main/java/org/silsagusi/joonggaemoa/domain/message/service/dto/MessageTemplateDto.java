@@ -1,4 +1,4 @@
-package org.silsagusi.joonggaemoa.domain.message.controller.dto;
+package org.silsagusi.joonggaemoa.domain.message.service.dto;
 
 import org.silsagusi.joonggaemoa.domain.message.service.command.MessageTemplateCommand;
 
