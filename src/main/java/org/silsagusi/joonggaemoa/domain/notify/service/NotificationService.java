@@ -7,7 +7,7 @@ import org.silsagusi.joonggaemoa.domain.notify.entity.Notification;
 import org.silsagusi.joonggaemoa.domain.notify.entity.NotificationType;
 import org.silsagusi.joonggaemoa.domain.notify.repository.EmitterRepository;
 import org.silsagusi.joonggaemoa.domain.notify.repository.NotificationRepository;
-import org.silsagusi.joonggaemoa.domain.notify.service.command.NotificationCommand;
+import org.silsagusi.joonggaemoa.domain.notify.service.dto.NotificationDto;
 import org.silsagusi.joonggaemoa.global.api.exception.CustomException;
 import org.silsagusi.joonggaemoa.global.api.exception.ErrorCode;
 import org.springframework.stereotype.Service;
@@ -69,10 +69,10 @@ public class NotificationService {
 
     }
 
-    public List<NotificationCommand> getNotification(Long agentId) {
+    public List<NotificationDto.Response> getNotification(Long agentId) {
         List<Notification> notificationList = notificationRepository.findAll();
         //List<Notification> notificationList = notificationRepository.findByAgentIdAndIsReadFalse(agentId);
-        return notificationList.stream().map(NotificationCommand::of).toList();
+        return notificationList.stream().map(NotificationDto.Response::of).toList();
     }
 
     public void markRead(Long notificationId) {
