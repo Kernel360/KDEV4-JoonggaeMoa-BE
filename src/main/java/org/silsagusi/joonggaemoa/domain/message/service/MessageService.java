@@ -36,12 +36,12 @@ public class MessageService {
 		return messagePage.map(MessageDto.Response::of);
 	}
 
-	public void createMessage(MessageDto.Request requestDto) {
-		requestDto.getCustomerIdList().stream()
+	public void createMessage(MessageDto.Request messageRequest) {
+		messageRequest.getCustomerIdList().stream()
 			.map(id -> customerRepository.findById(id)
 				.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_CUSTOMER)))
-			.map(customer -> new Message(customer, convertContent(requestDto.getContent(), customer.getName()),
-				requestDto.getSendAt()))
+			.map(customer -> new Message(customer, convertContent(messageRequest.getContent(), customer.getName()),
+				messageRequest.getSendAt()))
 			.forEach(messageRepository::save);
 	}
 
@@ -51,7 +51,7 @@ public class MessageService {
 		return content.replace("${이름}", customerName);
 	}
 
-	public void updateMessage(Long agentId, Long messageId, MessageUpdateRequest requestDto) {
+	public void updateMessage(Long agentId, Long messageId, MessageUpdateRequest messageUpdateRequest) {
 		Agent agent = agentRepository.findById(agentId)
 			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
 
@@ -66,7 +66,7 @@ public class MessageService {
 			throw new CustomException(ErrorCode.BAD_REQUEST);
 		}
 
-		message.updateMessage(requestDto.getSendAt(), requestDto.getContent());
+		message.updateMessage(messageUpdateRequest.getSendAt(), messageUpdateRequest.getContent());
 
 		messageRepository.save(message);
 	}

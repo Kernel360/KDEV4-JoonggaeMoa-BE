@@ -40,9 +40,9 @@ public class MessageController {
 
 	@PostMapping("/api/messages")
 	public ResponseEntity<ApiResponse<Void>> createMessage(
-		@RequestBody @Valid MessageDto.Request requestDto
+		@RequestBody @Valid MessageDto.Request messageRequest
 	) {
-		messageService.createMessage(requestDto);
+		messageService.createMessage(messageRequest);
 		return ResponseEntity.ok(ApiResponse.ok());
 	}
 
@@ -50,12 +50,12 @@ public class MessageController {
 	public ResponseEntity<ApiResponse<Void>> updateMessage(
 		HttpServletRequest request,
 		@PathVariable Long messageId,
-		@RequestBody @Valid MessageUpdateRequest requestDto
+		@RequestBody @Valid MessageUpdateRequest messageUpdateRequest
 	) {
 		messageService.updateMessage(
 			(Long)request.getAttribute("agentId"),
 			messageId,
-			requestDto
+			messageUpdateRequest
 		);
 
 		return ResponseEntity.ok(ApiResponse.ok());

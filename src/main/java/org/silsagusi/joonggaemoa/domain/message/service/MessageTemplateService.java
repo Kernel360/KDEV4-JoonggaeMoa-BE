@@ -32,11 +32,12 @@ public class MessageTemplateService {
 		messageTemplateRepository.save(messageTemplate3);
 	}
 
-	public void createMessageTemplate(Long agentId, MessageTemplateDto.Request request) {
+	public void createMessageTemplate(Long agentId, MessageTemplateDto.Request messageTemplateRequest) {
 		Agent agent = agentRepository.findById(agentId)
 			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
 
-		MessageTemplate messageTemplate = MessageTemplate.create(agent, request.getTitle(), request.getContent());
+		MessageTemplate messageTemplate = MessageTemplate.create(agent, messageTemplateRequest.getTitle(),
+			messageTemplateRequest.getContent());
 
 		messageTemplateRepository.save(messageTemplate);
 	}

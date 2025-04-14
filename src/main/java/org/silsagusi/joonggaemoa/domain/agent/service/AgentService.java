@@ -4,7 +4,7 @@ import org.silsagusi.joonggaemoa.domain.agent.entity.Agent;
 import org.silsagusi.joonggaemoa.domain.agent.repository.AgentRepository;
 import org.silsagusi.joonggaemoa.domain.agent.service.dto.AgentDto;
 import org.silsagusi.joonggaemoa.domain.agent.service.dto.AgentUpdateRequest;
-import org.silsagusi.joonggaemoa.domain.agent.service.dto.FindUsernameDto;
+import org.silsagusi.joonggaemoa.domain.agent.service.dto.UsernameDto;
 import org.silsagusi.joonggaemoa.domain.message.service.MessageTemplateService;
 import org.silsagusi.joonggaemoa.global.api.exception.CustomException;
 import org.silsagusi.joonggaemoa.global.api.exception.ErrorCode;
@@ -29,29 +29,29 @@ public class AgentService {
 	private final MessageTemplateService messageTemplateService;
 
 	@Transactional
-	public void signup(AgentDto.Request requestDto) {
+	public void signup(AgentDto.Request agentRequest) {
 
-		if (agentRepository.existsByUsername(requestDto.getUsername())) {
+		if (agentRepository.existsByUsername(agentRequest.getUsername())) {
 			throw new CustomException(ErrorCode.CONFLICT_USERNAME);
 		}
 
-		if (agentRepository.existsByPhone(requestDto.getPhone())) {
+		if (agentRepository.existsByPhone(agentRequest.getPhone())) {
 			throw new CustomException(ErrorCode.CONFLICT_PHONE);
 		}
 
-		if (agentRepository.existsByEmail(requestDto.getEmail())) {
+		if (agentRepository.existsByEmail(agentRequest.getEmail())) {
 			throw new CustomException(ErrorCode.CONFLICT_EMAIL);
 		}
 
 		Agent agent = new Agent(
-			requestDto.getName(),
-			requestDto.getPhone(),
-			requestDto.getEmail(),
-			requestDto.getUsername(),
-			bCryptPasswordEncoder.encode(requestDto.getPassword()),
-			requestDto.getOffice(),
-			requestDto.getRegion(),
-			requestDto.getBusinessNo()
+			agentRequest.getName(),
+			agentRequest.getPhone(),
+			agentRequest.getEmail(),
+			agentRequest.getUsername(),
+			bCryptPasswordEncoder.encode(agentRequest.getPassword()),
+			agentRequest.getOffice(),
+			agentRequest.getRegion(),
+			agentRequest.getBusinessNo()
 		);
 
 		agentRepository.save(agent);
@@ -59,11 +59,11 @@ public class AgentService {
 		messageTemplateService.createDefaultMessageTemplate(agent);
 	}
 
-	public FindUsernameDto.Response getAgentByNameAndPhone(FindUsernameDto.Request requestDto) {
-		Agent agent = agentRepository.findByNameAndPhone(requestDto.getName(), requestDto.getPhone())
+	public UsernameDto.Response getAgentByNameAndPhone(UsernameDto.Request usernameRequest) {
+		Agent agent = agentRepository.findByNameAndPhone(usernameRequest.getName(), usernameRequest.getPhone())
 			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
 
-		return FindUsernameDto.Response.of(agent);
+		return UsernameDto.Response.of(agent);
 	}
 
 	public void logout(String accessToken) {
@@ -83,12 +83,13 @@ public class AgentService {
 		return AgentDto.Response.of(agent);
 	}
 
-	public void updateAgent(Long agentId, AgentUpdateRequest requestDto) {
+	public void updateAgent(Long agentId, AgentUpdateRequest agentUpdateRequest) {
 		Agent agent = agentRepository.findById(agentId)
 			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
 
-		agent.updateAgent(requestDto.getName(), requestDto.getPhone(), requestDto.getEmail(), requestDto.getUsername(),
-			requestDto.getOffice(), requestDto.getRegion(), requestDto.getBusinessNo());
+		agent.updateAgent(agentUpdateRequest.getName(), agentUpdateRequest.getPhone(), agentUpdateRequest.getEmail(),
+			agentUpdateRequest.getUsername(),
+			agentUpdateRequest.getOffice(), agentUpdateRequest.getRegion(), agentUpdateRequest.getBusinessNo());
 
 		agentRepository.save(agent);
 	}

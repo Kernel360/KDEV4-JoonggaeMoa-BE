@@ -39,11 +39,11 @@ public class MessageTemplateController {
 	@PostMapping("/api/messages/templates")
 	public ResponseEntity<ApiResponse<Void>> createMessageTemplate(
 		HttpServletRequest request,
-		@RequestBody @Valid MessageTemplateDto.Request requestDto
+		@RequestBody @Valid MessageTemplateDto.Request messageTemplateRequest
 	) {
 		messageTemplateService.createMessageTemplate(
 			(Long)request.getAttribute("agentId"),
-			requestDto
+			messageTemplateRequest
 		);
 
 		return ResponseEntity.ok(ApiResponse.ok());

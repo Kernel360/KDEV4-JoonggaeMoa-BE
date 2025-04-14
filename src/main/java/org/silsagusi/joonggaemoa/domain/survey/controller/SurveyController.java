@@ -28,11 +28,11 @@ public class SurveyController {
 	@PostMapping("/api/surveys")
 	public ResponseEntity<ApiResponse<Void>> createSurvey(
 		HttpServletRequest request,
-		@RequestBody @Valid SurveyDto.CreateRequest createRequestDto
+		@RequestBody @Valid SurveyDto.CreateRequest surveyCreateRequest
 	) {
 		surveyService.createSurvey(
 			(Long)request.getAttribute("agentId"),
-			createRequestDto
+			surveyCreateRequest
 		);
 		return ResponseEntity.ok(ApiResponse.ok());
 	}
@@ -53,12 +53,12 @@ public class SurveyController {
 	public ResponseEntity<ApiResponse<Void>> updateSurvey(
 		HttpServletRequest request,
 		@PathVariable String surveyId,
-		@RequestBody @Valid SurveyDto.UpdateRequest requestDto
+		@RequestBody @Valid SurveyDto.UpdateRequest surveyUpdateRequest
 	) {
 		surveyService.updateSurvey(
 			(Long)request.getAttribute("agentId"),
 			surveyId,
-			requestDto
+			surveyUpdateRequest
 		);
 
 		return ResponseEntity.ok(ApiResponse.ok());
@@ -108,19 +108,9 @@ public class SurveyController {
 	@PostMapping("/api/customers/surveys/{surveyId}/submit")
 	public ResponseEntity<ApiResponse<Void>> submitSurveyAnswer(
 		@PathVariable("surveyId") String surveyId,
-		@RequestBody @Valid AnswerDto.Request requestDto
+		@RequestBody @Valid AnswerDto.Request answerRequest
 	) {
-		surveyService.submitSurveyAnswer(
-			surveyId,
-			requestDto.getName(),
-			requestDto.getEmail(),
-			requestDto.getPhone(),
-			requestDto.getConsent(),
-			requestDto.getApplyConsultation(),
-			requestDto.getConsultAt(),
-			requestDto.getQuestions(),
-			requestDto.getAnswers()
-		);
+		surveyService.submitSurveyAnswer(surveyId, answerRequest);
 		return ResponseEntity.ok(ApiResponse.ok());
 	}
 
