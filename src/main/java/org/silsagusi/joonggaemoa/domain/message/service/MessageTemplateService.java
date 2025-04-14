@@ -6,8 +6,8 @@ import org.silsagusi.joonggaemoa.domain.agent.entity.Agent;
 import org.silsagusi.joonggaemoa.domain.agent.repository.AgentRepository;
 import org.silsagusi.joonggaemoa.domain.message.entity.MessageTemplate;
 import org.silsagusi.joonggaemoa.domain.message.repository.MessageTemplateRepository;
-import org.silsagusi.joonggaemoa.domain.message.service.command.MessageTemplateCommand;
 import org.silsagusi.joonggaemoa.domain.message.service.dto.MessageTemplateDto;
+import org.silsagusi.joonggaemoa.domain.message.service.dto.MessageTemplateUpdateRequest;
 import org.silsagusi.joonggaemoa.global.api.exception.CustomException;
 import org.silsagusi.joonggaemoa.global.api.exception.ErrorCode;
 import org.springframework.stereotype.Service;
@@ -41,15 +41,15 @@ public class MessageTemplateService {
 		messageTemplateRepository.save(messageTemplate);
 	}
 
-	public List<MessageTemplateCommand> getMessageTemplateList(Long agentId) {
+	public List<MessageTemplateDto.Response> getMessageTemplateList(Long agentId) {
 		List<MessageTemplate> messageTemplateList = messageTemplateRepository.findByAgentId(agentId);
 
 		return messageTemplateList.stream()
-			.map(MessageTemplateCommand::of)
+			.map(MessageTemplateDto.Response::of)
 			.toList();
 	}
 
-	public void updateMessageTemplate(Long agentId, Long templateId, String title, String content) {
+	public void updateMessageTemplate(Long agentId, Long templateId, MessageTemplateUpdateRequest requestDto) {
 		MessageTemplate messageTemplate = messageTemplateRepository.findById(templateId)
 			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
 
@@ -57,7 +57,7 @@ public class MessageTemplateService {
 			throw new CustomException(ErrorCode.FORBIDDEN);
 		}
 
-		messageTemplate.updateMessageTemplate(title, content);
+		messageTemplate.updateMessageTemplate(requestDto.getTitle(), requestDto.getContent());
 
 		messageTemplateRepository.save(messageTemplate);
 	}

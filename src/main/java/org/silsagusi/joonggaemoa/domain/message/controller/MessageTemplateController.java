@@ -3,8 +3,8 @@ package org.silsagusi.joonggaemoa.domain.message.controller;
 import java.util.List;
 
 import org.silsagusi.joonggaemoa.domain.message.service.MessageTemplateService;
-import org.silsagusi.joonggaemoa.domain.message.service.command.MessageTemplateCommand;
 import org.silsagusi.joonggaemoa.domain.message.service.dto.MessageTemplateDto;
+import org.silsagusi.joonggaemoa.domain.message.service.dto.MessageTemplateUpdateRequest;
 import org.silsagusi.joonggaemoa.global.api.ApiResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -26,16 +26,12 @@ public class MessageTemplateController {
 	private final MessageTemplateService messageTemplateService;
 
 	@GetMapping("/api/messages/templates")
-	public ResponseEntity<ApiResponse<List<MessageTemplateDto.Response>>> getMessageTemplates(
+	public ResponseEntity<ApiResponse<List<MessageTemplateDto.Response>>> getMessageTemplateList(
 		HttpServletRequest request
 	) {
-		List<MessageTemplateCommand> commandList = messageTemplateService.getMessageTemplateList(
+		List<MessageTemplateDto.Response> responseList = messageTemplateService.getMessageTemplateList(
 			(Long)request.getAttribute("agentId")
 		);
-
-		List<MessageTemplateDto.Response> responseList = commandList.stream()
-			.map(MessageTemplateDto.Response::of)
-			.toList();
 
 		return ResponseEntity.ok(ApiResponse.ok(responseList));
 	}
@@ -57,13 +53,12 @@ public class MessageTemplateController {
 	public ResponseEntity<ApiResponse<Void>> updateMessageTemplate(
 		HttpServletRequest request,
 		@PathVariable(name = "templateId") Long templateId,
-		@RequestBody @Valid MessageTemplateDto.Request requestDto
+		@RequestBody @Valid MessageTemplateUpdateRequest requestDto
 	) {
 		messageTemplateService.updateMessageTemplate(
 			(Long)request.getAttribute("agentId"),
 			templateId,
-			requestDto.getTitle(),
-			requestDto.getContent()
+			requestDto
 		);
 
 		return ResponseEntity.ok(ApiResponse.ok());

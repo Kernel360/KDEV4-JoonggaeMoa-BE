@@ -1,8 +1,8 @@
-package org.silsagusi.joonggaemoa.domain.survey.controller.dto;
+package org.silsagusi.joonggaemoa.domain.survey.service.dto;
 
 import java.util.List;
 
-import org.silsagusi.joonggaemoa.domain.survey.service.command.SurveyCommand;
+import org.silsagusi.joonggaemoa.domain.survey.entity.Survey;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -48,16 +48,16 @@ public class SurveyDto {
 		private List<QuestionDto.Response> questionList;
 		private String createdAt;
 
-		public static Response of(SurveyCommand surveyCommand) {
-			List<QuestionDto.Response> questionResponseList = surveyCommand.getQuestionList()
+		public static Response of(Survey survey) {
+			List<QuestionDto.Response> questionResponseList = survey.getQuestionList()
 				.stream().map(QuestionDto.Response::of).toList();
 
 			return Response.builder()
-				.id(surveyCommand.getId())
-				.title(surveyCommand.getTitle())
-				.description(surveyCommand.getDescription())
+				.id(survey.getId())
+				.title(survey.getTitle())
+				.description(survey.getDescription())
 				.questionList(questionResponseList)
-				.createdAt(surveyCommand.getCreatedAt())
+				.createdAt(survey.getCreatedAt())
 				.build();
 		}
 	}

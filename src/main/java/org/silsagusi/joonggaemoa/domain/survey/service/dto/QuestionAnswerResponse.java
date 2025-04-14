@@ -1,20 +1,20 @@
-package org.silsagusi.joonggaemoa.domain.survey.service.command;
+package org.silsagusi.joonggaemoa.domain.survey.service.dto;
 
 import java.util.List;
 
 import org.silsagusi.joonggaemoa.domain.survey.entity.QuestionAnswerPair;
 
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 
-@Data
+@Getter
 @Builder
-public class QuestionAnswerCommand {
+public class QuestionAnswerResponse {
 	private String question;
 	private List<String> answer;
 
-	public static QuestionAnswerCommand of(QuestionAnswerPair questionAnswerPair) {
-		return QuestionAnswerCommand.builder()
+	public static QuestionAnswerResponse of(QuestionAnswerPair questionAnswerPair) {
+		return QuestionAnswerResponse.builder()
 			.question(questionAnswerPair.getQuestion())
 			.answer(questionAnswerPair.getAnswer())
 			.build();

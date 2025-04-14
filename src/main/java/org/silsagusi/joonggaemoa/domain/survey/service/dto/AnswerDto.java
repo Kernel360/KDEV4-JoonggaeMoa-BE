@@ -1,10 +1,10 @@
-package org.silsagusi.joonggaemoa.domain.survey.controller.dto;
+package org.silsagusi.joonggaemoa.domain.survey.service.dto;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 import org.silsagusi.joonggaemoa.domain.customer.controller.dto.CustomerDto;
-import org.silsagusi.joonggaemoa.domain.survey.service.command.AnswerCommand;
+import org.silsagusi.joonggaemoa.domain.survey.entity.Answer;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -61,15 +61,15 @@ public class AnswerDto {
 		private List<QuestionAnswerResponse> answer;
 		private String createdAt;
 
-		public static Response of(AnswerCommand command) {
-			List<QuestionAnswerResponse> questionAnswerResponseList = command.getAnswers().stream()
+		public static Response of(Answer answer) {
+			List<QuestionAnswerResponse> questionAnswerResponseList = answer.getQuestionAnswerPairs().stream()
 				.map(QuestionAnswerResponse::of).toList();
 
 			return Response.builder()
-				.customer(CustomerDto.Response.of(command.getCustomer()))
-				.survey(SurveyDto.Response.of(command.getSurvey()))
+				// .customer(CustomerDto.Response.of(answer.getCustomer()))
+				.survey(SurveyDto.Response.of(answer.getSurvey()))
 				.answer(questionAnswerResponseList)
-				.createdAt(command.getCreatedAt())
+				.createdAt(answer.getCreatedAt())
 				.build();
 		}
 	}
