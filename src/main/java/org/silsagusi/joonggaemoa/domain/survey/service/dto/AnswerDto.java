@@ -66,7 +66,7 @@ public class AnswerDto {
 				.map(QuestionAnswerResponse::of).toList();
 
 			return Response.builder()
-				// .customer(CustomerDto.Response.of(answer.getCustomer()))
+				.customer(CustomerDto.Response.of(answer.getCustomer()))
 				.survey(SurveyDto.Response.of(answer.getSurvey()))
 				.answer(questionAnswerResponseList)
 				.createdAt(answer.getCreatedAt())
