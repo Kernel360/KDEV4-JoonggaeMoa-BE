@@ -3,7 +3,7 @@ package org.silsagusi.joonggaemoa.domain.survey.service.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.silsagusi.joonggaemoa.domain.customer.controller.dto.CustomerDto;
+import org.silsagusi.joonggaemoa.domain.customer.service.dto.CustomerDto;
 import org.silsagusi.joonggaemoa.domain.survey.entity.Answer;
 import org.springframework.format.annotation.DateTimeFormat;
 
