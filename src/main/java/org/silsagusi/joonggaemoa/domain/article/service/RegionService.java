@@ -20,6 +20,8 @@ public class RegionService {
 	}
 
 	public List<RegionResponse> getRegionsByCortarNo(String cortarNo) {
-		return regionRepository.findByCortarNo(cortarNo);
+		return regionRepository.findAllByCortarNoIn(List.of(cortarNo)).stream()
+				.map(RegionResponse::of)
+				.toList();
 	}
 }

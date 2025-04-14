@@ -28,13 +28,13 @@ public class NaverLandArticleRequestService {
 	private final ArticleDataProvider articleDataProvider;
 
 	@Async("scrapExecutor")
-	public void scrapArticles(RegionScrapStatus scrapStatus) throws InterruptedException {
+	public void scrapArticles(RegionScrapStatus scrapStatus) {
 		List<Article> articles = new ArrayList<>();
 
 		try {
 			Region region = scrapStatus.getRegion();
 			if (region == null) {
-				throw new IllegalArgumentException("Region is null");
+				throw new IllegalArgumentException("Region이 null값임");
 			}
 
 			int page = scrapStatus.getLastScrapedPage();
@@ -49,7 +49,7 @@ public class NaverLandArticleRequestService {
 				);
 
 				if (response == null || response.getBody() == null) {
-					log.warn("No articles found for region: {}", region.getCortarNo());
+					log.warn("해당 지역에 대한 기사를 찾을 수 없습니다: {}", region.getCortarNo());
 					hasMore = false;
 					break;
 				}
@@ -65,7 +65,7 @@ public class NaverLandArticleRequestService {
 				hasMore = response.isMore();
 
 				// 3~7초 랜덤 딜레이
-				Thread.sleep((long)(3000 + Math.random() * 4000));
+				Thread.sleep((long) (3000 + Math.random() * 4000));
 			} while (hasMore && page <= 10);
 
 			// 마지막 페이지까지 완료된 경우
@@ -73,14 +73,15 @@ public class NaverLandArticleRequestService {
 				scrapStatus.updateCompleted(true);
 			}
 		} catch (Exception e) {
-			log.error("스크랩 실패 : {}", scrapStatus.getRegion().getCortarNo(), e);
+			assert scrapStatus.getRegion() != null;
+			log.error("스크랩 실패 : {}", scrapStatus.getRegion().getCortarNo());
 			scrapStatus.updateFailed(true, e.getMessage());
 		} finally {
 			if (!articles.isEmpty()) {
 				try {
 					articleDataProvider.saveArticles(articles);
 				} catch (Exception e) {
-					log.error("Articles 저장 실패: {}", e.getMessage(), e);
+					log.error("기사 저장 실패", e);
 				}
 			}
 		}
@@ -96,12 +97,13 @@ public class NaverLandArticleRequestService {
 				try {
 					AddressResponse addr = addressLookupService.lookupAddress(body.getLat(), body.getLng());
 					if (addr == null) {
-						log.warn("주소 조회 실패: lat={}, lng={}", body.getLat(), body.getLng());
+						log.warn("주소 조회 실패: 위도={}, 경도={}", body.getLat(), body.getLng());
 						return null;
 					}
+
 					return Article.createFrom(body, region, addr);
 				} catch (Exception e) {
-					log.error("Article 매핑 실패: {}", e.getMessage(), e);
+					log.error("기사 매핑 실패", e);
 					return null;
 				}
 			})
