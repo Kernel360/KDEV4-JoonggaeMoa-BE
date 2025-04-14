@@ -3,11 +3,10 @@ package org.silsagusi.joonggaemoa.domain.contract.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.silsagusi.joonggaemoa.domain.contract.controller.dto.ContractDetailDto;
-import org.silsagusi.joonggaemoa.domain.contract.controller.dto.ContractDto;
-import org.silsagusi.joonggaemoa.domain.contract.controller.dto.ContractSummaryResponse;
 import org.silsagusi.joonggaemoa.domain.contract.service.ContractService;
-import org.silsagusi.joonggaemoa.domain.contract.service.command.ContractCommand;
+import org.silsagusi.joonggaemoa.domain.contract.service.dto.ContractDetailDto;
+import org.silsagusi.joonggaemoa.domain.contract.service.dto.ContractDto;
+import org.silsagusi.joonggaemoa.domain.contract.service.dto.ContractSummaryResponse;
 import org.silsagusi.joonggaemoa.global.api.ApiResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,16 +25,10 @@ public class ContractController {
 
     @PostMapping(value = "/api/contracts", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResponse<String>> createContract(
-        @RequestPart("contractData") @Valid ContractDto.Request requestDto,
+        @RequestPart("contractData") @Valid ContractDto.Request contractRequestDto,
         @RequestPart("file") MultipartFile file
     ) throws IOException {
-        contractService.createContract(
-            requestDto.getLandlordId(),
-            requestDto.getTenantId(),
-            requestDto.getCreatedAt(),
-            requestDto.getExpiredAt(),
-            file
-        );
+        contractService.createContract(contractRequestDto, file);
         return ResponseEntity.ok(ApiResponse.ok());
     }
 
@@ -44,11 +37,10 @@ public class ContractController {
         HttpServletRequest request,
         Pageable pageable
     ) {
-        Page<ContractCommand> contractCommandPage = contractService.getAllContracts(
+        Page<ContractDto.Response> contractResponsePage = contractService.getAllContracts(
             (Long) request.getAttribute("agentId"),
             pageable
         );
-        Page<ContractDto.Response> contractResponsePage = contractCommandPage.map(ContractDto.Response::of);
         return ResponseEntity.ok(ApiResponse.ok(contractResponsePage));
     }
 
@@ -57,11 +49,11 @@ public class ContractController {
         HttpServletRequest request,
         @PathVariable("contractId") String contractId
     ) throws IOException {
-        ContractCommand contractCommand = contractService.getContractById(
+        ContractDetailDto.Response contractResponse = contractService.getContractById(
             (Long) request.getAttribute("agentId"),
             contractId
         );
-        return ResponseEntity.ok(ApiResponse.ok(ContractDetailDto.Response.of(contractCommand)));
+        return ResponseEntity.ok(ApiResponse.ok(contractResponse));
     }
 
     @DeleteMapping("/api/contracts/{contractId}")

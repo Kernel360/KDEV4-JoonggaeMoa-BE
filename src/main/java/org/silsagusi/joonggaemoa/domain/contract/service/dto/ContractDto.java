@@ -1,4 +1,4 @@
-package org.silsagusi.joonggaemoa.domain.contract.controller.dto;
+package org.silsagusi.joonggaemoa.domain.contract.service.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotNull;
@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.silsagusi.joonggaemoa.domain.contract.service.command.ContractCommand;
+import org.silsagusi.joonggaemoa.domain.contract.entity.Contract;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
@@ -45,15 +45,16 @@ public class ContractDto {
         private LocalDate expiredAt;
         private String url;
 
-        public static Response of(ContractCommand command) {
+        public static Response of(Contract contract) {
             return Response.builder()
-                .id(command.getId())
-                .landlordName(command.getLandlordName())
-                .tenantName(command.getTenantName())
-                .createdAt(command.getCreatedAt())
-                .expiredAt(command.getExpiredAt())
-                .url(command.getUrl())
+                .id(contract.getId())
+                .landlordName(contract.getCustomerLandlord().getName())
+                .tenantName(contract.getCustomerTenant().getName())
+                .createdAt(contract.getCreatedAt())
+                .expiredAt(contract.getExpiredAt())
+                .url(contract.getUrl())
                 .build();
         }
+
     }
 }
