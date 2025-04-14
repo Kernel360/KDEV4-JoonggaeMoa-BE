@@ -6,6 +6,7 @@ import org.silsagusi.joonggaemoa.domain.consultation.repository.ConsultationRepo
 import org.silsagusi.joonggaemoa.domain.consultation.service.dto.ConsultationDto;
 import org.silsagusi.joonggaemoa.domain.consultation.service.dto.ConsultationMonthInformResponse;
 import org.silsagusi.joonggaemoa.domain.consultation.service.dto.ConsultationSummaryResponse;
+import org.silsagusi.joonggaemoa.domain.consultation.service.dto.UpdateConsultationRequest;
 import org.silsagusi.joonggaemoa.domain.customer.entity.Customer;
 import org.silsagusi.joonggaemoa.domain.customer.repository.CustomerRepository;
 import org.silsagusi.joonggaemoa.global.api.exception.CustomException;
@@ -55,14 +56,7 @@ public class ConsultationService {
     public void updateConsultation(
         Long agentId,
         Long consultationId,
-        LocalDateTime date,
-        String purpose,
-        String interestProperty,
-        String interestLocation,
-        String contractType,
-        String assetStatus,
-        String memo,
-        String consultationStatus
+        UpdateConsultationRequest updateConsultationRequest
     ) {
         Consultation consultation = consultationRepository.findById(consultationId)
             .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
@@ -72,17 +66,17 @@ public class ConsultationService {
         }
 
         consultation.updateConsultation(
-            (date == null) ? consultation.getDate() : date,
-            (purpose == null || purpose.isBlank()) ? consultation.getPurpose() : purpose,
-            (interestProperty == null || interestProperty.isBlank()) ? consultation.getInterestProperty() :
-                interestProperty,
-            (interestLocation == null || interestLocation.isBlank()) ? consultation.getInterestLocation() :
-                interestLocation,
-            (contractType == null || contractType.isBlank()) ? consultation.getContractType() : contractType,
-            (assetStatus == null || assetStatus.isBlank()) ? consultation.getAssetStatus() : assetStatus,
-            (memo == null || memo.isBlank()) ? consultation.getMemo() : memo,
-            (consultationStatus == null) ? consultation.getConsultationStatus() :
-                Consultation.ConsultationStatus.valueOf(consultationStatus)
+            (updateConsultationRequest.getDate() == null) ? consultation.getDate() : updateConsultationRequest.getDate(),
+            (updateConsultationRequest.getPurpose() == null || updateConsultationRequest.getPurpose().isBlank()) ? consultation.getPurpose() : updateConsultationRequest.getPurpose(),
+            (updateConsultationRequest.getInterestProperty() == null || updateConsultationRequest.getInterestProperty().isBlank()) ? consultation.getInterestProperty() :
+                updateConsultationRequest.getInterestProperty(),
+            (updateConsultationRequest.getInterestLocation() == null || updateConsultationRequest.getInterestLocation().isBlank()) ? consultation.getInterestLocation() :
+                updateConsultationRequest.getInterestLocation(),
+            (updateConsultationRequest.getContractType() == null || updateConsultationRequest.getContractType().isBlank()) ? consultation.getContractType() : updateConsultationRequest.getContractType(),
+            (updateConsultationRequest.getAssetStatus() == null || updateConsultationRequest.getAssetStatus().isBlank()) ? consultation.getAssetStatus() : updateConsultationRequest.getAssetStatus(),
+            (updateConsultationRequest.getMemo() == null || updateConsultationRequest.getMemo().isBlank()) ? consultation.getMemo() : updateConsultationRequest.getMemo(),
+            (updateConsultationRequest.getConsultationStatus() == null) ? consultation.getConsultationStatus() :
+                Consultation.ConsultationStatus.valueOf(updateConsultationRequest.getConsultationStatus())
 
         );
         consultationRepository.save(consultation);

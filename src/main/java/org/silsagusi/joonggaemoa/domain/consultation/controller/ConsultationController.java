@@ -71,14 +71,7 @@ public class ConsultationController {
         consultationService.updateConsultation(
             (Long) request.getAttribute("agentId"),
             consultationId,
-            updateConsultationRequest.getDate(),
-            updateConsultationRequest.getPurpose(),
-            updateConsultationRequest.getInterestProperty(),
-            updateConsultationRequest.getInterestLocation(),
-            updateConsultationRequest.getContractType(),
-            updateConsultationRequest.getAssetStatus(),
-            updateConsultationRequest.getMemo(),
-            updateConsultationRequest.getConsultationStatus()
+            updateConsultationRequest
         );
         return ResponseEntity.ok(ApiResponse.ok());
     }
