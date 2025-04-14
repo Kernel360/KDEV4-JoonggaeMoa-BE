@@ -3,9 +3,8 @@ package org.silsagusi.joonggaemoa.domain.notify.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.silsagusi.joonggaemoa.domain.notify.controller.dto.NotificationDto;
 import org.silsagusi.joonggaemoa.domain.notify.service.NotificationService;
-import org.silsagusi.joonggaemoa.domain.notify.service.command.NotificationCommand;
+import org.silsagusi.joonggaemoa.domain.notify.service.dto.NotificationDto;
 import org.silsagusi.joonggaemoa.global.api.ApiResponse;
 import org.silsagusi.joonggaemoa.global.auth.jwt.JwtProvider;
 import org.springframework.http.ResponseEntity;
@@ -37,8 +36,7 @@ public class NotificationController {
     public ResponseEntity<ApiResponse<List<NotificationDto.Response>>> getNotification(
         HttpServletRequest request
     ) {
-        List<NotificationCommand> notificationCommand = notificationService.getNotification((Long) request.getAttribute("agentId"));
-        List<NotificationDto.Response> notification = notificationCommand.stream().map(NotificationDto.Response::of).toList();
+        List<NotificationDto.Response> notification = notificationService.getNotification((Long) request.getAttribute("agentId"));
 
         return ResponseEntity.ok(ApiResponse.ok(notification));
     }

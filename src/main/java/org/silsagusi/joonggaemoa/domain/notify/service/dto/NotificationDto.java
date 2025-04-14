@@ -1,10 +1,10 @@
-package org.silsagusi.joonggaemoa.domain.notify.controller.dto;
+package org.silsagusi.joonggaemoa.domain.notify.service.dto;
 
 
 import lombok.Builder;
 import lombok.Getter;
+import org.silsagusi.joonggaemoa.domain.notify.entity.Notification;
 import org.silsagusi.joonggaemoa.domain.notify.entity.NotificationType;
-import org.silsagusi.joonggaemoa.domain.notify.service.command.NotificationCommand;
 
 public class NotificationDto {
 
@@ -17,12 +17,12 @@ public class NotificationDto {
         private boolean isRead;
 
 
-        public static Response of(NotificationCommand command) {
+        public static Response of(Notification notification) {
             return Response.builder()
-                .id(command.getId())
-                .type(command.getType())
-                .content(command.getContent())
-                .isRead(command.getIsRead())
+                .id(notification.getId())
+                .type(notification.getType())
+                .content(notification.getContent())
+                .isRead(notification.getIsRead())
                 .build();
         }
     }
