@@ -1,13 +1,13 @@
-package org.silsagusi.joonggaemoa.domain.agent.controller.dto;
+package org.silsagusi.joonggaemoa.domain.agent.service.dto;
 
-import org.silsagusi.joonggaemoa.domain.agent.service.command.AgentCommand;
+import org.silsagusi.joonggaemoa.domain.agent.entity.Agent;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-public class FindUsernameDto {
+public class UsernameDto {
 
 	@Getter
 	@NoArgsConstructor
@@ -25,8 +25,8 @@ public class FindUsernameDto {
 	public static class Response {
 		private String username;
 
-		public static Response of(AgentCommand agentCommand) {
-			return new Response(agentCommand.getUsername());
+		public static Response of(Agent agent) {
+			return new Response(agent.getUsername());
 		}
 	}
 }

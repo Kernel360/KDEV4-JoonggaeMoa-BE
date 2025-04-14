@@ -1,6 +1,5 @@
 package org.silsagusi.joonggaemoa.domain.survey.service;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,9 +19,8 @@ import org.silsagusi.joonggaemoa.domain.survey.entity.Survey;
 import org.silsagusi.joonggaemoa.domain.survey.repository.AnswerRepository;
 import org.silsagusi.joonggaemoa.domain.survey.repository.QuestionRepository;
 import org.silsagusi.joonggaemoa.domain.survey.repository.SurveyRepository;
-import org.silsagusi.joonggaemoa.domain.survey.service.command.AnswerCommand;
-import org.silsagusi.joonggaemoa.domain.survey.service.command.QuestionCommand;
-import org.silsagusi.joonggaemoa.domain.survey.service.command.SurveyCommand;
+import org.silsagusi.joonggaemoa.domain.survey.service.dto.AnswerDto;
+import org.silsagusi.joonggaemoa.domain.survey.service.dto.SurveyDto;
 import org.silsagusi.joonggaemoa.global.api.exception.CustomException;
 import org.silsagusi.joonggaemoa.global.api.exception.ErrorCode;
 import org.springframework.data.domain.Page;
@@ -48,16 +46,15 @@ public class SurveyService {
 	@Transactional
 	public void createSurvey(
 		Long agentId,
-		String title,
-		String description,
-		List<QuestionCommand> questionCommandList
+		SurveyDto.CreateRequest surveyCreateRequest
 	) {
 		Agent agent = agentRepository.findById(agentId)
 			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
 
-		Survey survey = new Survey(agent, title, description, new ArrayList<>());
+		Survey survey = new Survey(agent, surveyCreateRequest.getTitle(), surveyCreateRequest.getDescription(),
+			new ArrayList<>());
 
-		List<Question> questionList = questionCommandList.stream()
+		List<Question> questionList = surveyCreateRequest.getQuestionList().stream()
 			.map(
 				it -> {
 					Question question = new Question(
@@ -94,9 +91,7 @@ public class SurveyService {
 	public void updateSurvey(
 		Long agentId,
 		String surveyId,
-		String title,
-		String description,
-		List<QuestionCommand> questionCommandList
+		SurveyDto.UpdateRequest surveyUpdateRequest
 	) {
 		Survey survey = surveyRepository.findById(surveyId)
 			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
@@ -105,14 +100,17 @@ public class SurveyService {
 			throw new CustomException(ErrorCode.FORBIDDEN);
 		}
 		survey.updateSurveyTitleDescription(
-			(title == null || title.isBlank()) ? survey.getTitle() : title,
-			(description == null || description.isBlank()) ? survey.getDescription() : description
+			(surveyUpdateRequest.getTitle() == null || surveyUpdateRequest.getTitle().isBlank()) ? survey.getTitle() :
+				surveyUpdateRequest.getTitle(),
+			(surveyUpdateRequest.getDescription() == null || surveyUpdateRequest.getDescription().isBlank()) ?
+				survey.getDescription() :
+				surveyUpdateRequest.getDescription()
 		);
 
 		questionRepository.deleteAll(survey.getQuestionList());
 		survey.getQuestionList().clear();
 
-		List<Question> updateQuestions = questionCommandList.stream()
+		List<Question> updateQuestions = surveyUpdateRequest.getQuestionList().stream()
 			.map(it -> new Question(
 					survey,
 					it.getContent(),
@@ -129,56 +127,49 @@ public class SurveyService {
 	}
 
 	@Transactional(readOnly = true)
-	public Page<SurveyCommand> getAllSurveys(Long agentId, Pageable pageable) {
+	public Page<SurveyDto.Response> getAllSurveys(Long agentId, Pageable pageable) {
 		Agent agent = agentRepository.findById(agentId)
 			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
 
 		Page<Survey> surveyPage = surveyRepository.findAllByAgent(agent, pageable);
-		return surveyPage.map(SurveyCommand::of);
+		return surveyPage.map(SurveyDto.Response::of);
 	}
 
 	@Transactional(readOnly = true)
-	public SurveyCommand findById(String surveyId) {
+	public SurveyDto.Response findById(String surveyId) {
 		Survey survey = surveyRepository.findById(surveyId)
 			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
-		return SurveyCommand.of(survey);
+		return SurveyDto.Response.of(survey);
 	}
 
 	@Transactional
 	public void submitSurveyAnswer(
 		String surveyId,
-		String name,
-		String email,
-		String phone,
-		Boolean consent,
-		Boolean applyConsultation,
-		LocalDateTime consultAt,
-		List<String> questions,
-		List<List<String>> answers
+		AnswerDto.Request answerRequest
 	) {
 		Survey survey = surveyRepository.findById(surveyId)
 			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
 		Agent agent = survey.getAgent();
 
 		// 고객인지 판별(휴대폰 번호) 후 고객 데이터 추가
-		Customer customer = customerService.getCustomerByPhone(phone);
+		Customer customer = customerService.getCustomerByPhone(answerRequest.getPhone());
 		if (customer == null) {
 			Customer newCustomer = new Customer(
-				name,
-				phone,
-				email,
-				consent,
+				answerRequest.getName(),
+				answerRequest.getPhone(),
+				answerRequest.getEmail(),
+				answerRequest.getConsent(),
 				agent
 			);
 			customerRepository.save(newCustomer);
 			customer = newCustomer;
 		}
 
-		if (applyConsultation) {
+		if (answerRequest.getApplyConsultation()) {
 			// 상담 추가
 			Consultation consultation = new Consultation(
 				customer,
-				consultAt,
+				answerRequest.getConsultAt(),
 				Consultation.ConsultationStatus.WAITING
 			);
 			consultationRepository.save(consultation);
@@ -186,17 +177,17 @@ public class SurveyService {
 
 		// 응답 추가
 		List<QuestionAnswerPair> pairList = new ArrayList<>();
-		for (int i = 0; i < questions.size(); i++) {
+		for (int i = 0; i < answerRequest.getQuestions().size(); i++) {
 			QuestionAnswerPair pair = new QuestionAnswerPair(
-				questions.get(i),
-				answers.get(i)
+				answerRequest.getQuestions().get(i),
+				answerRequest.getAnswers().get(i)
 			);
 			pairList.add(pair);
 		}
 
 		Answer newAnswer = new Answer(
-			applyConsultation,
-			consultAt,
+			answerRequest.getApplyConsultation(),
+			answerRequest.getConsultAt(),
 			customer,
 			survey,
 			pairList
@@ -212,8 +203,8 @@ public class SurveyService {
 		);
 	}
 
-	public Page<AnswerCommand> getAllAnswers(Long agentId, Pageable pageable) {
+	public Page<AnswerDto.Response> getAllAnswers(Long agentId, Pageable pageable) {
 		Page<Answer> answerPage = answerRepository.findAllByCustomer_AgentId(agentId, pageable);
-		return answerPage.map(AnswerCommand::of);
+		return answerPage.map(AnswerDto.Response::of);
 	}
 }

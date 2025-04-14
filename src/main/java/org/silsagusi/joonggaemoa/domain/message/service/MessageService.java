@@ -1,15 +1,13 @@
 package org.silsagusi.joonggaemoa.domain.message.service;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
 import org.silsagusi.joonggaemoa.domain.agent.entity.Agent;
 import org.silsagusi.joonggaemoa.domain.agent.repository.AgentRepository;
 import org.silsagusi.joonggaemoa.domain.customer.repository.CustomerRepository;
 import org.silsagusi.joonggaemoa.domain.message.entity.Message;
 import org.silsagusi.joonggaemoa.domain.message.entity.SendStatus;
 import org.silsagusi.joonggaemoa.domain.message.repository.MessageRepository;
-import org.silsagusi.joonggaemoa.domain.message.service.command.MessageCommand;
+import org.silsagusi.joonggaemoa.domain.message.service.dto.MessageDto;
+import org.silsagusi.joonggaemoa.domain.message.service.dto.MessageUpdateRequest;
 import org.silsagusi.joonggaemoa.global.api.exception.CustomException;
 import org.silsagusi.joonggaemoa.global.api.exception.ErrorCode;
 import org.springframework.data.domain.Page;
@@ -28,21 +26,22 @@ public class MessageService {
 	private final MessageRepository messageRepository;
 	private final AgentRepository agentRepository;
 
-	public Page<MessageCommand> getMessagePage(Long agentId, Pageable pageable) {
+	public Page<MessageDto.Response> getMessagePage(Long agentId, Pageable pageable) {
 		Page<Message> messagePage = messageRepository.findAllByCustomer_Agent_Id(agentId, pageable);
 
 		messagePage.forEach(message -> {
 			log.info("메세지 대상의 이름 : {}", message.getCustomer().getName());
 		});
 
-		return messagePage.map(MessageCommand::of);
+		return messagePage.map(MessageDto.Response::of);
 	}
 
-	public void createMessage(String content, LocalDateTime sendAt, List<Long> customerIdList) {
-		customerIdList.stream()
+	public void createMessage(MessageDto.Request messageRequest) {
+		messageRequest.getCustomerIdList().stream()
 			.map(id -> customerRepository.findById(id)
 				.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_CUSTOMER)))
-			.map(customer -> new Message(customer, convertContent(content, customer.getName()), sendAt))
+			.map(customer -> new Message(customer, convertContent(messageRequest.getContent(), customer.getName()),
+				messageRequest.getSendAt()))
 			.forEach(messageRepository::save);
 	}
 
@@ -52,7 +51,7 @@ public class MessageService {
 		return content.replace("${이름}", customerName);
 	}
 
-	public void updateMessage(Long agentId, Long messageId, LocalDateTime sendAt, String content) {
+	public void updateMessage(Long agentId, Long messageId, MessageUpdateRequest messageUpdateRequest) {
 		Agent agent = agentRepository.findById(agentId)
 			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
 
@@ -67,12 +66,12 @@ public class MessageService {
 			throw new CustomException(ErrorCode.BAD_REQUEST);
 		}
 
-		message.updateMessage(sendAt, content);
+		message.updateMessage(messageUpdateRequest.getSendAt(), messageUpdateRequest.getContent());
 
 		messageRepository.save(message);
 	}
 
-	public Page<MessageCommand> getReservedMessagePage(Long agentId, Pageable pageable) {
+	public Page<MessageDto.Response> getReservedMessagePage(Long agentId, Pageable pageable) {
 		Page<Message> messagePage = messageRepository.findAllByCustomer_Agent_IdAndSendStatus(agentId,
 			SendStatus.PENDING, pageable);
 
@@ -84,14 +83,14 @@ public class MessageService {
 			log.info("메세지 대상의 이름 : {}", message.getCustomer().getName());
 		});
 
-		return messagePage.map(MessageCommand::of);
+		return messagePage.map(MessageDto.Response::of);
 	}
 
-	public MessageCommand getReservedMessage(Long messageId) {
+	public MessageDto.Response getReservedMessage(Long messageId) {
 		Message message = messageRepository.findById(messageId)
 			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
 
-		return MessageCommand.of(message);
+		return MessageDto.Response.of(message);
 	}
 
 	public void deleteReservedMessage(Long agentId, Long messageId) {

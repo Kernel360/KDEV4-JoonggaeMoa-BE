@@ -1,6 +1,6 @@
-package org.silsagusi.joonggaemoa.domain.message.controller.dto;
+package org.silsagusi.joonggaemoa.domain.message.service.dto;
 
-import org.silsagusi.joonggaemoa.domain.message.service.command.MessageTemplateCommand;
+import org.silsagusi.joonggaemoa.domain.message.entity.MessageTemplate;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -29,11 +29,11 @@ public class MessageTemplateDto {
 		private String title;
 		private String content;
 
-		public static Response of(MessageTemplateCommand command) {
+		public static Response of(MessageTemplate messageTemplate) {
 			return Response.builder()
-				.id(command.getId())
-				.title(command.getTitle())
-				.content(command.getContent())
+				.id(messageTemplate.getId())
+				.title(messageTemplate.getTitle())
+				.content(messageTemplate.getContent())
 				.build();
 		}
 	}

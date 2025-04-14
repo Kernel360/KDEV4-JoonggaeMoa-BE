@@ -1,6 +1,6 @@
-package org.silsagusi.joonggaemoa.domain.agent.controller.dto;
+package org.silsagusi.joonggaemoa.domain.agent.service.dto;
 
-import org.silsagusi.joonggaemoa.domain.agent.service.command.AgentCommand;
+import org.silsagusi.joonggaemoa.domain.agent.entity.Agent;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -55,16 +55,16 @@ public class AgentDto {
 		private String businessNo;
 		private String role;
 
-		public static Response of(AgentCommand agentCommand) {
+		public static Response of(Agent agent) {
 			return AgentDto.Response.builder()
-				.id(agentCommand.getId())
-				.name(agentCommand.getName())
-				.phone(agentCommand.getPhone())
-				.email(agentCommand.getEmail())
-				.username(agentCommand.getUsername())
-				.office(agentCommand.getOffice())
-				.region(agentCommand.getRegion())
-				.businessNo(agentCommand.getBusinessNo())
+				.id(agent.getId())
+				.name(agent.getName())
+				.phone(agent.getPhone())
+				.email(agent.getEmail())
+				.username(agent.getUsername())
+				.office(agent.getOffice())
+				.region(agent.getRegion())
+				.businessNo(agent.getBusinessNo())
 				.build();
 		}
 	}

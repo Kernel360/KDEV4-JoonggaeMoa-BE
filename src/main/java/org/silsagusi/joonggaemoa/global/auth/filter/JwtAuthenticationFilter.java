@@ -3,7 +3,7 @@ package org.silsagusi.joonggaemoa.global.auth.filter;
 import java.io.IOException;
 import java.util.stream.Collectors;
 
-import org.silsagusi.joonggaemoa.domain.agent.controller.dto.LoginRequest;
+import org.silsagusi.joonggaemoa.domain.agent.service.dto.LoginRequest;
 import org.silsagusi.joonggaemoa.global.api.ApiResponse;
 import org.silsagusi.joonggaemoa.global.api.exception.CustomException;
 import org.silsagusi.joonggaemoa.global.api.exception.ErrorCode;

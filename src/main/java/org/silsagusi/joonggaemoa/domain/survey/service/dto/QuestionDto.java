@@ -1,8 +1,8 @@
-package org.silsagusi.joonggaemoa.domain.survey.controller.dto;
+package org.silsagusi.joonggaemoa.domain.survey.service.dto;
 
 import java.util.List;
 
-import org.silsagusi.joonggaemoa.domain.survey.service.command.QuestionCommand;
+import org.silsagusi.joonggaemoa.domain.survey.entity.Question;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -60,14 +60,14 @@ public class QuestionDto {
 		private Boolean isRequired;
 		private List<String> options;
 
-		public static Response of(QuestionCommand questionCommand) {
+		public static Response of(Question question) {
 			return Response.builder()
-				.id(questionCommand.getId())
-				.surveyId(questionCommand.getSurveyId())
-				.content(questionCommand.getContent())
-				.type(questionCommand.getType())
-				.isRequired(questionCommand.getIsRequired())
-				.options(questionCommand.getOptions())
+				.id(question.getId())
+				.surveyId(question.getSurvey().getId())
+				.content(question.getContent())
+				.type(question.getType())
+				.isRequired(question.getIsRequired())
+				.options(question.getOptions())
 				.build();
 		}
 	}
