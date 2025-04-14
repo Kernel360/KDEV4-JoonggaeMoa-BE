@@ -21,4 +21,6 @@ public interface RegionScrapStatusRepository extends JpaRepository<RegionScrapSt
 	@Query("update region_scrap_statuses s set s.completed = false, s.lastScrapedPage = 1 "
 		+ "where s.lastScrapedAt < :cutoff")
 	void resetAllScrapStatus(@Param("cutoff") LocalDateTime cutoff);
+
+	List<RegionScrapStatus> findByRegion_CortarNo(String cortarNo);
 }

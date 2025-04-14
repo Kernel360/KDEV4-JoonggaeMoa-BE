@@ -1,5 +1,8 @@
 package org.silsagusi.joonggaemoa.request.naverland.client;
 
+import java.time.Duration;
+import java.util.concurrent.TimeUnit;
+
 import org.silsagusi.joonggaemoa.request.naverland.service.dto.ClientArticleResponse;
 import org.silsagusi.joonggaemoa.request.naverland.service.dto.ClientComplexResponse;
 import org.silsagusi.joonggaemoa.request.naverland.service.dto.ClientRegionResponse;
@@ -8,13 +11,16 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class NaverLandApiClient {
 
 	private final WebClient naverWebClient;
 	private final WebClient naverRegionWebClient;
+	private static final long REQUEST_DELAY_MS = 1000; // 1초
 
 	/* 매물 유형 (real estate type code)
 	 * 아파트 : APT
@@ -55,8 +61,18 @@ public class NaverLandApiClient {
 	 */
 	private static final String ZOOM_LEVEL = "15";
 
+	private void delayBetweenRequests() {
+		try {
+			TimeUnit.MILLISECONDS.sleep(REQUEST_DELAY_MS);
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+			throw new RuntimeException("Request delay interrupted", e);
+		}
+	}
+
 	public <T> T fetchList(String path, String lat, String lon, String cortarNo, String page, Class<T> responseType) {
-		return naverWebClient.get()
+		delayBetweenRequests();
+		return RetryUtils.withRetry(() -> naverWebClient.get()
 			.uri(uriBuilder -> uriBuilder.path(path)
 				.queryParam("rletTpCd", RLET_TP_CD)
 				.queryParam("tradTpCd", TRAD_TP_CD)
@@ -73,7 +89,7 @@ public class NaverLandApiClient {
 			.accept(MediaType.APPLICATION_JSON)
 			.retrieve()
 			.bodyToMono(responseType)
-			.block();
+			.block());
 	}
 
 	public ClientArticleResponse fetchArticleList(String page, String lat, String lon, String cortarNo) {
@@ -85,13 +101,14 @@ public class NaverLandApiClient {
 	}
 
 	public ClientRegionResponse fetchRegionList(String cortarNo) {
-		return naverRegionWebClient.get()
+		delayBetweenRequests();
+		return RetryUtils.withRetry(() -> naverRegionWebClient.get()
 			.uri(uriBuilder -> uriBuilder.path("/api/regions/list")
 				.queryParam("cortarNo", cortarNo)
 				.build())
 			.accept(MediaType.APPLICATION_JSON)
 			.retrieve()
 			.bodyToMono(ClientRegionResponse.class)
-			.block();
+			.block());
 	}
 }

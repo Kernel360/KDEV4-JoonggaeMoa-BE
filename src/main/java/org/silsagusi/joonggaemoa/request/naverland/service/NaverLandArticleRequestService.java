@@ -33,8 +33,12 @@ public class NaverLandArticleRequestService {
 
 		try {
 			Region region = scrapStatus.getRegion();
+			if (region == null) {
+				throw new IllegalArgumentException("Region is null");
+			}
+
 			int page = scrapStatus.getLastScrapedPage();
-			boolean hasMore;
+			boolean hasMore = true;
 
 			do {
 				ClientArticleResponse response = naverLandApiClient.fetchArticleList(
@@ -44,7 +48,16 @@ public class NaverLandArticleRequestService {
 					region.getCortarNo()
 				);
 
-				articles.addAll(mapToArticles(response.getBody(), region));
+				if (response == null || response.getBody() == null) {
+					log.warn("No articles found for region: {}", region.getCortarNo());
+					hasMore = false;
+					break;
+				}
+
+				List<Article> mappedArticles = mapToArticles(response.getBody(), region);
+				if (mappedArticles != null && !mappedArticles.isEmpty()) {
+					articles.addAll(mappedArticles);
+				}
 
 				page++;
 				scrapStatus.updatePage(page, LocalDateTime.now());
@@ -63,20 +76,34 @@ public class NaverLandArticleRequestService {
 			log.error("스크랩 실패 : {}", scrapStatus.getRegion().getCortarNo(), e);
 			scrapStatus.updateFailed(true, e.getMessage());
 		} finally {
-			articleDataProvider.saveArticles(articles);
+			if (!articles.isEmpty()) {
+				try {
+					articleDataProvider.saveArticles(articles);
+				} catch (Exception e) {
+					log.error("Articles 저장 실패: {}", e.getMessage(), e);
+				}
+			}
 		}
 	}
 
 	private List<Article> mapToArticles(List<ClientArticleResponse.Body> bodies, Region region) {
+		if (bodies == null || region == null) {
+			return new ArrayList<>();
+		}
+
 		return bodies.stream()
 			.map(body -> {
-				AddressResponse addr = addressLookupService.lookupAddress(body.getLat(), body.getLng());
-
-				if (addr == null) {
+				try {
+					AddressResponse addr = addressLookupService.lookupAddress(body.getLat(), body.getLng());
+					if (addr == null) {
+						log.warn("주소 조회 실패: lat={}, lng={}", body.getLat(), body.getLng());
+						return null;
+					}
+					return Article.createFrom(body, region, addr);
+				} catch (Exception e) {
+					log.error("Article 매핑 실패: {}", e.getMessage(), e);
 					return null;
 				}
-
-				return Article.createFrom(body, region, addr);
 			})
 			.filter(Objects::nonNull)
 			.toList();

@@ -18,23 +18,23 @@ public class KakaoAddressLookupService implements AbstractAddressLookupService {
 
 	@Override
 	@Cacheable(value = "addressCache", key = "#latitude + ':' + #longitude")
-	public AddressResponse lookupAddress(double latitude, double longitude)
-		throws NullPointerException {
+	public AddressResponse lookupAddress(double latitude, double longitude) {
+		try {
+			// Call Kakao API client to fetch address JSON
+			Coord2AddressResponse response = kakaoApiClient.getAddr(longitude, latitude);
 
-		// Call Kakao API client to fetch address JSON
-		Coord2AddressResponse response = kakaoApiClient.getAddr(longitude, latitude);
+			if (response == null || response.getDocuments() == null || response.getDocuments().isEmpty()) {
+				log.warn("No address found for lat={}, lon={}", latitude, longitude);
+				return null;
+			}
 
-		if (response == null || response.getDocuments() == null || response.getDocuments().isEmpty()) {
-			log.warn("No address found for lat={}, lon={}", latitude, longitude);
-			return null;  // or throw if no address found
-		}
+			Coord2AddressResponse.Document doc = response.getDocuments().get(0);
 
-		Coord2AddressResponse.Document doc = response.getDocuments().get(0);
+			if (doc.getAddress() == null) {
+				log.warn("주소 정보 없음: lat={}, lon={}", latitude, longitude);
+				return null;
+			}
 
-		if (doc.getAddress() == null) {
-			log.warn("주소 정보 없음: lat={}, lon={}", latitude, longitude);
-			return null;  // Return null or handle as needed
-		} else {
 			String lotAddress = doc.getAddress().getLotAddressName();
 			String city = doc.getAddress().getCity();
 			String district = doc.getAddress().getDistrict();
@@ -47,18 +47,21 @@ public class KakaoAddressLookupService implements AbstractAddressLookupService {
 				return new AddressResponse(lotAddress, null,
 					city, district, town, mainAddressNo, subAddressNo,
 					null, null, null, null, null);
-			} else {
-				String roadAddress = doc.getRoadAddress().getRoadAddressName();
-				String roadName = doc.getRoadAddress().getRoadName();
-				String mainBuildingNo = doc.getRoadAddress().getMainBuildingNo();
-				String subBuildingNo = doc.getRoadAddress().getSubBuildingNo();
-				String buildingName = doc.getRoadAddress().getBuildingName();
-				String zoneNo = doc.getRoadAddress().getZoneNo();
-
-				return new AddressResponse(lotAddress, roadAddress,
-					city, district, town, mainAddressNo, subAddressNo,
-					roadName, mainBuildingNo, subBuildingNo, buildingName, zoneNo);
 			}
+
+			String roadAddress = doc.getRoadAddress().getRoadAddressName();
+			String roadName = doc.getRoadAddress().getRoadName();
+			String mainBuildingNo = doc.getRoadAddress().getMainBuildingNo();
+			String subBuildingNo = doc.getRoadAddress().getSubBuildingNo();
+			String buildingName = doc.getRoadAddress().getBuildingName();
+			String zoneNo = doc.getRoadAddress().getZoneNo();
+
+			return new AddressResponse(lotAddress, roadAddress,
+				city, district, town, mainAddressNo, subAddressNo,
+				roadName, mainBuildingNo, subBuildingNo, buildingName, zoneNo);
+		} catch (Exception e) {
+			log.error("주소 조회 중 오류 발생: lat={}, lon={}", latitude, longitude, e);
+			return null;
 		}
 	}
 

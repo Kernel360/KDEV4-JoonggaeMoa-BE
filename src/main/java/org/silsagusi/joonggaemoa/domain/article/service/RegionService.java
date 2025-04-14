@@ -18,4 +18,8 @@ public class RegionService {
 			.map(RegionResponse::of)
 			.toList();
 	}
+
+	public List<RegionResponse> getRegionsByCortarNo(String cortarNo) {
+		return regionRepository.findByCortarNo(cortarNo);
+	}
 }

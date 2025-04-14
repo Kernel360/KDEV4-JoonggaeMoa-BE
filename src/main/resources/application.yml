@@ -6,6 +6,9 @@ spring:
       add-mappings: false # Disable static resource mapping (For NoHandlerFoundException)
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
+  sql:
+    init:
+      mode: always
 
   jpa:
     open-in-view: true
@@ -18,6 +21,7 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
         format_sql: true
+    defer-datasource-initialization: true
 
   data:
     redis:

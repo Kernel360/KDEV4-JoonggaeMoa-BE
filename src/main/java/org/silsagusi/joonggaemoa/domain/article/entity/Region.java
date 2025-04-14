@@ -7,15 +7,19 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import lombok.AllArgsConstructor;
 
 @NoArgsConstructor
 @ToString
 @Entity(name = "regions")
 @Getter
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+@Builder
+@AllArgsConstructor
 public class Region {
 
 	@Id
@@ -38,15 +42,39 @@ public class Region {
 	@Column(name = "area")
 	private String cortarName;
 
+	// 법정동명 전체이름
+	private String areaFull;
+
 	// 법정동 유형
 	@Column(name = "type")
 	private String cortarType;
 
-	public Region(String cortarNo, Double centerLat, Double centerLon, String cortarName, String cortarType) {
+	public Region(String cortarNo, Double centerLat, Double centerLon,
+	              String cortarName, String cortarType) {
 		this.cortarNo = cortarNo;
 		this.centerLat = centerLat;
 		this.centerLon = centerLon;
 		this.cortarName = cortarName;
 		this.cortarType = cortarType;
+	}
+
+	public void updateRegion(Double centerLat, Double centerLon, String cortarName, String cortarType) {
+		this.centerLat = centerLat;
+		this.centerLon = centerLon;
+		this.cortarName = cortarName;
+		this.cortarType = cortarType;
+	}
+
+	public static class RegionBuilder {
+		public RegionBuilder update(Region region) {
+			this.id = region.getId();
+			this.cortarNo = region.getCortarNo();
+			this.areaFull = region.getAreaFull();
+			return this;
+		}
+	}
+
+	public static RegionBuilder updateBuilder() {
+		return builder();
 	}
 }
