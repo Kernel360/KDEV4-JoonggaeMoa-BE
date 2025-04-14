@@ -6,10 +6,11 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.silsagusi.joonggaemoa.domain.agent.repository.AgentRepository;
-import org.silsagusi.joonggaemoa.domain.contract.controller.dto.ContractSummaryResponse;
 import org.silsagusi.joonggaemoa.domain.contract.entity.Contract;
 import org.silsagusi.joonggaemoa.domain.contract.repository.ContractRepository;
-import org.silsagusi.joonggaemoa.domain.contract.service.command.ContractCommand;
+import org.silsagusi.joonggaemoa.domain.contract.service.dto.ContractDetailDto;
+import org.silsagusi.joonggaemoa.domain.contract.service.dto.ContractDto;
+import org.silsagusi.joonggaemoa.domain.contract.service.dto.ContractSummaryResponse;
 import org.silsagusi.joonggaemoa.domain.customer.entity.Customer;
 import org.silsagusi.joonggaemoa.domain.customer.repository.CustomerRepository;
 import org.silsagusi.joonggaemoa.global.api.exception.CustomException;
@@ -34,17 +35,11 @@ public class ContractService {
     private final AmazonS3 amazonS3;
     private static final String S3_BUCKET_NAME = "joonggaemoa";
 
-    public void createContract(
-        Long landlordId,
-        Long tenantId,
-        LocalDate createdAt,
-        LocalDate expiredAt,
-        MultipartFile file
-    ) throws IOException {
+    public void createContract(ContractDto.Request contractRequestDto, MultipartFile file) throws IOException {
 
-        Customer customerLandlord = customerRepository.findById(landlordId)
+        Customer customerLandlord = customerRepository.findById(contractRequestDto.getLandlordId())
             .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_CUSTOMER));
-        Customer customerTenant = customerRepository.findById(tenantId)
+        Customer customerTenant = customerRepository.findById(contractRequestDto.getTenantId())
             .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_CUSTOMER));
 
         String filename = fileUpload(file);
@@ -52,20 +47,20 @@ public class ContractService {
         Contract contract = new Contract(
             customerLandlord,
             customerTenant,
-            createdAt,
-            expiredAt,
+            contractRequestDto.getCreatedAt(),
+            contractRequestDto.getExpiredAt(),
             filename
         );
         contractRepository.save(contract);
     }
 
-    public Page<ContractCommand> getAllContracts(Long agentId, Pageable pageable) {
+    public Page<ContractDto.Response> getAllContracts(Long agentId, Pageable pageable) {
         Page<Contract> contractPage = contractRepository.findAllByCustomerLandlord_AgentId(agentId, pageable);
-        Page<ContractCommand> contractCommandPage = contractPage.map(ContractCommand::of);
-        Page<ContractCommand> s3ContractCommandPage = contractCommandPage.map(
+        Page<ContractDto.Response> contractCommandPage = contractPage.map(ContractDto.Response::of);
+        Page<ContractDto.Response> s3ContractCommandPage = contractCommandPage.map(
             it -> {
                 try {
-                    it.setUrl(getUrl(it.getUrl()));
+                    it.builder().url(getUrl(it.getUrl()));
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
@@ -74,7 +69,7 @@ public class ContractService {
         return s3ContractCommandPage;
     }
 
-    public ContractCommand getContractById(Long agentId, String contractId) throws IOException {
+    public ContractDetailDto.Response getContractById(Long agentId, String contractId) throws IOException {
         Contract contract = contractRepository.findById(contractId)
             .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
 
@@ -82,9 +77,9 @@ public class ContractService {
             throw new CustomException(ErrorCode.FORBIDDEN);
         }
 
-        ContractCommand command = ContractCommand.of(contract);
-        command.setUrl(getUrl(command.getUrl()));
-        return command;
+        ContractDetailDto.Response contractDetailResponse = ContractDetailDto.Response.of(contract);
+        contractDetailResponse.builder().url(contract.getUrl()).build();
+        return contractDetailResponse;
     }
 
     public void deleteContract(Long agentId, String contractId) {
