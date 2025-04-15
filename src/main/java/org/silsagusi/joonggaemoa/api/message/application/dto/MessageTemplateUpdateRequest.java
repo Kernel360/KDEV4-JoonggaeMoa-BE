@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class MessageTemplateUpdateRequest {
 
-	private String title;
-	private String content;
+    private String title;
+    private String content;
 }

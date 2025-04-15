@@ -7,6 +7,6 @@ import lombok.Getter;
 @Builder
 public class RealEstateTypeSummaryResponse {
 
-	private String type;
-	private Double ratio;
+    private String type;
+    private Double ratio;
 }
