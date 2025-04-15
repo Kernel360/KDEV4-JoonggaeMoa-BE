@@ -1,0 +1,94 @@
+package org.silsagusi.joonggaemoa.api.consultation.application;
+
+import lombok.RequiredArgsConstructor;
+import org.silsagusi.joonggaemoa.api.consultation.application.dto.ConsultationDto;
+import org.silsagusi.joonggaemoa.api.consultation.application.dto.ConsultationMonthResponse;
+import org.silsagusi.joonggaemoa.api.consultation.application.dto.ConsultationSummaryResponse;
+import org.silsagusi.joonggaemoa.api.consultation.application.dto.UpdateConsultationRequest;
+import org.silsagusi.joonggaemoa.api.consultation.domain.command.ConsultationMonthInfo;
+import org.silsagusi.joonggaemoa.api.consultation.domain.command.ConsultationSummaryInfo;
+import org.silsagusi.joonggaemoa.api.consultation.domain.dataProvider.ConsultationDataProvider;
+import org.silsagusi.joonggaemoa.api.consultation.domain.entity.Consultation;
+import org.silsagusi.joonggaemoa.api.consultation.infrastructure.ConsultationRepository;
+import org.silsagusi.joonggaemoa.api.customer.domain.Customer;
+import org.silsagusi.joonggaemoa.api.customer.infrastructure.CustomerRepository;
+import org.silsagusi.joonggaemoa.global.config.DataDBConfig;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+public class ConsultationService {
+
+    private final ConsultationRepository consultationRepository;
+    private final CustomerRepository customerRepository;
+
+    private final ConsultationDataProvider consultationDataProvider;
+    private final DataDBConfig dataDBConfig;
+
+    public void createConsultation(ConsultationDto.Request consultationRequestDto) {
+
+        Customer customer = consultationDataProvider.getCustomer(consultationRequestDto.getCustomerId());
+
+        consultationDataProvider.createConsultation(customer, consultationRequestDto.getDate());
+    }
+
+    public void updateConsultationStatus(Long agentId, Long consultationId, String consultationStatus) {
+
+        Consultation consultation = consultationDataProvider.getConsultation(consultationId);
+
+        consultationDataProvider.validateAgentAccess(agentId, consultation);
+
+        consultationDataProvider.updateStatus(consultation, consultationStatus);
+    }
+
+    public void updateConsultation(
+        Long agentId,
+        Long consultationId,
+        UpdateConsultationRequest updateConsultationRequest
+    ) {
+        Consultation consultation = consultationDataProvider.getConsultation(consultationId);
+
+        consultationDataProvider.validateAgentAccess(agentId, consultation);
+
+        consultationDataProvider.updateConcsultation(
+            consultation,
+            updateConsultationRequest.getDate(),
+            updateConsultationRequest.getPurpose(),
+            updateConsultationRequest.getInterestProperty(),
+            updateConsultationRequest.getInterestLocation(),
+            updateConsultationRequest.getContractType(),
+            updateConsultationRequest.getAssetStatus(),
+            updateConsultationRequest.getMemo(),
+            updateConsultationRequest.getConsultationStatus()
+        );
+    }
+
+    public List<ConsultationDto.Response> getAllConsultationsByDate(Long agentId, LocalDateTime date) {
+
+        List<Consultation> consultationList = consultationDataProvider.getConsultationByDate(agentId, date);
+        return consultationList.stream().map(ConsultationDto.Response::of).toList();
+    }
+
+    public ConsultationDto.Response getConsultation(Long consultationId) {
+        Consultation consultation = consultationDataProvider.getConsultation(consultationId);
+        return ConsultationDto.Response.of(consultation);
+    }
+
+    public ConsultationMonthResponse getMonthInformation(Long agentId, String date) {
+
+        ConsultationMonthInfo monthInformationCommand = consultationDataProvider.getMonthInformation(agentId, date);
+        return ConsultationMonthResponse.of(monthInformationCommand);
+    }
+
+    public ConsultationSummaryResponse getConsultationSummary(Long agentId) {
+
+        ConsultationSummaryInfo consultationSummaryInfo = consultationDataProvider.getSummary(agentId);
+
+        return ConsultationSummaryResponse.of(consultationSummaryInfo);
+    }
+
+
+}

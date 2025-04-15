@@ -1,0 +1,31 @@
+package org.silsagusi.joonggaemoa.api.agent.application.dto;
+
+import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.silsagusi.joonggaemoa.api.agent.domain.Agent;
+
+public class UsernameDto {
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class Request {
+        @NotBlank
+        private String name;
+
+        @NotBlank
+        private String phone;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public static class Response {
+        private String username;
+
+        public static Response of(Agent agent) {
+            return new Response(agent.getUsername());
+        }
+    }
+}

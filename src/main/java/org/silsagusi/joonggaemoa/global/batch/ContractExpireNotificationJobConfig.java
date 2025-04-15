@@ -2,11 +2,10 @@ package org.silsagusi.joonggaemoa.global.batch;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
-import org.silsagusi.joonggaemoa.domain.contract.domain.Contract;
-import org.silsagusi.joonggaemoa.domain.contract.infrastructure.ContractRepository;
-import org.silsagusi.joonggaemoa.domain.notify.domain.NotificationType;
-import org.silsagusi.joonggaemoa.domain.notify.application.NotificationService;
+import org.silsagusi.joonggaemoa.api.contract.domain.Contract;
+import org.silsagusi.joonggaemoa.api.contract.infrastructure.ContractRepository;
+import org.silsagusi.joonggaemoa.api.notify.application.NotificationService;
+import org.silsagusi.joonggaemoa.api.notify.domain.NotificationType;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobScope;
@@ -31,63 +30,63 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class ContractExpireNotificationJobConfig {
 
-	private final JobRepository jobRepository;
-	private final ContractRepository contractRepository;
-	private final PlatformTransactionManager platformTransactionManager;
-	private final NotificationService notificationService;
-	private static final String JOB_NAME = "contractExpireNotifyJob";
-	private static final int CHUNK_SIZE = 10;
+    private final JobRepository jobRepository;
+    private final ContractRepository contractRepository;
+    private final PlatformTransactionManager platformTransactionManager;
+    private final NotificationService notificationService;
+    private static final String JOB_NAME = "contractExpireNotifyJob";
+    private static final int CHUNK_SIZE = 10;
 
-	@Bean
-	public Job contractExpireJob(Step contractExpireStep) {
-		return new JobBuilder(JOB_NAME, jobRepository)
-			.start(contractExpireStep)
-			.build();
-	}
+    @Bean
+    public Job contractExpireJob(Step contractExpireStep) {
+        return new JobBuilder(JOB_NAME, jobRepository)
+            .start(contractExpireStep)
+            .build();
+    }
 
-	@Bean
-	@JobScope
-	public Step contractExpireStep() {
-		return new StepBuilder(JOB_NAME + "Step", jobRepository)
-			.<Contract, Void>chunk(CHUNK_SIZE, platformTransactionManager)
-			.reader(contractReader())
-			.processor(contractProcessor())
-			.writer(items -> {
-			})
-			.build();
-	}
+    @Bean
+    @JobScope
+    public Step contractExpireStep() {
+        return new StepBuilder(JOB_NAME + "Step", jobRepository)
+            .<Contract, Void>chunk(CHUNK_SIZE, platformTransactionManager)
+            .reader(contractReader())
+            .processor(contractProcessor())
+            .writer(items -> {
+            })
+            .build();
+    }
 
-	@Bean
-	@StepScope
-	public RepositoryItemReader<Contract> contractReader() {
-		return new RepositoryItemReaderBuilder<Contract>()
-			.name("contractReader")
-			.repository(contractRepository)
-			.methodName("findByExpiredAt")
-			.arguments(List.of(LocalDate.now()))
-			.pageSize(CHUNK_SIZE)
-			.sorts(Map.of("id", Sort.Direction.ASC))
-			.build();
-	}
+    @Bean
+    @StepScope
+    public RepositoryItemReader<Contract> contractReader() {
+        return new RepositoryItemReaderBuilder<Contract>()
+            .name("contractReader")
+            .repository(contractRepository)
+            .methodName("findByExpiredAt")
+            .arguments(List.of(LocalDate.now()))
+            .pageSize(CHUNK_SIZE)
+            .sorts(Map.of("id", Sort.Direction.ASC))
+            .build();
+    }
 
-	@Bean
-	@StepScope
-	public ItemProcessor<Contract, Void> contractProcessor() {
-		return contract -> {
-			try {
-				Long agentId = contract.getCustomerLandlord().getAgent().getId();
-				String customerLandlordName = contract.getCustomerLandlord().getName();
-				String customerTenantName = contract.getCustomerTenant().getName();
-				String content = "고객 " + customerLandlordName + ", " + customerTenantName + "의 계약이 만료되었습니다.";
+    @Bean
+    @StepScope
+    public ItemProcessor<Contract, Void> contractProcessor() {
+        return contract -> {
+            try {
+                Long agentId = contract.getCustomerLandlord().getAgent().getId();
+                String customerLandlordName = contract.getCustomerLandlord().getName();
+                String customerTenantName = contract.getCustomerTenant().getName();
+                String content = "고객 " + customerLandlordName + ", " + customerTenantName + "의 계약이 만료되었습니다.";
 
-				notificationService.notify(agentId, NotificationType.CONTRACT, content);
-				//writter 필요 없으므로 생략
-				return null;
-			} catch (Exception e) {
-				log.error("계약 -> 알림 변환 중 에러 발생", e);
-				return null;
-			}
-		};
-	}
+                notificationService.notify(agentId, NotificationType.CONTRACT, content);
+                //writter 필요 없으므로 생략
+                return null;
+            } catch (Exception e) {
+                log.error("계약 -> 알림 변환 중 에러 발생", e);
+                return null;
+            }
+        };
+    }
 
 }
