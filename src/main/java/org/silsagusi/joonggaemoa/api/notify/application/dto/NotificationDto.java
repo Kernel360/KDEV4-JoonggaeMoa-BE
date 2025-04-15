@@ -2,8 +2,8 @@ package org.silsagusi.joonggaemoa.api.notify.application.dto;
 
 import lombok.Builder;
 import lombok.Getter;
-import org.silsagusi.joonggaemoa.api.notify.domain.Notification;
-import org.silsagusi.joonggaemoa.api.notify.domain.NotificationType;
+import org.silsagusi.joonggaemoa.api.notify.domain.entity.Notification;
+import org.silsagusi.joonggaemoa.api.notify.domain.entity.NotificationType;
 
 public class NotificationDto {
 
