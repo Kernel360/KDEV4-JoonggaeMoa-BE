@@ -7,7 +7,6 @@ import org.silsagusi.joonggaemoa.api.consultation.domain.entity.Consultation.Con
 import org.silsagusi.joonggaemoa.api.consultation.domain.info.ConsultationMonthInfo;
 import org.silsagusi.joonggaemoa.api.consultation.domain.info.ConsultationSummaryInfo;
 import org.silsagusi.joonggaemoa.api.customer.domain.entity.Customer;
-import org.silsagusi.joonggaemoa.api.customer.infrastructure.CustomerRepository;
 import org.silsagusi.joonggaemoa.global.api.exception.CustomException;
 import org.silsagusi.joonggaemoa.global.api.exception.ErrorCode;
 import org.springframework.stereotype.Component;
@@ -27,16 +26,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ConsultationDataProviderImpl implements ConsultationDataProvider {
 
-    private final CustomerRepository customerRepository;
     private final ConsultationRepository consultationRepository;
-
-    @Override
-    public Customer getCustomer(Long customerId) {
-        Customer customer = customerRepository.findById(customerId)
-            .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_CUSTOMER));
-
-        return customer;
-    }
 
     @Override
     public void createConsultation(Customer customer, LocalDateTime consultationDate) {

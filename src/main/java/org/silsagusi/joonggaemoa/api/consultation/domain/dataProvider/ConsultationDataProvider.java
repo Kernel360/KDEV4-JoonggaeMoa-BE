@@ -10,9 +10,6 @@ import java.util.List;
 
 public interface ConsultationDataProvider {
 
-    //TODO
-    Customer getCustomer(Long customerId);
-
     void createConsultation(Customer customer, LocalDateTime consultationDate);
 
     Consultation getConsultation(Long consultationId);

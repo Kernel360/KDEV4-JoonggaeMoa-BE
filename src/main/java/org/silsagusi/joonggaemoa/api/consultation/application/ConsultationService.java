@@ -9,6 +9,7 @@ import org.silsagusi.joonggaemoa.api.consultation.domain.dataProvider.Consultati
 import org.silsagusi.joonggaemoa.api.consultation.domain.entity.Consultation;
 import org.silsagusi.joonggaemoa.api.consultation.domain.info.ConsultationMonthInfo;
 import org.silsagusi.joonggaemoa.api.consultation.domain.info.ConsultationSummaryInfo;
+import org.silsagusi.joonggaemoa.api.customer.domain.dataProvider.CustomerDataProvider;
 import org.silsagusi.joonggaemoa.api.customer.domain.entity.Customer;
 import org.springframework.stereotype.Service;
 
@@ -20,10 +21,11 @@ import java.util.List;
 public class ConsultationService {
 
     private final ConsultationDataProvider consultationDataProvider;
+    private final CustomerDataProvider customerDataProvider;
 
     public void createConsultation(ConsultationDto.Request consultationRequestDto) {
 
-        Customer customer = consultationDataProvider.getCustomer(consultationRequestDto.getCustomerId());
+        Customer customer = customerDataProvider.getCustomer(consultationRequestDto.getCustomerId());
 
         consultationDataProvider.createConsultation(customer, consultationRequestDto.getDate());
     }

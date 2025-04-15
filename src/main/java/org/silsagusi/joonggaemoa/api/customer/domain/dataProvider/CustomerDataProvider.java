@@ -13,8 +13,7 @@ public interface CustomerDataProvider {
 
     //TODO
     Agent getAgent(Long agentId);
-
-    //TODO
+    
     Customer getCustomer(Long customerId);
 
     void createCustomer(String name, LocalDate birthday, String phone, String email,

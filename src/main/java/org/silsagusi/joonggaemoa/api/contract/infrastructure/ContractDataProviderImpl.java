@@ -10,7 +10,6 @@ import org.silsagusi.joonggaemoa.api.contract.domain.info.ContractDetailInfo;
 import org.silsagusi.joonggaemoa.api.contract.domain.info.ContractInfo;
 import org.silsagusi.joonggaemoa.api.contract.domain.info.ContractSummaryInfo;
 import org.silsagusi.joonggaemoa.api.customer.domain.entity.Customer;
-import org.silsagusi.joonggaemoa.api.customer.infrastructure.CustomerRepository;
 import org.silsagusi.joonggaemoa.global.api.exception.CustomException;
 import org.silsagusi.joonggaemoa.global.api.exception.ErrorCode;
 import org.springframework.data.domain.Page;
@@ -26,19 +25,10 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ContractDataProviderImpl implements ContractDataProvider {
 
-    private final CustomerRepository customerRepository;
     private final ContractRepository contractRepository;
 
     private final AmazonS3 amazonS3;
     private static final String S3_BUCKET_NAME = "joonggaemoa";
-
-    @Override
-    public Customer getCustomer(Long customerId) {
-        Customer customer = customerRepository.findById(customerId)
-            .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_CUSTOMER));
-
-        return customer;
-    }
 
     @Override
     public void createContract(Customer customerLandlord, Customer customerTenant, LocalDate createdAt, LocalDate expiredAt, MultipartFile file) throws IOException {

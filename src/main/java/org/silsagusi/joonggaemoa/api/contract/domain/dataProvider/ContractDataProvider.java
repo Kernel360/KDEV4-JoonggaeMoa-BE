@@ -14,9 +14,6 @@ import java.time.LocalDate;
 
 public interface ContractDataProvider {
 
-    //TODO
-    Customer getCustomer(Long customerId);
-
     void createContract(Customer customerLandlord, Customer customerTenant, LocalDate createdAt, LocalDate expiredAt, MultipartFile file) throws IOException;
 
     Page<ContractInfo> getAllContracts(Long agentId, Pageable pageable);

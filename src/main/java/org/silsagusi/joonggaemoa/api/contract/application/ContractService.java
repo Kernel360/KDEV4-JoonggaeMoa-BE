@@ -9,6 +9,7 @@ import org.silsagusi.joonggaemoa.api.contract.domain.entity.Contract;
 import org.silsagusi.joonggaemoa.api.contract.domain.info.ContractDetailInfo;
 import org.silsagusi.joonggaemoa.api.contract.domain.info.ContractInfo;
 import org.silsagusi.joonggaemoa.api.contract.domain.info.ContractSummaryInfo;
+import org.silsagusi.joonggaemoa.api.customer.domain.dataProvider.CustomerDataProvider;
 import org.silsagusi.joonggaemoa.api.customer.domain.entity.Customer;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,10 +23,11 @@ import java.io.IOException;
 public class ContractService {
 
     private final ContractDataProvider contractDataProvider;
+    private final CustomerDataProvider customerDataProvider;
 
     public void createContract(ContractDto.Request contractRequestDto, MultipartFile file) throws IOException {
-        Customer customerLandlord = contractDataProvider.getCustomer(contractRequestDto.getLandlordId());
-        Customer customerTenant = contractDataProvider.getCustomer(contractRequestDto.getTenantId());
+        Customer customerLandlord = customerDataProvider.getCustomer(contractRequestDto.getLandlordId());
+        Customer customerTenant = customerDataProvider.getCustomer(contractRequestDto.getTenantId());
 
         contractDataProvider.createContract(
             customerLandlord, customerTenant,
