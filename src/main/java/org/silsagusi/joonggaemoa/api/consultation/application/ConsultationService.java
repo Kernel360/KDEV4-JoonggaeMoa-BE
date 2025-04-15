@@ -5,10 +5,10 @@ import org.silsagusi.joonggaemoa.api.consultation.application.dto.ConsultationDt
 import org.silsagusi.joonggaemoa.api.consultation.application.dto.ConsultationMonthResponse;
 import org.silsagusi.joonggaemoa.api.consultation.application.dto.ConsultationSummaryResponse;
 import org.silsagusi.joonggaemoa.api.consultation.application.dto.UpdateConsultationRequest;
-import org.silsagusi.joonggaemoa.api.consultation.domain.command.ConsultationMonthInfo;
-import org.silsagusi.joonggaemoa.api.consultation.domain.command.ConsultationSummaryInfo;
 import org.silsagusi.joonggaemoa.api.consultation.domain.dataProvider.ConsultationDataProvider;
 import org.silsagusi.joonggaemoa.api.consultation.domain.entity.Consultation;
+import org.silsagusi.joonggaemoa.api.consultation.domain.info.ConsultationMonthInfo;
+import org.silsagusi.joonggaemoa.api.consultation.domain.info.ConsultationSummaryInfo;
 import org.silsagusi.joonggaemoa.api.consultation.infrastructure.ConsultationRepository;
 import org.silsagusi.joonggaemoa.api.customer.domain.Customer;
 import org.silsagusi.joonggaemoa.api.customer.infrastructure.CustomerRepository;

@@ -2,7 +2,7 @@ package org.silsagusi.joonggaemoa.api.contract.application.dto;
 
 import lombok.Builder;
 import lombok.Getter;
-import org.silsagusi.joonggaemoa.api.contract.domain.Contract;
+import org.silsagusi.joonggaemoa.api.contract.domain.info.ContractDetailInfo;
 
 import java.time.LocalDate;
 
@@ -24,20 +24,20 @@ public class ContractDetailDto {
         private LocalDate expiredAt;
         private String url;
 
-        public static Response of(Contract contract) {
+        public static Response of(ContractDetailInfo info) {
             return Response.builder()
-                .id(contract.getId())
-                .landlordId(contract.getCustomerLandlord().getId())
-                .tenantId(contract.getCustomerTenant().getId())
-                .landlordName(contract.getCustomerLandlord().getName())
-                .tenantName(contract.getCustomerTenant().getName())
-                .landlordPhone(contract.getCustomerLandlord().getPhone())
-                .tenantPhone(contract.getCustomerTenant().getPhone())
-                .landlordEmail(contract.getCustomerLandlord().getEmail())
-                .tenantEmail(contract.getCustomerTenant().getEmail())
-                .createdAt(contract.getCreatedAt())
-                .expiredAt(contract.getExpiredAt())
-                .url(contract.getUrl())
+                .id(info.getId())
+                .landlordId(info.getLandlordId())
+                .tenantId(info.getTenantId())
+                .landlordName(info.getLandlordName())
+                .tenantName(info.getLandlordName())
+                .landlordPhone(info.getLandlordPhone())
+                .tenantPhone(info.getTenantPhone())
+                .landlordEmail(info.getLandlordEmail())
+                .tenantEmail(info.getTenantEmail())
+                .createdAt(info.getCreatedAt())
+                .expiredAt(info.getExpiredAt())
+                .url(info.getUrl())
                 .build();
         }
     }

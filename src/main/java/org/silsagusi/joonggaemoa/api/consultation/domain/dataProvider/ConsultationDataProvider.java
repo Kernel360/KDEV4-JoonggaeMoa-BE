@@ -1,8 +1,8 @@
 package org.silsagusi.joonggaemoa.api.consultation.domain.dataProvider;
 
-import org.silsagusi.joonggaemoa.api.consultation.domain.command.ConsultationMonthInfo;
-import org.silsagusi.joonggaemoa.api.consultation.domain.command.ConsultationSummaryInfo;
 import org.silsagusi.joonggaemoa.api.consultation.domain.entity.Consultation;
+import org.silsagusi.joonggaemoa.api.consultation.domain.info.ConsultationMonthInfo;
+import org.silsagusi.joonggaemoa.api.consultation.domain.info.ConsultationSummaryInfo;
 import org.silsagusi.joonggaemoa.api.customer.domain.Customer;
 
 import java.time.LocalDateTime;
@@ -10,6 +10,7 @@ import java.util.List;
 
 public interface ConsultationDataProvider {
 
+    //TODO
     Customer getCustomer(Long customerId);
 
     void createConsultation(Customer customer, LocalDateTime consultationDate);

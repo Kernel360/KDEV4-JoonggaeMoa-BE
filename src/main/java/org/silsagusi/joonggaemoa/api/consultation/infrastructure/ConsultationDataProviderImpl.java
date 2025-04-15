@@ -1,11 +1,11 @@
 package org.silsagusi.joonggaemoa.api.consultation.infrastructure;
 
 import lombok.RequiredArgsConstructor;
-import org.silsagusi.joonggaemoa.api.consultation.domain.command.ConsultationMonthInfo;
-import org.silsagusi.joonggaemoa.api.consultation.domain.command.ConsultationSummaryInfo;
 import org.silsagusi.joonggaemoa.api.consultation.domain.dataProvider.ConsultationDataProvider;
 import org.silsagusi.joonggaemoa.api.consultation.domain.entity.Consultation;
 import org.silsagusi.joonggaemoa.api.consultation.domain.entity.Consultation.ConsultationStatus;
+import org.silsagusi.joonggaemoa.api.consultation.domain.info.ConsultationMonthInfo;
+import org.silsagusi.joonggaemoa.api.consultation.domain.info.ConsultationSummaryInfo;
 import org.silsagusi.joonggaemoa.api.customer.domain.Customer;
 import org.silsagusi.joonggaemoa.api.customer.infrastructure.CustomerRepository;
 import org.silsagusi.joonggaemoa.global.api.exception.CustomException;
@@ -30,7 +30,6 @@ public class ConsultationDataProviderImpl implements ConsultationDataProvider {
     private final CustomerRepository customerRepository;
     private final ConsultationRepository consultationRepository;
 
-    //TODO: customer를 참조해야하나...?
     @Override
     public Customer getCustomer(Long customerId) {
         Customer customer = customerRepository.findById(customerId)

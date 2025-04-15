@@ -1,6 +1,6 @@
 package org.silsagusi.joonggaemoa.api.contract.infrastructure;
 
-import org.silsagusi.joonggaemoa.api.contract.domain.Contract;
+import org.silsagusi.joonggaemoa.api.contract.domain.entity.Contract;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

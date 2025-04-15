@@ -2,7 +2,7 @@ package org.silsagusi.joonggaemoa.api.consultation.application.dto;
 
 import lombok.Builder;
 import lombok.Getter;
-import org.silsagusi.joonggaemoa.api.consultation.domain.command.ConsultationMonthInfo;
+import org.silsagusi.joonggaemoa.api.consultation.domain.info.ConsultationMonthInfo;
 
 import java.util.List;
 

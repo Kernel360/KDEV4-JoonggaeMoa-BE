@@ -1,4 +1,4 @@
-package org.silsagusi.joonggaemoa.api.consultation.domain.command;
+package org.silsagusi.joonggaemoa.api.consultation.domain.info;
 
 import lombok.Builder;
 import lombok.Getter;

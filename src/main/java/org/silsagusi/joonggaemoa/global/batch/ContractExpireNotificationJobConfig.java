@@ -2,7 +2,7 @@ package org.silsagusi.joonggaemoa.global.batch;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.silsagusi.joonggaemoa.api.contract.domain.Contract;
+import org.silsagusi.joonggaemoa.api.contract.domain.entity.Contract;
 import org.silsagusi.joonggaemoa.api.contract.infrastructure.ContractRepository;
 import org.silsagusi.joonggaemoa.api.notify.application.NotificationService;
 import org.silsagusi.joonggaemoa.api.notify.domain.NotificationType;

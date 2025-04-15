@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.silsagusi.joonggaemoa.api.contract.domain.Contract;
+import org.silsagusi.joonggaemoa.api.contract.domain.info.ContractInfo;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
@@ -45,14 +45,14 @@ public class ContractDto {
         private LocalDate expiredAt;
         private String url;
 
-        public static Response of(Contract contract) {
+        public static Response of(ContractInfo info) {
             return Response.builder()
-                .id(contract.getId())
-                .landlordName(contract.getCustomerLandlord().getName())
-                .tenantName(contract.getCustomerTenant().getName())
-                .createdAt(contract.getCreatedAt())
-                .expiredAt(contract.getExpiredAt())
-                .url(contract.getUrl())
+                .id(info.getId())
+                .landlordName(info.getLandlordName())
+                .tenantName(info.getTenantName())
+                .createdAt(info.getCreatedAt())
+                .expiredAt(info.getExpiredAt())
+                .url(info.getUrl())
                 .build();
         }
 

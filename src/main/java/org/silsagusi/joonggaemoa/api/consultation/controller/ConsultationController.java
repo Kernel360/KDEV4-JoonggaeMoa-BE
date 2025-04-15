@@ -5,7 +5,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.silsagusi.joonggaemoa.api.consultation.application.ConsultationService;
 import org.silsagusi.joonggaemoa.api.consultation.application.dto.ConsultationDto;
-import org.silsagusi.joonggaemoa.api.consultation.application.dto.ConsultationMonthInformResponse;
+import org.silsagusi.joonggaemoa.api.consultation.application.dto.ConsultationMonthResponse;
 import org.silsagusi.joonggaemoa.api.consultation.application.dto.ConsultationSummaryResponse;
 import org.silsagusi.joonggaemoa.api.consultation.application.dto.UpdateConsultationRequest;
 import org.silsagusi.joonggaemoa.global.api.ApiResponse;
@@ -51,11 +51,11 @@ public class ConsultationController {
     }
 
     @GetMapping("/api/consultations/month-inform")
-    public ResponseEntity<ApiResponse<ConsultationMonthInformResponse>> getMonthInform(
+    public ResponseEntity<ApiResponse<ConsultationMonthResponse>> getMonthInform(
         HttpServletRequest request,
         @RequestParam String month //date형식: yyyy-MM
     ) {
-        ConsultationMonthInformResponse consultationMonthInformResponse = consultationService.getMonthInformation(
+        ConsultationMonthResponse consultationMonthInformResponse = consultationService.getMonthInformation(
             (Long) request.getAttribute("agentId"),
             month
         );
