@@ -2,7 +2,7 @@ package org.silsagusi.joonggaemoa.api.survey.application.dto;
 
 import java.util.List;
 
-import org.silsagusi.joonggaemoa.api.survey.domain.Survey;
+import org.silsagusi.joonggaemoa.api.survey.domain.entity.Survey;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;

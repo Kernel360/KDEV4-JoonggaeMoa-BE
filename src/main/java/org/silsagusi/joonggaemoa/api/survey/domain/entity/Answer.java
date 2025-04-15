@@ -1,4 +1,4 @@
-package org.silsagusi.joonggaemoa.api.survey.domain;
+package org.silsagusi.joonggaemoa.api.survey.domain.entity;
 
 import java.time.LocalDateTime;
 import java.util.List;

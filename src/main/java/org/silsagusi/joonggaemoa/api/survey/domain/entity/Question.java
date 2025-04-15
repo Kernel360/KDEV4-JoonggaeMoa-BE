@@ -1,4 +1,4 @@
-package org.silsagusi.joonggaemoa.api.survey.domain;
+package org.silsagusi.joonggaemoa.api.survey.domain.entity;
 
 import java.util.List;
 

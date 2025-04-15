@@ -2,7 +2,7 @@ package org.silsagusi.joonggaemoa.api.survey.application.dto;
 
 import java.util.List;
 
-import org.silsagusi.joonggaemoa.api.survey.domain.QuestionAnswerPair;
+import org.silsagusi.joonggaemoa.api.survey.domain.entity.QuestionAnswerPair;
 
 import lombok.Builder;
 import lombok.Getter;

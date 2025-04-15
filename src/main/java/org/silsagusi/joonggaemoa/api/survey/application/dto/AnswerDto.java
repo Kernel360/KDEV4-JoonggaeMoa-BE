@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import org.silsagusi.joonggaemoa.api.customer.application.dto.CustomerDto;
-import org.silsagusi.joonggaemoa.api.survey.domain.Answer;
+import org.silsagusi.joonggaemoa.api.survey.domain.entity.Answer;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
