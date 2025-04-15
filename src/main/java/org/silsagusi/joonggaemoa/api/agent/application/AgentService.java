@@ -5,6 +5,7 @@ import org.silsagusi.joonggaemoa.api.agent.application.dto.AgentUpdateRequest;
 import org.silsagusi.joonggaemoa.api.agent.application.dto.UsernameDto;
 import org.silsagusi.joonggaemoa.api.agent.domain.Agent;
 import org.silsagusi.joonggaemoa.api.agent.domain.AgentDataProvider;
+import org.silsagusi.joonggaemoa.api.message.domain.MessageTemplateDataProvider;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +19,7 @@ public class AgentService {
 
 	private final BCryptPasswordEncoder bCryptPasswordEncoder;
 	private final AgentDataProvider agentDataProvider;
+	private final MessageTemplateDataProvider messageTemplateDataProvider;
 
 	@Transactional
 	public void signup(AgentDto.Request agentRequest) {
@@ -34,7 +36,7 @@ public class AgentService {
 
 		agentDataProvider.createAgent(agent);
 
-		// TODO messageTemplateDataProvider 에서 템플릿 만들기
+		messageTemplateDataProvider.createDefaultMessageTemplate(agent);
 	}
 
 	public UsernameDto.Response getAgentByNameAndPhone(UsernameDto.Request usernameRequest) {
