@@ -3,8 +3,8 @@ package org.silsagusi.joonggaemoa.api.message.infrastructure;
 import java.util.List;
 
 import org.silsagusi.joonggaemoa.api.agent.domain.Agent;
-import org.silsagusi.joonggaemoa.api.message.domain.MessageTemplate;
-import org.silsagusi.joonggaemoa.api.message.domain.MessageTemplateDataProvider;
+import org.silsagusi.joonggaemoa.api.message.domain.dataProvider.MessageTemplateDataProvider;
+import org.silsagusi.joonggaemoa.api.message.domain.entity.MessageTemplate;
 import org.silsagusi.joonggaemoa.global.api.exception.CustomException;
 import org.silsagusi.joonggaemoa.global.api.exception.ErrorCode;
 import org.springframework.stereotype.Component;

@@ -1,15 +1,16 @@
 package org.silsagusi.joonggaemoa.api.message.application;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.silsagusi.joonggaemoa.api.agent.domain.Agent;
-import org.silsagusi.joonggaemoa.api.agent.infrastructure.AgentRepository;
-import org.silsagusi.joonggaemoa.api.customer.infrastructure.CustomerRepository;
-import org.silsagusi.joonggaemoa.api.message.domain.Message;
-import org.silsagusi.joonggaemoa.api.message.domain.SendStatus;
-import org.silsagusi.joonggaemoa.api.message.infrastructure.MessageRepository;
+import org.silsagusi.joonggaemoa.api.agent.domain.AgentDataProvider;
+import org.silsagusi.joonggaemoa.api.customer.domain.Customer;
 import org.silsagusi.joonggaemoa.api.message.application.dto.MessageDto;
 import org.silsagusi.joonggaemoa.api.message.application.dto.MessageUpdateRequest;
-import org.silsagusi.joonggaemoa.global.api.exception.CustomException;
-import org.silsagusi.joonggaemoa.global.api.exception.ErrorCode;
+import org.silsagusi.joonggaemoa.api.message.domain.dataProvider.MessageDataProvider;
+import org.silsagusi.joonggaemoa.api.message.domain.entity.Message;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -22,92 +23,54 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class MessageService {
 
-	private final CustomerRepository customerRepository;
-	private final MessageRepository messageRepository;
-	private final AgentRepository agentRepository;
+	private final AgentDataProvider agentDataProvider;
+	private final MessageDataProvider messageDataProvider;
 
 	public Page<MessageDto.Response> getMessagePage(Long agentId, Pageable pageable) {
-		Page<Message> messagePage = messageRepository.findAllByCustomer_Agent_Id(agentId, pageable);
-
-		messagePage.forEach(message -> {
-			log.info("메세지 대상의 이름 : {}", message.getCustomer().getName());
-		});
-
+		Page<Message> messagePage = messageDataProvider.getMessagePageByAgent(agentId, pageable);
 		return messagePage.map(MessageDto.Response::of);
 	}
 
 	public void createMessage(MessageDto.Request messageRequest) {
-		messageRequest.getCustomerIdList().stream()
-			.map(id -> customerRepository.findById(id)
-				.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_CUSTOMER)))
-			.map(customer -> new Message(customer, convertContent(messageRequest.getContent(), customer.getName()),
-				messageRequest.getSendAt()))
-			.forEach(messageRepository::save);
-	}
+		String content = messageRequest.getContent();
+		// TODO customer id list로 customer list로 변환해서 message를 만들어야 함
+		List<Customer> customerList = new ArrayList<>();
+		LocalDateTime sendAt = messageRequest.getSendAt();
 
-	private String convertContent(String content, String customerName) {
-		if (content == null || customerName == null)
-			return content;
-		return content.replace("${이름}", customerName);
+		customerList.forEach(customer -> {
+			Message message = new Message(
+				customer,
+				messageDataProvider.convertContent(content, customer.getName()),
+				sendAt
+			);
+			messageDataProvider.createMessage(message);
+		});
 	}
 
 	public void updateMessage(Long agentId, Long messageId, MessageUpdateRequest messageUpdateRequest) {
-		Agent agent = agentRepository.findById(agentId)
-			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
-
-		Message message = messageRepository.findById(messageId)
-			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
-
-		if (!agent.equals(message.getCustomer().getAgent())) {
-			throw new CustomException(ErrorCode.UNAUTHORIZED);
-		}
-
-		if (message.getSendStatus() != SendStatus.PENDING) {
-			throw new CustomException(ErrorCode.BAD_REQUEST);
-		}
-
+		Agent agent = agentDataProvider.getAgentById(agentId);
+		Message message = messageDataProvider.getMessage(messageId);
+		messageDataProvider.validateMessageWithAgent(message, agent);
+		messageDataProvider.validateMessageStatusEqualsPending(message);
 		message.updateMessage(messageUpdateRequest.getSendAt(), messageUpdateRequest.getContent());
-
-		messageRepository.save(message);
+		messageDataProvider.updateMessage(message);
 	}
 
 	public Page<MessageDto.Response> getReservedMessagePage(Long agentId, Pageable pageable) {
-		Page<Message> messagePage = messageRepository.findAllByCustomer_Agent_IdAndSendStatus(agentId,
-			SendStatus.PENDING, pageable);
-
-		log.info("Agent ID: {}, SendStatus: {}, Page: {}", agentId, pageable, messagePage);
-		log.info("Retrieved message count: {}", messagePage.getTotalElements());
-		log.info("Page number: {}, Page size: {}, Total pages: {}",
-			messagePage.getNumber(), messagePage.getSize(), messagePage.getTotalPages());
-		messagePage.forEach(message -> {
-			log.info("메세지 대상의 이름 : {}", message.getCustomer().getName());
-		});
-
+		Page<Message> messagePage = messageDataProvider.getReservedMessagePageByAgent(agentId, pageable);
 		return messagePage.map(MessageDto.Response::of);
 	}
 
 	public MessageDto.Response getReservedMessage(Long messageId) {
-		Message message = messageRepository.findById(messageId)
-			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
-
+		Message message = messageDataProvider.getMessage(messageId);
 		return MessageDto.Response.of(message);
 	}
 
 	public void deleteReservedMessage(Long agentId, Long messageId) {
-		Agent agent = agentRepository.findById(agentId)
-			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
-
-		Message message = messageRepository.findById(messageId)
-			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
-
-		if (!agent.equals(message.getCustomer().getAgent())) {
-			throw new CustomException(ErrorCode.UNAUTHORIZED);
-		}
-
-		if (message.getSendStatus() != SendStatus.PENDING) {
-			throw new CustomException(ErrorCode.BAD_REQUEST);
-		}
-
-		messageRepository.delete(message);
+		Agent agent = agentDataProvider.getAgentById(agentId);
+		Message message = messageDataProvider.getMessage(messageId);
+		messageDataProvider.validateMessageWithAgent(message, agent);
+		messageDataProvider.validateMessageStatusEqualsPending(message);
+		messageDataProvider.deleteMessage(message);
 	}
 }

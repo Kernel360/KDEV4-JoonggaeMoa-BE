@@ -6,8 +6,8 @@ import org.silsagusi.joonggaemoa.api.agent.domain.Agent;
 import org.silsagusi.joonggaemoa.api.agent.domain.AgentDataProvider;
 import org.silsagusi.joonggaemoa.api.message.application.dto.MessageTemplateDto;
 import org.silsagusi.joonggaemoa.api.message.application.dto.MessageTemplateUpdateRequest;
-import org.silsagusi.joonggaemoa.api.message.domain.MessageTemplate;
-import org.silsagusi.joonggaemoa.api.message.domain.MessageTemplateDataProvider;
+import org.silsagusi.joonggaemoa.api.message.domain.dataProvider.MessageTemplateDataProvider;
+import org.silsagusi.joonggaemoa.api.message.domain.entity.MessageTemplate;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;

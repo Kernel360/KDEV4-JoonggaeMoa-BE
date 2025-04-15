@@ -2,8 +2,8 @@ package org.silsagusi.joonggaemoa.api.message.infrastructure;
 
 import java.time.LocalDateTime;
 
-import org.silsagusi.joonggaemoa.api.message.domain.Message;
-import org.silsagusi.joonggaemoa.api.message.domain.SendStatus;
+import org.silsagusi.joonggaemoa.api.message.domain.entity.Message;
+import org.silsagusi.joonggaemoa.api.message.domain.entity.SendStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;

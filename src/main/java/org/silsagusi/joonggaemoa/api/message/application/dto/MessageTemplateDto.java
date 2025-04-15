@@ -1,6 +1,6 @@
 package org.silsagusi.joonggaemoa.api.message.application.dto;
 
-import org.silsagusi.joonggaemoa.api.message.domain.MessageTemplate;
+import org.silsagusi.joonggaemoa.api.message.domain.entity.MessageTemplate;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;

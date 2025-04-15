@@ -1,8 +1,9 @@
-package org.silsagusi.joonggaemoa.api.message.domain;
+package org.silsagusi.joonggaemoa.api.message.domain.dataProvider;
 
 import java.util.List;
 
 import org.silsagusi.joonggaemoa.api.agent.domain.Agent;
+import org.silsagusi.joonggaemoa.api.message.domain.entity.MessageTemplate;
 
 public interface MessageTemplateDataProvider {
 

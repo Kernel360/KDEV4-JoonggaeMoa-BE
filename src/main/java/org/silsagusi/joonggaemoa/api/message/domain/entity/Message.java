@@ -1,4 +1,4 @@
-package org.silsagusi.joonggaemoa.api.message.domain;
+package org.silsagusi.joonggaemoa.api.message.domain.entity;
 
 import java.time.LocalDateTime;
 

@@ -5,7 +5,7 @@ import org.silsagusi.joonggaemoa.api.agent.application.dto.AgentUpdateRequest;
 import org.silsagusi.joonggaemoa.api.agent.application.dto.UsernameDto;
 import org.silsagusi.joonggaemoa.api.agent.domain.Agent;
 import org.silsagusi.joonggaemoa.api.agent.domain.AgentDataProvider;
-import org.silsagusi.joonggaemoa.api.message.domain.MessageTemplateDataProvider;
+import org.silsagusi.joonggaemoa.api.message.domain.dataProvider.MessageTemplateDataProvider;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

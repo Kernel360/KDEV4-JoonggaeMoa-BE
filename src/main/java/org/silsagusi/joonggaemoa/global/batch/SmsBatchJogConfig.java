@@ -5,8 +5,8 @@ import java.util.Map;
 
 import org.silsagusi.joonggaemoa.api.agent.domain.Agent;
 import org.silsagusi.joonggaemoa.api.customer.domain.Customer;
-import org.silsagusi.joonggaemoa.api.message.domain.Message;
-import org.silsagusi.joonggaemoa.api.message.domain.SendStatus;
+import org.silsagusi.joonggaemoa.api.message.domain.entity.Message;
+import org.silsagusi.joonggaemoa.api.message.domain.entity.SendStatus;
 import org.silsagusi.joonggaemoa.api.message.infrastructure.MessageRepository;
 import org.silsagusi.joonggaemoa.api.message.infrastructure.SmsUtil;
 import org.springframework.batch.core.Job;
