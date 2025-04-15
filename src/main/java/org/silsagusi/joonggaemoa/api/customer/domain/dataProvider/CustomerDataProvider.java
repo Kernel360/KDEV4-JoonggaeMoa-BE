@@ -1,6 +1,7 @@
 package org.silsagusi.joonggaemoa.api.customer.domain.dataProvider;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import org.silsagusi.joonggaemoa.api.agent.domain.Agent;
 import org.silsagusi.joonggaemoa.api.customer.domain.entity.Customer;
@@ -35,4 +36,6 @@ public interface CustomerDataProvider {
 	String getExcelFormatFile();
 
 	CustomerSummaryInfo getCustomerSummary(Long agentId);
+
+	List<Customer> getCustomerListByIdList(List<Long> customerIdList);
 }

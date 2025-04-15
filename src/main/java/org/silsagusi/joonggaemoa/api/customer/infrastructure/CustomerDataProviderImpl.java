@@ -4,6 +4,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.List;
 
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -182,4 +183,11 @@ public class CustomerDataProviderImpl implements CustomerDataProvider {
 
 	}
 
+	@Override
+	public List<Customer> getCustomerListByIdList(List<Long> customerIdList) {
+		return customerIdList.stream()
+			.map(id -> customerRepository.findById(id)
+				.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER))
+			).toList();
+	}
 }

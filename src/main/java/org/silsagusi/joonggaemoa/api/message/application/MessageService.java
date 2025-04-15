@@ -1,11 +1,11 @@
 package org.silsagusi.joonggaemoa.api.message.application;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.silsagusi.joonggaemoa.api.agent.domain.Agent;
 import org.silsagusi.joonggaemoa.api.agent.domain.AgentDataProvider;
+import org.silsagusi.joonggaemoa.api.customer.domain.dataProvider.CustomerDataProvider;
 import org.silsagusi.joonggaemoa.api.customer.domain.entity.Customer;
 import org.silsagusi.joonggaemoa.api.message.application.dto.MessageDto;
 import org.silsagusi.joonggaemoa.api.message.application.dto.MessageUpdateRequest;
@@ -25,6 +25,7 @@ public class MessageService {
 
 	private final AgentDataProvider agentDataProvider;
 	private final MessageDataProvider messageDataProvider;
+	private final CustomerDataProvider customerDataProvider;
 
 	public Page<MessageDto.Response> getMessagePage(Long agentId, Pageable pageable) {
 		Page<Message> messagePage = messageDataProvider.getMessagePageByAgent(agentId, pageable);
@@ -33,8 +34,7 @@ public class MessageService {
 
 	public void createMessage(MessageDto.Request messageRequest) {
 		String content = messageRequest.getContent();
-		// TODO customer id list로 customer list로 변환해서 message를 만들어야 함
-		List<Customer> customerList = new ArrayList<>();
+		List<Customer> customerList = customerDataProvider.getCustomerListByIdList(messageRequest.getCustomerIdList());
 		LocalDateTime sendAt = messageRequest.getSendAt();
 
 		customerList.forEach(customer -> {

@@ -1,9 +1,11 @@
 package org.silsagusi.joonggaemoa.api.survey.infrastructure.dataProviderImpl;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.silsagusi.joonggaemoa.api.agent.domain.Agent;
+import org.silsagusi.joonggaemoa.api.customer.domain.entity.Customer;
 import org.silsagusi.joonggaemoa.api.survey.domain.command.QuestionCommand;
 import org.silsagusi.joonggaemoa.api.survey.domain.dataProvider.SurveyDataProvider;
 import org.silsagusi.joonggaemoa.api.survey.domain.entity.Answer;
@@ -99,7 +101,20 @@ public class SurveyDataProviderImpl implements SurveyDataProvider {
 	}
 
 	@Override
-	public void createAnswer(Answer answer) {
+	public void createAnswer(
+		Boolean applyConsultation,
+		LocalDateTime consultAt,
+		Customer customer,
+		Survey survey,
+		List<QuestionAnswerPair> questionAnswerPairList
+	) {
+		Answer answer = new Answer(
+			applyConsultation,
+			consultAt,
+			customer,
+			survey,
+			questionAnswerPairList
+		);
 		answerRepository.save(answer);
 	}
 

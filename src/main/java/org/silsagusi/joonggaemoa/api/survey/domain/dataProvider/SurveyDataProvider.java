@@ -1,8 +1,10 @@
 package org.silsagusi.joonggaemoa.api.survey.domain.dataProvider;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.silsagusi.joonggaemoa.api.agent.domain.Agent;
+import org.silsagusi.joonggaemoa.api.customer.domain.entity.Customer;
 import org.silsagusi.joonggaemoa.api.survey.domain.command.QuestionCommand;
 import org.silsagusi.joonggaemoa.api.survey.domain.entity.Answer;
 import org.silsagusi.joonggaemoa.api.survey.domain.entity.Question;
@@ -27,7 +29,13 @@ public interface SurveyDataProvider {
 
 	void deleteSurvey(Survey survey);
 
-	void createAnswer(Answer answer);
+	void createAnswer(
+		Boolean applyConsultation,
+		LocalDateTime consultAt,
+		Customer customer,
+		Survey survey,
+		List<QuestionAnswerPair> questionAnswerPairs
+	);
 
 	Page<Answer> getAnswerPage(Long agentId, Pageable pageable);
 
