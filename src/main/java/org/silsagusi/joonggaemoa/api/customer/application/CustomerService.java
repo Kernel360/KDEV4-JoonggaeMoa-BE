@@ -1,7 +1,7 @@
 package org.silsagusi.joonggaemoa.api.customer.application;
 
-import lombok.RequiredArgsConstructor;
 import org.silsagusi.joonggaemoa.api.agent.domain.Agent;
+import org.silsagusi.joonggaemoa.api.agent.domain.AgentDataProvider;
 import org.silsagusi.joonggaemoa.api.customer.application.dto.CustomerDto;
 import org.silsagusi.joonggaemoa.api.customer.application.dto.CustomerSummaryResponse;
 import org.silsagusi.joonggaemoa.api.customer.domain.dataProvider.CustomerDataProvider;
@@ -12,92 +12,94 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
 @RequiredArgsConstructor
 public class CustomerService {
 
-    private final CustomerDataProvider customerDataProvider;
+	private final CustomerDataProvider customerDataProvider;
+	private final AgentDataProvider agentDataProvider;
 
-    public void createCustomer(
-        Long agentId,
-        CustomerDto.Request customerRequestDto
-    ) {
-        Agent agent = customerDataProvider.getAgent(agentId);
+	public void createCustomer(
+		Long agentId,
+		CustomerDto.Request customerRequestDto
+	) {
+		Agent agent = agentDataProvider.getAgentById(agentId);
 
-        customerDataProvider.validateExist(agent, customerRequestDto.getPhone(), customerRequestDto.getEmail());
+		customerDataProvider.validateExist(agent, customerRequestDto.getPhone(), customerRequestDto.getEmail());
 
-        customerDataProvider.createCustomer(
-            customerRequestDto.getName(),
-            customerRequestDto.getBirthday(),
-            customerRequestDto.getPhone(),
-            customerRequestDto.getEmail(),
-            customerRequestDto.getJob(),
-            customerRequestDto.getIsVip(),
-            customerRequestDto.getMemo(),
-            customerRequestDto.getConsent(),
-            agent
-        );
+		customerDataProvider.createCustomer(
+			customerRequestDto.getName(),
+			customerRequestDto.getBirthday(),
+			customerRequestDto.getPhone(),
+			customerRequestDto.getEmail(),
+			customerRequestDto.getJob(),
+			customerRequestDto.getIsVip(),
+			customerRequestDto.getMemo(),
+			customerRequestDto.getConsent(),
+			agent
+		);
 
+	}
 
-    }
+	public void bulkCreateCustomer(Long agentId, MultipartFile file) {
+		customerDataProvider.bulkCreateCustomer(agentId, file);
+	}
 
-    public void bulkCreateCustomer(Long agentId, MultipartFile file) {
-        customerDataProvider.bulkCreateCustomer(agentId, file);
-    }
+	public void deleteCustomer(Long agentId, Long customerId) {
+		Customer customer = customerDataProvider.getCustomer(customerId);
+		customerDataProvider.validateAgentAccess(agentId, customer);
 
-    public void deleteCustomer(Long agentId, Long customerId) {
-        Customer customer = customerDataProvider.getCustomer(customerId);
-        customerDataProvider.validateAgentAccess(agentId, customer);
+		customerDataProvider.deleteCustomer(customer);
+	}
 
-        customerDataProvider.deleteCustomer(customer);
-    }
+	public void updateCustomer(
+		Long agentId, Long customerId, CustomerDto.Request customerRequestDto
+	) {
+		Customer customer = customerDataProvider.getCustomer(customerId);
+		customerDataProvider.validateAgentAccess(agentId, customer);
 
-    public void updateCustomer(
-        Long agentId, Long customerId, CustomerDto.Request customerRequestDto
-    ) {
-        Customer customer = customerDataProvider.getCustomer(customerId);
-        customerDataProvider.validateAgentAccess(agentId, customer);
+		customerDataProvider.updateCustomer(
+			customer,
+			customerRequestDto.getName(),
+			customerRequestDto.getBirthday(),
+			customerRequestDto.getPhone(),
+			customerRequestDto.getEmail(),
+			customerRequestDto.getJob(),
+			customerRequestDto.getIsVip(),
+			customerRequestDto.getMemo(),
+			customerRequestDto.getConsent()
+		);
 
-        customerDataProvider.updateCustomer(
-            customer,
-            customerRequestDto.getName(),
-            customerRequestDto.getBirthday(),
-            customerRequestDto.getPhone(),
-            customerRequestDto.getEmail(),
-            customerRequestDto.getJob(),
-            customerRequestDto.getIsVip(),
-            customerRequestDto.getMemo(),
-            customerRequestDto.getConsent()
-        );
+	}
 
-    }
+	public CustomerDto.Response getCustomerById(Long agentId, Long customerId) {
+		Customer customer = customerDataProvider.getCustomer(customerId);
+		customerDataProvider.validateAgentAccess(agentId, customer);
+		return CustomerDto.Response.of(customer);
+	}
 
-    public CustomerDto.Response getCustomerById(Long agentId, Long customerId) {
-        Customer customer = customerDataProvider.getCustomer(customerId);
-        customerDataProvider.validateAgentAccess(agentId, customer);
-        return CustomerDto.Response.of(customer);
-    }
+	public Page<CustomerDto.Response> getAllCustomers(Long agentId, Pageable pageable) {
+		Agent agent = agentDataProvider.getAgentById(agentId);
 
-    public Page<CustomerDto.Response> getAllCustomers(Long agentId, Pageable pageable) {
-        Agent agent = customerDataProvider.getAgent(agentId);
+		Page<Customer> customerPage = customerDataProvider.getAllByAgent(agent, pageable);
+		return customerPage.map(CustomerDto.Response::of);
+	}
 
-        Page<Customer> customerPage = customerDataProvider.getAllByAgent(agent, pageable);
-        return customerPage.map(CustomerDto.Response::of);
-    }
+	public CustomerDto.Response getCustomerByPhone(String phone) {
+		Customer customer = customerDataProvider.getCustomerByPhone(phone);
+		return CustomerDto.Response.of(customer);
+	}
 
-    public CustomerDto.Response getCustomerByPhone(String phone) {
-        Customer customer = customerDataProvider.getCustomerByPhone(phone);
-        return CustomerDto.Response.of(customer);
-    }
+	public String excelDownload() {
+		return customerDataProvider.getExcelFormatFile();
+	}
 
-    public String excelDownload() {
-        return customerDataProvider.getExcelFormatFile();
-    }
+	public CustomerSummaryResponse getCustomerSummary(Long agentId) {
 
-    public CustomerSummaryResponse getCustomerSummary(Long agentId) {
+		CustomerSummaryInfo customerSummaryInfo = customerDataProvider.getCustomerSummary(agentId);
 
-        CustomerSummaryInfo customerSummaryInfo = customerDataProvider.getCustomerSummary(agentId);
-
-        return CustomerSummaryResponse.of(customerSummaryInfo);
-    }
+		return CustomerSummaryResponse.of(customerSummaryInfo);
+	}
 }

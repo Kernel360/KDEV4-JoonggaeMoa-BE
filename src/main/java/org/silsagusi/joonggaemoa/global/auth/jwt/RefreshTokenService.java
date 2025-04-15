@@ -1,7 +1,5 @@
 package org.silsagusi.joonggaemoa.global.auth.jwt;
 
-import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
 import org.silsagusi.joonggaemoa.api.agent.domain.Agent;
 import org.silsagusi.joonggaemoa.api.agent.infrastructure.AgentRepository;
 import org.silsagusi.joonggaemoa.global.api.exception.CustomException;
@@ -9,43 +7,46 @@ import org.silsagusi.joonggaemoa.global.api.exception.ErrorCode;
 import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Service;
 
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+
 @Service
 @RequiredArgsConstructor
 public class RefreshTokenService {
 
-    private final JwtProvider jwtProvider;
-    private final RefreshTokenStore refreshTokenStore;
-    private final AgentRepository agentRepository;
+	private final JwtProvider jwtProvider;
+	private final RefreshTokenStore refreshTokenStore;
+	private final AgentRepository agentRepository;
 
-    public void refreshToken(String refreshToken, HttpServletResponse response) {
+	public void refreshToken(String refreshToken, HttpServletResponse response) {
 
-        String username = jwtProvider.getSubject(refreshToken);
+		String username = jwtProvider.getSubject(refreshToken);
 
-        String storedToken = refreshTokenStore.getRefreshToken(username);
-        if (storedToken == null && !storedToken.equals(refreshToken)) {
-            throw new CustomException(ErrorCode.INVALID_TOKEN);
-        }
+		String storedToken = refreshTokenStore.getRefreshToken(username);
+		if (storedToken == null && !storedToken.equals(refreshToken)) {
+			throw new CustomException(ErrorCode.INVALID_TOKEN);
+		}
 
-        Long agentId = Long.valueOf(jwtProvider.getTokenId(refreshToken));
+		Long agentId = Long.valueOf(jwtProvider.getTokenId(refreshToken));
 
-        Agent agent = agentRepository.findById(agentId)
-            .orElseThrow(() -> new CustomException(ErrorCode.INVALID_TOKEN));
+		Agent agent = agentRepository.findById(agentId)
+			.orElseThrow(() -> new CustomException(ErrorCode.INVALID_TOKEN));
 
-        String newAccessToken = jwtProvider.generateAccessToken(agent.getId(), agent.getUsername(),
-            agent.getRole() + "");
-        String newRefreshToken = jwtProvider.generateRefreshToken(agent.getId(), agent.getUsername());
+		String newAccessToken = jwtProvider.generateAccessToken(agent.getId(), agent.getUsername(),
+			agent.getRole() + "");
+		String newRefreshToken = jwtProvider.generateRefreshToken(agent.getId(), agent.getUsername());
 
-        refreshTokenStore.deleteRefreshToken(refreshToken);
-        refreshTokenStore.saveRefreshToken(username, newRefreshToken, jwtProvider.getExpirationTime(newRefreshToken));
-        ResponseCookie cookie = ResponseCookie.from("refreshToken", newRefreshToken)
-            .httpOnly(true)
-            .secure(true)
-            .path("/")
-            .maxAge(86400)
-            .build();
+		refreshTokenStore.deleteRefreshToken(refreshToken);
+		refreshTokenStore.saveRefreshToken(username, newRefreshToken, jwtProvider.getExpirationTime(newRefreshToken));
+		ResponseCookie cookie = ResponseCookie.from("refreshToken", newRefreshToken)
+			.httpOnly(true)
+			.secure(true)
+			.path("/")
+			.maxAge(86400)
+			.build();
 
-        response.setStatus(HttpServletResponse.SC_OK);
-        response.addHeader("Authorization", "Bearer " + newAccessToken);
-        response.addHeader("Set-Cookie", cookie.toString());
-    }
+		response.setStatus(HttpServletResponse.SC_OK);
+		response.addHeader("Authorization", "Bearer " + newAccessToken);
+		response.addHeader("Set-Cookie", cookie.toString());
+	}
 }

@@ -7,6 +7,6 @@ import lombok.Getter;
 @Builder
 public class TradeTypeSummaryResponse {
 
-    private String type;
-    private Double ratio;
+	private String type;
+	private Double ratio;
 }

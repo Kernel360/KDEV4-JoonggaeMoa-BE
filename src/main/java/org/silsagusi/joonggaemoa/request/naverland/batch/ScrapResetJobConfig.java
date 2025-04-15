@@ -1,6 +1,7 @@
 package org.silsagusi.joonggaemoa.request.naverland.batch;
 
-import lombok.RequiredArgsConstructor;
+import java.time.LocalDateTime;
+
 import org.silsagusi.joonggaemoa.api.article.repository.RegionScrapStatusRepository;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -13,33 +14,33 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import java.time.LocalDateTime;
+import lombok.RequiredArgsConstructor;
 
 @Configuration
 @RequiredArgsConstructor
 public class ScrapResetJobConfig {
 
-    private static final String JOB_NAME = "scrapStatusResetJob";
-    private final JobRepository jobRepository;
-    private final PlatformTransactionManager transactionManager;
-    private final RegionScrapStatusRepository regionScrapStatusRepository;
+	private static final String JOB_NAME = "scrapStatusResetJob";
+	private final JobRepository jobRepository;
+	private final PlatformTransactionManager transactionManager;
+	private final RegionScrapStatusRepository regionScrapStatusRepository;
 
-    @Bean
-    public Job scrapStatusResetJob(Step scrapStatusResetStep) {
-        return new JobBuilder(JOB_NAME, jobRepository)
-            .start(scrapStatusResetStep)
-            .build();
-    }
+	@Bean
+	public Job scrapStatusResetJob(Step scrapStatusResetStep) {
+		return new JobBuilder(JOB_NAME, jobRepository)
+			.start(scrapStatusResetStep)
+			.build();
+	}
 
-    @Bean
-    @JobScope
-    public Step scrapStatusResetStep() {
-        return new StepBuilder(JOB_NAME + "Step", jobRepository)
-            .tasklet(((contribution, chunkContext) -> {
-                LocalDateTime cutoff = LocalDateTime.now().minusDays(1);
-                regionScrapStatusRepository.resetAllScrapStatus(cutoff);
-                return RepeatStatus.FINISHED;
-            }), transactionManager)
-            .build();
-    }
+	@Bean
+	@JobScope
+	public Step scrapStatusResetStep() {
+		return new StepBuilder(JOB_NAME + "Step", jobRepository)
+			.tasklet(((contribution, chunkContext) -> {
+				LocalDateTime cutoff = LocalDateTime.now().minusDays(1);
+				regionScrapStatusRepository.resetAllScrapStatus(cutoff);
+				return RepeatStatus.FINISHED;
+			}), transactionManager)
+			.build();
+	}
 }

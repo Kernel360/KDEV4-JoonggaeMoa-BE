@@ -1,7 +1,7 @@
 package org.silsagusi.joonggaemoa.api.article.entity.projection;
 
 public interface RealEstateTypeRatioProjection {
-    String getType();
+	String getType();
 
-    Integer getCount();
+	Integer getCount();
 }
