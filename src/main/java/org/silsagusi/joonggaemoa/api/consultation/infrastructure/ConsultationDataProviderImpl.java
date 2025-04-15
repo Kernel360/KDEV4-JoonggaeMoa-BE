@@ -6,7 +6,7 @@ import org.silsagusi.joonggaemoa.api.consultation.domain.entity.Consultation;
 import org.silsagusi.joonggaemoa.api.consultation.domain.entity.Consultation.ConsultationStatus;
 import org.silsagusi.joonggaemoa.api.consultation.domain.info.ConsultationMonthInfo;
 import org.silsagusi.joonggaemoa.api.consultation.domain.info.ConsultationSummaryInfo;
-import org.silsagusi.joonggaemoa.api.customer.domain.Customer;
+import org.silsagusi.joonggaemoa.api.customer.domain.entity.Customer;
 import org.silsagusi.joonggaemoa.api.customer.infrastructure.CustomerRepository;
 import org.silsagusi.joonggaemoa.global.api.exception.CustomException;
 import org.silsagusi.joonggaemoa.global.api.exception.ErrorCode;

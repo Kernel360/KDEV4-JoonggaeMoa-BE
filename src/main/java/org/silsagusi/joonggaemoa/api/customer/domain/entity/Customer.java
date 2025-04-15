@@ -1,4 +1,4 @@
-package org.silsagusi.joonggaemoa.api.customer.domain;
+package org.silsagusi.joonggaemoa.api.customer.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;

@@ -1,7 +1,6 @@
 package org.silsagusi.joonggaemoa.api.contract.application;
 
 import lombok.RequiredArgsConstructor;
-import org.silsagusi.joonggaemoa.api.agent.infrastructure.AgentRepository;
 import org.silsagusi.joonggaemoa.api.contract.application.dto.ContractDetailDto;
 import org.silsagusi.joonggaemoa.api.contract.application.dto.ContractDto;
 import org.silsagusi.joonggaemoa.api.contract.application.dto.ContractSummaryResponse;
@@ -10,10 +9,7 @@ import org.silsagusi.joonggaemoa.api.contract.domain.entity.Contract;
 import org.silsagusi.joonggaemoa.api.contract.domain.info.ContractDetailInfo;
 import org.silsagusi.joonggaemoa.api.contract.domain.info.ContractInfo;
 import org.silsagusi.joonggaemoa.api.contract.domain.info.ContractSummaryInfo;
-import org.silsagusi.joonggaemoa.api.contract.infrastructure.ContractRepository;
-import org.silsagusi.joonggaemoa.api.customer.domain.Customer;
-import org.silsagusi.joonggaemoa.api.customer.infrastructure.CustomerRepository;
-import org.silsagusi.joonggaemoa.global.config.DataDBConfig;
+import org.silsagusi.joonggaemoa.api.customer.domain.entity.Customer;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -25,12 +21,7 @@ import java.io.IOException;
 @Service
 public class ContractService {
 
-    private final ContractRepository contractRepository;
-    private final CustomerRepository customerRepository;
-    private final AgentRepository agentRepository;
-
     private final ContractDataProvider contractDataProvider;
-    private final DataDBConfig dataDBConfig;
 
     public void createContract(ContractDto.Request contractRequestDto, MultipartFile file) throws IOException {
         Customer customerLandlord = contractDataProvider.getCustomer(contractRequestDto.getLandlordId());

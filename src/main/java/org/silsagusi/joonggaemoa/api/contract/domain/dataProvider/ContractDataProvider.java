@@ -4,7 +4,7 @@ import org.silsagusi.joonggaemoa.api.contract.domain.entity.Contract;
 import org.silsagusi.joonggaemoa.api.contract.domain.info.ContractDetailInfo;
 import org.silsagusi.joonggaemoa.api.contract.domain.info.ContractInfo;
 import org.silsagusi.joonggaemoa.api.contract.domain.info.ContractSummaryInfo;
-import org.silsagusi.joonggaemoa.api.customer.domain.Customer;
+import org.silsagusi.joonggaemoa.api.customer.domain.entity.Customer;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;

@@ -3,7 +3,7 @@ package org.silsagusi.joonggaemoa.global.batch;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.silsagusi.joonggaemoa.api.agent.domain.Agent;
-import org.silsagusi.joonggaemoa.api.customer.domain.Customer;
+import org.silsagusi.joonggaemoa.api.customer.domain.entity.Customer;
 import org.silsagusi.joonggaemoa.api.message.domain.Message;
 import org.silsagusi.joonggaemoa.api.message.domain.SendStatus;
 import org.silsagusi.joonggaemoa.api.message.infrastructure.MessageRepository;

@@ -3,18 +3,14 @@ package org.silsagusi.joonggaemoa.api.survey.application;
 import lombok.RequiredArgsConstructor;
 import org.silsagusi.joonggaemoa.api.agent.domain.Agent;
 import org.silsagusi.joonggaemoa.api.agent.infrastructure.AgentRepository;
-import org.silsagusi.joonggaemoa.api.consultation.domain.entity.Consultation;
 import org.silsagusi.joonggaemoa.api.consultation.infrastructure.ConsultationRepository;
 import org.silsagusi.joonggaemoa.api.customer.application.CustomerService;
-import org.silsagusi.joonggaemoa.api.customer.domain.Customer;
 import org.silsagusi.joonggaemoa.api.customer.infrastructure.CustomerRepository;
 import org.silsagusi.joonggaemoa.api.notify.application.NotificationService;
-import org.silsagusi.joonggaemoa.api.notify.domain.NotificationType;
 import org.silsagusi.joonggaemoa.api.survey.application.dto.AnswerDto;
 import org.silsagusi.joonggaemoa.api.survey.application.dto.SurveyDto;
 import org.silsagusi.joonggaemoa.api.survey.domain.Answer;
 import org.silsagusi.joonggaemoa.api.survey.domain.Question;
-import org.silsagusi.joonggaemoa.api.survey.domain.QuestionAnswerPair;
 import org.silsagusi.joonggaemoa.api.survey.domain.Survey;
 import org.silsagusi.joonggaemoa.api.survey.infrastructure.AnswerRepository;
 import org.silsagusi.joonggaemoa.api.survey.infrastructure.QuestionRepository;
@@ -141,66 +137,66 @@ public class SurveyService {
         return SurveyDto.Response.of(survey);
     }
 
-    @Transactional
-    public void submitSurveyAnswer(
-        String surveyId,
-        AnswerDto.Request answerRequest
-    ) {
-        Survey survey = surveyRepository.findById(surveyId)
-            .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
-        Agent agent = survey.getAgent();
-
-        // 고객인지 판별(휴대폰 번호) 후 고객 데이터 추가
-        Customer customer = customerService.getCustomerByPhone(answerRequest.getPhone());
-        if (customer == null) {
-            Customer newCustomer = new Customer(
-                answerRequest.getName(),
-                answerRequest.getPhone(),
-                answerRequest.getEmail(),
-                answerRequest.getConsent(),
-                agent
-            );
-            customerRepository.save(newCustomer);
-            customer = newCustomer;
-        }
-
-        if (answerRequest.getApplyConsultation()) {
-            // 상담 추가
-            Consultation consultation = new Consultation(
-                customer,
-                answerRequest.getConsultAt(),
-                Consultation.ConsultationStatus.WAITING
-            );
-            consultationRepository.save(consultation);
-        }
-
-        // 응답 추가
-        List<QuestionAnswerPair> pairList = new ArrayList<>();
-        for (int i = 0; i < answerRequest.getQuestions().size(); i++) {
-            QuestionAnswerPair pair = new QuestionAnswerPair(
-                answerRequest.getQuestions().get(i),
-                answerRequest.getAnswers().get(i)
-            );
-            pairList.add(pair);
-        }
-
-        Answer newAnswer = new Answer(
-            answerRequest.getApplyConsultation(),
-            answerRequest.getConsultAt(),
-            customer,
-            survey,
-            pairList
-        );
-
-        answerRepository.save(newAnswer);
-
-        //응답 완료 시 알림
-        notificationService.notify(
-            agent.getId(),
-            NotificationType.SURVEY,
-            customer.getName() + "님이 [" + survey.getTitle() + "] 설문에 응답했습니다."
-        );
-    }
+//    @Transactional
+//    public void submitSurveyAnswer(
+//        String surveyId,
+//        AnswerDto.Request answerRequest
+//    ) {
+//        Survey survey = surveyRepository.findById(surveyId)
+//            .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
+//        Agent agent = survey.getAgent();
+//
+//        // 고객인지 판별(휴대폰 번호) 후 고객 데이터 추가
+//        Customer customer = customerService.getCustomerByPhone(answerRequest.getPhone());
+//        if (customer == null) {
+//            Customer newCustomer = new Customer(
+//                answerRequest.getName(),
+//                answerRequest.getPhone(),
+//                answerRequest.getEmail(),
+//                answerRequest.getConsent(),
+//                agent
+//            );
+//            customerRepository.save(newCustomer);
+//            customer = newCustomer;
+//        }
+//
+//        if (answerRequest.getApplyConsultation()) {
+//            // 상담 추가
+//            Consultation consultation = new Consultation(
+//                customer,
+//                answerRequest.getConsultAt(),
+//                Consultation.ConsultationStatus.WAITING
+//            );
+//            consultationRepository.save(consultation);
+//        }
+//
+//        // 응답 추가
+//        List<QuestionAnswerPair> pairList = new ArrayList<>();
+//        for (int i = 0; i < answerRequest.getQuestions().size(); i++) {
+//            QuestionAnswerPair pair = new QuestionAnswerPair(
+//                answerRequest.getQuestions().get(i),
+//                answerRequest.getAnswers().get(i)
+//            );
+//            pairList.add(pair);
+//        }
+//
+//        Answer newAnswer = new Answer(
+//            answerRequest.getApplyConsultation(),
+//            answerRequest.getConsultAt(),
+//            customer,
+//            survey,
+//            pairList
+//        );
+//
+//        answerRepository.save(newAnswer);
+//
+//        //응답 완료 시 알림
+//        notificationService.notify(
+//            agent.getId(),
+//            NotificationType.SURVEY,
+//            customer.getName() + "님이 [" + survey.getTitle() + "] 설문에 응답했습니다."
+//        );
+//    }
 
     public Page<AnswerDto.Response> getAllAnswers(Long agentId, Pageable pageable) {
         Page<Answer> answerPage = answerRepository.findAllByCustomer_AgentId(agentId, pageable);

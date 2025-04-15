@@ -9,7 +9,7 @@ import org.silsagusi.joonggaemoa.api.contract.domain.entity.Contract;
 import org.silsagusi.joonggaemoa.api.contract.domain.info.ContractDetailInfo;
 import org.silsagusi.joonggaemoa.api.contract.domain.info.ContractInfo;
 import org.silsagusi.joonggaemoa.api.contract.domain.info.ContractSummaryInfo;
-import org.silsagusi.joonggaemoa.api.customer.domain.Customer;
+import org.silsagusi.joonggaemoa.api.customer.domain.entity.Customer;
 import org.silsagusi.joonggaemoa.api.customer.infrastructure.CustomerRepository;
 import org.silsagusi.joonggaemoa.global.api.exception.CustomException;
 import org.silsagusi.joonggaemoa.global.api.exception.ErrorCode;

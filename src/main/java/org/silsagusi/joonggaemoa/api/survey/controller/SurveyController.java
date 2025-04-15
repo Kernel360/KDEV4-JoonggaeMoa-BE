@@ -98,13 +98,13 @@ public class SurveyController {
         return ResponseEntity.ok(ApiResponse.ok(surveyCommand));
     }
 
-    @PostMapping("/api/customers/surveys/{surveyId}/submit")
-    public ResponseEntity<ApiResponse<Void>> submitSurveyAnswer(
-        @PathVariable("surveyId") String surveyId,
-        @RequestBody @Valid AnswerDto.Request answerRequest
-    ) {
-        surveyService.submitSurveyAnswer(surveyId, answerRequest);
-        return ResponseEntity.ok(ApiResponse.ok());
-    }
+//    @PostMapping("/api/customers/surveys/{surveyId}/submit")
+//    public ResponseEntity<ApiResponse<Void>> submitSurveyAnswer(
+//        @PathVariable("surveyId") String surveyId,
+//        @RequestBody @Valid AnswerDto.Request answerRequest
+//    ) {
+//        surveyService.submitSurveyAnswer(surveyId, answerRequest);
+//        return ResponseEntity.ok(ApiResponse.ok());
+//    }
 
 }

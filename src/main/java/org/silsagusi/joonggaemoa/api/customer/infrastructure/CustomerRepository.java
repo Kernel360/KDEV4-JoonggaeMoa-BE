@@ -1,7 +1,7 @@
 package org.silsagusi.joonggaemoa.api.customer.infrastructure;
 
 import org.silsagusi.joonggaemoa.api.agent.domain.Agent;
-import org.silsagusi.joonggaemoa.api.customer.domain.Customer;
+import org.silsagusi.joonggaemoa.api.customer.domain.entity.Customer;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

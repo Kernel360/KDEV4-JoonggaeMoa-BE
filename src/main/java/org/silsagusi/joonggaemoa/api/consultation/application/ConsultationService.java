@@ -9,10 +9,7 @@ import org.silsagusi.joonggaemoa.api.consultation.domain.dataProvider.Consultati
 import org.silsagusi.joonggaemoa.api.consultation.domain.entity.Consultation;
 import org.silsagusi.joonggaemoa.api.consultation.domain.info.ConsultationMonthInfo;
 import org.silsagusi.joonggaemoa.api.consultation.domain.info.ConsultationSummaryInfo;
-import org.silsagusi.joonggaemoa.api.consultation.infrastructure.ConsultationRepository;
-import org.silsagusi.joonggaemoa.api.customer.domain.Customer;
-import org.silsagusi.joonggaemoa.api.customer.infrastructure.CustomerRepository;
-import org.silsagusi.joonggaemoa.global.config.DataDBConfig;
+import org.silsagusi.joonggaemoa.api.customer.domain.entity.Customer;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -22,11 +19,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ConsultationService {
 
-    private final ConsultationRepository consultationRepository;
-    private final CustomerRepository customerRepository;
-
     private final ConsultationDataProvider consultationDataProvider;
-    private final DataDBConfig dataDBConfig;
 
     public void createConsultation(ConsultationDto.Request consultationRequestDto) {
 
