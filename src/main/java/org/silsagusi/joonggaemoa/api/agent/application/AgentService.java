@@ -34,6 +34,8 @@ public class AgentService {
 			agentRequest.getBusinessNo()
 		);
 
+		agentDataProvider.validateExist(agent);
+
 		agentDataProvider.createAgent(agent);
 
 		messageTemplateDataProvider.createDefaultMessageTemplate(agent);

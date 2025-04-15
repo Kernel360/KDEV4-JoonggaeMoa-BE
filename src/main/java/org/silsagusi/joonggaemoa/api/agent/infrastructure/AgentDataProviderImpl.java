@@ -21,6 +21,11 @@ public class AgentDataProviderImpl implements AgentDataProvider {
 
 	@Override
 	public void createAgent(Agent agent) {
+		agentRepository.save(agent);
+	}
+
+	@Override
+	public void validateExist(Agent agent) {
 		if (agentRepository.existsByUsername(agent.getUsername())) {
 			throw new CustomException(ErrorCode.CONFLICT_USERNAME);
 		}
@@ -32,8 +37,6 @@ public class AgentDataProviderImpl implements AgentDataProvider {
 		if (agentRepository.existsByEmail(agent.getEmail())) {
 			throw new CustomException(ErrorCode.CONFLICT_EMAIL);
 		}
-
-		agentRepository.save(agent);
 	}
 
 	@Override

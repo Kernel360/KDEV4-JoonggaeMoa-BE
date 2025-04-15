@@ -4,6 +4,8 @@ public interface AgentDataProvider {
 
 	void createAgent(Agent agent);
 
+	void validateExist(Agent agent);
+
 	Agent getAgentById(Long agentId);
 
 	Agent getAgentByNameAndPhone(String name, String phone);
