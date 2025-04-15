@@ -3,10 +3,10 @@ package org.silsagusi.joonggaemoa.global.batch;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import org.silsagusi.joonggaemoa.domain.contract.domain.Contract;
-import org.silsagusi.joonggaemoa.domain.contract.infrastructure.ContractRepository;
-import org.silsagusi.joonggaemoa.domain.notify.domain.NotificationType;
-import org.silsagusi.joonggaemoa.domain.notify.application.NotificationService;
+import org.silsagusi.joonggaemoa.api.contract.domain.Contract;
+import org.silsagusi.joonggaemoa.api.contract.infrastructure.ContractRepository;
+import org.silsagusi.joonggaemoa.api.notify.domain.NotificationType;
+import org.silsagusi.joonggaemoa.api.notify.application.NotificationService;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobScope;

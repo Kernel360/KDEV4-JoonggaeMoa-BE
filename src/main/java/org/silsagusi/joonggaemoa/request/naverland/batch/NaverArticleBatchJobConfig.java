@@ -2,8 +2,8 @@ package org.silsagusi.joonggaemoa.request.naverland.batch;
 
 import java.util.List;
 
-import org.silsagusi.joonggaemoa.domain.article.entity.RegionScrapStatus;
-import org.silsagusi.joonggaemoa.domain.article.repository.RegionScrapStatusRepository;
+import org.silsagusi.joonggaemoa.api.article.entity.RegionScrapStatus;
+import org.silsagusi.joonggaemoa.api.article.repository.RegionScrapStatusRepository;
 import org.silsagusi.joonggaemoa.request.naverland.service.NaverLandArticleRequestService;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;

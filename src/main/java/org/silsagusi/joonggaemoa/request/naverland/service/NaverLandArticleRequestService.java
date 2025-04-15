@@ -5,10 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import org.silsagusi.joonggaemoa.domain.article.dataProvider.ArticleDataProvider;
-import org.silsagusi.joonggaemoa.domain.article.entity.Article;
-import org.silsagusi.joonggaemoa.domain.article.entity.Region;
-import org.silsagusi.joonggaemoa.domain.article.entity.RegionScrapStatus;
+import org.silsagusi.joonggaemoa.api.article.dataProvider.ArticleDataProvider;
+import org.silsagusi.joonggaemoa.api.article.entity.Article;
+import org.silsagusi.joonggaemoa.api.article.entity.Region;
+import org.silsagusi.joonggaemoa.api.article.entity.RegionScrapStatus;
 import org.silsagusi.joonggaemoa.request.naverland.client.NaverLandApiClient;
 import org.silsagusi.joonggaemoa.request.naverland.service.dto.AddressResponse;
 import org.silsagusi.joonggaemoa.request.naverland.service.dto.ClientArticleResponse;

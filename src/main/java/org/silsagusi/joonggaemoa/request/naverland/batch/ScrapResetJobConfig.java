@@ -2,7 +2,7 @@ package org.silsagusi.joonggaemoa.request.naverland.batch;
 
 import java.time.LocalDateTime;
 
-import org.silsagusi.joonggaemoa.domain.article.repository.RegionScrapStatusRepository;
+import org.silsagusi.joonggaemoa.api.article.repository.RegionScrapStatusRepository;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobScope;
