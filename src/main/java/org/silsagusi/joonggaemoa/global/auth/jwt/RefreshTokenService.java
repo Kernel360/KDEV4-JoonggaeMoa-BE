@@ -1,7 +1,7 @@
 package org.silsagusi.joonggaemoa.global.auth.jwt;
 
-import org.silsagusi.joonggaemoa.domain.agent.entity.Agent;
-import org.silsagusi.joonggaemoa.domain.agent.repository.AgentRepository;
+import org.silsagusi.joonggaemoa.domain.agent.domain.Agent;
+import org.silsagusi.joonggaemoa.domain.agent.infrastructure.AgentRepository;
 import org.silsagusi.joonggaemoa.global.api.exception.CustomException;
 import org.silsagusi.joonggaemoa.global.api.exception.ErrorCode;
 import org.springframework.http.ResponseCookie;

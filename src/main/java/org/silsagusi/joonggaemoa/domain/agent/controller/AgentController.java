@@ -1,9 +1,9 @@
 package org.silsagusi.joonggaemoa.domain.agent.controller;
 
-import org.silsagusi.joonggaemoa.domain.agent.service.AgentService;
-import org.silsagusi.joonggaemoa.domain.agent.service.dto.AgentDto;
-import org.silsagusi.joonggaemoa.domain.agent.service.dto.AgentUpdateRequest;
-import org.silsagusi.joonggaemoa.domain.agent.service.dto.UsernameDto;
+import org.silsagusi.joonggaemoa.domain.agent.application.AgentService;
+import org.silsagusi.joonggaemoa.domain.agent.application.dto.AgentDto;
+import org.silsagusi.joonggaemoa.domain.agent.application.dto.AgentUpdateRequest;
+import org.silsagusi.joonggaemoa.domain.agent.application.dto.UsernameDto;
 import org.silsagusi.joonggaemoa.global.api.ApiResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

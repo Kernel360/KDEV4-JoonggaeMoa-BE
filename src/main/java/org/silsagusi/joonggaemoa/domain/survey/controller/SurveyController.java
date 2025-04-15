@@ -1,8 +1,8 @@
 package org.silsagusi.joonggaemoa.domain.survey.controller;
 
-import org.silsagusi.joonggaemoa.domain.survey.service.SurveyService;
-import org.silsagusi.joonggaemoa.domain.survey.service.dto.AnswerDto;
-import org.silsagusi.joonggaemoa.domain.survey.service.dto.SurveyDto;
+import org.silsagusi.joonggaemoa.domain.survey.application.SurveyService;
+import org.silsagusi.joonggaemoa.domain.survey.application.dto.AnswerDto;
+import org.silsagusi.joonggaemoa.domain.survey.application.dto.SurveyDto;
 import org.silsagusi.joonggaemoa.global.api.ApiResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

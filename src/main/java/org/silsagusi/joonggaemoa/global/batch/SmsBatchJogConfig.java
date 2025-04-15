@@ -3,12 +3,12 @@ package org.silsagusi.joonggaemoa.global.batch;
 import java.time.LocalDateTime;
 import java.util.Map;
 
-import org.silsagusi.joonggaemoa.domain.agent.entity.Agent;
-import org.silsagusi.joonggaemoa.domain.customer.entity.Customer;
-import org.silsagusi.joonggaemoa.domain.message.entity.Message;
-import org.silsagusi.joonggaemoa.domain.message.entity.SendStatus;
-import org.silsagusi.joonggaemoa.domain.message.repository.MessageRepository;
-import org.silsagusi.joonggaemoa.domain.message.repository.SmsUtil;
+import org.silsagusi.joonggaemoa.domain.agent.domain.Agent;
+import org.silsagusi.joonggaemoa.domain.customer.domain.Customer;
+import org.silsagusi.joonggaemoa.domain.message.domain.Message;
+import org.silsagusi.joonggaemoa.domain.message.domain.SendStatus;
+import org.silsagusi.joonggaemoa.domain.message.infrastructure.MessageRepository;
+import org.silsagusi.joonggaemoa.domain.message.infrastructure.SmsUtil;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobScope;

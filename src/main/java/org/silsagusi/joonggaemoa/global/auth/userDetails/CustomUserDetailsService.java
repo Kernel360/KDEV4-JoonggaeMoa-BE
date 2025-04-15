@@ -1,7 +1,7 @@
 package org.silsagusi.joonggaemoa.global.auth.userDetails;
 
-import org.silsagusi.joonggaemoa.domain.agent.entity.Agent;
-import org.silsagusi.joonggaemoa.domain.agent.repository.AgentRepository;
+import org.silsagusi.joonggaemoa.domain.agent.domain.Agent;
+import org.silsagusi.joonggaemoa.domain.agent.infrastructure.AgentRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
