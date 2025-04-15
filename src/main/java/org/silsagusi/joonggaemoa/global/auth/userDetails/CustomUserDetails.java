@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import org.silsagusi.joonggaemoa.domain.agent.entity.Agent;
+import org.silsagusi.joonggaemoa.domain.agent.domain.Agent;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

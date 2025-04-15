@@ -1,8 +1,8 @@
 package org.silsagusi.joonggaemoa.domain.message.controller;
 
-import org.silsagusi.joonggaemoa.domain.message.service.MessageService;
-import org.silsagusi.joonggaemoa.domain.message.service.dto.MessageDto;
-import org.silsagusi.joonggaemoa.domain.message.service.dto.MessageUpdateRequest;
+import org.silsagusi.joonggaemoa.domain.message.application.MessageService;
+import org.silsagusi.joonggaemoa.domain.message.application.dto.MessageDto;
+import org.silsagusi.joonggaemoa.domain.message.application.dto.MessageUpdateRequest;
 import org.silsagusi.joonggaemoa.global.api.ApiResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
