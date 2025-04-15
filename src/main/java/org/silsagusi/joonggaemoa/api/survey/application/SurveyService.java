@@ -45,8 +45,10 @@ public class SurveyService {
 		Survey survey = new Survey(agent, surveyCreateRequest.getTitle(), surveyCreateRequest.getDescription(),
 			new ArrayList<>());
 
-		List<QuestionCommand> questionCommandList = QuestionCommand.fromCreateRequest(
-			surveyCreateRequest.getQuestionList());
+		List<QuestionCommand> questionCommandList =
+			surveyCreateRequest.getQuestionList().stream()
+				.map(QuestionCommand::of)
+				.toList();
 		List<Question> questionList = surveyDataProvider.mapToQuestionList(survey, questionCommandList);
 
 		surveyDataProvider.createSurvey(survey, questionList);
@@ -70,8 +72,11 @@ public class SurveyService {
 		Survey survey = surveyDataProvider.getSurvey(surveyId);
 		surveyDataProvider.validateSurveyWithAgent(agent, survey);
 
-		List<QuestionCommand> questionCommandList = QuestionCommand.fromUpdateRequest(
-			surveyUpdateRequest.getQuestionList());
+		List<QuestionCommand> questionCommandList =
+			surveyUpdateRequest.getQuestionList()
+				.stream()
+				.map(QuestionCommand::of)
+				.toList();
 		List<Question> questionList = surveyDataProvider.mapToQuestionList(survey, questionCommandList);
 
 		surveyDataProvider.updateSurvey(

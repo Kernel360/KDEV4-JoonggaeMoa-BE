@@ -15,29 +15,21 @@ public class QuestionCommand {
 	private Boolean isRequired;
 	private List<String> options;
 
-	public static List<QuestionCommand> fromCreateRequest(List<QuestionDto.CreateRequest> questionDtoList) {
-		return questionDtoList.stream()
-			.map(questionDto ->
-				QuestionCommand.builder()
-					.content(questionDto.getContent())
-					.type(questionDto.getType())
-					.isRequired(questionDto.getIsRequired())
-					.options(questionDto.getOptions())
-					.build()
-			)
-			.toList();
+	public static QuestionCommand of(QuestionDto.CreateRequest questionDto) {
+		return QuestionCommand.builder()
+			.content(questionDto.getContent())
+			.type(questionDto.getType())
+			.isRequired(questionDto.getIsRequired())
+			.options(questionDto.getOptions())
+			.build();
 	}
 
-	public static List<QuestionCommand> fromUpdateRequest(List<QuestionDto.UpdateRequest> questionDtoList) {
-		return questionDtoList.stream()
-			.map(questionDto ->
-				QuestionCommand.builder()
-					.content(questionDto.getContent())
-					.type(questionDto.getType())
-					.isRequired(questionDto.getIsRequired())
-					.options(questionDto.getOptions())
-					.build()
-			)
-			.toList();
+	public static QuestionCommand of(QuestionDto.UpdateRequest questionDto) {
+		return QuestionCommand.builder()
+			.content(questionDto.getContent())
+			.type(questionDto.getType())
+			.isRequired(questionDto.getIsRequired())
+			.options(questionDto.getOptions())
+			.build();
 	}
 }
