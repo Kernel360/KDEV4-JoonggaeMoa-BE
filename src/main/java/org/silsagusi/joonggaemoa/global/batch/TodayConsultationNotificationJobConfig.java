@@ -1,12 +1,15 @@
 package org.silsagusi.joonggaemoa.global.batch;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.List;
+import java.util.Map;
 
-import org.silsagusi.joonggaemoa.api.consultation.domain.Consultation;
+import org.silsagusi.joonggaemoa.api.consultation.domain.entity.Consultation;
 import org.silsagusi.joonggaemoa.api.consultation.infrastructure.ConsultationRepository;
-import org.silsagusi.joonggaemoa.api.notify.domain.NotificationType;
 import org.silsagusi.joonggaemoa.api.notify.application.NotificationService;
+import org.silsagusi.joonggaemoa.api.notify.domain.entity.NotificationType;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobScope;
@@ -22,11 +25,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.Sort;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.List;
-import java.util.Map;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Configuration

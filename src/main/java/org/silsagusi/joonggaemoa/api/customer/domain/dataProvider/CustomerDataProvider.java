@@ -1,5 +1,7 @@
 package org.silsagusi.joonggaemoa.api.customer.domain.dataProvider;
 
+import java.time.LocalDate;
+
 import org.silsagusi.joonggaemoa.api.agent.domain.Agent;
 import org.silsagusi.joonggaemoa.api.customer.domain.entity.Customer;
 import org.silsagusi.joonggaemoa.api.customer.domain.info.CustomerSummaryInfo;
@@ -7,36 +9,30 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDate;
-
 public interface CustomerDataProvider {
 
-    //TODO
-    Agent getAgent(Long agentId);
-    
-    Customer getCustomer(Long customerId);
+	Customer getCustomer(Long customerId);
 
-    void createCustomer(String name, LocalDate birthday, String phone, String email,
-                        String job, Boolean isVip, String memo, Boolean consent, Agent agent);
+	void createCustomer(String name, LocalDate birthday, String phone, String email,
+		String job, Boolean isVip, String memo, Boolean consent, Agent agent);
 
-    void validateExist(Agent agent, String phone, String email);
+	void validateExist(Agent agent, String phone, String email);
 
-    void bulkCreateCustomer(Long agentId, MultipartFile file);
+	void bulkCreateCustomer(Long agentId, MultipartFile file);
 
+	void validateAgentAccess(Long agentId, Customer customer);
 
-    void validateAgentAccess(Long agentId, Customer customer);
+	void deleteCustomer(Customer customer);
 
-    void deleteCustomer(Customer customer);
+	void updateCustomer(Customer customer,
+		String name, LocalDate birthday, String phone, String email,
+		String job, Boolean isVip, String memo, Boolean consent);
 
-    void updateCustomer(Customer customer,
-                        String name, LocalDate birthday, String phone, String email,
-                        String job, Boolean isVip, String memo, Boolean consent);
+	Page<Customer> getAllByAgent(Agent agent, Pageable pageable);
 
-    Page<Customer> getAllByAgent(Agent agent, Pageable pageable);
+	Customer getCustomerByPhone(String phone);
 
-    Customer getCustomerByPhone(String phone);
+	String getExcelFormatFile();
 
-    String getExcelFormatFile();
-
-    CustomerSummaryInfo getCustomerSummary(Long agentId);
+	CustomerSummaryInfo getCustomerSummary(Long agentId);
 }

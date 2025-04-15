@@ -2,7 +2,7 @@ package org.silsagusi.joonggaemoa.api.message.domain.entity;
 
 import java.time.LocalDateTime;
 
-import org.silsagusi.joonggaemoa.api.customer.domain.Customer;
+import org.silsagusi.joonggaemoa.api.customer.domain.entity.Customer;
 import org.silsagusi.joonggaemoa.global.BaseEntity;
 
 import jakarta.persistence.Column;

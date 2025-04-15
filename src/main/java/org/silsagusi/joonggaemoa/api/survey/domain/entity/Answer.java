@@ -3,7 +3,7 @@ package org.silsagusi.joonggaemoa.api.survey.domain.entity;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.silsagusi.joonggaemoa.api.customer.domain.Customer;
+import org.silsagusi.joonggaemoa.api.customer.domain.entity.Customer;
 import org.silsagusi.joonggaemoa.global.BaseEntity;
 
 import jakarta.persistence.CollectionTable;

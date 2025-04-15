@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.util.Map;
 
 import org.silsagusi.joonggaemoa.api.agent.domain.Agent;
-import org.silsagusi.joonggaemoa.api.customer.domain.Customer;
+import org.silsagusi.joonggaemoa.api.customer.domain.entity.Customer;
 import org.silsagusi.joonggaemoa.api.message.domain.entity.Message;
 import org.silsagusi.joonggaemoa.api.message.domain.entity.SendStatus;
 import org.silsagusi.joonggaemoa.api.message.infrastructure.MessageRepository;

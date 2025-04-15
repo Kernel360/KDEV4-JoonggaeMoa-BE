@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.silsagusi.joonggaemoa.api.agent.domain.Agent;
 import org.silsagusi.joonggaemoa.api.agent.domain.AgentDataProvider;
-import org.silsagusi.joonggaemoa.api.customer.domain.Customer;
+import org.silsagusi.joonggaemoa.api.customer.domain.entity.Customer;
 import org.silsagusi.joonggaemoa.api.message.application.dto.MessageDto;
 import org.silsagusi.joonggaemoa.api.message.application.dto.MessageUpdateRequest;
 import org.silsagusi.joonggaemoa.api.message.domain.dataProvider.MessageDataProvider;
