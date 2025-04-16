@@ -1,4 +1,4 @@
-package org.silsagusi.api.message.infrastructure;
+package org.silsagusi.api.message.infrastructure.repository;
 
 import java.time.LocalDateTime;
 

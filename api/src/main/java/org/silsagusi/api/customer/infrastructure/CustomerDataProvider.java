@@ -9,13 +9,12 @@ import java.util.List;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.silsagusi.core.domain.agent.Agent;
 import org.silsagusi.api.agent.infrastructure.AgentRepository;
-import org.silsagusi.core.domain.customer.dataProvider.CustomerDataProvider;
-import org.silsagusi.core.domain.customer.entity.Customer;
-import org.silsagusi.core.domain.customer.info.CustomerSummaryInfo;
 import org.silsagusi.core.customResponse.exception.CustomException;
 import org.silsagusi.core.customResponse.exception.ErrorCode;
+import org.silsagusi.core.domain.agent.Agent;
+import org.silsagusi.core.domain.customer.entity.Customer;
+import org.silsagusi.core.domain.customer.info.CustomerSummaryInfo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
@@ -27,7 +26,7 @@ import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
-public class CustomerDataProviderImpl implements CustomerDataProvider {
+public class CustomerDataProvider {
 
 	private final AgentRepository agentRepository;
 	private final CustomerRepository customerRepository;
@@ -36,7 +35,6 @@ public class CustomerDataProviderImpl implements CustomerDataProvider {
 	private static final String S3_BUCKET_NAME = "joonggaemoa";
 	private static final String EXCEL_FORMAT_FILENAME = "format.xlsx";
 
-	@Override
 	public void createCustomer(String name, LocalDate birthday, String phone, String email, String job, Boolean isVip,
 		String memo, Boolean consent, Agent agent) {
 
@@ -46,7 +44,6 @@ public class CustomerDataProviderImpl implements CustomerDataProvider {
 		customerRepository.save(customer);
 	}
 
-	@Override
 	public void validateExist(Agent agent, String phone, String email) {
 		if (customerRepository.existsByAgentAndPhone(agent, phone)) {
 			throw new CustomException(ErrorCode.CONFLICT_PHONE);
@@ -57,7 +54,6 @@ public class CustomerDataProviderImpl implements CustomerDataProvider {
 		}
 	}
 
-	@Override
 	public void bulkCreateCustomer(Long agentId, MultipartFile file) {
 		//TODO: 엑셀 파일 타입 확인
 		try {
@@ -102,26 +98,22 @@ public class CustomerDataProviderImpl implements CustomerDataProvider {
 		}
 	}
 
-	@Override
 	public void validateAgentAccess(Long agentId, Customer customer) {
 		if (!customer.getAgent().getId().equals(agentId)) {
 			throw new CustomException(ErrorCode.FORBIDDEN);
 		}
 	}
 
-	@Override
 	public void deleteCustomer(Customer customer) {
 		customerRepository.delete(customer);
 	}
 
-	@Override
 	public Customer getCustomer(Long customerId) {
 		Customer customer = customerRepository.findById(customerId)
 			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_CUSTOMER));
 		return customer;
 	}
 
-	@Override
 	public void updateCustomer(
 		Customer customer,
 		String name, LocalDate birthday, String phone, String email,
@@ -140,22 +132,18 @@ public class CustomerDataProviderImpl implements CustomerDataProvider {
 		customerRepository.save(customer);
 	}
 
-	@Override
 	public Page<Customer> getAllByAgent(Agent agent, Pageable pageable) {
 		return customerRepository.findAllByAgent(agent, pageable);
 	}
 
-	@Override
 	public Customer getCustomerByPhone(String phone) {
 		return customerRepository.findByPhone(phone).orElse(null);
 	}
 
-	@Override
 	public String getExcelFormatFile() {
 		return amazonS3.getUrl(S3_BUCKET_NAME, EXCEL_FORMAT_FILENAME).toString();
 	}
 
-	@Override
 	public CustomerSummaryInfo getCustomerSummary(Long agentId) {
 		LocalDateTime now = LocalDateTime.now();
 
@@ -183,7 +171,6 @@ public class CustomerDataProviderImpl implements CustomerDataProvider {
 
 	}
 
-	@Override
 	public List<Customer> getCustomerListByIdList(List<Long> customerIdList) {
 		return customerIdList.stream()
 			.map(id -> customerRepository.findById(id)

@@ -1,11 +1,11 @@
-package org.silsagusi.api.message.infrastructure;
+package org.silsagusi.api.message.infrastructure.dataProvider;
 
 import java.util.List;
 
+import org.silsagusi.api.message.infrastructure.repository.MessageTemplateRepository;
 import org.silsagusi.core.customResponse.exception.CustomException;
 import org.silsagusi.core.customResponse.exception.ErrorCode;
 import org.silsagusi.core.domain.agent.Agent;
-import org.silsagusi.core.domain.message.dataProvider.MessageTemplateDataProvider;
 import org.silsagusi.core.domain.message.entity.MessageTemplate;
 import org.springframework.stereotype.Component;
 
@@ -13,11 +13,10 @@ import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
-public class MessageTemplateDataProviderImpl implements MessageTemplateDataProvider {
+public class MessageTemplateDataProvider {
 
 	private final MessageTemplateRepository messageTemplateRepository;
 
-	@Override
 	public void createDefaultMessageTemplate(Agent agent) {
 		MessageTemplate messageTemplate1 = MessageTemplate.create(agent, "생일 축하", "생일 축하드립니다");
 		MessageTemplate messageTemplate2 = MessageTemplate.create(agent, "계약 기한 만료", "곧 계약 기한 만료입니다");
@@ -28,33 +27,27 @@ public class MessageTemplateDataProviderImpl implements MessageTemplateDataProvi
 		messageTemplateRepository.save(messageTemplate3);
 	}
 
-	@Override
 	public void createMessageTemplate(MessageTemplate messageTemplate) {
 		messageTemplateRepository.save(messageTemplate);
 	}
 
-	@Override
 	public List<MessageTemplate> getMessageTemplateList(Agent agent) {
 		return messageTemplateRepository.findByAgent(agent);
 	}
 
-	@Override
 	public MessageTemplate getMessageTemplateById(Long templateId) {
 		return messageTemplateRepository.findById(templateId)
 			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
 	}
 
-	@Override
 	public void updateMessageTemplate(MessageTemplate messageTemplate) {
 		messageTemplateRepository.save(messageTemplate);
 	}
 
-	@Override
 	public void deleteMessageTemplate(MessageTemplate messageTemplate) {
 		messageTemplateRepository.delete(messageTemplate);
 	}
 
-	@Override
 	public void validateMessageTemplateWithAgent(MessageTemplate messageTemplate, Agent agent) {
 		if (!messageTemplate.getAgent().equals(agent)) {
 			throw new CustomException(ErrorCode.FORBIDDEN);

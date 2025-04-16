@@ -1,15 +1,15 @@
 package org.silsagusi.api.notify.application;
 
-import lombok.RequiredArgsConstructor;
+import java.util.List;
 
 import org.silsagusi.api.notify.application.dto.NotificationDto;
-import org.silsagusi.core.domain.notification.dataProvider.NotificationDataProvider;
+import org.silsagusi.api.notify.infrastructure.NotificationDataProvider;
 import org.silsagusi.core.domain.notification.entity.Notification;
 import org.silsagusi.core.domain.notification.entity.NotificationType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-import java.util.List;
+import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Service

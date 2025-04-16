@@ -1,23 +1,23 @@
 package org.silsagusi.api.contract.application;
 
-import lombok.RequiredArgsConstructor;
+import java.io.IOException;
 
 import org.silsagusi.api.contract.application.dto.ContractDetailDto;
 import org.silsagusi.api.contract.application.dto.ContractDto;
 import org.silsagusi.api.contract.application.dto.ContractSummaryResponse;
-import org.silsagusi.core.domain.contract.dataProvider.ContractDataProvider;
+import org.silsagusi.api.contract.infrastructure.ContractDataProvider;
+import org.silsagusi.api.customer.infrastructure.CustomerDataProvider;
 import org.silsagusi.core.domain.contract.entity.Contract;
 import org.silsagusi.core.domain.contract.info.ContractDetailInfo;
 import org.silsagusi.core.domain.contract.info.ContractInfo;
 import org.silsagusi.core.domain.contract.info.ContractSummaryInfo;
-import org.silsagusi.core.domain.customer.dataProvider.CustomerDataProvider;
 import org.silsagusi.core.domain.customer.entity.Customer;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
+import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Service

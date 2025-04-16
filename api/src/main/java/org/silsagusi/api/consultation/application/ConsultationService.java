@@ -7,11 +7,11 @@ import org.silsagusi.api.consultation.application.dto.ConsultationDto;
 import org.silsagusi.api.consultation.application.dto.ConsultationMonthResponse;
 import org.silsagusi.api.consultation.application.dto.ConsultationSummaryResponse;
 import org.silsagusi.api.consultation.application.dto.UpdateConsultationRequest;
-import org.silsagusi.core.domain.consultation.dataProvider.ConsultationDataProvider;
+import org.silsagusi.api.consultation.infrastructure.ConsultationDataProvider;
+import org.silsagusi.api.customer.infrastructure.CustomerDataProvider;
 import org.silsagusi.core.domain.consultation.entity.Consultation;
 import org.silsagusi.core.domain.consultation.info.ConsultationMonthInfo;
 import org.silsagusi.core.domain.consultation.info.ConsultationSummaryInfo;
-import org.silsagusi.core.domain.customer.dataProvider.CustomerDataProvider;
 import org.silsagusi.core.domain.customer.entity.Customer;
 import org.springframework.stereotype.Service;
 

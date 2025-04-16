@@ -1,10 +1,10 @@
 package org.silsagusi.api.customer.application;
 
-import org.silsagusi.core.domain.agent.Agent;
-import org.silsagusi.core.domain.agent.AgentDataProvider;
+import org.silsagusi.api.agent.infrastructure.AgentDataProvider;
 import org.silsagusi.api.customer.application.dto.CustomerDto;
 import org.silsagusi.api.customer.application.dto.CustomerSummaryResponse;
-import org.silsagusi.core.domain.customer.dataProvider.CustomerDataProvider;
+import org.silsagusi.api.customer.infrastructure.CustomerDataProvider;
+import org.silsagusi.core.domain.agent.Agent;
 import org.silsagusi.core.domain.customer.entity.Customer;
 import org.silsagusi.core.domain.customer.info.CustomerSummaryInfo;
 import org.springframework.data.domain.Page;

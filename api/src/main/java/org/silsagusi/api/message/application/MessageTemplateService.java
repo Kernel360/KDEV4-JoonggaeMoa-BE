@@ -2,11 +2,11 @@ package org.silsagusi.api.message.application;
 
 import java.util.List;
 
-import org.silsagusi.core.domain.agent.Agent;
-import org.silsagusi.core.domain.agent.AgentDataProvider;
+import org.silsagusi.api.agent.infrastructure.AgentDataProvider;
 import org.silsagusi.api.message.application.dto.MessageTemplateDto;
 import org.silsagusi.api.message.application.dto.MessageTemplateUpdateRequest;
-import org.silsagusi.core.domain.message.dataProvider.MessageTemplateDataProvider;
+import org.silsagusi.api.message.infrastructure.dataProvider.MessageTemplateDataProvider;
+import org.silsagusi.core.domain.agent.Agent;
 import org.silsagusi.core.domain.message.entity.MessageTemplate;
 import org.springframework.stereotype.Service;
 

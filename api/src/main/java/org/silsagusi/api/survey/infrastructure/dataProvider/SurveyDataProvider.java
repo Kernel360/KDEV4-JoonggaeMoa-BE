@@ -1,4 +1,4 @@
-package org.silsagusi.api.survey.infrastructure.dataProviderImpl;
+package org.silsagusi.api.survey.infrastructure.dataProvider;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -7,7 +7,6 @@ import java.util.List;
 import org.silsagusi.core.domain.agent.Agent;
 import org.silsagusi.core.domain.customer.entity.Customer;
 import org.silsagusi.core.domain.survey.command.QuestionCommand;
-import org.silsagusi.core.domain.survey.dataProvider.SurveyDataProvider;
 import org.silsagusi.core.domain.survey.entity.Answer;
 import org.silsagusi.core.domain.survey.entity.Question;
 import org.silsagusi.core.domain.survey.entity.QuestionAnswerPair;
@@ -25,19 +24,17 @@ import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
-public class SurveyDataProviderImpl implements SurveyDataProvider {
+public class SurveyDataProvider {
 
 	private final SurveyRepository surveyRepository;
 	private final QuestionRepository questionRepository;
 	private final AnswerRepository answerRepository;
 
-	@Override
 	public void createSurvey(Survey survey, List<Question> questionList) {
 		surveyRepository.save(survey);
 		questionRepository.saveAll(questionList);
 	}
 
-	@Override
 	public List<Question> mapToQuestionList(Survey survey, List<QuestionCommand> questionCommandList) {
 		return questionCommandList.stream()
 			.map(questionCommand ->
@@ -51,7 +48,6 @@ public class SurveyDataProviderImpl implements SurveyDataProvider {
 			.toList();
 	}
 
-	@Override
 	public List<QuestionAnswerPair> mapToQuestionAnswerPairList(List<String> questionList,
 		List<List<String>> answerList) {
 		List<QuestionAnswerPair> pairList = new ArrayList<>();
@@ -65,18 +61,15 @@ public class SurveyDataProviderImpl implements SurveyDataProvider {
 		return pairList;
 	}
 
-	@Override
 	public Page<Survey> getSurveyPageByAgent(Agent agent, Pageable pageable) {
 		return surveyRepository.findAllByAgent(agent, pageable);
 	}
 
-	@Override
 	public Survey getSurvey(String surveyId) {
 		return surveyRepository.findById(surveyId)
 			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
 	}
 
-	@Override
 	public void updateSurvey(Survey survey, String title, String description, List<Question> questionList) {
 		questionRepository.deleteAll(survey.getQuestionList());
 		survey.getQuestionList().clear();
@@ -94,13 +87,11 @@ public class SurveyDataProviderImpl implements SurveyDataProvider {
 		surveyRepository.save(survey);
 	}
 
-	@Override
 	public void deleteSurvey(Survey survey) {
 		questionRepository.deleteAll(survey.getQuestionList());
 		surveyRepository.delete(survey);
 	}
 
-	@Override
 	public void createAnswer(
 		Boolean applyConsultation,
 		LocalDateTime consultAt,
@@ -118,12 +109,10 @@ public class SurveyDataProviderImpl implements SurveyDataProvider {
 		answerRepository.save(answer);
 	}
 
-	@Override
 	public Page<Answer> getAnswerPage(Long agentId, Pageable pageable) {
 		return answerRepository.findAllByCustomer_AgentId(agentId, pageable);
 	}
 
-	@Override
 	public void validateSurveyWithAgent(Agent agent, Survey survey) {
 		if (!survey.getAgent().equals(agent)) {
 			throw new CustomException(ErrorCode.FORBIDDEN);
