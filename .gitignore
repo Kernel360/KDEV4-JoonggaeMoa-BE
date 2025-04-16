@@ -370,4 +370,7 @@ gradle-app.setting
 
 /src/main/resources/application-secret.yml
 /src/main/resources/application-prod.yml
-/src/main/resources/application-local.yml
+application-local.yml
+
+/api/src/main/resources/application-local.yml
+/batch/src/main/resources/application-local.yml
