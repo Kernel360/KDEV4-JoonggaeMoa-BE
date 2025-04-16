@@ -1,11 +1,11 @@
 package org.silsagusi.joonggaemoa.api.agent.infrastructure;
 
-import org.silsagusi.joonggaemoa.api.agent.domain.Agent;
-import org.silsagusi.joonggaemoa.api.agent.domain.AgentDataProvider;
-import org.silsagusi.joonggaemoa.global.api.exception.CustomException;
-import org.silsagusi.joonggaemoa.global.api.exception.ErrorCode;
-import org.silsagusi.joonggaemoa.global.auth.jwt.JwtProvider;
-import org.silsagusi.joonggaemoa.global.auth.jwt.RefreshTokenStore;
+import org.silsagusi.joonggaemoa.core.domain.agent.Agent;
+import org.silsagusi.joonggaemoa.core.domain.agent.AgentDataProvider;
+import org.silsagusi.joonggaemoa.core.customResponse.exception.CustomException;
+import org.silsagusi.joonggaemoa.core.customResponse.exception.ErrorCode;
+import org.silsagusi.joonggaemoa.core.auth.jwt.JwtProvider;
+import org.silsagusi.joonggaemoa.core.auth.jwt.RefreshTokenStore;
 import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.Claims;

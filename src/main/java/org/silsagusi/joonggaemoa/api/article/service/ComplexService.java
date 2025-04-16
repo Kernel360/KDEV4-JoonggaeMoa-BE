@@ -2,8 +2,8 @@ package org.silsagusi.joonggaemoa.api.article.service;
 
 import lombok.RequiredArgsConstructor;
 
-import org.silsagusi.joonggaemoa.api.article.entity.Complex;
-import org.silsagusi.joonggaemoa.api.article.repository.ComplexRepository;
+import org.silsagusi.joonggaemoa.core.domain.article.Complex;
+import org.silsagusi.joonggaemoa.core.domain.article.infrastructure.ComplexRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

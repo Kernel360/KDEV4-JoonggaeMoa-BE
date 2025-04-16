@@ -3,7 +3,7 @@ package org.silsagusi.joonggaemoa.api.survey.controller;
 import org.silsagusi.joonggaemoa.api.survey.application.SurveyService;
 import org.silsagusi.joonggaemoa.api.survey.application.dto.AnswerDto;
 import org.silsagusi.joonggaemoa.api.survey.application.dto.SurveyDto;
-import org.silsagusi.joonggaemoa.global.api.ApiResponse;
+import org.silsagusi.joonggaemoa.core.customResponse.ApiResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;

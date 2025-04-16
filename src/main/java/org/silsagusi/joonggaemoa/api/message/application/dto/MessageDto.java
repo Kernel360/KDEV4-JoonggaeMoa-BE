@@ -3,7 +3,7 @@ package org.silsagusi.joonggaemoa.api.message.application.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.silsagusi.joonggaemoa.api.message.domain.entity.Message;
+import org.silsagusi.joonggaemoa.core.domain.message.entity.Message;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.fasterxml.jackson.annotation.JsonFormat;

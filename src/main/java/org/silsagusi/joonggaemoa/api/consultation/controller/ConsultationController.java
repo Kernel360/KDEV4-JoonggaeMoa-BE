@@ -8,7 +8,7 @@ import org.silsagusi.joonggaemoa.api.consultation.application.dto.ConsultationDt
 import org.silsagusi.joonggaemoa.api.consultation.application.dto.ConsultationMonthResponse;
 import org.silsagusi.joonggaemoa.api.consultation.application.dto.ConsultationSummaryResponse;
 import org.silsagusi.joonggaemoa.api.consultation.application.dto.UpdateConsultationRequest;
-import org.silsagusi.joonggaemoa.global.api.ApiResponse;
+import org.silsagusi.joonggaemoa.core.customResponse.ApiResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

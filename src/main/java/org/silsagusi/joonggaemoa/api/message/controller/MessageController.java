@@ -3,7 +3,7 @@ package org.silsagusi.joonggaemoa.api.message.controller;
 import org.silsagusi.joonggaemoa.api.message.application.MessageService;
 import org.silsagusi.joonggaemoa.api.message.application.dto.MessageDto;
 import org.silsagusi.joonggaemoa.api.message.application.dto.MessageUpdateRequest;
-import org.silsagusi.joonggaemoa.global.api.ApiResponse;
+import org.silsagusi.joonggaemoa.core.customResponse.ApiResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;

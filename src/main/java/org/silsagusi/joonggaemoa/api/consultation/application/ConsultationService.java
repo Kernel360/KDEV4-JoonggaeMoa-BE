@@ -7,12 +7,12 @@ import org.silsagusi.joonggaemoa.api.consultation.application.dto.ConsultationDt
 import org.silsagusi.joonggaemoa.api.consultation.application.dto.ConsultationMonthResponse;
 import org.silsagusi.joonggaemoa.api.consultation.application.dto.ConsultationSummaryResponse;
 import org.silsagusi.joonggaemoa.api.consultation.application.dto.UpdateConsultationRequest;
-import org.silsagusi.joonggaemoa.api.consultation.domain.dataProvider.ConsultationDataProvider;
-import org.silsagusi.joonggaemoa.api.consultation.domain.entity.Consultation;
-import org.silsagusi.joonggaemoa.api.consultation.domain.info.ConsultationMonthInfo;
-import org.silsagusi.joonggaemoa.api.consultation.domain.info.ConsultationSummaryInfo;
-import org.silsagusi.joonggaemoa.api.customer.domain.dataProvider.CustomerDataProvider;
-import org.silsagusi.joonggaemoa.api.customer.domain.entity.Customer;
+import org.silsagusi.joonggaemoa.core.domain.consultation.dataProvider.ConsultationDataProvider;
+import org.silsagusi.joonggaemoa.core.domain.consultation.entity.Consultation;
+import org.silsagusi.joonggaemoa.core.domain.consultation.info.ConsultationMonthInfo;
+import org.silsagusi.joonggaemoa.core.domain.consultation.info.ConsultationSummaryInfo;
+import org.silsagusi.joonggaemoa.core.domain.customer.dataProvider.CustomerDataProvider;
+import org.silsagusi.joonggaemoa.core.domain.customer.entity.Customer;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;

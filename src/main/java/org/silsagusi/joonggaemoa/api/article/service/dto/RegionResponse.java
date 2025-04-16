@@ -3,7 +3,7 @@ package org.silsagusi.joonggaemoa.api.article.service.dto;
 import lombok.Builder;
 import lombok.Getter;
 
-import org.silsagusi.joonggaemoa.api.article.entity.Region;
+import org.silsagusi.joonggaemoa.core.domain.article.Region;
 
 @Getter
 @Builder

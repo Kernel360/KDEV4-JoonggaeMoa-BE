@@ -7,7 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.silsagusi.joonggaemoa.api.consultation.domain.entity.Consultation;
+import org.silsagusi.joonggaemoa.core.domain.consultation.entity.Consultation;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;

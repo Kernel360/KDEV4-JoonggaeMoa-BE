@@ -5,7 +5,7 @@ import java.util.List;
 import org.silsagusi.joonggaemoa.api.message.application.MessageTemplateService;
 import org.silsagusi.joonggaemoa.api.message.application.dto.MessageTemplateDto;
 import org.silsagusi.joonggaemoa.api.message.application.dto.MessageTemplateUpdateRequest;
-import org.silsagusi.joonggaemoa.global.api.ApiResponse;
+import org.silsagusi.joonggaemoa.core.customResponse.ApiResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;

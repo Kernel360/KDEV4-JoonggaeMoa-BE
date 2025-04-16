@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.silsagusi.joonggaemoa.api.article.service.ComplexService;
 import org.silsagusi.joonggaemoa.api.article.service.dto.ComplexResponse;
-import org.silsagusi.joonggaemoa.global.api.ApiResponse;
+import org.silsagusi.joonggaemoa.core.customResponse.ApiResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;

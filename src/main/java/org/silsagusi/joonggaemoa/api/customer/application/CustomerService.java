@@ -1,12 +1,12 @@
 package org.silsagusi.joonggaemoa.api.customer.application;
 
-import org.silsagusi.joonggaemoa.api.agent.domain.Agent;
-import org.silsagusi.joonggaemoa.api.agent.domain.AgentDataProvider;
+import org.silsagusi.joonggaemoa.core.domain.agent.Agent;
+import org.silsagusi.joonggaemoa.core.domain.agent.AgentDataProvider;
 import org.silsagusi.joonggaemoa.api.customer.application.dto.CustomerDto;
 import org.silsagusi.joonggaemoa.api.customer.application.dto.CustomerSummaryResponse;
-import org.silsagusi.joonggaemoa.api.customer.domain.dataProvider.CustomerDataProvider;
-import org.silsagusi.joonggaemoa.api.customer.domain.entity.Customer;
-import org.silsagusi.joonggaemoa.api.customer.domain.info.CustomerSummaryInfo;
+import org.silsagusi.joonggaemoa.core.domain.customer.dataProvider.CustomerDataProvider;
+import org.silsagusi.joonggaemoa.core.domain.customer.entity.Customer;
+import org.silsagusi.joonggaemoa.core.domain.customer.info.CustomerSummaryInfo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;

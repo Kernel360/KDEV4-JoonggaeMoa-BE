@@ -4,7 +4,7 @@ import org.silsagusi.joonggaemoa.api.agent.application.AgentService;
 import org.silsagusi.joonggaemoa.api.agent.application.dto.AgentDto;
 import org.silsagusi.joonggaemoa.api.agent.application.dto.AgentUpdateRequest;
 import org.silsagusi.joonggaemoa.api.agent.application.dto.UsernameDto;
-import org.silsagusi.joonggaemoa.global.api.ApiResponse;
+import org.silsagusi.joonggaemoa.core.customResponse.ApiResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;

@@ -3,7 +3,7 @@ package org.silsagusi.joonggaemoa.api.consultation.application.dto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import org.silsagusi.joonggaemoa.api.consultation.domain.info.ConsultationSummaryInfo;
+import org.silsagusi.joonggaemoa.core.domain.consultation.info.ConsultationSummaryInfo;
 
 @Builder
 @Getter

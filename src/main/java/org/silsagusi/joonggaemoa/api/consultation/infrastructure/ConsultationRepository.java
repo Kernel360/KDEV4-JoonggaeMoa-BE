@@ -1,6 +1,6 @@
 package org.silsagusi.joonggaemoa.api.consultation.infrastructure;
 
-import org.silsagusi.joonggaemoa.api.consultation.domain.entity.Consultation;
+import org.silsagusi.joonggaemoa.core.domain.consultation.entity.Consultation;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

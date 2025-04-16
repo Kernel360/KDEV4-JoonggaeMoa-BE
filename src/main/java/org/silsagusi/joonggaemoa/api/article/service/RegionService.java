@@ -2,7 +2,7 @@ package org.silsagusi.joonggaemoa.api.article.service;
 
 import lombok.RequiredArgsConstructor;
 
-import org.silsagusi.joonggaemoa.api.article.repository.RegionRepository;
+import org.silsagusi.joonggaemoa.core.domain.article.infrastructure.RegionRepository;
 import org.silsagusi.joonggaemoa.api.article.service.dto.RegionResponse;
 import org.springframework.stereotype.Service;
 

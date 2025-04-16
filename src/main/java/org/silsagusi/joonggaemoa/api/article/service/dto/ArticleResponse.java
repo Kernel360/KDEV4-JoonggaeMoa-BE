@@ -3,7 +3,7 @@ package org.silsagusi.joonggaemoa.api.article.service.dto;
 import java.time.LocalDate;
 import java.util.List;
 
-import org.silsagusi.joonggaemoa.api.article.entity.Article;
+import org.silsagusi.joonggaemoa.core.domain.article.Article;
 
 import lombok.Builder;
 import lombok.Getter;

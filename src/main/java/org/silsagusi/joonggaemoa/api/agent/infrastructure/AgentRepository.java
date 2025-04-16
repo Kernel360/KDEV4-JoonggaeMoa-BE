@@ -1,6 +1,6 @@
 package org.silsagusi.joonggaemoa.api.agent.infrastructure;
 
-import org.silsagusi.joonggaemoa.api.agent.domain.Agent;
+import org.silsagusi.joonggaemoa.core.domain.agent.Agent;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

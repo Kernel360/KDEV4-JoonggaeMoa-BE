@@ -1,16 +1,17 @@
 package org.silsagusi.joonggaemoa.api.contract.application;
 
 import lombok.RequiredArgsConstructor;
+
 import org.silsagusi.joonggaemoa.api.contract.application.dto.ContractDetailDto;
 import org.silsagusi.joonggaemoa.api.contract.application.dto.ContractDto;
 import org.silsagusi.joonggaemoa.api.contract.application.dto.ContractSummaryResponse;
-import org.silsagusi.joonggaemoa.api.contract.domain.dataProvider.ContractDataProvider;
-import org.silsagusi.joonggaemoa.api.contract.domain.entity.Contract;
-import org.silsagusi.joonggaemoa.api.contract.domain.info.ContractDetailInfo;
-import org.silsagusi.joonggaemoa.api.contract.domain.info.ContractInfo;
-import org.silsagusi.joonggaemoa.api.contract.domain.info.ContractSummaryInfo;
-import org.silsagusi.joonggaemoa.api.customer.domain.dataProvider.CustomerDataProvider;
-import org.silsagusi.joonggaemoa.api.customer.domain.entity.Customer;
+import org.silsagusi.joonggaemoa.core.domain.contract.dataProvider.ContractDataProvider;
+import org.silsagusi.joonggaemoa.core.domain.contract.entity.Contract;
+import org.silsagusi.joonggaemoa.core.domain.contract.info.ContractDetailInfo;
+import org.silsagusi.joonggaemoa.core.domain.contract.info.ContractInfo;
+import org.silsagusi.joonggaemoa.core.domain.contract.info.ContractSummaryInfo;
+import org.silsagusi.joonggaemoa.core.domain.customer.dataProvider.CustomerDataProvider;
+import org.silsagusi.joonggaemoa.core.domain.customer.entity.Customer;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -22,42 +23,42 @@ import java.io.IOException;
 @Service
 public class ContractService {
 
-    private final ContractDataProvider contractDataProvider;
-    private final CustomerDataProvider customerDataProvider;
+	private final ContractDataProvider contractDataProvider;
+	private final CustomerDataProvider customerDataProvider;
 
-    public void createContract(ContractDto.Request contractRequestDto, MultipartFile file) throws IOException {
-        Customer customerLandlord = customerDataProvider.getCustomer(contractRequestDto.getLandlordId());
-        Customer customerTenant = customerDataProvider.getCustomer(contractRequestDto.getTenantId());
+	public void createContract(ContractDto.Request contractRequestDto, MultipartFile file) throws IOException {
+		Customer customerLandlord = customerDataProvider.getCustomer(contractRequestDto.getLandlordId());
+		Customer customerTenant = customerDataProvider.getCustomer(contractRequestDto.getTenantId());
 
-        contractDataProvider.createContract(
-            customerLandlord, customerTenant,
-            contractRequestDto.getCreatedAt(), contractRequestDto.getExpiredAt(),
-            file);
-    }
+		contractDataProvider.createContract(
+			customerLandlord, customerTenant,
+			contractRequestDto.getCreatedAt(), contractRequestDto.getExpiredAt(),
+			file);
+	}
 
-    public Page<ContractDto.Response> getAllContracts(Long agentId, Pageable pageable) {
-        Page<ContractInfo> contractInfoPage = contractDataProvider.getAllContracts(agentId, pageable);
-        return contractInfoPage.map(ContractDto.Response::of);
-    }
+	public Page<ContractDto.Response> getAllContracts(Long agentId, Pageable pageable) {
+		Page<ContractInfo> contractInfoPage = contractDataProvider.getAllContracts(agentId, pageable);
+		return contractInfoPage.map(ContractDto.Response::of);
+	}
 
-    public ContractDetailDto.Response getContractById(Long agentId, String contractId) throws IOException {
-        Contract contract = contractDataProvider.getContract(contractId);
-        contractDataProvider.validateAgentAccess(agentId, contract);
+	public ContractDetailDto.Response getContractById(Long agentId, String contractId) throws IOException {
+		Contract contract = contractDataProvider.getContract(contractId);
+		contractDataProvider.validateAgentAccess(agentId, contract);
 
-        ContractDetailInfo contractDetailInfo = contractDataProvider.getContractInfo(contract);
-        ContractDetailDto.Response contractDetailResponse = ContractDetailDto.Response.of(contractDetailInfo);
+		ContractDetailInfo contractDetailInfo = contractDataProvider.getContractInfo(contract);
+		ContractDetailDto.Response contractDetailResponse = ContractDetailDto.Response.of(contractDetailInfo);
 
-        return contractDetailResponse;
-    }
+		return contractDetailResponse;
+	}
 
-    public void deleteContract(Long agentId, String contractId) {
-        Contract contract = contractDataProvider.getContract(contractId);
-        contractDataProvider.validateAgentAccess(agentId, contract);
-        contractDataProvider.deleteContract(contract);
-    }
+	public void deleteContract(Long agentId, String contractId) {
+		Contract contract = contractDataProvider.getContract(contractId);
+		contractDataProvider.validateAgentAccess(agentId, contract);
+		contractDataProvider.deleteContract(contract);
+	}
 
-    public ContractSummaryResponse getContractSummary(Long agentId) {
-        ContractSummaryInfo contractSummaryInfo = contractDataProvider.getSummary(agentId);
-        return ContractSummaryResponse.of(contractSummaryInfo);
-    }
+	public ContractSummaryResponse getContractSummary(Long agentId) {
+		ContractSummaryInfo contractSummaryInfo = contractDataProvider.getSummary(agentId);
+		return ContractSummaryResponse.of(contractSummaryInfo);
+	}
 }

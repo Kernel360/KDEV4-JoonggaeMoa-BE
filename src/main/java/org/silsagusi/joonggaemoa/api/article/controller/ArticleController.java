@@ -8,7 +8,7 @@ import org.silsagusi.joonggaemoa.api.article.service.dto.ArticleResponse;
 import org.silsagusi.joonggaemoa.api.article.service.dto.RealEstateTypeSummaryResponse;
 import org.silsagusi.joonggaemoa.api.article.service.dto.RegionResponse;
 import org.silsagusi.joonggaemoa.api.article.service.dto.TradeTypeSummaryResponse;
-import org.silsagusi.joonggaemoa.global.api.ApiResponse;
+import org.silsagusi.joonggaemoa.core.customResponse.ApiResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;

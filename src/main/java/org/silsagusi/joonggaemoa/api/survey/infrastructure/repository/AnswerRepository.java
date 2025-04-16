@@ -1,6 +1,6 @@
 package org.silsagusi.joonggaemoa.api.survey.infrastructure.repository;
 
-import org.silsagusi.joonggaemoa.api.survey.domain.entity.Answer;
+import org.silsagusi.joonggaemoa.core.domain.survey.entity.Answer;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

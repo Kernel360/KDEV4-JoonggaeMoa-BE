@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.silsagusi.joonggaemoa.api.customer.application.CustomerService;
 import org.silsagusi.joonggaemoa.api.customer.application.dto.CustomerDto;
 import org.silsagusi.joonggaemoa.api.customer.application.dto.CustomerSummaryResponse;
-import org.silsagusi.joonggaemoa.global.api.ApiResponse;
+import org.silsagusi.joonggaemoa.core.customResponse.ApiResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;

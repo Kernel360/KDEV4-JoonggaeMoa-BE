@@ -1,6 +1,6 @@
 package org.silsagusi.joonggaemoa.api.agent.application.dto;
 
-import org.silsagusi.joonggaemoa.api.agent.domain.Agent;
+import org.silsagusi.joonggaemoa.core.domain.agent.Agent;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
