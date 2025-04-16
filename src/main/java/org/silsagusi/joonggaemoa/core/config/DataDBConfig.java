@@ -33,7 +33,7 @@ public class DataDBConfig {
 		LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
 
 		em.setDataSource(dataSource());
-		em.setPackagesToScan("org.silsagusi.joonggaemoa.api");
+		em.setPackagesToScan("org.silsagusi.joonggaemoa.core");
 		em.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
 
 		HashMap<String, Object> properties = new HashMap<>();
