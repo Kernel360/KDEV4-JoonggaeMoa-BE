@@ -2,8 +2,8 @@ package org.silsagusi.core.domain.survey.entity;
 
 import java.util.List;
 
+import org.silsagusi.core.domain.BaseEntity;
 import org.silsagusi.core.domain.agent.Agent;
-import org.silsagusi.core.BaseEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

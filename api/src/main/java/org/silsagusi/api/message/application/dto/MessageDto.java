@@ -43,7 +43,7 @@ public class MessageDto {
 		private String customerName;
 		private String customerPhone;
 		private String content;
-		private String createdAt;
+		private LocalDateTime createdAt;
 		private String sendStatus;
 		private LocalDateTime sendAt;
 

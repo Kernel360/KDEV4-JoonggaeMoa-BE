@@ -1,4 +1,6 @@
-package org.silsagusi.core;
+package org.silsagusi.core.domain;
+
+import java.time.LocalDateTime;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -16,8 +18,8 @@ public abstract class BaseEntity {
 
 	@CreatedDate
 	@Column(updatable = false)
-	private String createdAt;
+	private LocalDateTime createdAt;
 
 	@LastModifiedDate
-	private String updatedAt;
+	private LocalDateTime updatedAt;
 }
