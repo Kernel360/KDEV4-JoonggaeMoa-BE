@@ -1,0 +1,76 @@
+server:
+  port: 8081
+
+spring:
+  profiles:
+    active: local
+  web:
+    resources:
+      add-mappings: false # Disable static resource mapping (For NoHandlerFoundException)
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    open-in-view: true
+    hibernate:
+      ddl-auto: update
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        format_sql: true
+
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      password: ${REDIS_PASSWORD}
+      port: 6379
+
+  batch:
+    job:
+      enabled: false
+    jdbc:
+      schema: classpath:org/springframework/batch/core/schema-mysql.sql
+      initialize-schema: always
+
+  servlet:
+    multipart:
+      max-file-size: 5MB #파일 용량 제한
+      max-request-size: 10MB #전체 최대 크기 제한
+
+logging:
+  level:
+    org.hibernate.sql: debug
+
+cloud:
+  aws:
+    credentials:
+      access-key: ${S3_ACCESS_KEY}
+      secret-key: ${S3_SECRET_KEY}
+    s3:
+      bucket: joonggaemoa
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui
+
+
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+    import: application-prod.yml
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+    import: application-local.yml
+

@@ -1,1 +1,5 @@
 rootProject.name = 'JoonggaeMoa'
+
+include 'core'
+include 'api'
+include 'batch'
