@@ -34,7 +34,9 @@ public class ArticleController {
 		@RequestParam(required = false) String maxPrice
 	) {
 		return ResponseEntity.ok(ApiResponse.ok(
-			articleService.getAllArticles(pageable, realEstateType, tradeType, minPrice, maxPrice)
+			articleService.getAllArticles(
+				pageable, realEstateType, tradeType, minPrice, maxPrice
+			)
 		));
 	}
 

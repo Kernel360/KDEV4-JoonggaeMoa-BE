@@ -12,6 +12,8 @@ import lombok.Getter;
 @Builder
 public class ArticleResponse {
 	private Long id;
+	private Double latitude;
+	private Double longitude;
 	private String cortarNo;
 	private String articleNo;
 	private String name;
@@ -35,6 +37,8 @@ public class ArticleResponse {
 	public static ArticleResponse of(Article article) {
 		return ArticleResponse.builder()
 			.id(article.getId())
+			.latitude(article.getLatitude())
+			.longitude(article.getLongitude())
 			.cortarNo(article.getCortarNo())
 			.articleNo(article.getArticleNo())
 			.name(article.getName())
