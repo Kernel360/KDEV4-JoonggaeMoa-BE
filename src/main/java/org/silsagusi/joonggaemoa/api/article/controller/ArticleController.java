@@ -31,10 +31,14 @@ public class ArticleController {
 		@RequestParam(required = false) List<String> realEstateType,
 		@RequestParam(required = false) List<String> tradeType,
 		@RequestParam(required = false) String minPrice,
-		@RequestParam(required = false) String maxPrice
+		@RequestParam(required = false) String maxPrice,
+		@RequestParam(required = false) Double latitude,
+		@RequestParam(required = false) Double longitude
 	) {
 		return ResponseEntity.ok(ApiResponse.ok(
-			articleService.getAllArticles(pageable, realEstateType, tradeType, minPrice, maxPrice)
+			articleService.getAllArticles(
+				pageable, realEstateType, tradeType, minPrice, maxPrice, latitude, longitude
+			)
 		));
 	}
 

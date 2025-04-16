@@ -36,7 +36,9 @@ public class ArticleService {
 		List<String> realEstateType,
 		List<String> tradeType,
 		String minPrice,
-		String maxPrice
+		String maxPrice,
+		Double latitude,
+		Double longitude
 	) {
 		Specification<Article> spec = Specification.where(null);
 
