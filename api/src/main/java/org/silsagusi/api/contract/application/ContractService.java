@@ -25,15 +25,17 @@ public class ContractService {
 
 	private final ContractDataProvider contractDataProvider;
 	private final CustomerDataProvider customerDataProvider;
+	private final ContractMapper contractMapper;
 
-	public void createContract(ContractDto.Request contractRequestDto, MultipartFile file) throws IOException {
-		Customer customerLandlord = customerDataProvider.getCustomer(contractRequestDto.getLandlordId());
-		Customer customerTenant = customerDataProvider.getCustomer(contractRequestDto.getTenantId());
+	public void createContract(ContractDto.Request contractRequest, MultipartFile file) throws IOException {
+		Customer customerLandlord = customerDataProvider.getCustomer(contractRequest.getLandlordId());
+		Customer customerTenant = customerDataProvider.getCustomer(contractRequest.getTenantId());
 
-		contractDataProvider.createContract(
-			customerLandlord, customerTenant,
-			contractRequestDto.getCreatedAt(), contractRequestDto.getExpiredAt(),
-			file);
+		String filename = contractDataProvider.fileUpload(file);
+
+		Contract contract = contractMapper.toEntity(contractRequest, customerLandlord, customerTenant, filename);
+
+		contractDataProvider.createContract(contract);
 	}
 
 	public Page<ContractDto.Response> getAllContracts(Long agentId, Pageable pageable) {
@@ -46,9 +48,7 @@ public class ContractService {
 		contractDataProvider.validateAgentAccess(agentId, contract);
 
 		ContractDetailInfo contractDetailInfo = contractDataProvider.getContractInfo(contract);
-		ContractDetailDto.Response contractDetailResponse = ContractDetailDto.Response.of(contractDetailInfo);
-
-		return contractDetailResponse;
+		return ContractDetailDto.Response.of(contractDetailInfo);
 	}
 
 	public void deleteContract(Long agentId, String contractId) {
