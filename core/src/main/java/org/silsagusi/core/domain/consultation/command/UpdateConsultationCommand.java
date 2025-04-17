@@ -1,11 +1,13 @@
-package org.silsagusi.api.consultation.application.dto;
+package org.silsagusi.core.domain.consultation.command;
 
 import java.time.LocalDateTime;
 
+import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-public class UpdateConsultationRequest {
+@Builder
+public class UpdateConsultationCommand {
 	private LocalDateTime date;
 	private String purpose;
 	private String interestProperty;

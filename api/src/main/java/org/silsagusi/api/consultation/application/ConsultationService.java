@@ -9,6 +9,7 @@ import org.silsagusi.api.consultation.application.dto.ConsultationSummaryRespons
 import org.silsagusi.api.consultation.application.dto.UpdateConsultationRequest;
 import org.silsagusi.api.consultation.infrastructure.ConsultationDataProvider;
 import org.silsagusi.api.customer.infrastructure.CustomerDataProvider;
+import org.silsagusi.core.domain.consultation.command.UpdateConsultationCommand;
 import org.silsagusi.core.domain.consultation.entity.Consultation;
 import org.silsagusi.core.domain.consultation.info.ConsultationMonthInfo;
 import org.silsagusi.core.domain.consultation.info.ConsultationSummaryInfo;
@@ -23,9 +24,9 @@ public class ConsultationService {
 
 	private final ConsultationDataProvider consultationDataProvider;
 	private final CustomerDataProvider customerDataProvider;
+	private final ConsultationMapper consultationMapper;
 
 	public void createConsultation(ConsultationDto.Request consultationRequestDto) {
-
 		Customer customer = customerDataProvider.getCustomer(consultationRequestDto.getCustomerId());
 
 		consultationDataProvider.createConsultation(customer, consultationRequestDto.getDate(),
@@ -33,7 +34,6 @@ public class ConsultationService {
 	}
 
 	public void updateConsultationStatus(Long agentId, Long consultationId, String consultationStatus) {
-
 		Consultation consultation = consultationDataProvider.getConsultation(consultationId);
 
 		consultationDataProvider.validateAgentAccess(agentId, consultation);
@@ -42,25 +42,17 @@ public class ConsultationService {
 	}
 
 	public void updateConsultation(
-		Long agentId,
-		Long consultationId,
+		Long agentId, Long consultationId,
 		UpdateConsultationRequest updateConsultationRequest
 	) {
 		Consultation consultation = consultationDataProvider.getConsultation(consultationId);
 
 		consultationDataProvider.validateAgentAccess(agentId, consultation);
 
-		consultationDataProvider.updateConcsultation(
-			consultation,
-			updateConsultationRequest.getDate(),
-			updateConsultationRequest.getPurpose(),
-			updateConsultationRequest.getInterestProperty(),
-			updateConsultationRequest.getInterestLocation(),
-			updateConsultationRequest.getContractType(),
-			updateConsultationRequest.getAssetStatus(),
-			updateConsultationRequest.getMemo(),
-			updateConsultationRequest.getConsultationStatus()
-		);
+		UpdateConsultationCommand updateConsultationCommand = consultationMapper.toUpdateConsultationCommand(
+			updateConsultationRequest);
+
+		consultationDataProvider.updateConsultation(consultation, updateConsultationCommand);
 	}
 
 	public List<ConsultationDto.Response> getAllConsultationsByDate(Long agentId, LocalDateTime date) {
