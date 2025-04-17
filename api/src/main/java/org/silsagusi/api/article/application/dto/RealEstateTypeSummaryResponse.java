@@ -1,11 +1,11 @@
-package org.silsagusi.api.article.service.dto;
+package org.silsagusi.api.article.application.dto;
 
 import lombok.Builder;
 import lombok.Getter;
 
 @Getter
 @Builder
-public class TradeTypeSummaryResponse {
+public class RealEstateTypeSummaryResponse {
 
 	private String type;
 	private Double ratio;
