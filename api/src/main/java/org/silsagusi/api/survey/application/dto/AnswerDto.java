@@ -9,6 +9,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
@@ -24,6 +25,7 @@ public class AnswerDto {
 	@Getter
 	@NoArgsConstructor
 	@AllArgsConstructor
+	@Schema(name = "AnswerRequestDto")
 	public static class Request {
 
 		@NotBlank

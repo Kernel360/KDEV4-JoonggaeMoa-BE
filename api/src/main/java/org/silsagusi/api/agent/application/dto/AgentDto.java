@@ -2,6 +2,7 @@ package org.silsagusi.api.agent.application.dto;
 
 import org.silsagusi.core.domain.agent.Agent;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -16,6 +17,7 @@ public class AgentDto {
 	@Getter
 	@NoArgsConstructor
 	@AllArgsConstructor
+	@Schema(name = "AgentSignUpRequest")
 	public static class Request {
 
 		@NotBlank

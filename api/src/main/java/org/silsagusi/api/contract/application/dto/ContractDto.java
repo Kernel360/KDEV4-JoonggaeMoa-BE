@@ -1,23 +1,25 @@
 package org.silsagusi.api.contract.application.dto;
 
+import java.time.LocalDate;
+
+import org.silsagusi.core.domain.contract.info.ContractInfo;
+import org.springframework.format.annotation.DateTimeFormat;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import org.silsagusi.core.domain.contract.info.ContractInfo;
-import org.springframework.format.annotation.DateTimeFormat;
-
-import java.time.LocalDate;
-
 public class ContractDto {
 
 	@Getter
 	@NoArgsConstructor
 	@AllArgsConstructor
+	@Schema(name = "ContractRequestDto")
 	public static class Request {
 
 		@NotNull

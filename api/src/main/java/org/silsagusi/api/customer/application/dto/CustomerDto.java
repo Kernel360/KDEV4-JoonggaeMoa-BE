@@ -1,7 +1,13 @@
 package org.silsagusi.api.customer.application.dto;
 
+import java.time.LocalDate;
+
+import org.silsagusi.core.domain.customer.entity.Customer;
+import org.springframework.format.annotation.DateTimeFormat;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -11,16 +17,12 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import org.silsagusi.core.domain.customer.entity.Customer;
-import org.springframework.format.annotation.DateTimeFormat;
-
-import java.time.LocalDate;
-
 public class CustomerDto {
 
 	@Getter
 	@NoArgsConstructor
 	@AllArgsConstructor
+	@Schema(name = "CustomerRequestDto")
 	public static class Request {
 
 		@NotBlank

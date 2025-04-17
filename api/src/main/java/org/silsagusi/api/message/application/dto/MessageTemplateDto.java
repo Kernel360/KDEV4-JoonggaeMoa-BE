@@ -2,6 +2,7 @@ package org.silsagusi.api.message.application.dto;
 
 import org.silsagusi.core.domain.message.entity.MessageTemplate;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,6 +14,7 @@ public class MessageTemplateDto {
 	@Getter
 	@NoArgsConstructor
 	@AllArgsConstructor
+	@Schema(name = "MessageTemplateRequestDto")
 	public static class Request {
 
 		@NotBlank

@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.silsagusi.core.domain.survey.entity.Survey;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,6 +17,7 @@ public class SurveyDto {
 	@Getter
 	@NoArgsConstructor
 	@AllArgsConstructor
+	@Schema(name = "SurveyCreateRequestDto")
 	public static class CreateRequest {
 
 		@NotBlank
@@ -29,6 +31,7 @@ public class SurveyDto {
 	@Getter
 	@NoArgsConstructor
 	@AllArgsConstructor
+	@Schema(name = "SurveyUpdateRequestDto")
 	public static class UpdateRequest {
 
 		@NotBlank

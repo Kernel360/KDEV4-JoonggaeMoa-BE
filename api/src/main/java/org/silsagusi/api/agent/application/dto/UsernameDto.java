@@ -2,6 +2,7 @@ package org.silsagusi.api.agent.application.dto;
 
 import org.silsagusi.core.domain.agent.Agent;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,6 +13,7 @@ public class UsernameDto {
 	@Getter
 	@NoArgsConstructor
 	@AllArgsConstructor
+	@Schema(name = "UsernameRequestDto")
 	public static class Request {
 		@NotBlank
 		private String name;
