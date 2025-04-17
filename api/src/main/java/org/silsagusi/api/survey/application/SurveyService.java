@@ -1,6 +1,5 @@
 package org.silsagusi.api.survey.application;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.silsagusi.api.agent.infrastructure.AgentDataProvider;
@@ -9,14 +8,13 @@ import org.silsagusi.api.customer.application.CustomerMapper;
 import org.silsagusi.api.customer.infrastructure.CustomerDataProvider;
 import org.silsagusi.api.notify.infrastructure.NotificationDataProvider;
 import org.silsagusi.api.survey.application.dto.AnswerDto;
-import org.silsagusi.api.survey.application.dto.QuestionDto;
 import org.silsagusi.api.survey.application.dto.SurveyDto;
+import org.silsagusi.api.survey.application.mapper.SurveyMapper;
 import org.silsagusi.api.survey.infrastructure.dataProvider.SurveyDataProvider;
 import org.silsagusi.core.domain.agent.Agent;
 import org.silsagusi.core.domain.consultation.entity.Consultation;
 import org.silsagusi.core.domain.customer.entity.Customer;
 import org.silsagusi.core.domain.notification.entity.NotificationType;
-import org.silsagusi.core.domain.survey.command.QuestionCommand;
 import org.silsagusi.core.domain.survey.entity.Answer;
 import org.silsagusi.core.domain.survey.entity.Question;
 import org.silsagusi.core.domain.survey.entity.QuestionAnswerPair;
@@ -38,55 +36,40 @@ public class SurveyService {
 	private final ConsultationDataProvider consultationDataProvider;
 	private final NotificationDataProvider notificationDataProvider;
 	private final CustomerMapper customerMapper;
+	private final SurveyMapper surveyMapper;
 
 	@Transactional
-	public void createSurvey(
-		Long agentId,
-		SurveyDto.CreateRequest surveyCreateRequest
-	) {
+	public void createSurvey(Long agentId, SurveyDto.CreateRequest surveyCreateRequest) {
 		Agent agent = agentDataProvider.getAgentById(agentId);
-		Survey survey = new Survey(agent, surveyCreateRequest.getTitle(), surveyCreateRequest.getDescription(),
-			new ArrayList<>());
+		Survey survey = surveyMapper.toSurvey(agent, surveyCreateRequest);
+		List<Question> questions = surveyMapper.fromCreateDtoToQuestions(survey, surveyCreateRequest.getQuestionList());
 
-		List<QuestionCommand> questionCommandList =
-			surveyCreateRequest.getQuestionList().stream()
-				.map(QuestionDto.CreateRequest::toCommand)
-				.toList();
-		List<Question> questionList = surveyDataProvider.mapToQuestionList(survey, questionCommandList);
-
-		surveyDataProvider.createSurvey(survey, questionList);
+		surveyDataProvider.createSurvey(survey, questions);
 	}
 
 	@Transactional
 	public void deleteSurvey(Long agentId, String surveyId) {
 		Agent agent = agentDataProvider.getAgentById(agentId);
 		Survey survey = surveyDataProvider.getSurvey(surveyId);
+
 		surveyDataProvider.validateSurveyWithAgent(agent, survey);
+
 		surveyDataProvider.deleteSurvey(survey);
 	}
 
 	@Transactional
-	public void updateSurvey(
-		Long agentId,
-		String surveyId,
-		SurveyDto.UpdateRequest surveyUpdateRequest
-	) {
+	public void updateSurvey(Long agentId, String surveyId, SurveyDto.UpdateRequest surveyUpdateRequest) {
 		Agent agent = agentDataProvider.getAgentById(agentId);
 		Survey survey = surveyDataProvider.getSurvey(surveyId);
 		surveyDataProvider.validateSurveyWithAgent(agent, survey);
 
-		List<QuestionCommand> questionCommandList =
-			surveyUpdateRequest.getQuestionList()
-				.stream()
-				.map(QuestionDto.UpdateRequest::toCommand)
-				.toList();
-		List<Question> questionList = surveyDataProvider.mapToQuestionList(survey, questionCommandList);
+		List<Question> questions = surveyMapper.fromUpdateDtoToQuestions(survey, surveyUpdateRequest.getQuestionList());
 
 		surveyDataProvider.updateSurvey(
 			survey,
 			surveyUpdateRequest.getTitle(),
 			surveyUpdateRequest.getDescription(),
-			questionList
+			questions
 		);
 	}
 
@@ -117,7 +100,7 @@ public class SurveyService {
 			customerDataProvider.createCustomer(newCustomer);
 		}
 
-		if (answerRequest.getApplyConsultation()) {
+		if (Boolean.TRUE.equals(answerRequest.getApplyConsultation())) {
 			consultationDataProvider.createConsultation(
 				customer,
 				answerRequest.getConsultAt(),
@@ -126,7 +109,7 @@ public class SurveyService {
 		}
 
 		// 응답 추가
-		List<QuestionAnswerPair> pairList = surveyDataProvider.mapToQuestionAnswerPairList(
+		List<QuestionAnswerPair> pairList = surveyMapper.mapToQuestionAnswerPairList(
 			answerRequest.getQuestions(), answerRequest.getAnswers()
 		);
 

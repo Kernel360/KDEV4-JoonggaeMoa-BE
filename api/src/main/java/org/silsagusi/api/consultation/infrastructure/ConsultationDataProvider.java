@@ -34,7 +34,7 @@ public class ConsultationDataProvider {
 		Consultation consultation = new Consultation(
 			customer,
 			consultationDate,
-			ConsultationStatus.CONFIRMED
+			consultationStatus
 		);
 
 		consultationRepository.save(consultation);
