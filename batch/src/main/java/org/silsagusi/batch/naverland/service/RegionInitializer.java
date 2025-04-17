@@ -1,7 +1,12 @@
 package org.silsagusi.batch.naverland.service;
 
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
+import java.util.Set;
 
+import ch.hsr.geohash.GeoHash;
 import org.silsagusi.batch.infrastructure.RegionRepository;
 import org.silsagusi.batch.infrastructure.RegionScrapStatusRepository;
 import org.silsagusi.batch.naverland.client.NaverLandApiClient;
@@ -25,57 +30,60 @@ public class RegionInitializer {
 	private final RegionRepository regionRepository;
 	private final RegionScrapStatusRepository regionScrapStatusRepository;
 
-	public static final String[] cortars = {
-		"1100000000", // 서울특별시
-		"1111000000", // 서울특별시 종로구
-		"1114000000", // 서울특별시 중구
-		"1117000000", // 서울특별시 용산구
-		"1120000000", // 서울특별시 성동구
-		"1121500000", // 서울특별시 광진구
-		"1123000000", // 서울특별시 동대문구
-		"1126000000", // 서울특별시 중랑구
-		"1129000000", // 서울특별시 성북구
-		"1130500000", // 서울특별시 강북구
-		"1132000000", // 서울특별시 도봉구
-		"1135000000", // 서울특별시 노원구
-		"1138000000", // 서울특별시 은평구
-		"1141000000", // 서울특별시 서대문구
-		"1144000000", // 서울특별시 마포구
-		"1147000000", // 서울특별시 양천구
-		"1150000000", // 서울특별시 강서구
-		"1153000000", // 서울특별시 구로구
-		"1154500000", // 서울특별시 금천구
-		"1156000000", // 서울특별시 영등포구
-		"1159000000", // 서울특별시 동작구
-		"1162000000", // 서울특별시 관악구
-		"1165000000", // 서울특별시 서초구
-		"1168000000", // 서울특별시 강남구
-		"1171000000", // 서울특별시 송파구
-		"1174000000", // 서울특별시 강동구
-	};
-
 	@Transactional
 	@EventListener(ApplicationReadyEvent.class)
 	public void init() {
-		for (String cortarNo : cortars) {
-			ClientRegionResponse response = naverLandApiClient.fetchRegionList(cortarNo);
-
-			List<Region> regionList = response.getRegionList().stream()
-				.map(it ->
-					new Region(it.getCortarNo(), it.getCenterLat(), it.getCenterLon(),
-						it.getCortarName(), it.getCortarType()
-					)
-				)
-				.toList();
-
-			regionRepository.saveAll(regionList);
-
-			List<RegionScrapStatus> statusList = regionList.stream()
-				.map(region -> new RegionScrapStatus(region, 1, false, null))
-				.toList();
-
-			regionScrapStatusRepository.saveAll(statusList);
+		if (regionRepository.count() > 0) {
+			log.info("지역 정보 이미 크롤링됨. 저장된 지역: {}개", regionRepository.count());
 		}
-		log.info("Region saved : {}", regionRepository.count());
+		// 리셋할 수 있는 다른 방법은?
+
+		Queue<String> queue = new LinkedList<>();
+		Set<String> visited = new HashSet<>();
+		queue.add("0000000000"); // 법정동코드 첫 요청값
+
+		while (!queue.isEmpty()) {
+			String code = queue.poll();
+			if (!visited.add(code))
+				continue;
+			ClientRegionResponse response = naverLandApiClient.fetchRegionList(code);
+
+			if (response.getRegionList().isEmpty())
+				continue;
+
+			List<Region> regions = response.getRegionList().stream()
+				.map(it -> new Region(
+					it.getCortarNo(),
+					it.getCenterLat(),
+					it.getCenterLon(),
+					it.getCortarName(),
+					it.getCortarType()
+				))
+				.toList();
+
+			regionRepository.saveAll(regions);
+			regionScrapStatusRepository.saveAll(
+				regions.stream()
+					.map(region -> new RegionScrapStatus(region, 1, false, null))
+					.toList()
+			);
+
+			regions.stream()
+				.map(Region::getCortarNo)
+				.forEach(queue::add);
+			log.info("{}개 지역 저장 완료", regionRepository.count());
+		}
+
+		List<Region> dvsnRegions = regionRepository.findByCortarType("dvsn");
+		dvsnRegions.forEach(region -> {
+			String hash = GeoHash.withCharacterPrecision(
+				region.getCenterLat(),
+				region.getCenterLon(),
+				12
+			).toBase32();
+			region.update(hash);
+		});
+		regionRepository.saveAll(dvsnRegions);
+		log.info("직방 크롤링을 위한 지오해시값 저장 완료. RegionInitializer 종료");
 	}
 }
