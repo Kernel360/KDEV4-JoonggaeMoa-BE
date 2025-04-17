@@ -1,8 +1,8 @@
 package org.silsagusi.api.message.controller;
 
-import org.silsagusi.api.message.application.MessageService;
 import org.silsagusi.api.message.application.dto.MessageDto;
 import org.silsagusi.api.message.application.dto.UpdateMessageRequest;
+import org.silsagusi.api.message.application.service.MessageService;
 import org.silsagusi.core.customResponse.ApiResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

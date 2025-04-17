@@ -1,4 +1,4 @@
-package org.silsagusi.api.message.application;
+package org.silsagusi.api.message.application.mapper;
 
 import java.time.LocalDateTime;
 import java.util.List;
