@@ -3,6 +3,7 @@ package org.silsagusi.api.agent.controller;
 import org.silsagusi.api.agent.application.AgentService;
 import org.silsagusi.api.agent.application.dto.AgentDto;
 import org.silsagusi.api.agent.application.dto.AgentUpdateRequest;
+import org.silsagusi.api.agent.application.dto.LoginRequest;
 import org.silsagusi.api.agent.application.dto.UsernameDto;
 import org.silsagusi.core.customResponse.ApiResponse;
 import org.springframework.http.ResponseEntity;
@@ -74,6 +75,14 @@ public class AgentController {
 			agentUpdateRequest
 		);
 
+		return ResponseEntity.ok(ApiResponse.ok());
+	}
+
+	// 스웨거용 더미 엔드포인트
+	@PostMapping("/api/agents/login")
+	public ResponseEntity<ApiResponse<Void>> login(
+		@RequestBody LoginRequest loginRequest
+	) {
 		return ResponseEntity.ok(ApiResponse.ok());
 	}
 }

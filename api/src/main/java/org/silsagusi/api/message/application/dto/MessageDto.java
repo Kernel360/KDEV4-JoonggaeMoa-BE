@@ -8,6 +8,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -21,6 +22,7 @@ public class MessageDto {
 	@Getter
 	@NoArgsConstructor
 	@AllArgsConstructor
+	@Schema(name = "MessageRequestDto")
 	public static class Request {
 
 		@NotBlank(message = "내용은 필수 값입니다.")
