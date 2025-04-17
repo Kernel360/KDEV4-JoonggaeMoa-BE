@@ -1,11 +1,12 @@
 package org.silsagusi.api.agent.application;
 
 import org.silsagusi.api.agent.application.dto.AgentDto;
-import org.silsagusi.api.agent.application.dto.AgentUpdateRequest;
+import org.silsagusi.api.agent.application.dto.UpdateAgentRequest;
 import org.silsagusi.api.agent.application.dto.UsernameDto;
 import org.silsagusi.api.agent.infrastructure.AgentDataProvider;
 import org.silsagusi.api.message.infrastructure.dataProvider.MessageTemplateDataProvider;
 import org.silsagusi.core.domain.agent.Agent;
+import org.silsagusi.core.domain.agent.command.UpdateAgentCommand;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,19 +21,11 @@ public class AgentService {
 	private final BCryptPasswordEncoder bCryptPasswordEncoder;
 	private final AgentDataProvider agentDataProvider;
 	private final MessageTemplateDataProvider messageTemplateDataProvider;
+	private final AgentMapper agentMapper;
 
 	@Transactional
 	public void signup(AgentDto.Request agentRequest) {
-		Agent agent = new Agent(
-			agentRequest.getName(),
-			agentRequest.getPhone(),
-			agentRequest.getEmail(),
-			agentRequest.getUsername(),
-			bCryptPasswordEncoder.encode(agentRequest.getPassword()),
-			agentRequest.getOffice(),
-			agentRequest.getRegion(),
-			agentRequest.getBusinessNo()
-		);
+		Agent agent = agentMapper.toEntity(agentRequest);
 
 		agentDataProvider.validateExist(agent);
 
@@ -57,13 +50,11 @@ public class AgentService {
 		return AgentDto.Response.of(agent);
 	}
 
-	public void updateAgent(Long agentId, AgentUpdateRequest agentUpdateRequest) {
+	public void updateAgent(Long agentId, UpdateAgentRequest updateAgentRequest) {
 		Agent agent = agentDataProvider.getAgentById(agentId);
 
-		agent.updateAgent(agentUpdateRequest.getName(), agentUpdateRequest.getPhone(), agentUpdateRequest.getEmail(),
-			agentUpdateRequest.getUsername(),
-			agentUpdateRequest.getOffice(), agentUpdateRequest.getRegion(), agentUpdateRequest.getBusinessNo());
+		UpdateAgentCommand updateAgentCommand = agentMapper.toCommand(updateAgentRequest);
 
-		agentDataProvider.updateAgent(agent);
+		agentDataProvider.updateAgent(agent, updateAgentCommand);
 	}
 }

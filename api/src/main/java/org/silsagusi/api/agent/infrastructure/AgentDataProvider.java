@@ -5,6 +5,7 @@ import org.silsagusi.api.auth.jwt.RefreshTokenStore;
 import org.silsagusi.core.customResponse.exception.CustomException;
 import org.silsagusi.core.customResponse.exception.ErrorCode;
 import org.silsagusi.core.domain.agent.Agent;
+import org.silsagusi.core.domain.agent.command.UpdateAgentCommand;
 import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.Claims;
@@ -46,7 +47,11 @@ public class AgentDataProvider {
 			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
 	}
 
-	public void updateAgent(Agent agent) {
+	public void updateAgent(Agent agent, UpdateAgentCommand updateAgentCommand) {
+		agent.updateAgent(updateAgentCommand.getName(), updateAgentCommand.getPhone(), updateAgentCommand.getEmail(),
+			updateAgentCommand.getUsername(), updateAgentCommand.getOffice(), updateAgentCommand.getRegion(),
+			updateAgentCommand.getBusinessNo());
+
 		agentRepository.save(agent);
 	}
 

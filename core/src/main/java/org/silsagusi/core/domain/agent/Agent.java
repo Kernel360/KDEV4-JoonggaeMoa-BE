@@ -55,7 +55,7 @@ public class Agent {
 		ROLE_AGENT, ROLE_CUSTOMER
 	}
 
-	public Agent(String name, String phone, String email, String username, String password, String office,
+	private Agent(String name, String phone, String email, String username, String password, String office,
 		String region, String businessNo) {
 		this.name = name;
 		this.phone = phone;
@@ -68,6 +68,11 @@ public class Agent {
 		this.role = Role.ROLE_AGENT;
 	}
 
+	public static Agent create(String name, String phone, String email, String username, String password, String office,
+		String region, String businessNo) {
+		return new Agent(name, phone, email, username, password, office, region, businessNo);
+	}
+
 	public void updateAgent(String name, String phone, String email, String username, String office, String region,
 		String businessNo) {
 		this.name = name;
@@ -78,5 +83,4 @@ public class Agent {
 		this.region = region;
 		this.businessNo = businessNo;
 	}
-
 }
