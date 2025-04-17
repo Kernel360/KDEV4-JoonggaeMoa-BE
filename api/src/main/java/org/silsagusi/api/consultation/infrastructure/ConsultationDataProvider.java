@@ -10,25 +10,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.silsagusi.core.domain.consultation.dataProvider.ConsultationDataProvider;
+import org.silsagusi.core.customResponse.exception.CustomException;
+import org.silsagusi.core.customResponse.exception.ErrorCode;
 import org.silsagusi.core.domain.consultation.entity.Consultation;
 import org.silsagusi.core.domain.consultation.entity.Consultation.ConsultationStatus;
 import org.silsagusi.core.domain.consultation.info.ConsultationMonthInfo;
 import org.silsagusi.core.domain.consultation.info.ConsultationSummaryInfo;
 import org.silsagusi.core.domain.customer.entity.Customer;
-import org.silsagusi.core.customResponse.exception.CustomException;
-import org.silsagusi.core.customResponse.exception.ErrorCode;
 import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
-public class ConsultationDataProviderImpl implements ConsultationDataProvider {
+public class ConsultationDataProvider {
 
 	private final ConsultationRepository consultationRepository;
 
-	@Override
 	public void createConsultation(Customer customer, LocalDateTime consultationDate,
 		ConsultationStatus consultationStatus) {
 
@@ -41,7 +39,6 @@ public class ConsultationDataProviderImpl implements ConsultationDataProvider {
 		consultationRepository.save(consultation);
 	}
 
-	@Override
 	public Consultation getConsultation(Long consultationId) {
 		Consultation consultation = consultationRepository.findById(consultationId)
 			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
@@ -49,20 +46,17 @@ public class ConsultationDataProviderImpl implements ConsultationDataProvider {
 		return consultation;
 	}
 
-	@Override
 	public void validateAgentAccess(Long agentId, Consultation consultation) {
 		if (!consultation.getCustomer().getAgent().getId().equals(agentId)) {
 			throw new CustomException(ErrorCode.FORBIDDEN);
 		}
 	}
 
-	@Override
 	public void updateStatus(Consultation consultation, String consultationStatus) {
 		consultation.updateStatus(Consultation.ConsultationStatus.valueOf(consultationStatus));
 		consultationRepository.save(consultation);
 	}
 
-	@Override
 	public void updateConcsultation(
 		Consultation consultation, LocalDateTime date, String purpose, String interestProperty, String interestLocation,
 		String contractType, String assetStatus, String memo, String consultationStatus
@@ -84,7 +78,6 @@ public class ConsultationDataProviderImpl implements ConsultationDataProvider {
 		consultationRepository.save(consultation);
 	}
 
-	@Override
 	public List<Consultation> getConsultationByDate(Long agentId, LocalDateTime date) {
 		LocalDateTime startOfDay = date.toLocalDate().atStartOfDay();
 		LocalDateTime endOfDay = date.toLocalDate().atTime(LocalTime.MAX);
@@ -94,7 +87,6 @@ public class ConsultationDataProviderImpl implements ConsultationDataProvider {
 		return consultationList;
 	}
 
-	@Override
 	public ConsultationMonthInfo getMonthInformation(Long agentId, String date) {
 
 		YearMonth yearMonth = YearMonth.parse(date);
@@ -131,7 +123,6 @@ public class ConsultationDataProviderImpl implements ConsultationDataProvider {
 			.build();
 	}
 
-	@Override
 	public ConsultationSummaryInfo getSummary(Long agentId) {
 		LocalDate today = LocalDate.now();
 
