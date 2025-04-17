@@ -34,4 +34,11 @@ public class WebClientConfig {
 			.defaultHeader("Authorization", "KakaoAK " + kakaoApiKey)
 			.build();
 	}
+
+	@Bean
+	public WebClient zigBangWebClient() {
+		return WebClient.builder()
+			.baseUrl("https://apis.zigbang.com/")
+			.build();
+	}
 }
