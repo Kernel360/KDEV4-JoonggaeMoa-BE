@@ -6,10 +6,7 @@ import org.silsagusi.core.domain.agent.Agent;
 import org.silsagusi.core.domain.agent.command.UpdateAgentCommand;
 import org.springframework.stereotype.Component;
 
-import lombok.RequiredArgsConstructor;
-
 @Component
-@RequiredArgsConstructor
 public class AgentMapper {
 
 	public Agent toEntity(AgentDto.Request agentRequest) {
