@@ -1,4 +1,4 @@
-package org.silsagusi.api.article.infrastructure;
+package org.silsagusi.api.article.infrastructure.repository;
 
 import java.util.List;
 

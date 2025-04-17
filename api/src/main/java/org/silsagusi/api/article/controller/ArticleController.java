@@ -2,12 +2,12 @@ package org.silsagusi.api.article.controller;
 
 import java.util.List;
 
-import org.silsagusi.api.article.service.ArticleService;
-import org.silsagusi.api.article.service.RegionService;
-import org.silsagusi.api.article.service.dto.ArticleResponse;
-import org.silsagusi.api.article.service.dto.RealEstateTypeSummaryResponse;
-import org.silsagusi.api.article.service.dto.RegionResponse;
-import org.silsagusi.api.article.service.dto.TradeTypeSummaryResponse;
+import org.silsagusi.api.article.application.ArticleService;
+import org.silsagusi.api.article.application.RegionService;
+import org.silsagusi.api.article.application.dto.ArticleResponse;
+import org.silsagusi.api.article.application.dto.RealEstateTypeSummaryResponse;
+import org.silsagusi.api.article.application.dto.RegionResponse;
+import org.silsagusi.api.article.application.dto.TradeTypeSummaryResponse;
 import org.silsagusi.core.customResponse.ApiResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -43,7 +43,7 @@ public class ArticleController {
 	@GetMapping("/api/regions")
 	public ResponseEntity<ApiResponse<List<RegionResponse>>> getRegions() {
 		return ResponseEntity.ok(ApiResponse.ok(
-			regionService.getAllRegions()
+			regionService.getRegions()
 		));
 	}
 

@@ -1,4 +1,4 @@
-package org.silsagusi.api.article.service.dto;
+package org.silsagusi.api.article.application.dto;
 
 import lombok.Builder;
 import lombok.Getter;

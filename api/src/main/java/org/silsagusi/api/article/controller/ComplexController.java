@@ -2,8 +2,8 @@ package org.silsagusi.api.article.controller;
 
 import java.util.List;
 
-import org.silsagusi.api.article.service.ComplexService;
-import org.silsagusi.api.article.service.dto.ComplexResponse;
+import org.silsagusi.api.article.application.ComplexService;
+import org.silsagusi.api.article.application.dto.ComplexResponse;
 import org.silsagusi.core.customResponse.ApiResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,7 +19,7 @@ public class ComplexController {
 
 	@GetMapping("/api/naverbudongsan/complexes")
 	public ResponseEntity<ApiResponse<List<ComplexResponse>>> getComplexes() {
-		List<ComplexResponse> complexResponseList = complexService.getComplex().stream()
+		List<ComplexResponse> complexResponseList = complexService.getComplexes().stream()
 			.map(complex -> new ComplexResponse()).toList();
 		return ResponseEntity.ok(ApiResponse.ok(complexResponseList));
 	}

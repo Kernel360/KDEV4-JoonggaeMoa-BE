@@ -1,11 +1,10 @@
-package org.silsagusi.api.article.infrastructure;
+package org.silsagusi.api.article.infrastructure.repository;
 
 import java.time.LocalDate;
 import java.util.List;
 
 import org.silsagusi.core.domain.article.Article;
-import org.silsagusi.core.domain.article.projection.RealEstateTypeRatioProjection;
-import org.silsagusi.core.domain.article.projection.TradeTypeRatioProjection;
+import org.silsagusi.core.domain.article.projection.ArticleTypeRatioProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -18,7 +17,7 @@ public interface ArticleRepository extends JpaRepository<Article, Long>, JpaSpec
 		    WHERE a.confirmedAt >= :startDate
 		    GROUP BY a.realEstateType
 		""")
-	List<RealEstateTypeRatioProjection> countByRealEstateTypeSince(LocalDate startDate);
+	List<ArticleTypeRatioProjection> countByRealEstateTypeSince(LocalDate startDate);
 
 	// 거래 방식(TradeType) 비율
 	@Query("""
@@ -27,5 +26,5 @@ public interface ArticleRepository extends JpaRepository<Article, Long>, JpaSpec
 		    WHERE a.confirmedAt >= :startDate
 		    GROUP BY a.tradeType
 		""")
-	List<TradeTypeRatioProjection> countByTradeTypeSince(LocalDate startDate);
+	List<ArticleTypeRatioProjection> countByTradeTypeSince(LocalDate startDate);
 }

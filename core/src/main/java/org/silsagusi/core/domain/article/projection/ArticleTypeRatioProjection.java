@@ -1,6 +1,6 @@
 package org.silsagusi.core.domain.article.projection;
 
-public interface TradeTypeRatioProjection {
+public interface ArticleTypeRatioProjection {
 	String getType();
 
 	Integer getCount();
