@@ -3,8 +3,8 @@ package org.silsagusi.core.domain.survey.entity;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.silsagusi.core.domain.BaseEntity;
 import org.silsagusi.core.domain.customer.entity.Customer;
-import org.silsagusi.core.BaseEntity;
 
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;

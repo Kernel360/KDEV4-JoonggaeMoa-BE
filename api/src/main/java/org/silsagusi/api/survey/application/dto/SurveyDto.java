@@ -1,5 +1,6 @@
 package org.silsagusi.api.survey.application.dto;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.silsagusi.core.domain.survey.entity.Survey;
@@ -46,7 +47,7 @@ public class SurveyDto {
 		private String title;
 		private String description;
 		private List<QuestionDto.Response> questionList;
-		private String createdAt;
+		private LocalDateTime createdAt;
 
 		public static Response of(Survey survey) {
 			List<QuestionDto.Response> questionResponseList = survey.getQuestionList()

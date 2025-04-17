@@ -2,8 +2,8 @@ package org.silsagusi.core.domain.message.entity;
 
 import java.time.LocalDateTime;
 
+import org.silsagusi.core.domain.BaseEntity;
 import org.silsagusi.core.domain.customer.entity.Customer;
-import org.silsagusi.core.BaseEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

@@ -59,7 +59,7 @@ public class AnswerDto {
 		private CustomerDto.Response customer;
 		private SurveyDto.Response survey;
 		private List<QuestionAnswerResponse> answer;
-		private String createdAt;
+		private LocalDateTime createdAt;
 
 		public static Response of(Answer answer) {
 			List<QuestionAnswerResponse> questionAnswerResponseList = answer.getQuestionAnswerPairs().stream()
