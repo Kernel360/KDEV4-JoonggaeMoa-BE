@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class MessageUpdateRequest {
+public class UpdateMessageRequest {
 
 	private String content;
 	private LocalDateTime sendAt;

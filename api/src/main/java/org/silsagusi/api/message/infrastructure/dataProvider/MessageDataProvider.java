@@ -1,10 +1,12 @@
 package org.silsagusi.api.message.infrastructure.dataProvider;
 
-import org.silsagusi.api.agent.infrastructure.AgentRepository;
+import java.util.List;
+
 import org.silsagusi.api.message.infrastructure.repository.MessageRepository;
 import org.silsagusi.core.customResponse.exception.CustomException;
 import org.silsagusi.core.customResponse.exception.ErrorCode;
 import org.silsagusi.core.domain.agent.Agent;
+import org.silsagusi.core.domain.message.command.UpdateMessageCommand;
 import org.silsagusi.core.domain.message.entity.Message;
 import org.silsagusi.core.domain.message.entity.SendStatus;
 import org.springframework.data.domain.Page;
@@ -17,11 +19,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class MessageDataProvider {
 
-	private final AgentRepository agentRepository;
 	private final MessageRepository messageRepository;
 
-	public void createMessage(Message message) {
-		messageRepository.save(message);
+	public void createMessages(List<Message> messages) {
+		messageRepository.saveAll(messages);
 	}
 
 	public Message getMessage(Long id) {
@@ -38,18 +39,13 @@ public class MessageDataProvider {
 			SendStatus.PENDING, pageable);
 	}
 
-	public void updateMessage(Message message) {
+	public void updateMessage(Message message, UpdateMessageCommand updateMessageCommand) {
+		message.updateMessage(updateMessageCommand.getSendAt(), updateMessageCommand.getContent());
 		messageRepository.save(message);
 	}
 
 	public void deleteMessage(Message message) {
 		messageRepository.delete(message);
-	}
-
-	public String convertContent(String content, String customerName) {
-		if (content == null || customerName == null)
-			return content;
-		return content.replace("${이름}", customerName);
 	}
 
 	public void validateMessageWithAgent(Message message, Agent agent) {
