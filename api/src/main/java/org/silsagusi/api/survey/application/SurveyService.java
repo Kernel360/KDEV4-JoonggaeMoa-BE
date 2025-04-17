@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.silsagusi.api.agent.infrastructure.AgentDataProvider;
 import org.silsagusi.api.consultation.infrastructure.ConsultationDataProvider;
+import org.silsagusi.api.customer.application.CustomerMapper;
 import org.silsagusi.api.customer.infrastructure.CustomerDataProvider;
 import org.silsagusi.api.notify.infrastructure.NotificationDataProvider;
 import org.silsagusi.api.survey.application.dto.AnswerDto;
@@ -36,6 +37,7 @@ public class SurveyService {
 	private final CustomerDataProvider customerDataProvider;
 	private final ConsultationDataProvider consultationDataProvider;
 	private final NotificationDataProvider notificationDataProvider;
+	private final CustomerMapper customerMapper;
 
 	@Transactional
 	public void createSurvey(
@@ -111,17 +113,8 @@ public class SurveyService {
 
 		Customer customer = customerDataProvider.getCustomerByPhone(answerRequest.getPhone());
 		if (customer == null) {
-			customerDataProvider.createCustomer(
-				answerRequest.getName(),
-				null,
-				answerRequest.getPhone(),
-				answerRequest.getEmail(),
-				null,
-				null,
-				null,
-				answerRequest.getConsent(),
-				agent
-			);
+			Customer newCustomer = customerMapper.AnswerDtoToCustomer(answerRequest, agent);
+			customerDataProvider.createCustomer(newCustomer);
 		}
 
 		if (answerRequest.getApplyConsultation()) {

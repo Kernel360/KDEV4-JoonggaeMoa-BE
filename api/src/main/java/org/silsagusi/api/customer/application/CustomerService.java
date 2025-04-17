@@ -1,10 +1,13 @@
 package org.silsagusi.api.customer.application;
 
+import java.util.List;
+
 import org.silsagusi.api.agent.infrastructure.AgentDataProvider;
 import org.silsagusi.api.customer.application.dto.CustomerDto;
 import org.silsagusi.api.customer.application.dto.CustomerSummaryResponse;
 import org.silsagusi.api.customer.infrastructure.CustomerDataProvider;
 import org.silsagusi.core.domain.agent.Agent;
+import org.silsagusi.core.domain.customer.command.UpdateCustomerCommand;
 import org.silsagusi.core.domain.customer.entity.Customer;
 import org.silsagusi.core.domain.customer.info.CustomerSummaryInfo;
 import org.springframework.data.domain.Page;
@@ -20,6 +23,7 @@ public class CustomerService {
 
 	private final CustomerDataProvider customerDataProvider;
 	private final AgentDataProvider agentDataProvider;
+	private final CustomerMapper customerMapper;
 
 	public void createCustomer(
 		Long agentId,
@@ -29,22 +33,17 @@ public class CustomerService {
 
 		customerDataProvider.validateExist(agent, customerRequestDto.getPhone(), customerRequestDto.getEmail());
 
-		customerDataProvider.createCustomer(
-			customerRequestDto.getName(),
-			customerRequestDto.getBirthday(),
-			customerRequestDto.getPhone(),
-			customerRequestDto.getEmail(),
-			customerRequestDto.getJob(),
-			customerRequestDto.getIsVip(),
-			customerRequestDto.getMemo(),
-			customerRequestDto.getConsent(),
-			agent
-		);
+		Customer customer = customerMapper.toEntity(customerRequestDto, agent);
 
+		customerDataProvider.createCustomer(customer);
 	}
 
 	public void bulkCreateCustomer(Long agentId, MultipartFile file) {
-		customerDataProvider.bulkCreateCustomer(agentId, file);
+		Agent agent = agentDataProvider.getAgentById(agentId);
+
+		List<Customer> customers = customerMapper.toEntityList(agent, file);
+
+		customerDataProvider.createCustomers(customers);
 	}
 
 	public void deleteCustomer(Long agentId, Long customerId) {
@@ -54,24 +53,14 @@ public class CustomerService {
 		customerDataProvider.deleteCustomer(customer);
 	}
 
-	public void updateCustomer(
-		Long agentId, Long customerId, CustomerDto.Request customerRequestDto
-	) {
+	public void updateCustomer(Long agentId, Long customerId, CustomerDto.Request customerRequestDto) {
 		Customer customer = customerDataProvider.getCustomer(customerId);
 		customerDataProvider.validateAgentAccess(agentId, customer);
 
-		customerDataProvider.updateCustomer(
-			customer,
-			customerRequestDto.getName(),
-			customerRequestDto.getBirthday(),
-			customerRequestDto.getPhone(),
-			customerRequestDto.getEmail(),
-			customerRequestDto.getJob(),
-			customerRequestDto.getIsVip(),
-			customerRequestDto.getMemo(),
-			customerRequestDto.getConsent()
-		);
+		UpdateCustomerCommand updateCustomerCommand = customerMapper.toUpdateCustomerCommand(customer,
+			customerRequestDto);
 
+		customerDataProvider.updateCustomer(updateCustomerCommand);
 	}
 
 	public CustomerDto.Response getCustomerById(Long agentId, Long customerId) {

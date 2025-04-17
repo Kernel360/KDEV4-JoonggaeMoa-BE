@@ -6,19 +6,16 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.silsagusi.api.agent.infrastructure.AgentRepository;
 import org.silsagusi.core.customResponse.exception.CustomException;
 import org.silsagusi.core.customResponse.exception.ErrorCode;
 import org.silsagusi.core.domain.agent.Agent;
+import org.silsagusi.core.domain.customer.command.UpdateCustomerCommand;
 import org.silsagusi.core.domain.customer.entity.Customer;
 import org.silsagusi.core.domain.customer.info.CustomerSummaryInfo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.amazonaws.services.s3.AmazonS3;
 
@@ -35,12 +32,7 @@ public class CustomerDataProvider {
 	private static final String S3_BUCKET_NAME = "joonggaemoa";
 	private static final String EXCEL_FORMAT_FILENAME = "format.xlsx";
 
-	public void createCustomer(String name, LocalDate birthday, String phone, String email, String job, Boolean isVip,
-		String memo, Boolean consent, Agent agent) {
-
-		Customer customer = new Customer(
-			name, birthday, phone, email, job, isVip, memo, consent, agent
-		);
+	public void createCustomer(Customer customer) {
 		customerRepository.save(customer);
 	}
 
@@ -54,48 +46,8 @@ public class CustomerDataProvider {
 		}
 	}
 
-	public void bulkCreateCustomer(Long agentId, MultipartFile file) {
-		//TODO: 엑셀 파일 타입 확인
-		try {
-			XSSFWorkbook workbook = new XSSFWorkbook(file.getInputStream());
-
-			int sheetsLength = workbook.getNumberOfSheets();
-			Agent agent = agentRepository.findById(agentId)
-				.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
-
-			for (int sheetIndex = 0; sheetIndex < sheetsLength; sheetIndex++) {
-				XSSFSheet workSheet = workbook.getSheetAt(sheetIndex);
-
-				for (int i = 1; i < workSheet.getLastRowNum(); i++) {
-					try {
-
-						Row row = workSheet.getRow(i);
-						if (row == null)
-							continue;
-						Customer customer = new Customer(
-							row.getCell(0).getStringCellValue(),
-							row.getCell(1).getLocalDateTimeCellValue().toLocalDate(),
-							row.getCell(2).getStringCellValue(),
-							row.getCell(3).getStringCellValue(),
-							row.getCell(4).getStringCellValue(),
-							row.getCell(5).getBooleanCellValue(),
-							row.getCell(6).getStringCellValue(),
-							row.getCell(7).getBooleanCellValue(),
-							agent
-						);
-
-						customerRepository.save(customer);
-
-					} catch (Exception innerException) {
-						System.err.println("Error processiong row " + (i) + ": " + innerException.getMessage());
-						throw innerException;
-					}
-				}
-			}
-
-		} catch (Exception e) {
-			throw new CustomException(ErrorCode.FILE_UPLOAD_ERROR);
-		}
+	public void createCustomers(List<Customer> customers) {
+		customerRepository.saveAll(customers);
 	}
 
 	public void validateAgentAccess(Long agentId, Customer customer) {
@@ -114,11 +66,18 @@ public class CustomerDataProvider {
 		return customer;
 	}
 
-	public void updateCustomer(
-		Customer customer,
-		String name, LocalDate birthday, String phone, String email,
-		String job, Boolean isVip, String memo, Boolean consent
-	) {
+	public void updateCustomer(UpdateCustomerCommand updateCustomerCommand) {
+		// TODO @DynamicUpdate
+		Customer customer = updateCustomerCommand.getCustomer();
+		String name = updateCustomerCommand.getName();
+		LocalDate birthday = updateCustomerCommand.getBirthday();
+		String phone = updateCustomerCommand.getPhone();
+		String email = updateCustomerCommand.getEmail();
+		String job = updateCustomerCommand.getJob();
+		Boolean isVip = updateCustomerCommand.getIsVip();
+		String memo = updateCustomerCommand.getMemo();
+		Boolean consent = updateCustomerCommand.getConsent();
+
 		customer.updateCustomer(
 			(name == null || name.isBlank()) ? customer.getName() : name,
 			(birthday == null) ? customer.getBirthday() : birthday,
