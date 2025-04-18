@@ -32,21 +32,22 @@ public class MessageTemplateDataProvider {
 	}
 
 	public List<MessageTemplate> getMessageTemplateList(Agent agent) {
-		return messageTemplateRepository.findByAgent(agent);
+		return messageTemplateRepository.findByAgentAndDeletedAtIsNull(agent);
 	}
 
 	public MessageTemplate getMessageTemplateById(Long templateId) {
-		return messageTemplateRepository.findById(templateId)
+		return messageTemplateRepository.findByIdAndDeletedAtIsNull(templateId)
 			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
 	}
 
-    public void updateMessageTemplate(String title, String content, MessageTemplate messageTemplate) {
-        messageTemplate.updateMessageTemplate(title, content);
-        messageTemplateRepository.save(messageTemplate);
-    }
+	public void updateMessageTemplate(String title, String content, MessageTemplate messageTemplate) {
+		messageTemplate.updateMessageTemplate(title, content);
+		messageTemplateRepository.save(messageTemplate);
+	}
 
 	public void deleteMessageTemplate(MessageTemplate messageTemplate) {
-		messageTemplateRepository.delete(messageTemplate);
+		messageTemplate.markAsDeleted();
+		messageTemplateRepository.save(messageTemplate);
 	}
 
 }

@@ -15,11 +15,11 @@ public class CustomerValidator {
 	private final CustomerRepository customerRepository;
 
 	public void validateExist(Agent agent, String phone, String email) {
-		if (customerRepository.existsByAgentAndPhone(agent, phone)) {
+		if (customerRepository.existsByAgentAndPhoneAndDeletedAtIsNull(agent, phone)) {
 			throw new CustomException(ErrorCode.CONFLICT_PHONE);
 		}
 
-		if (customerRepository.existsByAgentAndEmail(agent, email)) {
+		if (customerRepository.existsByAgentAndEmailAndDeletedAtIsNull(agent, email)) {
 			throw new CustomException(ErrorCode.CONFLICT_EMAIL);
 		}
 	}

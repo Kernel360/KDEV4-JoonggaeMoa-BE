@@ -3,6 +3,7 @@ package org.silsagusi.core.domain.agent;
 import java.util.List;
 
 import org.hibernate.annotations.DynamicUpdate;
+import org.silsagusi.core.domain.BaseEntity;
 import org.silsagusi.core.domain.customer.entity.Customer;
 
 import jakarta.persistence.Column;
@@ -22,7 +23,7 @@ import lombok.NoArgsConstructor;
 @DynamicUpdate
 @Entity(name = "agents")
 @Getter
-public class Agent {
+public class Agent extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -51,10 +52,6 @@ public class Agent {
 	@Enumerated(EnumType.STRING)
 	private Role role;
 
-	enum Role {
-		ROLE_AGENT, ROLE_CUSTOMER
-	}
-
 	private Agent(String name, String phone, String email, String username, String password, String office,
 		String region, String businessNo) {
 		this.name = name;
@@ -82,5 +79,9 @@ public class Agent {
 		this.office = office;
 		this.region = region;
 		this.businessNo = businessNo;
+	}
+
+	enum Role {
+		ROLE_AGENT, ROLE_CUSTOMER
 	}
 }

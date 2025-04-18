@@ -17,7 +17,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		Agent agent = agentRepository.findByUsername(username)
+		Agent agent = agentRepository.findByUsernameAndDeletedAtIsNull(username)
 			.orElseThrow(() -> new UsernameNotFoundException(username));
 		return CustomUserDetails.create(agent);
 	}

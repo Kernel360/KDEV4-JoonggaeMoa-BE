@@ -6,5 +6,5 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface AnswerRepository extends JpaRepository<Answer, Long> {
-	Page<Answer> findAllByCustomer_AgentId(Long agentId, Pageable pageable);
+	Page<Answer> findAllByCustomer_AgentIdAndDeletedAtIsNull(Long agentId, Pageable pageable);
 }
