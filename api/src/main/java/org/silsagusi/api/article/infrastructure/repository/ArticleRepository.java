@@ -12,10 +12,10 @@ import org.springframework.data.jpa.repository.Query;
 public interface ArticleRepository extends JpaRepository<Article, Long>, JpaSpecificationExecutor<Article> {
 
 	@Query("""
-		    SELECT a.realEstateType AS type, COUNT(a) AS count
+		    SELECT a.articleType AS type, COUNT(a) AS count
 		    FROM articles a
 		    WHERE a.confirmedAt >= :startDate
-		    GROUP BY a.realEstateType
+		    GROUP BY a.articleType
 		""")
 	List<ArticleTypeRatioProjection> countByRealEstateTypeSince(LocalDate startDate);
 

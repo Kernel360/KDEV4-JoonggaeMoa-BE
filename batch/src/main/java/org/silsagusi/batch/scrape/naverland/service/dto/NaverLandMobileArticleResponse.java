@@ -1,11 +1,11 @@
-package org.silsagusi.batch.naverland.service.dto;
+package org.silsagusi.batch.scrape.naverland.service.dto;
 
 import lombok.Data;
 
 import java.util.List;
 
 @Data
-public class ArticleResponse {
+public class NaverLandMobileArticleResponse {
 
 	private String code;
 	private boolean hasPaidPreSale;

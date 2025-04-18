@@ -1,10 +1,8 @@
-package org.silsagusi.batch.naverland.batch;
+package org.silsagusi.batch.scrape.naverland.batch;
 
-import java.util.List;
+import java.time.LocalDateTime;
 
 import org.silsagusi.batch.infrastructure.RegionScrapStatusRepository;
-import org.silsagusi.batch.naverland.service.NaverLandArticleRequestService;
-import org.silsagusi.core.domain.article.RegionScrapStatus;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobScope;
@@ -17,38 +15,32 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @Configuration
 @RequiredArgsConstructor
-public class NaverArticleBatchJobConfig {
+public class ScrapResetJobConfig {
 
-	private static final String JOB_NAME = "naverArticleJob";
-
+	private static final String JOB_NAME = "scrapStatusResetJob";
 	private final JobRepository jobRepository;
 	private final PlatformTransactionManager transactionManager;
 	private final RegionScrapStatusRepository regionScrapStatusRepository;
-	private final NaverLandArticleRequestService naverLandArticleRequestService;
 
 	@Bean
-	public Job naverArticleJob(Step naverArticleStep) {
+	public Job scrapStatusResetJob(Step scrapStatusResetStep) {
 		return new JobBuilder(JOB_NAME, jobRepository)
-			.start(naverArticleStep)
+			.start(scrapStatusResetStep)
 			.build();
 	}
 
 	@Bean
 	@JobScope
-	public Step naverArticleStep() {
+	public Step scrapStatusResetStep() {
 		return new StepBuilder(JOB_NAME + "Step", jobRepository)
-			.tasklet((contribution, chunkContext) -> {
-				List<RegionScrapStatus> regions = regionScrapStatusRepository.findTop50ByCompletedFalseOrderByIdAsc();
-				for (RegionScrapStatus status : regions) {
-					naverLandArticleRequestService.scrapArticles(status);
-				}
+			.tasklet(((contribution, chunkContext) -> {
+				LocalDateTime cutoff = LocalDateTime.now().minusDays(1);
+				regionScrapStatusRepository.resetAllScrapStatus(cutoff);
 				return RepeatStatus.FINISHED;
-			}, transactionManager)
+			}), transactionManager)
 			.build();
 	}
 }

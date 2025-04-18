@@ -1,8 +1,8 @@
-package org.silsagusi.batch.naverland.service;
+package org.silsagusi.batch.scrape.naverland.service;
 
-import org.silsagusi.batch.naverland.client.KakaoApiClient;
-import org.silsagusi.batch.naverland.service.dto.AddressResponse;
-import org.silsagusi.batch.naverland.service.dto.Coord2AddressResponse;
+import org.silsagusi.batch.scrape.naverland.client.KakaoMapApiClient;
+import org.silsagusi.batch.scrape.naverland.service.dto.KakaoMapAddressResponse;
+import org.silsagusi.batch.scrape.naverland.service.dto.KakaoMapCoord2AddressResponse;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -12,24 +12,24 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class KakaoAddressLookupService implements AbstractAddressLookupService {
+public class KakaoMapAddressLookupInterface implements AddressLookupInterface {
 
-	private final KakaoApiClient kakaoApiClient;
+	private final KakaoMapApiClient kakaoMapApiClient;
 
 	@Override
 	@Cacheable(value = "addressCache", key = "#latitude + ':' + #longitude")
-	public AddressResponse lookupAddress(double latitude, double longitude)
+	public KakaoMapAddressResponse lookupAddress(double latitude, double longitude)
 		throws NullPointerException {
 
 		// Call Kakao API client to fetch address JSON
-		Coord2AddressResponse response = kakaoApiClient.getAddr(longitude, latitude);
+		KakaoMapCoord2AddressResponse response = kakaoMapApiClient.getAddr(longitude, latitude);
 
 		if (response == null || response.getDocuments() == null || response.getDocuments().isEmpty()) {
 			log.warn("No address found for lat={}, lon={}", latitude, longitude);
 			return null;  // or throw if no address found
 		}
 
-		Coord2AddressResponse.Document doc = response.getDocuments().get(0);
+		KakaoMapCoord2AddressResponse.Document doc = response.getDocuments().get(0);
 
 		if (doc.getAddress() == null) {
 			log.warn("주소 정보 없음: lat={}, lon={}", latitude, longitude);
@@ -44,7 +44,7 @@ public class KakaoAddressLookupService implements AbstractAddressLookupService {
 
 			if (doc.getRoadAddress() == null) {
 				log.warn("도로명 주소 정보 없음: lat={}, lon={}", latitude, longitude);
-				return new AddressResponse(lotAddress, null,
+				return new KakaoMapAddressResponse(lotAddress, null,
 					city, district, town, mainAddressNo, subAddressNo,
 					null, null, null, null, null);
 			} else {
@@ -55,7 +55,7 @@ public class KakaoAddressLookupService implements AbstractAddressLookupService {
 				String buildingName = doc.getRoadAddress().getBuildingName();
 				String zoneNo = doc.getRoadAddress().getZoneNo();
 
-				return new AddressResponse(lotAddress, roadAddress,
+				return new KakaoMapAddressResponse(lotAddress, roadAddress,
 					city, district, town, mainAddressNo, subAddressNo,
 					roadName, mainBuildingNo, subBuildingNo, buildingName, zoneNo);
 			}

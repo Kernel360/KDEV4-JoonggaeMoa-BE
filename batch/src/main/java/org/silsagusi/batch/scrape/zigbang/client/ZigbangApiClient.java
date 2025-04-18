@@ -1,4 +1,4 @@
-package org.silsagusi.batch.zigbang.client;
+package org.silsagusi.batch.scrape.zigbang.client;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;

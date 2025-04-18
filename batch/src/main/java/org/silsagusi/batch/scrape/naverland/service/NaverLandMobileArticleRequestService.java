@@ -1,4 +1,4 @@
-package org.silsagusi.batch.naverland.service;
+package org.silsagusi.batch.scrape.naverland.service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -6,9 +6,9 @@ import java.util.List;
 import java.util.Objects;
 
 import org.silsagusi.batch.infrastructure.ArticleDataProvider;
-import org.silsagusi.batch.naverland.client.NaverLandApiClient;
-import org.silsagusi.batch.naverland.service.dto.AddressResponse;
-import org.silsagusi.batch.naverland.service.dto.ArticleResponse;
+import org.silsagusi.batch.scrape.naverland.client.NaverLandApiClient;
+import org.silsagusi.batch.scrape.naverland.service.dto.KakaoMapAddressResponse;
+import org.silsagusi.batch.scrape.naverland.service.dto.NaverLandMobileArticleResponse;
 import org.silsagusi.core.domain.article.Article;
 import org.silsagusi.core.domain.article.Region;
 import org.silsagusi.core.domain.article.RegionScrapStatus;
@@ -21,10 +21,10 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class NaverLandArticleRequestService {
+public class NaverLandMobileArticleRequestService {
 
 	private final NaverLandApiClient naverLandApiClient;
-	private final KakaoAddressLookupService addressLookupService;
+	private final KakaoMapAddressLookupInterface addressLookupService;
 	private final ArticleDataProvider articleDataProvider;
 
 	@Async("scrapExecutor")
@@ -37,7 +37,7 @@ public class NaverLandArticleRequestService {
 			boolean hasMore;
 
 			do {
-				ArticleResponse response = naverLandApiClient.fetchArticleList(
+				NaverLandMobileArticleResponse response = naverLandApiClient.fetchArticleList(
 					String.valueOf(page),
 					region.getCenterLat().toString(),
 					region.getCenterLon().toString(),
@@ -67,10 +67,10 @@ public class NaverLandArticleRequestService {
 		}
 	}
 
-	private List<Article> mapToArticles(List<ArticleResponse.Body> bodies, Region region) {
+	private List<Article> mapToArticles(List<NaverLandMobileArticleResponse.Body> bodies, Region region) {
 		return bodies.stream()
 			.map(body -> {
-				AddressResponse addr = addressLookupService.lookupAddress(body.getLat(), body.getLng());
+				KakaoMapAddressResponse addr = addressLookupService.lookupAddress(body.getLat(), body.getLng());
 
 				if (addr == null) {
 					return null;

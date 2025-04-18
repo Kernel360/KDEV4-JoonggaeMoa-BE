@@ -1,13 +1,12 @@
-package org.silsagusi.batch.naverland.client;
+package org.silsagusi.batch.scrape.naverland.client;
 
-import org.silsagusi.batch.naverland.service.dto.ArticleResponse;
-import org.silsagusi.batch.naverland.service.dto.ComplexResponse;
-import org.silsagusi.batch.naverland.service.dto.RegionResponse;
+import lombok.RequiredArgsConstructor;
+import org.silsagusi.batch.scrape.naverland.service.dto.NaverLandMobileArticleResponse;
+import org.silsagusi.batch.scrape.naverland.service.dto.NaverLandMobileComplexResponse;
+import org.silsagusi.batch.scrape.naverland.service.dto.NaverLandNewRegionResponse;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
-
-import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
@@ -76,22 +75,22 @@ public class NaverLandApiClient {
 			.block();
 	}
 
-	public ArticleResponse fetchArticleList(String page, String lat, String lon, String cortarNo) {
-		return fetchList("/cluster/ajax/articleList", lat, lon, cortarNo, page, ArticleResponse.class);
+	public NaverLandMobileArticleResponse fetchArticleList(String page, String lat, String lon, String cortarNo) {
+		return fetchList("/cluster/ajax/articleList", lat, lon, cortarNo, page, NaverLandMobileArticleResponse.class);
 	}
 
-	public ComplexResponse fetchComplexList(String page, String lat, String lon, String cortarNo) {
-		return fetchList("/cluster/ajax/complexList", lat, lon, cortarNo, page, ComplexResponse.class);
+	public NaverLandMobileComplexResponse fetchComplexList(String page, String lat, String lon, String cortarNo) {
+		return fetchList("/cluster/ajax/complexList", lat, lon, cortarNo, page, NaverLandMobileComplexResponse.class);
 	}
 
-	public RegionResponse fetchRegionList(String cortarNo) {
+	public NaverLandNewRegionResponse fetchRegionList(String cortarNo) {
 		return naverRegionWebClient.get()
 			.uri(uriBuilder -> uriBuilder.path("/api/regions/list")
 				.queryParam("cortarNo", cortarNo)
 				.build())
 			.accept(MediaType.APPLICATION_JSON)
 			.retrieve()
-			.bodyToMono(RegionResponse.class)
+			.bodyToMono(NaverLandNewRegionResponse.class)
 			.block();
 	}
 }

@@ -1,4 +1,4 @@
-package org.silsagusi.batch.zigbang.service.dto;
+package org.silsagusi.batch.scrape.zigbang.service.dto;
 
 import lombok.Data;
 

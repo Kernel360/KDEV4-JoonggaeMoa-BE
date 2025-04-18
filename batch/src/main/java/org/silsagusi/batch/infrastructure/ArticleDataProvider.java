@@ -4,8 +4,8 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-import org.silsagusi.batch.naverland.service.dto.AddressResponse;
-import org.silsagusi.batch.naverland.service.dto.ArticleResponse;
+import org.silsagusi.batch.scrape.naverland.service.dto.KakaoMapAddressResponse;
+import org.silsagusi.batch.scrape.naverland.service.dto.NaverLandMobileArticleResponse;
 import org.silsagusi.core.domain.article.Article;
 import org.silsagusi.core.domain.article.Region;
 import org.springframework.stereotype.Service;
@@ -26,9 +26,9 @@ public class ArticleDataProvider {
 	}
 
 	public static Article createArticle(
-		ArticleResponse.Body body,
+		NaverLandMobileArticleResponse.Body body,
 		Region region,
-		AddressResponse addressResponse
+		KakaoMapAddressResponse kakaoMapAddressResponse
 	) {
 		return new Article(
 			body.getAtclNo(),
@@ -53,18 +53,18 @@ public class ArticleDataProvider {
 			body.getSbwyInfo(),
 			body.getTradeCheckedByOwner(),
 			region,
-			addressResponse.getLotAddress(),
-			addressResponse.getRoadAddress(),
-			addressResponse.getCity(),
-			addressResponse.getDistrict(),
-			addressResponse.getRegion(),
-			addressResponse.getMainAddressNo(),
-			addressResponse.getSubAddressNo(),
-			addressResponse.getRoadName(),
-			addressResponse.getMainBuildingNo(),
-			addressResponse.getSubBuildingNo(),
-			addressResponse.getBuildingName(),
-			addressResponse.getZoneNo()
+			kakaoMapAddressResponse.getLotAddress(),
+			kakaoMapAddressResponse.getRoadAddress(),
+			kakaoMapAddressResponse.getCity(),
+			kakaoMapAddressResponse.getDistrict(),
+			kakaoMapAddressResponse.getRegion(),
+			kakaoMapAddressResponse.getMainAddressNo(),
+			kakaoMapAddressResponse.getSubAddressNo(),
+			kakaoMapAddressResponse.getRoadName(),
+			kakaoMapAddressResponse.getMainBuildingNo(),
+			kakaoMapAddressResponse.getSubBuildingNo(),
+			kakaoMapAddressResponse.getBuildingName(),
+			kakaoMapAddressResponse.getZoneNo()
 		);
 	}
 

@@ -1,4 +1,4 @@
-package org.silsagusi.batch.naverland.service;
+package org.silsagusi.batch.scrape.naverland.service;
 
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -9,8 +9,8 @@ import java.util.Set;
 import ch.hsr.geohash.GeoHash;
 import org.silsagusi.batch.infrastructure.RegionRepository;
 import org.silsagusi.batch.infrastructure.RegionScrapStatusRepository;
-import org.silsagusi.batch.naverland.client.NaverLandApiClient;
-import org.silsagusi.batch.naverland.service.dto.RegionResponse;
+import org.silsagusi.batch.scrape.naverland.client.NaverLandApiClient;
+import org.silsagusi.batch.scrape.naverland.service.dto.NaverLandNewRegionResponse;
 import org.silsagusi.core.domain.article.Region;
 import org.silsagusi.core.domain.article.RegionScrapStatus;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -46,7 +46,7 @@ public class RegionInitializer {
 			String code = queue.poll();
 			if (!visited.add(code))
 				continue;
-			RegionResponse response = naverLandApiClient.fetchRegionList(code);
+			NaverLandNewRegionResponse response = naverLandApiClient.fetchRegionList(code);
 
 			if (response.getRegionList().isEmpty())
 				continue;

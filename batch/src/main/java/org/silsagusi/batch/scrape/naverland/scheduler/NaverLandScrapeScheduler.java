@@ -1,4 +1,4 @@
-package org.silsagusi.batch.naverland.scheduler;
+package org.silsagusi.batch.scrape.naverland.scheduler;
 
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
@@ -18,7 +18,7 @@ import lombok.RequiredArgsConstructor;
 @Component
 @EnableScheduling
 @RequiredArgsConstructor
-public class NaverLandScheduler {
+public class NaverLandScrapeScheduler {
 
 	private final JobLauncher jobLauncher;
 	private final JobRegistry jobRegistry;

@@ -1,4 +1,4 @@
-package org.silsagusi.batch.naverland.service.dto;
+package org.silsagusi.batch.scrape.naverland.service.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
@@ -10,7 +10,7 @@ import java.util.List;
 
 // 카카오 API 응답 DTO
 @Data
-public class Coord2AddressResponse {
+public class KakaoMapCoord2AddressResponse {
 
 	// meta: 응답된 주소 개수 등의 메타 정보
 	private Meta meta;

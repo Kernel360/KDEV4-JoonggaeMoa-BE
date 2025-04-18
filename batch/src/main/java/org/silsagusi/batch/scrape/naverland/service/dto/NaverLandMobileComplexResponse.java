@@ -1,11 +1,11 @@
-package org.silsagusi.batch.naverland.service.dto;
+package org.silsagusi.batch.scrape.naverland.service.dto;
 
 import java.util.List;
 
 import lombok.Data;
 
 @Data
-public class ComplexResponse {
+public class NaverLandMobileComplexResponse {
 
 	private List<ComplexList> result;
 
