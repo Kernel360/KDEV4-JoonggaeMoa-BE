@@ -25,16 +25,16 @@ public class MessageDataProvider {
 	}
 
 	public Message getMessage(Long id) {
-		return messageRepository.findById(id)
+		return messageRepository.findByIdAndDeletedAtIsNull(id)
 			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
 	}
 
 	public Page<Message> getMessagePageByAgent(Long agentId, Pageable pageable) {
-		return messageRepository.findAllByCustomer_Agent_Id(agentId, pageable);
+		return messageRepository.findAllByCustomer_Agent_IdAndDeletedAtIsNull(agentId, pageable);
 	}
 
 	public Page<Message> getReservedMessagePageByAgent(Long agentId, Pageable pageable) {
-		return messageRepository.findAllByCustomer_Agent_IdAndSendStatus(agentId,
+		return messageRepository.findAllByCustomer_Agent_IdAndSendStatusAndDeletedAtIsNull(agentId,
 			SendStatus.PENDING, pageable);
 	}
 
@@ -44,7 +44,8 @@ public class MessageDataProvider {
 	}
 
 	public void deleteMessage(Message message) {
-		messageRepository.delete(message);
+		message.markAsDeleted();
+		messageRepository.save(message);
 	}
 
 }
