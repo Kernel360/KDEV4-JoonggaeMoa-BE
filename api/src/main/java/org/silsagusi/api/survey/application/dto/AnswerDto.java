@@ -18,7 +18,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 public class AnswerDto {
 
@@ -56,7 +55,6 @@ public class AnswerDto {
 	}
 
 	@Getter
-	@Setter
 	@Builder
 	public static class Response {
 		private CustomerDto.Response customer;
