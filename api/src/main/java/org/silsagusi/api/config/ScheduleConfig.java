@@ -1,76 +1,134 @@
-// package org.silsagusi.api.config;
-//
-// import lombok.RequiredArgsConstructor;
-// import lombok.extern.slf4j.Slf4j;
-// import org.springframework.batch.core.JobParameters;
-// import org.springframework.batch.core.JobParametersBuilder;
-// import org.springframework.batch.core.configuration.JobRegistry;
-// import org.springframework.batch.core.launch.JobLauncher;
-// import org.springframework.context.annotation.Bean;
-// import org.springframework.context.annotation.Configuration;
-// import org.springframework.scheduling.annotation.Async;
-// import org.springframework.scheduling.annotation.EnableAsync;
-// import org.springframework.scheduling.annotation.EnableScheduling;
-// import org.springframework.scheduling.annotation.Scheduled;
-// import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
-//
-// @Slf4j
-// @Configuration
-// @EnableScheduling
-// @EnableAsync
-// @RequiredArgsConstructor
-// public class ScheduleConfig {
-//
-//     private final JobLauncher jobLauncher;
-//     private final JobRegistry jobRegistry;
-//     private static final String TIME_STAMP = "timeStamp";
-//     private static final String TIME_ZONE = "Asia/Seoul";
-//
-//     @Bean
-//     public ThreadPoolTaskScheduler taskScheduler() {
-//         ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();
-//         scheduler.setPoolSize(5); // 작업 수
-//         scheduler.setThreadNamePrefix("scheduler-thread");
-//         scheduler.initialize();
-//         return scheduler;
-//     }
-//
-//     @Async
-//     @Scheduled(cron = "0 0/30 * * * *", zone = TIME_ZONE)
-//     public void sendMessages() throws Exception {
-//         log.info("Sending message schedule start");
-//
-//         JobParameters jobParameters = new JobParametersBuilder()
-//             .addLong(TIME_STAMP, System.currentTimeMillis())
-//             .toJobParameters();
-//
-//         jobLauncher.run(jobRegistry.getJob("messageSendingJob"), jobParameters);
-//
-//     }
-//
-//     @Async
-//     @Scheduled(cron = "0 0/30 * * * *", zone = TIME_ZONE)
-//     public void notifyTodayConsultations() throws Exception {
-//         log.info("Checking today's consultation schedule start");
-//
-//         JobParameters jobParameters = new JobParametersBuilder()
-//             .addLong(TIME_STAMP, System.currentTimeMillis())
-//             .toJobParameters();
-//
-//         jobLauncher.run(jobRegistry.getJob("todayConsultationNotifyJob"), jobParameters);
-//
-//     }
-//
-//     @Async
-//     @Scheduled(cron = "0 0 * * * *", zone = TIME_ZONE)
-//     public void notifyContractExpiry() throws Exception {
-//         log.info("Checking contract expiration schedule start");
-//
-//         JobParameters jobParameters = new JobParametersBuilder()
-//             .addString(TIME_STAMP, String.valueOf(System.currentTimeMillis()))
-//             .toJobParameters();
-//
-//         jobLauncher.run(jobRegistry.getJob("contractExpireNotifyJob"), jobParameters);
-//     }
-//
-// }
+package org.silsagusi.api.config;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.List;
+
+import org.silsagusi.api.consultation.infrastructure.ConsultationRepository;
+import org.silsagusi.api.contract.infrastructure.ContractRepository;
+import org.silsagusi.api.message.infrastructure.repository.MessageRepository;
+import org.silsagusi.api.notify.infrastructure.NotificationDataProvider;
+import org.silsagusi.core.domain.agent.Agent;
+import org.silsagusi.core.domain.consultation.entity.Consultation;
+import org.silsagusi.core.domain.contract.entity.Contract;
+import org.silsagusi.core.domain.customer.entity.Customer;
+import org.silsagusi.core.domain.message.entity.Message;
+import org.silsagusi.core.domain.message.entity.SendStatus;
+import org.silsagusi.core.domain.notification.entity.NotificationType;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+@Configuration
+@EnableScheduling
+@EnableAsync
+@RequiredArgsConstructor
+public class ScheduleConfig {
+
+	private static final String TIME_STAMP = "timeStamp";
+	private static final String TIME_ZONE = "Asia/Seoul";
+
+	private final MessageRepository messageRepository;
+	private final ContractRepository contractRepository;
+	private final ConsultationRepository consultationRepository;
+	private final NotificationDataProvider notificationDataProvider;
+
+	@Scheduled(cron = "0 0/30 * * * *", zone = "Asia/Seoul")
+	public void sendScheduledMessages() {
+		log.info("Starting Send Message Scheduler");
+
+		List<Message> messages = messageRepository.findBySendStatusAndSendAtBetweenAndDeletedAtIsNull(
+			SendStatus.PENDING, LocalDateTime.now(), LocalDateTime.now().plusMinutes(30));
+
+		for (Message message : messages) {
+			log.info("Processing reserved message: {}", message);
+			if (message == null) {
+				log.warn("Reserved message is null");
+				continue;
+			}
+
+			try {
+				if (message.getCustomer() == null || message.getContent() == null) {
+					log.error("Reserved message content is null");
+					continue;
+				}
+
+				Customer customer = message.getCustomer();
+				Agent agent = customer.getAgent();
+				String text = message.getContent();
+				LocalDateTime sendAt = message.getSendAt();
+
+				// smsUtil.sendMessage(agent.getPhone(), customer.getPhone(), content, message.getSendAt());
+
+				message.updateSendStatus(SendStatus.SENT);
+				messageRepository.save(message);
+			} catch (Exception e) {
+				log.error("Error processing reserved message", e);
+				message.updateSendStatus(SendStatus.FAILED);
+				messageRepository.save(message);
+			}
+
+		}
+	}
+
+	@Async
+	@Scheduled(cron = "0 0/30 * * * *", zone = TIME_ZONE)
+	public void notifyTodayConsultations() {
+		log.info("Checking today's consultation schedule start");
+
+		LocalDateTime startOfDay = LocalDate.now().atStartOfDay();
+		LocalDateTime endOfDay = LocalDate.now().atTime(LocalTime.MAX);
+
+		List<Consultation> consultations = consultationRepository.findByDateBetweenAndConsultationStatusAndDeletedAtIsNull(
+			startOfDay, endOfDay, Consultation.ConsultationStatus.CONFIRMED);
+
+		for (Consultation consultation : consultations) {
+			try {
+				Long agentId = consultation.getCustomer().getAgent().getId();
+				String customerName = consultation.getCustomer().getName();
+				String time = consultation.getDate().toLocalTime().toString();
+
+				String content = String.format("고객 %s님의 상담이 오늘 %s 예정되어 있습니다.", customerName, time);
+
+				notificationDataProvider.notify(agentId, NotificationType.CONSULTATION, content);
+				log.info("상담 알림 전송: {}", content);
+
+			} catch (Exception e) {
+				log.error("상담 알림 전송 실패", e);
+			}
+		}
+
+	}
+
+	@Async
+	@Scheduled(cron = "0 0 * * * *", zone = TIME_ZONE)
+	public void notifyContractExpiry() {
+		log.info("Checking contract expiration schedule start");
+
+		List<Contract> expiredContracts = contractRepository.findByExpiredAtAndDeletedAtIsNull(LocalDate.now());
+
+		for (Contract contract : expiredContracts) {
+			try {
+				Long agentId = contract.getCustomerLandlord().getAgent().getId();
+				String customerLandlordName = contract.getCustomerLandlord().getName();
+				String customerTenantName = contract.getCustomerTenant().getName();
+				String content = "고객 " + customerLandlordName + ", " + customerTenantName + "의 계약이 만료되었습니다.";
+
+				// 알림 전송
+				notificationDataProvider.notify(agentId, NotificationType.CONTRACT, content);
+				log.info("계약 만료 알림 전송: {}", content);
+
+			} catch (Exception e) {
+				log.error("계약 -> 알림 변환 중 에러 발생", e);
+			}
+		}
+	}
+
+}

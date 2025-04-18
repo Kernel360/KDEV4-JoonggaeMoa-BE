@@ -6,8 +6,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.silsagusi.core.domain.consultation.entity.Consultation;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -20,11 +18,8 @@ public interface ConsultationRepository extends JpaRepository<Consultation, Long
 	Integer countByCustomer_AgentIdAndDateBetweenAndDeletedAtIsNull(Long agentId, LocalDateTime startOfDay,
 		LocalDateTime endOfDay);
 
-	Page<Consultation> findByDateBetweenAndConsultationStatus(
-		LocalDateTime start, LocalDateTime end,
-		Consultation.ConsultationStatus status,
-		Pageable pageable
-	);
+	List<Consultation> findByDateBetweenAndConsultationStatusAndDeletedAtIsNull(LocalDateTime start, LocalDateTime end,
+		Consultation.ConsultationStatus status);
 
 	// 오늘 상담 전체 건수
 	@Query("SELECT COUNT(c) FROM consultations c " +

@@ -1,6 +1,7 @@
 package org.silsagusi.api.message.infrastructure.repository;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import org.silsagusi.core.domain.message.entity.Message;
@@ -19,11 +20,10 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
 	Page<Message> findAllByCustomer_Agent_IdAndSendStatusAndDeletedAtIsNull(Long agentId, SendStatus sendStatus,
 		Pageable pageable);
 
-	Page<Message> findBySendStatusAndSendAtBetween(
+	List<Message> findBySendStatusAndSendAtBetweenAndDeletedAtIsNull(
 		SendStatus status,
 		LocalDateTime start,
-		LocalDateTime end,
-		Pageable pageable
+		LocalDateTime end
 	);
 
 	Optional<Message> findByIdAndDeletedAtIsNull(Long id);

@@ -1,7 +1,7 @@
 package org.silsagusi.api.contract.infrastructure;
 
-import org.silsagusi.core.customResponse.exception.CustomException;
-import org.silsagusi.core.customResponse.exception.ErrorCode;
+import org.silsagusi.api.customResponse.exception.CustomException;
+import org.silsagusi.api.customResponse.exception.ErrorCode;
 import org.silsagusi.core.domain.contract.entity.Contract;
 import org.springframework.stereotype.Component;
 
