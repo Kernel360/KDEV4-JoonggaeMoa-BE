@@ -1,23 +1,25 @@
 package org.silsagusi.api.customer.infrastructure;
 
+import java.time.LocalDateTime;
+import java.util.Optional;
+
 import org.silsagusi.core.domain.agent.Agent;
 import org.silsagusi.core.domain.customer.entity.Customer;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.time.LocalDateTime;
-import java.util.Optional;
-
 public interface CustomerRepository extends JpaRepository<Customer, Long> {
+	
+	Long countByAgentIdAndCreatedAtBetweenAndDeletedAtIsNull(Long agentId, LocalDateTime start, LocalDateTime end);
 
-	Optional<Customer> findByPhone(String phone);
+	boolean existsByAgentAndPhoneAndDeletedAtIsNull(Agent agent, String phone);
 
-	Page<Customer> findAllByAgent(Agent agent, Pageable pageable);
+	boolean existsByAgentAndEmailAndDeletedAtIsNull(Agent agent, String email);
 
-	Long countByAgentIdAndCreatedAtBetween(Long agentId, LocalDateTime start, LocalDateTime end);
+	Optional<Customer> findByIdAndDeletedAtIsNull(Long customerId);
 
-	boolean existsByAgentAndPhone(Agent agent, String phone);
+	Page<Customer> findAllByAgentAndDeletedAtIsNull(Agent agent, Pageable pageable);
 
-	boolean existsByAgentAndEmail(Agent agent, String email);
+	Optional<Customer> findByPhoneAndDeletedAtIsNull(String phone);
 }
