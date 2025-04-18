@@ -23,7 +23,6 @@ import lombok.RequiredArgsConstructor;
 public class ArticleController {
 
 	private final ArticleService articleService;
-	private final RegionService regionService;
 
 	@GetMapping("/api/articles")
 	public ResponseEntity<ApiResponse<Page<ArticleResponse>>> getArticles(
@@ -37,13 +36,6 @@ public class ArticleController {
 			articleService.getAllArticles(
 				pageable, realEstateType, tradeType, minPrice, maxPrice
 			)
-		));
-	}
-
-	@GetMapping("/api/regions")
-	public ResponseEntity<ApiResponse<List<RegionResponse>>> getRegions() {
-		return ResponseEntity.ok(ApiResponse.ok(
-			regionService.getRegions()
 		));
 	}
 
