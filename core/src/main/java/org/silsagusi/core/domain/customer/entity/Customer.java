@@ -1,7 +1,6 @@
 package org.silsagusi.core.domain.customer.entity;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 import org.hibernate.annotations.DynamicUpdate;
 import org.silsagusi.core.domain.BaseEntity;
@@ -48,9 +47,6 @@ public class Customer extends BaseEntity {
 
 	private Boolean consent;
 
-	@Column(name = "created_at")
-	private LocalDateTime createdAt;
-
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "agent_id", nullable = false)
 	private Agent agent;
@@ -66,7 +62,6 @@ public class Customer extends BaseEntity {
 		this.memo = memo;
 		this.consent = consent;
 		this.agent = agent;
-		createdAt = LocalDateTime.now();
 	}
 
 	private Customer(String name, String phone, String email, Boolean consent, Agent agent) {
