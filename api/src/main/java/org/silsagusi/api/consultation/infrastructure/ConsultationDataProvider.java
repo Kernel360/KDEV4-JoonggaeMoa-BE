@@ -10,8 +10,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.silsagusi.core.customResponse.exception.CustomException;
-import org.silsagusi.core.customResponse.exception.ErrorCode;
+import org.silsagusi.api.customResponse.exception.CustomException;
+import org.silsagusi.api.customResponse.exception.ErrorCode;
 import org.silsagusi.core.domain.consultation.command.UpdateConsultationCommand;
 import org.silsagusi.core.domain.consultation.entity.Consultation;
 import org.silsagusi.core.domain.consultation.entity.Consultation.ConsultationStatus;

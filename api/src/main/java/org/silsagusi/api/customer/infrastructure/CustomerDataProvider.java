@@ -7,8 +7,9 @@ import java.time.LocalTime;
 import java.util.List;
 
 import org.silsagusi.api.agent.infrastructure.AgentRepository;
-import org.silsagusi.core.customResponse.exception.CustomException;
-import org.silsagusi.core.customResponse.exception.ErrorCode;
+import org.silsagusi.api.customResponse.exception.CustomException;
+import org.silsagusi.api.customResponse.exception.ErrorCode;
+import org.silsagusi.api.customer.exception.CustomerNotFoundException;
 import org.silsagusi.core.domain.agent.Agent;
 import org.silsagusi.core.domain.customer.command.UpdateCustomerCommand;
 import org.silsagusi.core.domain.customer.entity.Customer;
@@ -62,7 +63,7 @@ public class CustomerDataProvider {
 
 	public Customer getCustomer(Long customerId) {
 		Customer customer = customerRepository.findById(customerId)
-			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_CUSTOMER));
+			.orElseThrow(() -> new CustomerNotFoundException(customerId));
 		return customer;
 	}
 
@@ -133,7 +134,7 @@ public class CustomerDataProvider {
 	public List<Customer> getCustomerListByIdList(List<Long> customerIdList) {
 		return customerIdList.stream()
 			.map(id -> customerRepository.findById(id)
-				.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER))
+				.orElseThrow(() -> new CustomerNotFoundException(id))
 			).toList();
 	}
 }

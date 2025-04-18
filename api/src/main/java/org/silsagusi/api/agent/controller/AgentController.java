@@ -5,7 +5,7 @@ import org.silsagusi.api.agent.application.dto.AgentDto;
 import org.silsagusi.api.agent.application.dto.LoginRequest;
 import org.silsagusi.api.agent.application.dto.UpdateAgentRequest;
 import org.silsagusi.api.agent.application.dto.UsernameDto;
-import org.silsagusi.core.customResponse.ApiResponse;
+import org.silsagusi.api.customResponse.ApiResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;

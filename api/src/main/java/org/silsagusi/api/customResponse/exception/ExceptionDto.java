@@ -1,4 +1,4 @@
-package org.silsagusi.core.customResponse.exception;
+package org.silsagusi.api.customResponse.exception;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;

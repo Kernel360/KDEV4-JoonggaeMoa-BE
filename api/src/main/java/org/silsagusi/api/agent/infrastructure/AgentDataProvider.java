@@ -1,9 +1,10 @@
 package org.silsagusi.api.agent.infrastructure;
 
+import org.silsagusi.api.agent.exception.AgentNotFoundException;
 import org.silsagusi.api.auth.jwt.JwtProvider;
 import org.silsagusi.api.auth.jwt.RefreshTokenStore;
-import org.silsagusi.core.customResponse.exception.CustomException;
-import org.silsagusi.core.customResponse.exception.ErrorCode;
+import org.silsagusi.api.customResponse.exception.CustomException;
+import org.silsagusi.api.customResponse.exception.ErrorCode;
 import org.silsagusi.core.domain.agent.Agent;
 import org.silsagusi.core.domain.agent.command.UpdateAgentCommand;
 import org.springframework.stereotype.Component;
@@ -39,12 +40,12 @@ public class AgentDataProvider {
 
 	public Agent getAgentById(Long agentId) {
 		return agentRepository.findById(agentId)
-			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
+			.orElseThrow(() -> new AgentNotFoundException(agentId));
 	}
 
 	public Agent getAgentByNameAndPhone(String name, String phone) {
 		return agentRepository.findByNameAndPhone(name, phone)
-			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
+			.orElseThrow(() -> new AgentNotFoundException(name));
 	}
 
 	public void updateAgent(Agent agent, UpdateAgentCommand updateAgentCommand) {
