@@ -84,10 +84,4 @@ public class SurveyDataProvider {
 	public Page<Answer> getAnswerPage(Long agentId, Pageable pageable) {
 		return answerRepository.findAllByCustomer_AgentId(agentId, pageable);
 	}
-
-	public void validateSurveyWithAgent(Agent agent, Survey survey) {
-		if (!survey.getAgent().equals(agent)) {
-			throw new CustomException(ErrorCode.FORBIDDEN);
-		}
-	}
 }

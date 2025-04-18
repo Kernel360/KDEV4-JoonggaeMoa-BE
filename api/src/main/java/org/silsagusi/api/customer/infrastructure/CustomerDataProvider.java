@@ -36,24 +36,8 @@ public class CustomerDataProvider {
 		customerRepository.save(customer);
 	}
 
-	public void validateExist(Agent agent, String phone, String email) {
-		if (customerRepository.existsByAgentAndPhone(agent, phone)) {
-			throw new CustomException(ErrorCode.CONFLICT_PHONE);
-		}
-
-		if (customerRepository.existsByAgentAndEmail(agent, email)) {
-			throw new CustomException(ErrorCode.CONFLICT_EMAIL);
-		}
-	}
-
 	public void createCustomers(List<Customer> customers) {
 		customerRepository.saveAll(customers);
-	}
-
-	public void validateAgentAccess(Long agentId, Customer customer) {
-		if (!customer.getAgent().getId().equals(agentId)) {
-			throw new CustomException(ErrorCode.FORBIDDEN);
-		}
 	}
 
 	public void deleteCustomer(Customer customer) {

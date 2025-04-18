@@ -8,6 +8,7 @@ import org.silsagusi.api.message.application.dto.MessageDto;
 import org.silsagusi.api.message.application.dto.UpdateMessageRequest;
 import org.silsagusi.api.message.application.mapper.MessageMapper;
 import org.silsagusi.api.message.infrastructure.dataProvider.MessageDataProvider;
+import org.silsagusi.api.message.infrastructure.validator.MessageValidator;
 import org.silsagusi.core.domain.agent.Agent;
 import org.silsagusi.core.domain.customer.entity.Customer;
 import org.silsagusi.core.domain.message.command.UpdateMessageCommand;
@@ -28,6 +29,7 @@ public class MessageService {
 	private final MessageDataProvider messageDataProvider;
 	private final CustomerDataProvider customerDataProvider;
 	private final MessageMapper messageMapper;
+	private final MessageValidator messageValidator;
 
 	public Page<MessageDto.Response> getMessagePage(Long agentId, Pageable pageable) {
 		Page<Message> messagePage = messageDataProvider.getMessagePageByAgent(agentId, pageable);
@@ -47,8 +49,8 @@ public class MessageService {
 		Agent agent = agentDataProvider.getAgentById(agentId);
 		Message message = messageDataProvider.getMessage(messageId);
 
-		messageDataProvider.validateMessageWithAgent(message, agent);
-		messageDataProvider.validateMessageStatusEqualsPending(message);
+		messageValidator.validateAgentAccess(message, agent);
+		messageValidator.validateMessageStatusEqualsPending(message);
 
 		UpdateMessageCommand updateMessageCommand = messageMapper.toUpdateMessageCommand(updateMessageRequest);
 		messageDataProvider.updateMessage(message, updateMessageCommand);
@@ -68,8 +70,8 @@ public class MessageService {
 		Agent agent = agentDataProvider.getAgentById(agentId);
 		Message message = messageDataProvider.getMessage(messageId);
 
-		messageDataProvider.validateMessageWithAgent(message, agent);
-		messageDataProvider.validateMessageStatusEqualsPending(message);
+		messageValidator.validateAgentAccess(message, agent);
+		messageValidator.validateMessageStatusEqualsPending(message);
 
 		messageDataProvider.deleteMessage(message);
 	}

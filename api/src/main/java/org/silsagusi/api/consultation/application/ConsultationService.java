@@ -8,6 +8,7 @@ import org.silsagusi.api.consultation.application.dto.ConsultationMonthResponse;
 import org.silsagusi.api.consultation.application.dto.ConsultationSummaryResponse;
 import org.silsagusi.api.consultation.application.dto.UpdateConsultationRequest;
 import org.silsagusi.api.consultation.infrastructure.ConsultationDataProvider;
+import org.silsagusi.api.consultation.infrastructure.ConsultationValidator;
 import org.silsagusi.api.customer.infrastructure.CustomerDataProvider;
 import org.silsagusi.core.domain.consultation.command.UpdateConsultationCommand;
 import org.silsagusi.core.domain.consultation.entity.Consultation;
@@ -25,6 +26,7 @@ public class ConsultationService {
 	private final ConsultationDataProvider consultationDataProvider;
 	private final CustomerDataProvider customerDataProvider;
 	private final ConsultationMapper consultationMapper;
+	private final ConsultationValidator consultationValidator;
 
 	public void createConsultation(ConsultationDto.Request consultationRequestDto) {
 		Customer customer = customerDataProvider.getCustomer(consultationRequestDto.getCustomerId());
@@ -36,7 +38,7 @@ public class ConsultationService {
 	public void updateConsultationStatus(Long agentId, Long consultationId, String consultationStatus) {
 		Consultation consultation = consultationDataProvider.getConsultation(consultationId);
 
-		consultationDataProvider.validateAgentAccess(agentId, consultation);
+		consultationValidator.validateAgentAccess(agentId, consultation);
 
 		consultationDataProvider.updateStatus(consultation, consultationStatus);
 	}
@@ -47,7 +49,7 @@ public class ConsultationService {
 	) {
 		Consultation consultation = consultationDataProvider.getConsultation(consultationId);
 
-		consultationDataProvider.validateAgentAccess(agentId, consultation);
+		consultationValidator.validateAgentAccess(agentId, consultation);
 
 		UpdateConsultationCommand updateConsultationCommand = consultationMapper.toUpdateConsultationCommand(
 			updateConsultationRequest);

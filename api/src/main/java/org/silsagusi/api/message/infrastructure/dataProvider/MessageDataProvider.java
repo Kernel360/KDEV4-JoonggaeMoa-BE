@@ -5,7 +5,6 @@ import java.util.List;
 import org.silsagusi.api.message.infrastructure.repository.MessageRepository;
 import org.silsagusi.core.customResponse.exception.CustomException;
 import org.silsagusi.core.customResponse.exception.ErrorCode;
-import org.silsagusi.core.domain.agent.Agent;
 import org.silsagusi.core.domain.message.command.UpdateMessageCommand;
 import org.silsagusi.core.domain.message.entity.Message;
 import org.silsagusi.core.domain.message.entity.SendStatus;
@@ -48,15 +47,4 @@ public class MessageDataProvider {
 		messageRepository.delete(message);
 	}
 
-	public void validateMessageWithAgent(Message message, Agent agent) {
-		if (!agent.equals(message.getCustomer().getAgent())) {
-			throw new CustomException(ErrorCode.UNAUTHORIZED);
-		}
-	}
-
-	public void validateMessageStatusEqualsPending(Message message) {
-		if (message.getSendStatus() != SendStatus.PENDING) {
-			throw new CustomException(ErrorCode.BAD_REQUEST);
-		}
-	}
 }
