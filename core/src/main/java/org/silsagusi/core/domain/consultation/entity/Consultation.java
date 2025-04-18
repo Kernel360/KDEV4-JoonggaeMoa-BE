@@ -72,8 +72,7 @@ public class Consultation {
         String interestLocation,
         String contractType,
         String assetStatus,
-        String memo,
-        ConsultationStatus consultationStatus
+        String memo
     ) {
         this.date = date;
         this.purpose = purpose;
@@ -82,7 +81,6 @@ public class Consultation {
         this.contractType = contractType;
         this.assetStatus = assetStatus;
         this.memo = memo;
-        this.consultationStatus = consultationStatus;
     }
 
 }
