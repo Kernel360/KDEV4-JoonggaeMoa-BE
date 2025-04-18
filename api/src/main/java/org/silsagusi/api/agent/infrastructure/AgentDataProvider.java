@@ -24,12 +24,12 @@ public class AgentDataProvider {
 	}
 
 	public Agent getAgentById(Long agentId) {
-		return agentRepository.findById(agentId)
+		return agentRepository.findByIdAndDeletedAtIsNull(agentId)
 			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
 	}
 
 	public Agent getAgentByNameAndPhone(String name, String phone) {
-		return agentRepository.findByNameAndPhone(name, phone)
+		return agentRepository.findByNameAndPhoneAndDeletedAtIsNull(name, phone)
 			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
 	}
 
