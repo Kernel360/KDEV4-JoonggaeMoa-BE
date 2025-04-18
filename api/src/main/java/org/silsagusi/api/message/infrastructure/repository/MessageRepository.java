@@ -1,6 +1,7 @@
 package org.silsagusi.api.message.infrastructure.repository;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.silsagusi.core.domain.message.entity.Message;
 import org.silsagusi.core.domain.message.entity.SendStatus;
@@ -22,5 +23,11 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
 		LocalDateTime start,
 		LocalDateTime end,
 		Pageable pageable
+	);
+
+	List<Message> findBySendStatusAndSendAtBetween(
+		SendStatus status,
+		LocalDateTime start,
+		LocalDateTime end
 	);
 }

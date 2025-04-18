@@ -1,15 +1,15 @@
 package org.silsagusi.api.consultation.infrastructure;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+
 import org.silsagusi.core.domain.consultation.entity.Consultation;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
 
 public interface ConsultationRepository extends JpaRepository<Consultation, Long> {
 
@@ -22,6 +22,11 @@ public interface ConsultationRepository extends JpaRepository<Consultation, Long
 		LocalDateTime start, LocalDateTime end,
 		Consultation.ConsultationStatus status,
 		Pageable pageable
+	);
+
+	List<Consultation> findByDateBetweenAndConsultationStatus(
+		LocalDateTime start, LocalDateTime end,
+		Consultation.ConsultationStatus status
 	);
 
 	// 오늘 상담 전체 건수
