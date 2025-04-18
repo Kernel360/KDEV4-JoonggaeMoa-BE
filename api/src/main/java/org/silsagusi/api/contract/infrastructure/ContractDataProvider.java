@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.UUID;
 
-import org.silsagusi.core.customResponse.exception.CustomException;
-import org.silsagusi.core.customResponse.exception.ErrorCode;
+import org.silsagusi.api.customResponse.exception.CustomException;
+import org.silsagusi.api.customResponse.exception.ErrorCode;
 import org.silsagusi.core.domain.contract.entity.Contract;
 import org.silsagusi.core.domain.contract.info.ContractDetailInfo;
 import org.silsagusi.core.domain.contract.info.ContractInfo;
@@ -25,17 +25,17 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ContractDataProvider {
 
-	private final ContractRepository contractRepository;
-
-	private final AmazonS3 amazonS3;
 	private static final String S3_BUCKET_NAME = "joonggaemoa";
+	private final ContractRepository contractRepository;
+	private final AmazonS3 amazonS3;
 
 	public void createContract(Contract contract) {
 		contractRepository.save(contract);
 	}
 
 	public Page<ContractInfo> getAllContracts(Long agentId, Pageable pageable) {
-		Page<Contract> contractPage = contractRepository.findAllByCustomerLandlord_AgentId(agentId, pageable);
+		Page<Contract> contractPage = contractRepository.findAllByCustomerLandlord_AgentIdAndDeletedAtIsNull(agentId,
+			pageable);
 		Page<ContractInfo> contractInfoPage = contractPage.map(ContractInfo::of);
 		contractInfoPage.map(it -> {
 			try {
@@ -48,13 +48,14 @@ public class ContractDataProvider {
 	}
 
 	public Contract getContract(String contractId) {
-		Contract contract = contractRepository.findById(contractId)
+		Contract contract = contractRepository.findByIdAndDeletedAtIsNull(contractId)
 			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
 		return contract;
 	}
 
 	public void deleteContract(Contract contract) {
-		contractRepository.delete(contract);
+		contract.markAsDeleted();
+		contractRepository.save(contract);
 	}
 
 	public ContractSummaryInfo getSummary(Long agentId) {

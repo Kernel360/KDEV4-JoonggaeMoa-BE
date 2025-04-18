@@ -3,11 +3,11 @@ package org.silsagusi.api.survey.infrastructure.dataProvider;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.silsagusi.api.customResponse.exception.CustomException;
+import org.silsagusi.api.customResponse.exception.ErrorCode;
 import org.silsagusi.api.survey.infrastructure.repository.AnswerRepository;
 import org.silsagusi.api.survey.infrastructure.repository.QuestionRepository;
 import org.silsagusi.api.survey.infrastructure.repository.SurveyRepository;
-import org.silsagusi.core.customResponse.exception.CustomException;
-import org.silsagusi.core.customResponse.exception.ErrorCode;
 import org.silsagusi.core.domain.agent.Agent;
 import org.silsagusi.core.domain.customer.entity.Customer;
 import org.silsagusi.core.domain.survey.entity.Answer;
@@ -34,28 +34,30 @@ public class SurveyDataProvider {
 	}
 
 	public Page<Survey> getSurveyPageByAgent(Agent agent, Pageable pageable) {
-		return surveyRepository.findAllByAgent(agent, pageable);
+		return surveyRepository.findAllByAgentAndDeletedAtIsNull(agent, pageable);
 	}
 
 	public Survey getSurvey(String surveyId) {
-		return surveyRepository.findById(surveyId)
+		return surveyRepository.findByIdAndDeletedAtIsNull(surveyId)
 			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
 	}
 
-    public void updateSurvey(Survey survey, String title, String description, List<Question> questionList) {
-        questionRepository.deleteAll(survey.getQuestionList());
-        survey.getQuestionList().clear();
+	public void updateSurvey(Survey survey, String title, String description, List<Question> questionList) {
+		questionRepository.deleteAll(survey.getQuestionList());
+		survey.getQuestionList().clear();
 
-        survey.updateSurveyTitleDescription(title, description);
+		survey.updateSurveyTitleDescription(title, description);
 
-        survey.getQuestionList().addAll(questionList);
-        questionRepository.saveAll(questionList);
-        surveyRepository.save(survey);
-    }
+		survey.getQuestionList().addAll(questionList);
+		questionRepository.saveAll(questionList);
+		surveyRepository.save(survey);
+	}
 
 	public void deleteSurvey(Survey survey) {
-		questionRepository.deleteAll(survey.getQuestionList());
-		surveyRepository.delete(survey);
+		survey.getQuestionList().forEach(Question::markAsDeleted);
+		survey.markAsDeleted();
+		questionRepository.saveAll(survey.getQuestionList());
+		surveyRepository.save(survey);
 	}
 
 	public void createAnswer(
@@ -76,6 +78,6 @@ public class SurveyDataProvider {
 	}
 
 	public Page<Answer> getAnswerPage(Long agentId, Pageable pageable) {
-		return answerRepository.findAllByCustomer_AgentId(agentId, pageable);
+		return answerRepository.findAllByCustomer_AgentIdAndDeletedAtIsNull(agentId, pageable);
 	}
 }

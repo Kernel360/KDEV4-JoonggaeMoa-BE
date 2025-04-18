@@ -3,6 +3,7 @@ package org.silsagusi.core.domain.agent;
 import java.util.List;
 
 import org.hibernate.annotations.DynamicUpdate;
+import org.silsagusi.core.domain.BaseEntity;
 import org.silsagusi.core.domain.customer.entity.Customer;
 
 import jakarta.persistence.Column;
@@ -14,6 +15,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,8 +24,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @DynamicUpdate
 @Entity(name = "agents")
+@Table(uniqueConstraints = {
+	@UniqueConstraint(name = "UK_agent_username", columnNames = {"username"}),
+	@UniqueConstraint(name = "UK_agent_phone", columnNames = {"phone"}),
+	@UniqueConstraint(name = "UK_agent_email", columnNames = {"email"})
+})
 @Getter
-public class Agent {
+public class Agent extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -51,10 +59,6 @@ public class Agent {
 	@Enumerated(EnumType.STRING)
 	private Role role;
 
-	enum Role {
-		ROLE_AGENT, ROLE_CUSTOMER
-	}
-
 	private Agent(String name, String phone, String email, String username, String password, String office,
 		String region, String businessNo) {
 		this.name = name;
@@ -82,5 +86,9 @@ public class Agent {
 		this.office = office;
 		this.region = region;
 		this.businessNo = businessNo;
+	}
+
+	enum Role {
+		ROLE_AGENT, ROLE_CUSTOMER
 	}
 }

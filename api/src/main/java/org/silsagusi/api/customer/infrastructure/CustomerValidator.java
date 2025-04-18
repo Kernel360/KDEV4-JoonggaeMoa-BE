@@ -1,7 +1,7 @@
 package org.silsagusi.api.customer.infrastructure;
 
-import org.silsagusi.core.customResponse.exception.CustomException;
-import org.silsagusi.core.customResponse.exception.ErrorCode;
+import org.silsagusi.api.customResponse.exception.CustomException;
+import org.silsagusi.api.customResponse.exception.ErrorCode;
 import org.silsagusi.core.domain.agent.Agent;
 import org.silsagusi.core.domain.customer.entity.Customer;
 import org.springframework.stereotype.Component;
@@ -15,11 +15,11 @@ public class CustomerValidator {
 	private final CustomerRepository customerRepository;
 
 	public void validateExist(Agent agent, String phone, String email) {
-		if (customerRepository.existsByAgentAndPhone(agent, phone)) {
+		if (customerRepository.existsByAgentAndPhoneAndDeletedAtIsNull(agent, phone)) {
 			throw new CustomException(ErrorCode.CONFLICT_PHONE);
 		}
 
-		if (customerRepository.existsByAgentAndEmail(agent, email)) {
+		if (customerRepository.existsByAgentAndEmailAndDeletedAtIsNull(agent, email)) {
 			throw new CustomException(ErrorCode.CONFLICT_EMAIL);
 		}
 	}

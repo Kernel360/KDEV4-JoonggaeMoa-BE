@@ -3,8 +3,8 @@ package org.silsagusi.api.notify.infrastructure;
 import java.io.IOException;
 import java.util.List;
 
-import org.silsagusi.core.customResponse.exception.CustomException;
-import org.silsagusi.core.customResponse.exception.ErrorCode;
+import org.silsagusi.api.customResponse.exception.CustomException;
+import org.silsagusi.api.customResponse.exception.ErrorCode;
 import org.silsagusi.core.domain.notification.entity.Notification;
 import org.silsagusi.core.domain.notification.entity.NotificationType;
 import org.springframework.stereotype.Component;

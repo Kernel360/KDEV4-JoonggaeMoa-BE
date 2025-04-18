@@ -1,7 +1,7 @@
 package org.silsagusi.api.consultation.infrastructure;
 
-import org.silsagusi.core.customResponse.exception.CustomException;
-import org.silsagusi.core.customResponse.exception.ErrorCode;
+import org.silsagusi.api.customResponse.exception.CustomException;
+import org.silsagusi.api.customResponse.exception.ErrorCode;
 import org.silsagusi.core.domain.consultation.entity.Consultation;
 import org.springframework.stereotype.Component;
 

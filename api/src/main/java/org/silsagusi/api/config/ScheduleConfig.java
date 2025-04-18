@@ -44,7 +44,7 @@ public class ScheduleConfig {
 	public void sendScheduledMessages() {
 		log.info("Starting Send Message Scheduler");
 
-		List<Message> messages = messageRepository.findBySendStatusAndSendAtBetween(
+		List<Message> messages = messageRepository.findBySendStatusAndSendAtBetweenAndDeletedAtIsNull(
 			SendStatus.PENDING, LocalDateTime.now(), LocalDateTime.now().plusMinutes(30));
 
 		for (Message message : messages) {
@@ -86,7 +86,7 @@ public class ScheduleConfig {
 		LocalDateTime startOfDay = LocalDate.now().atStartOfDay();
 		LocalDateTime endOfDay = LocalDate.now().atTime(LocalTime.MAX);
 
-		List<Consultation> consultations = consultationRepository.findByDateBetweenAndConsultationStatus(
+		List<Consultation> consultations = consultationRepository.findByDateBetweenAndConsultationStatusAndDeletedAtIsNull(
 			startOfDay, endOfDay, Consultation.ConsultationStatus.CONFIRMED);
 
 		for (Consultation consultation : consultations) {
@@ -112,7 +112,7 @@ public class ScheduleConfig {
 	public void notifyContractExpiry() {
 		log.info("Checking contract expiration schedule start");
 
-		List<Contract> expiredContracts = contractRepository.findByExpiredAt(LocalDate.now());
+		List<Contract> expiredContracts = contractRepository.findByExpiredAtAndDeletedAtIsNull(LocalDate.now());
 
 		for (Contract contract : expiredContracts) {
 			try {

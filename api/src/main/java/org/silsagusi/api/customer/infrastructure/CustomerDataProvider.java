@@ -7,8 +7,7 @@ import java.time.LocalTime;
 import java.util.List;
 
 import org.silsagusi.api.agent.infrastructure.AgentRepository;
-import org.silsagusi.core.customResponse.exception.CustomException;
-import org.silsagusi.core.customResponse.exception.ErrorCode;
+import org.silsagusi.api.customer.exception.CustomerNotFoundException;
 import org.silsagusi.core.domain.agent.Agent;
 import org.silsagusi.core.domain.customer.command.UpdateCustomerCommand;
 import org.silsagusi.core.domain.customer.entity.Customer;
@@ -25,12 +24,11 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CustomerDataProvider {
 
-	private final AgentRepository agentRepository;
-	private final CustomerRepository customerRepository;
-
-	private final AmazonS3 amazonS3;
 	private static final String S3_BUCKET_NAME = "joonggaemoa";
 	private static final String EXCEL_FORMAT_FILENAME = "format.xlsx";
+	private final AgentRepository agentRepository;
+	private final CustomerRepository customerRepository;
+	private final AmazonS3 amazonS3;
 
 	public void createCustomer(Customer customer) {
 		customerRepository.save(customer);
@@ -41,30 +39,34 @@ public class CustomerDataProvider {
 	}
 
 	public void deleteCustomer(Customer customer) {
-		customerRepository.delete(customer);
+		customer.markAsDeleted();
+		customerRepository.save(customer);
 	}
 
 	public Customer getCustomer(Long customerId) {
-		Customer customer = customerRepository.findById(customerId)
-			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_CUSTOMER));
+
+		Customer customer = customerRepository.findByIdAndDeletedAtIsNull(customerId)
+			.orElseThrow(() -> new CustomerNotFoundException(customerId));
 		return customer;
 	}
 
-    public void updateCustomer(UpdateCustomerCommand updateCustomerCommand) {
-        Customer customer = updateCustomerCommand.getCustomer();
+	public void updateCustomer(UpdateCustomerCommand updateCustomerCommand) {
+		Customer customer = updateCustomerCommand.getCustomer();
 
-        customer.updateCustomer(updateCustomerCommand.getName(), updateCustomerCommand.getBirthday(), updateCustomerCommand.getPhone(), updateCustomerCommand.getEmail(),
-            updateCustomerCommand.getJob(), updateCustomerCommand.getIsVip(), updateCustomerCommand.getMemo(), updateCustomerCommand.getConsent());
+		customer.updateCustomer(updateCustomerCommand.getName(), updateCustomerCommand.getBirthday(),
+			updateCustomerCommand.getPhone(), updateCustomerCommand.getEmail(),
+			updateCustomerCommand.getJob(), updateCustomerCommand.getIsVip(), updateCustomerCommand.getMemo(),
+			updateCustomerCommand.getConsent());
 
-        customerRepository.save(customer);
-    }
+		customerRepository.save(customer);
+	}
 
 	public Page<Customer> getAllByAgent(Agent agent, Pageable pageable) {
-		return customerRepository.findAllByAgent(agent, pageable);
+		return customerRepository.findAllByAgentAndDeletedAtIsNull(agent, pageable);
 	}
 
 	public Customer getCustomerByPhone(String phone) {
-		return customerRepository.findByPhone(phone).orElse(null);
+		return customerRepository.findByPhoneAndDeletedAtIsNull(phone).orElse(null);
 	}
 
 	public String getExcelFormatFile() {
@@ -83,8 +85,10 @@ public class CustomerDataProvider {
 		LocalDateTime lastWeekStartTime = lastWeekStart.atStartOfDay();
 		LocalDateTime lastWeekEndTime = lastWeekEnd.atTime(LocalTime.MAX);
 
-		Long thisWeekCount = customerRepository.countByAgentIdAndCreatedAtBetween(agentId, thisWeekStartTime, now);
-		Long lastWeekCount = customerRepository.countByAgentIdAndCreatedAtBetween(agentId, lastWeekStartTime,
+		Long thisWeekCount = customerRepository.countByAgentIdAndCreatedAtBetweenAndDeletedAtIsNull(agentId,
+			thisWeekStartTime, now);
+		Long lastWeekCount = customerRepository.countByAgentIdAndCreatedAtBetweenAndDeletedAtIsNull(agentId,
+			lastWeekStartTime,
 			lastWeekEndTime);
 
 		double changeRate;
@@ -100,8 +104,9 @@ public class CustomerDataProvider {
 
 	public List<Customer> getCustomerListByIdList(List<Long> customerIdList) {
 		return customerIdList.stream()
-			.map(id -> customerRepository.findById(id)
-				.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER))
+
+			.map(id -> customerRepository.findByIdAndDeletedAtIsNull(id)
+				.orElseThrow(() -> new CustomerNotFoundException(id))
 			).toList();
 	}
 }
