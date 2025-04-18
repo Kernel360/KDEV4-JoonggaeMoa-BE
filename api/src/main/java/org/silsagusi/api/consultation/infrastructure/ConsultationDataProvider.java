@@ -47,12 +47,6 @@ public class ConsultationDataProvider {
 		return consultation;
 	}
 
-	public void validateAgentAccess(Long agentId, Consultation consultation) {
-		if (!consultation.getCustomer().getAgent().getId().equals(agentId)) {
-			throw new CustomException(ErrorCode.FORBIDDEN);
-		}
-	}
-
 	public void updateStatus(Consultation consultation, String consultationStatus) {
 		consultation.updateStatus(Consultation.ConsultationStatus.valueOf(consultationStatus));
 		consultationRepository.save(consultation);

@@ -48,9 +48,4 @@ public class MessageTemplateDataProvider {
 		messageTemplateRepository.delete(messageTemplate);
 	}
 
-	public void validateMessageTemplateWithAgent(MessageTemplate messageTemplate, Agent agent) {
-		if (!messageTemplate.getAgent().equals(agent)) {
-			throw new CustomException(ErrorCode.FORBIDDEN);
-		}
-	}
 }
