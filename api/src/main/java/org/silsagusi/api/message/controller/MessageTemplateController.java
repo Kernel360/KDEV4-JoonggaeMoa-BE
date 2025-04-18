@@ -2,10 +2,10 @@ package org.silsagusi.api.message.controller;
 
 import java.util.List;
 
+import org.silsagusi.api.customResponse.ApiResponse;
 import org.silsagusi.api.message.application.dto.MessageTemplateDto;
 import org.silsagusi.api.message.application.dto.UpdateMessageTemplateRequest;
 import org.silsagusi.api.message.application.service.MessageTemplateService;
-import org.silsagusi.core.customResponse.ApiResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;

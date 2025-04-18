@@ -4,7 +4,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
-@ComponentScan(basePackages = {"org.silsagusi.batch", "org.silsagusi.core"})
+@ComponentScan(basePackages = {"org.silsagusi"})
 @SpringBootApplication
 public class BatchApplication {
 

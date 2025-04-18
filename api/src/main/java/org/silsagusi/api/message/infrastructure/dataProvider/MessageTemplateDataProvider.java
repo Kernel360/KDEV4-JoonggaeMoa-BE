@@ -2,9 +2,9 @@ package org.silsagusi.api.message.infrastructure.dataProvider;
 
 import java.util.List;
 
+import org.silsagusi.api.customResponse.exception.CustomException;
+import org.silsagusi.api.customResponse.exception.ErrorCode;
 import org.silsagusi.api.message.infrastructure.repository.MessageTemplateRepository;
-import org.silsagusi.core.customResponse.exception.CustomException;
-import org.silsagusi.core.customResponse.exception.ErrorCode;
 import org.silsagusi.core.domain.agent.Agent;
 import org.silsagusi.core.domain.message.entity.MessageTemplate;
 import org.springframework.stereotype.Component;

@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.UUID;
 
-import org.silsagusi.core.customResponse.exception.CustomException;
-import org.silsagusi.core.customResponse.exception.ErrorCode;
+import org.silsagusi.api.customResponse.exception.CustomException;
+import org.silsagusi.api.customResponse.exception.ErrorCode;
 import org.silsagusi.core.domain.contract.entity.Contract;
 import org.silsagusi.core.domain.contract.info.ContractDetailInfo;
 import org.silsagusi.core.domain.contract.info.ContractInfo;

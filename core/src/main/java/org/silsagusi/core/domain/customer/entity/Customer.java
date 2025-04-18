@@ -64,23 +64,11 @@ public class Customer extends BaseEntity {
 		this.agent = agent;
 	}
 
-	private Customer(String name, String phone, String email, Boolean consent, Agent agent) {
-		this.name = name;
-		this.phone = phone;
-		this.email = email;
-		this.consent = consent;
-		this.agent = agent;
-	}
-
 	public static Customer create(
 		String name, LocalDate birthday, String phone, String email, String job, Boolean isVip, String memo,
 		Boolean consent, Agent agent
 	) {
 		return new Customer(name, birthday, phone, email, job, isVip, memo, consent, agent);
-	}
-
-	public static Customer createForSurvey(String name, String phone, String email, Boolean consent, Agent agent) {
-		return new Customer(name, phone, email, consent, agent);
 	}
 
 	public void updateCustomer(
