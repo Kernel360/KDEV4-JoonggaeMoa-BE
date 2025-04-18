@@ -19,9 +19,7 @@ public class ZigbangApiClient {
 
 	private static final String maxPynArea = "60평대이상";
 
-	private static final String geohash = "wydm6";
-
-	private<T> T fetchApt(String path, String minPynArea, String maxPynArea, String geohash, Class<T> responseType) {
+	private<T> T fetchApt(String path, String geohash, Class<T> responseType) {
 		return zigBangWebClient.get()
 			.uri(uriBuilder -> uriBuilder.path(path)
 				.queryParam("minPynArea", minPynArea)
@@ -35,17 +33,15 @@ public class ZigbangApiClient {
 			.block();
 	}
 
-	public <T> T fetchVilla(String path, String lat, String lon, String page, Class<T> responseType) {
-		return zigBangWebClient.get()
-			.uri(uriBuilder -> uriBuilder.path(path)
-				.queryParam("lat", lat)
-				.queryParam("lon", lon)
-				.queryParam("page", page)
-				.build())
-			.accept(MediaType.APPLICATION_JSON)
-			.retrieve()
-			.bodyToMono(responseType)
-			.block();
-	}
+//	public <T> T fetchVilla(String path, String geohash, Class<T> responseType) {
+//		return zigBangWebClient.get()
+//			.uri(uriBuilder -> uriBuilder.path(path)
+//				.queryParam("geohash", geohash)
+//				.build())
+//			.accept(MediaType.APPLICATION_JSON)
+//			.retrieve()
+//			.bodyToMono(responseType)
+//			.block();
+//	}
 
 }

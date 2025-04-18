@@ -5,7 +5,7 @@ import java.util.List;
 import lombok.Data;
 
 @Data
-public class ClientComplexResponse {
+public class ComplexResponse {
 
 	private List<ComplexList> result;
 

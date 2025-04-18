@@ -10,7 +10,7 @@ import ch.hsr.geohash.GeoHash;
 import org.silsagusi.batch.infrastructure.RegionRepository;
 import org.silsagusi.batch.infrastructure.RegionScrapStatusRepository;
 import org.silsagusi.batch.naverland.client.NaverLandApiClient;
-import org.silsagusi.batch.naverland.service.dto.ClientRegionResponse;
+import org.silsagusi.batch.naverland.service.dto.RegionResponse;
 import org.silsagusi.core.domain.article.Region;
 import org.silsagusi.core.domain.article.RegionScrapStatus;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -46,7 +46,7 @@ public class RegionInitializer {
 			String code = queue.poll();
 			if (!visited.add(code))
 				continue;
-			ClientRegionResponse response = naverLandApiClient.fetchRegionList(code);
+			RegionResponse response = naverLandApiClient.fetchRegionList(code);
 
 			if (response.getRegionList().isEmpty())
 				continue;

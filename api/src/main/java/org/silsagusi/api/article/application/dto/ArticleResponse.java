@@ -12,55 +12,76 @@ import lombok.Getter;
 @Builder
 public class ArticleResponse {
 	private Long id;
+	private String articleCode;
+	private String dongCode;
+	private String articleName;
+	private String articleType;
+	private String tradeType;
+	private String floors;
+	private Integer priceSale;
+	private Integer priceRent;
+	private Double areaSupply;
+	private Double areaExclusive;
+	private String direction;
+	private LocalDate confirmedAt;
+	private String imageUrl;
 	private Double latitude;
 	private Double longitude;
-	private String cortarNo;
-	private String articleNo;
-	private String name;
-	private String realEstateType;
-	private String tradeType;
-	private String price;
-	private Integer rentPrice;
-	private LocalDate confirmedAt;
-	private String lotAddressName;
-	private String roadAddressName;
-	private String zipCode;
-	private String imageUrl;
-	private String direction;
+	private String atclFetrDesc;
 	private List<String> tags;
-	private String subwayInfo;
-	private String companyId;
 	private String companyName;
 	private String agentName;
-	private String cortarName;
+	private String subwayInfo;
+	private Boolean isChecked;
+	private String lotAddress;
+	private String roadAddress;
+	private String city;
+	private String district;
+	private String town;
+	private String mainAddressNo;
+	private String subAddressNo;
+	private String roadName;
+	private String mainBuildingNo;
+	private String subBuildingNo;
+	private String buildingName;
+	private String zipCode;
 
 	public static ArticleResponse of(Article article) {
 		return ArticleResponse.builder()
 			.id(article.getId())
+			.articleCode(article.getArticleCode())
+			.dongCode(article.getDongCode())
+			.articleName(article.getArticleName())
+			.articleType(article.getArticleType())
+			.tradeType(article.getTradeType())
+			.floors(article.getFloors())
+			.priceSale(article.getPriceSale())
+			.priceRent(article.getPriceRent())
+			.areaSupply(article.getAreaSupply())
+			.areaExclusive(article.getAreaExclusive())
+			.direction(article.getDirection())
+			.confirmedAt(article.getConfirmedAt())
+			.imageUrl(article.getImageUrl())
 			.latitude(article.getLatitude())
 			.longitude(article.getLongitude())
-			.cortarNo(article.getCortarNo())
-			.articleNo(article.getArticleNo())
-			.name(article.getName())
-			.realEstateType(article.getRealEstateType())
-			.tradeType(article.getTradeType())
-			.price(article.getPrice() + "")
-			.rentPrice(article.getRentPrice())
-			.lotAddressName(article.getLotAddressName())
-			.roadAddressName(article.getRoadAddressName())
-			.zipCode(article.getZoneNo())
-			.confirmedAt(article.getConfirmedAt())
-			.lotAddressName(article.getLotAddressName())
-			.roadAddressName(article.getRoadAddressName())
-			.zipCode(article.getZoneNo())
-			.imageUrl(article.getImageUrl())
-			.direction(article.getDirection())
+			.atclFetrDesc(article.getAtclFetrDesc())
 			.tags(article.getTags())
-			.subwayInfo(article.getSubwayInfo())
-			.companyId(article.getCompanyId())
 			.companyName(article.getCompanyName())
 			.agentName(article.getAgentName())
-			.cortarName(article.getRegion().getCortarName())
+			.subwayInfo(article.getSubwayInfo())
+			.isChecked(article.getIsChecked())
+			.lotAddress(article.getLotAddress())
+			.roadAddress(article.getRoadAddress())
+			.city(article.getCity())
+			.district(article.getDistrict())
+			.town(article.getTown())
+			.mainAddressNo(article.getMainAddressNo())
+			.subAddressNo(article.getSubAddressNo())
+			.roadName(article.getRoadName())
+			.mainBuildingNo(article.getMainBuildingNo())
+			.subBuildingNo(article.getSubBuildingNo())
+			.buildingName(article.getBuildingName())
+			.zipCode(article.getZipCode())
 			.build();
 	}
 }

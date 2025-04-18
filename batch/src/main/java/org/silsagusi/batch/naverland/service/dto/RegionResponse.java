@@ -5,7 +5,7 @@ import java.util.List;
 import lombok.Data;
 
 @Data
-public class ClientRegionResponse {
+public class RegionResponse {
 
 	private List<Region> regionList;
 

@@ -8,7 +8,7 @@ import java.util.Objects;
 import org.silsagusi.batch.infrastructure.ArticleDataProvider;
 import org.silsagusi.batch.naverland.client.NaverLandApiClient;
 import org.silsagusi.batch.naverland.service.dto.AddressResponse;
-import org.silsagusi.batch.naverland.service.dto.ClientArticleResponse;
+import org.silsagusi.batch.naverland.service.dto.ArticleResponse;
 import org.silsagusi.core.domain.article.Article;
 import org.silsagusi.core.domain.article.Region;
 import org.silsagusi.core.domain.article.RegionScrapStatus;
@@ -28,7 +28,7 @@ public class NaverLandArticleRequestService {
 	private final ArticleDataProvider articleDataProvider;
 
 	@Async("scrapExecutor")
-	public void scrapArticles(RegionScrapStatus scrapStatus) throws InterruptedException {
+	public void scrapArticles(RegionScrapStatus scrapStatus) {
 		List<Article> articles = new ArrayList<>();
 
 		try {
@@ -37,7 +37,7 @@ public class NaverLandArticleRequestService {
 			boolean hasMore;
 
 			do {
-				ClientArticleResponse response = naverLandApiClient.fetchArticleList(
+				ArticleResponse response = naverLandApiClient.fetchArticleList(
 					String.valueOf(page),
 					region.getCenterLat().toString(),
 					region.getCenterLon().toString(),
@@ -67,7 +67,7 @@ public class NaverLandArticleRequestService {
 		}
 	}
 
-	private List<Article> mapToArticles(List<ClientArticleResponse.Body> bodies, Region region) {
+	private List<Article> mapToArticles(List<ArticleResponse.Body> bodies, Region region) {
 		return bodies.stream()
 			.map(body -> {
 				AddressResponse addr = addressLookupService.lookupAddress(body.getLat(), body.getLng());
@@ -76,7 +76,7 @@ public class NaverLandArticleRequestService {
 					return null;
 				}
 
-				return ClientArticleResponse.createFrom(body, region, addr);
+				return ArticleDataProvider.createArticle(body, region, addr);
 			})
 			.filter(Objects::nonNull)
 			.toList();

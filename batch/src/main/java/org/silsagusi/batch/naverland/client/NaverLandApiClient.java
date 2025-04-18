@@ -1,8 +1,8 @@
 package org.silsagusi.batch.naverland.client;
 
-import org.silsagusi.batch.naverland.service.dto.ClientArticleResponse;
-import org.silsagusi.batch.naverland.service.dto.ClientComplexResponse;
-import org.silsagusi.batch.naverland.service.dto.ClientRegionResponse;
+import org.silsagusi.batch.naverland.service.dto.ArticleResponse;
+import org.silsagusi.batch.naverland.service.dto.ComplexResponse;
+import org.silsagusi.batch.naverland.service.dto.RegionResponse;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -76,22 +76,22 @@ public class NaverLandApiClient {
 			.block();
 	}
 
-	public ClientArticleResponse fetchArticleList(String page, String lat, String lon, String cortarNo) {
-		return fetchList("/cluster/ajax/articleList", lat, lon, cortarNo, page, ClientArticleResponse.class);
+	public ArticleResponse fetchArticleList(String page, String lat, String lon, String cortarNo) {
+		return fetchList("/cluster/ajax/articleList", lat, lon, cortarNo, page, ArticleResponse.class);
 	}
 
-	public ClientComplexResponse fetchComplexList(String page, String lat, String lon, String cortarNo) {
-		return fetchList("/cluster/ajax/complexList", lat, lon, cortarNo, page, ClientComplexResponse.class);
+	public ComplexResponse fetchComplexList(String page, String lat, String lon, String cortarNo) {
+		return fetchList("/cluster/ajax/complexList", lat, lon, cortarNo, page, ComplexResponse.class);
 	}
 
-	public ClientRegionResponse fetchRegionList(String cortarNo) {
+	public RegionResponse fetchRegionList(String cortarNo) {
 		return naverRegionWebClient.get()
 			.uri(uriBuilder -> uriBuilder.path("/api/regions/list")
 				.queryParam("cortarNo", cortarNo)
 				.build())
 			.accept(MediaType.APPLICATION_JSON)
 			.retrieve()
-			.bodyToMono(ClientRegionResponse.class)
+			.bodyToMono(RegionResponse.class)
 			.block();
 	}
 }
