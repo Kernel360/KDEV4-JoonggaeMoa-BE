@@ -40,9 +40,10 @@ public class MessageTemplateDataProvider {
 			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
 	}
 
-	public void updateMessageTemplate(MessageTemplate messageTemplate) {
-		messageTemplateRepository.save(messageTemplate);
-	}
+    public void updateMessageTemplate(String title, String content, MessageTemplate messageTemplate) {
+        messageTemplate.updateMessageTemplate(title, content);
+        messageTemplateRepository.save(messageTemplate);
+    }
 
 	public void deleteMessageTemplate(MessageTemplate messageTemplate) {
 		messageTemplateRepository.delete(messageTemplate);

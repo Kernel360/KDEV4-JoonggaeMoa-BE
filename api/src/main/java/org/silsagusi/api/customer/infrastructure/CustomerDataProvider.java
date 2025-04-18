@@ -50,30 +50,14 @@ public class CustomerDataProvider {
 		return customer;
 	}
 
-	public void updateCustomer(UpdateCustomerCommand updateCustomerCommand) {
-		// TODO @DynamicUpdate
-		Customer customer = updateCustomerCommand.getCustomer();
-		String name = updateCustomerCommand.getName();
-		LocalDate birthday = updateCustomerCommand.getBirthday();
-		String phone = updateCustomerCommand.getPhone();
-		String email = updateCustomerCommand.getEmail();
-		String job = updateCustomerCommand.getJob();
-		Boolean isVip = updateCustomerCommand.getIsVip();
-		String memo = updateCustomerCommand.getMemo();
-		Boolean consent = updateCustomerCommand.getConsent();
+    public void updateCustomer(UpdateCustomerCommand updateCustomerCommand) {
+        Customer customer = updateCustomerCommand.getCustomer();
 
-		customer.updateCustomer(
-			(name == null || name.isBlank()) ? customer.getName() : name,
-			(birthday == null) ? customer.getBirthday() : birthday,
-			(phone == null || phone.isBlank()) ? customer.getPhone() : phone,
-			(email == null || email.isBlank()) ? customer.getEmail() : email,
-			(job == null || job.isBlank()) ? customer.getJob() : job,
-			(isVip == null) ? customer.getIsVip() : isVip,
-			(memo == null || memo.isBlank()) ? customer.getMemo() : memo,
-			(consent == null) ? customer.getConsent() : consent
-		);
-		customerRepository.save(customer);
-	}
+        customer.updateCustomer(updateCustomerCommand.getName(), updateCustomerCommand.getBirthday(), updateCustomerCommand.getPhone(), updateCustomerCommand.getEmail(),
+            updateCustomerCommand.getJob(), updateCustomerCommand.getIsVip(), updateCustomerCommand.getMemo(), updateCustomerCommand.getConsent());
+
+        customerRepository.save(customer);
+    }
 
 	public Page<Customer> getAllByAgent(Agent agent, Pageable pageable) {
 		return customerRepository.findAllByAgent(agent, pageable);

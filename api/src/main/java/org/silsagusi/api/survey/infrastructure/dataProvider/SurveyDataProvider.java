@@ -42,22 +42,16 @@ public class SurveyDataProvider {
 			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
 	}
 
-	public void updateSurvey(Survey survey, String title, String description, List<Question> questionList) {
-		questionRepository.deleteAll(survey.getQuestionList());
-		survey.getQuestionList().clear();
+    public void updateSurvey(Survey survey, String title, String description, List<Question> questionList) {
+        questionRepository.deleteAll(survey.getQuestionList());
+        survey.getQuestionList().clear();
 
-		survey.updateSurveyTitleDescription(
-			(title == null || title.isBlank()) ? survey.getTitle() :
-				title,
-			(description == null || description.isBlank()) ?
-				survey.getDescription() :
-				description
-		);
+        survey.updateSurveyTitleDescription(title, description);
 
-		survey.getQuestionList().addAll(questionList);
-		questionRepository.saveAll(questionList);
-		surveyRepository.save(survey);
-	}
+        survey.getQuestionList().addAll(questionList);
+        questionRepository.saveAll(questionList);
+        surveyRepository.save(survey);
+    }
 
 	public void deleteSurvey(Survey survey) {
 		questionRepository.deleteAll(survey.getQuestionList());

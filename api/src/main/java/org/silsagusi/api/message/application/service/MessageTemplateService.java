@@ -43,9 +43,8 @@ public class MessageTemplateService {
 
 		messageTemplateValidator.validateAgentAccess(messageTemplate, agent);
 
-		messageTemplate.updateMessageTemplate(requestDto.getTitle(), requestDto.getContent());
-		messageTemplateDataProvider.updateMessageTemplate(messageTemplate);
-	}
+        messageTemplateDataProvider.updateMessageTemplate(requestDto.getTitle(), requestDto.getContent(), messageTemplate);
+    }
 
 	public void deleteMessageTemplate(Long agentId, Long templateId) {
 		Agent agent = agentDataProvider.getAgentById(agentId);
