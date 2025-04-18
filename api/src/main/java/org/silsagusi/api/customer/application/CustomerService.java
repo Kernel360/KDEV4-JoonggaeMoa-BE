@@ -24,6 +24,7 @@ public class CustomerService {
 	private final CustomerDataProvider customerDataProvider;
 	private final AgentDataProvider agentDataProvider;
 	private final CustomerMapper customerMapper;
+	private final CustomerExcelParser customerExcelParser;
 
 	public void createCustomer(
 		Long agentId,
@@ -41,7 +42,7 @@ public class CustomerService {
 	public void bulkCreateCustomer(Long agentId, MultipartFile file) {
 		Agent agent = agentDataProvider.getAgentById(agentId);
 
-		List<Customer> customers = customerMapper.toEntityList(agent, file);
+		List<Customer> customers = customerExcelParser.toEntityList(agent, file);
 
 		customerDataProvider.createCustomers(customers);
 	}
