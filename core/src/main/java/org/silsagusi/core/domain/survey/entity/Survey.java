@@ -39,11 +39,15 @@ public class Survey extends BaseEntity {
 	@OneToMany(mappedBy = "survey", fetch = FetchType.LAZY)
 	private List<Question> questionList = List.of();
 
-	public Survey(Agent agent, String title, String description, List<Question> questionList) {
+	private Survey(Agent agent, String title, String description, List<Question> questionList) {
 		this.agent = agent;
 		this.title = title;
 		this.description = description.isEmpty() ? "" : description;
 		this.questionList = questionList;
+	}
+
+	public static Survey create(Agent agent, String title, String description, List<Question> questionList) {
+		return new Survey(agent, title, description, questionList);
 	}
 
 	public void updateSurveyTitleDescription(

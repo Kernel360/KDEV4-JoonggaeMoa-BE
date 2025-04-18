@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 public class NotificationService {
 
 	private NotificationDataProvider notificationDataProvider;
+	private NotificationMapper notificationMapper;
 
 	public SseEmitter subscribe(Long agentId) {
 		SseEmitter emitter = notificationDataProvider.subscribe(agentId);
@@ -28,7 +29,7 @@ public class NotificationService {
 
 	public List<NotificationDto.Response> getNotification(Long agentId) {
 		List<Notification> notificationList = notificationDataProvider.getAllByAgent(agentId);
-		return notificationList.stream().map(NotificationDto.Response::of).toList();
+		return notificationList.stream().map(notificationMapper::toNotificationResponse).toList();
 	}
 
 	public void markRead(Long notificationId) {

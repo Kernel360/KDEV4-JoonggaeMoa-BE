@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import org.silsagusi.api.customer.application.dto.CustomerDto;
-import org.silsagusi.core.domain.survey.entity.Answer;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -62,17 +61,5 @@ public class AnswerDto {
 		private SurveyDto.Response survey;
 		private List<QuestionAnswerResponse> answer;
 		private LocalDateTime createdAt;
-
-		public static Response of(Answer answer) {
-			List<QuestionAnswerResponse> questionAnswerResponseList = answer.getQuestionAnswerPairs().stream()
-				.map(QuestionAnswerResponse::of).toList();
-
-			return Response.builder()
-				.customer(CustomerDto.Response.of(answer.getCustomer()))
-				.survey(SurveyDto.Response.of(answer.getSurvey()))
-				.answer(questionAnswerResponseList)
-				.createdAt(answer.getCreatedAt())
-				.build();
-		}
 	}
 }

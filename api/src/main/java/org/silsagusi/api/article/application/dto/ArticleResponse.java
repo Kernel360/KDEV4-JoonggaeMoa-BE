@@ -3,8 +3,6 @@ package org.silsagusi.api.article.application.dto;
 import java.time.LocalDate;
 import java.util.List;
 
-import org.silsagusi.core.domain.article.Article;
-
 import lombok.Builder;
 import lombok.Getter;
 
@@ -33,34 +31,4 @@ public class ArticleResponse {
 	private String companyName;
 	private String agentName;
 	private String cortarName;
-
-	public static ArticleResponse of(Article article) {
-		return ArticleResponse.builder()
-			.id(article.getId())
-			.latitude(article.getLatitude())
-			.longitude(article.getLongitude())
-			.cortarNo(article.getCortarNo())
-			.articleNo(article.getArticleNo())
-			.name(article.getName())
-			.realEstateType(article.getRealEstateType())
-			.tradeType(article.getTradeType())
-			.price(article.getPrice() + "")
-			.rentPrice(article.getRentPrice())
-			.lotAddressName(article.getLotAddressName())
-			.roadAddressName(article.getRoadAddressName())
-			.zipCode(article.getZoneNo())
-			.confirmedAt(article.getConfirmedAt())
-			.lotAddressName(article.getLotAddressName())
-			.roadAddressName(article.getRoadAddressName())
-			.zipCode(article.getZoneNo())
-			.imageUrl(article.getImageUrl())
-			.direction(article.getDirection())
-			.tags(article.getTags())
-			.subwayInfo(article.getSubwayInfo())
-			.companyId(article.getCompanyId())
-			.companyName(article.getCompanyName())
-			.agentName(article.getAgentName())
-			.cortarName(article.getRegion().getCortarName())
-			.build();
-	}
 }

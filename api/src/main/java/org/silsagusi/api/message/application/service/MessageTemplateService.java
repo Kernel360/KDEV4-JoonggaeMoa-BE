@@ -1,10 +1,11 @@
-package org.silsagusi.api.message.application;
+package org.silsagusi.api.message.application.service;
 
 import java.util.List;
 
 import org.silsagusi.api.agent.infrastructure.AgentDataProvider;
 import org.silsagusi.api.message.application.dto.MessageTemplateDto;
-import org.silsagusi.api.message.application.dto.MessageTemplateUpdateRequest;
+import org.silsagusi.api.message.application.dto.UpdateMessageTemplateRequest;
+import org.silsagusi.api.message.application.mapper.MessageTemplateMapper;
 import org.silsagusi.api.message.infrastructure.dataProvider.MessageTemplateDataProvider;
 import org.silsagusi.core.domain.agent.Agent;
 import org.silsagusi.core.domain.message.entity.MessageTemplate;
@@ -18,26 +19,28 @@ public class MessageTemplateService {
 
 	private final AgentDataProvider agentDataProvider;
 	private final MessageTemplateDataProvider messageTemplateDataProvider;
+	private final MessageTemplateMapper messageTemplateMapper;
 
 	public void createMessageTemplate(Long agentId, MessageTemplateDto.Request messageTemplateRequest) {
 		Agent agent = agentDataProvider.getAgentById(agentId);
-		MessageTemplate messageTemplate = MessageTemplate.create(agent, messageTemplateRequest.getTitle(),
-			messageTemplateRequest.getContent());
+		MessageTemplate messageTemplate = messageTemplateMapper.toEntity(agent, messageTemplateRequest);
+
 		messageTemplateDataProvider.createMessageTemplate(messageTemplate);
 	}
 
-	public List<MessageTemplateDto.Response> getMessageTemplateList(Long agentId) {
+	public List<MessageTemplateDto.Response> getMessageTemplates(Long agentId) {
 		Agent agent = agentDataProvider.getAgentById(agentId);
-		List<MessageTemplate> messageTemplateList = messageTemplateDataProvider.getMessageTemplateList(agent);
-		return messageTemplateList.stream()
-			.map(MessageTemplateDto.Response::of)
-			.toList();
+		List<MessageTemplate> messageTemplates = messageTemplateDataProvider.getMessageTemplateList(agent);
+
+		return messageTemplateMapper.toResponseDtos(messageTemplates);
 	}
 
-	public void updateMessageTemplate(Long agentId, Long templateId, MessageTemplateUpdateRequest requestDto) {
+	public void updateMessageTemplate(Long agentId, Long templateId, UpdateMessageTemplateRequest requestDto) {
 		Agent agent = agentDataProvider.getAgentById(agentId);
 		MessageTemplate messageTemplate = messageTemplateDataProvider.getMessageTemplateById(templateId);
+
 		messageTemplateDataProvider.validateMessageTemplateWithAgent(messageTemplate, agent);
+
 		messageTemplate.updateMessageTemplate(requestDto.getTitle(), requestDto.getContent());
 		messageTemplateDataProvider.updateMessageTemplate(messageTemplate);
 	}
@@ -45,7 +48,9 @@ public class MessageTemplateService {
 	public void deleteMessageTemplate(Long agentId, Long templateId) {
 		Agent agent = agentDataProvider.getAgentById(agentId);
 		MessageTemplate messageTemplate = messageTemplateDataProvider.getMessageTemplateById(templateId);
+
 		messageTemplateDataProvider.validateMessageTemplateWithAgent(messageTemplate, agent);
+
 		messageTemplateDataProvider.deleteMessageTemplate(messageTemplate);
 	}
 }

@@ -42,12 +42,16 @@ public class Message extends BaseEntity {
 
 	private String errorMessage;
 
-	public Message(Customer customer, String content, LocalDateTime sendAt) {
+	private Message(Customer customer, String content, LocalDateTime sendAt) {
 		this.customer = customer;
 		this.content = content;
 		this.sendStatus = SendStatus.PENDING;
 		this.sendAt = sendAt;
 		this.errorMessage = null;
+	}
+
+	public static Message create(Customer customer, String content, LocalDateTime sendAt) {
+		return new Message(customer, content, sendAt);
 	}
 
 	public void updateMessage(LocalDateTime sendAt, String content) {

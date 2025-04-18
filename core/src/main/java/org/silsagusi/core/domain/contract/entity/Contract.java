@@ -1,13 +1,20 @@
 package org.silsagusi.core.domain.contract.entity;
 
-import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import java.time.LocalDate;
 
 import org.silsagusi.core.domain.customer.entity.Customer;
 
-import java.time.LocalDate;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity(name = "contracts")
@@ -35,7 +42,7 @@ public class Contract {
 
 	private String url;
 
-	public Contract(
+	private Contract(
 		Customer customerLandlordId,
 		Customer customerTenantId,
 		LocalDate createdAt,
@@ -47,6 +54,22 @@ public class Contract {
 		this.createdAt = createdAt;
 		this.expiredAt = expiredAt;
 		this.url = url;
+	}
+
+	public static Contract create(
+		Customer customerLandlordId,
+		Customer customerTenantId,
+		LocalDate createdAt,
+		LocalDate expiredAt,
+		String url
+	) {
+		return new Contract(
+			customerLandlordId,
+			customerTenantId,
+			createdAt,
+			expiredAt,
+			url
+		);
 	}
 
 	public void update(

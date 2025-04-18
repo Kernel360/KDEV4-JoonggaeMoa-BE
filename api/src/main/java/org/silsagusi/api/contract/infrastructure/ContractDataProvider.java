@@ -10,7 +10,6 @@ import org.silsagusi.core.domain.contract.entity.Contract;
 import org.silsagusi.core.domain.contract.info.ContractDetailInfo;
 import org.silsagusi.core.domain.contract.info.ContractInfo;
 import org.silsagusi.core.domain.contract.info.ContractSummaryInfo;
-import org.silsagusi.core.domain.customer.entity.Customer;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
@@ -31,22 +30,11 @@ public class ContractDataProvider {
 	private final AmazonS3 amazonS3;
 	private static final String S3_BUCKET_NAME = "joonggaemoa";
 
-	public void createContract(Customer customerLandlord, Customer customerTenant, LocalDate createdAt,
-		LocalDate expiredAt, MultipartFile file) throws IOException {
-		String filename = fileUpload(file);
-
-		Contract contract = new Contract(
-			customerLandlord,
-			customerTenant,
-			createdAt,
-			expiredAt,
-			filename
-		);
+	public void createContract(Contract contract) {
 		contractRepository.save(contract);
 	}
 
 	public Page<ContractInfo> getAllContracts(Long agentId, Pageable pageable) {
-
 		Page<Contract> contractPage = contractRepository.findAllByCustomerLandlord_AgentId(agentId, pageable);
 		Page<ContractInfo> contractInfoPage = contractPage.map(ContractInfo::of);
 		contractInfoPage.map(it -> {
@@ -100,7 +88,7 @@ public class ContractDataProvider {
 		return contractDetailInfo;
 	}
 
-	private String fileUpload(MultipartFile file) throws IOException {
+	public String fileUpload(MultipartFile file) throws IOException {
 		String filename = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
 
 		//meta data

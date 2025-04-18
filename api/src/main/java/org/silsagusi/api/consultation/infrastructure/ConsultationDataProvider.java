@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 
 import org.silsagusi.core.customResponse.exception.CustomException;
 import org.silsagusi.core.customResponse.exception.ErrorCode;
+import org.silsagusi.core.domain.consultation.command.UpdateConsultationCommand;
 import org.silsagusi.core.domain.consultation.entity.Consultation;
 import org.silsagusi.core.domain.consultation.entity.Consultation.ConsultationStatus;
 import org.silsagusi.core.domain.consultation.info.ConsultationMonthInfo;
@@ -33,7 +34,7 @@ public class ConsultationDataProvider {
 		Consultation consultation = new Consultation(
 			customer,
 			consultationDate,
-			ConsultationStatus.CONFIRMED
+			consultationStatus
 		);
 
 		consultationRepository.save(consultation);
@@ -57,10 +58,16 @@ public class ConsultationDataProvider {
 		consultationRepository.save(consultation);
 	}
 
-	public void updateConcsultation(
-		Consultation consultation, LocalDateTime date, String purpose, String interestProperty, String interestLocation,
-		String contractType, String assetStatus, String memo, String consultationStatus
-	) {
+	public void updateConsultation(Consultation consultation, UpdateConsultationCommand updateConsultationCommand) {
+		// TODO @DynamicUpdate
+		LocalDateTime date = updateConsultationCommand.getDate();
+		String purpose = updateConsultationCommand.getPurpose();
+		String interestProperty = updateConsultationCommand.getInterestProperty();
+		String interestLocation = updateConsultationCommand.getInterestLocation();
+		String contractType = updateConsultationCommand.getContractType();
+		String assetStatus = updateConsultationCommand.getAssetStatus();
+		String memo = updateConsultationCommand.getMemo();
+		String consultationStatus = updateConsultationCommand.getConsultationStatus();
 
 		consultation.updateConsultation(
 			(date == null) ? consultation.getDate() : date,

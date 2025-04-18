@@ -3,7 +3,6 @@ package org.silsagusi.api.message.application.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.silsagusi.core.domain.message.entity.Message;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -48,18 +47,5 @@ public class MessageDto {
 		private LocalDateTime createdAt;
 		private String sendStatus;
 		private LocalDateTime sendAt;
-
-		public static Response of(Message message) {
-			return Response.builder()
-				.id(message.getId())
-				.customerId(message.getCustomer().getId())
-				.customerName(message.getCustomer().getName())
-				.customerPhone(message.getCustomer().getPhone())
-				.content(message.getContent())
-				.createdAt(message.getCreatedAt())
-				.sendStatus(message.getSendStatus() + "")
-				.sendAt(message.getSendAt())
-				.build();
-		}
 	}
 }
