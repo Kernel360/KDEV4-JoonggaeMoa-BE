@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.silsagusi.api.agent.infrastructure.AgentDataProvider;
 import org.silsagusi.api.message.application.dto.MessageTemplateDto;
-import org.silsagusi.api.message.application.dto.MessageTemplateUpdateRequest;
+import org.silsagusi.api.message.application.dto.UpdateMessageTemplateRequest;
 import org.silsagusi.api.message.application.mapper.MessageTemplateMapper;
 import org.silsagusi.api.message.infrastructure.dataProvider.MessageTemplateDataProvider;
 import org.silsagusi.core.domain.agent.Agent;
@@ -35,7 +35,7 @@ public class MessageTemplateService {
 		return messageTemplateMapper.toResponseDtos(messageTemplates);
 	}
 
-	public void updateMessageTemplate(Long agentId, Long templateId, MessageTemplateUpdateRequest requestDto) {
+	public void updateMessageTemplate(Long agentId, Long templateId, UpdateMessageTemplateRequest requestDto) {
 		Agent agent = agentDataProvider.getAgentById(agentId);
 		MessageTemplate messageTemplate = messageTemplateDataProvider.getMessageTemplateById(templateId);
 

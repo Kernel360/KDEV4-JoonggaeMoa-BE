@@ -77,13 +77,13 @@ public class SurveyService {
 	public Page<SurveyDto.Response> getAllSurveys(Long agentId, Pageable pageable) {
 		Agent agent = agentDataProvider.getAgentById(agentId);
 		Page<Survey> surveyPage = surveyDataProvider.getSurveyPageByAgent(agent, pageable);
-		return surveyPage.map(SurveyDto.Response::of);
+		return surveyPage.map(surveyMapper::toSurveyResponse);
 	}
 
 	@Transactional(readOnly = true)
 	public SurveyDto.Response findById(String surveyId) {
 		Survey survey = surveyDataProvider.getSurvey(surveyId);
-		return SurveyDto.Response.of(survey);
+		return surveyMapper.toSurveyResponse(survey);
 	}
 
 	@Transactional
@@ -96,7 +96,7 @@ public class SurveyService {
 
 		Customer customer = customerDataProvider.getCustomerByPhone(answerRequest.getPhone());
 		if (customer == null) {
-			Customer newCustomer = customerMapper.AnswerDtoToCustomer(answerRequest, agent);
+			Customer newCustomer = customerMapper.answerDtoToCustomer(answerRequest, agent);
 			customerDataProvider.createCustomer(newCustomer);
 		}
 
@@ -131,6 +131,7 @@ public class SurveyService {
 
 	public Page<AnswerDto.Response> getAllAnswers(Long agentId, Pageable pageable) {
 		Page<Answer> answerPage = surveyDataProvider.getAnswerPage(agentId, pageable);
-		return answerPage.map(AnswerDto.Response::of);
+
+		return answerPage.map(surveyMapper::toAnswerResponse);
 	}
 }

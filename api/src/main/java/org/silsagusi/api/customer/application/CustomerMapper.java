@@ -7,12 +7,14 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.silsagusi.api.customer.application.dto.CustomerDto;
+import org.silsagusi.api.customer.application.dto.CustomerSummaryResponse;
 import org.silsagusi.api.survey.application.dto.AnswerDto;
 import org.silsagusi.core.customResponse.exception.CustomException;
 import org.silsagusi.core.customResponse.exception.ErrorCode;
 import org.silsagusi.core.domain.agent.Agent;
 import org.silsagusi.core.domain.customer.command.UpdateCustomerCommand;
 import org.silsagusi.core.domain.customer.entity.Customer;
+import org.silsagusi.core.domain.customer.info.CustomerSummaryInfo;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -91,7 +93,7 @@ public class CustomerMapper {
 		return customers;
 	}
 
-	public Customer AnswerDtoToCustomer(AnswerDto.Request answerRequest, Agent agent) {
+	public Customer answerDtoToCustomer(AnswerDto.Request answerRequest, Agent agent) {
 		return Customer.create(
 			answerRequest.getName(),
 			null,
@@ -103,5 +105,26 @@ public class CustomerMapper {
 			answerRequest.getConsent(),
 			agent
 		);
+	}
+
+	public CustomerDto.Response toCustomerResponse(Customer customer) {
+		return CustomerDto.Response.builder()
+			.id(customer.getId())
+			.name(customer.getName())
+			.birthday(customer.getBirthday())
+			.phone(customer.getPhone())
+			.email(customer.getEmail())
+			.job(customer.getJob())
+			.isVip(customer.getIsVip())
+			.memo(customer.getMemo())
+			.consent(customer.getConsent())
+			.build();
+	}
+
+	public CustomerSummaryResponse toCustomerSummaryResponse(CustomerSummaryInfo info) {
+		return CustomerSummaryResponse.builder()
+			.count(info.getCount())
+			.rate(info.getRate())
+			.build();
 	}
 }

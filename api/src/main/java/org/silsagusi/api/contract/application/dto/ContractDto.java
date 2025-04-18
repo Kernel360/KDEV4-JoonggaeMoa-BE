@@ -2,7 +2,6 @@ package org.silsagusi.api.contract.application.dto;
 
 import java.time.LocalDate;
 
-import org.silsagusi.core.domain.contract.info.ContractInfo;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -48,17 +47,5 @@ public class ContractDto {
 		private LocalDate createdAt;
 		private LocalDate expiredAt;
 		private String url;
-
-		public static Response of(ContractInfo info) {
-			return Response.builder()
-				.id(info.getId())
-				.landlordName(info.getLandlordName())
-				.tenantName(info.getTenantName())
-				.createdAt(info.getCreatedAt())
-				.expiredAt(info.getExpiredAt())
-				.url(info.getUrl())
-				.build();
-		}
-
 	}
 }

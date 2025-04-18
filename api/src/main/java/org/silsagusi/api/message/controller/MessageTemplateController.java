@@ -3,7 +3,7 @@ package org.silsagusi.api.message.controller;
 import java.util.List;
 
 import org.silsagusi.api.message.application.dto.MessageTemplateDto;
-import org.silsagusi.api.message.application.dto.MessageTemplateUpdateRequest;
+import org.silsagusi.api.message.application.dto.UpdateMessageTemplateRequest;
 import org.silsagusi.api.message.application.service.MessageTemplateService;
 import org.silsagusi.core.customResponse.ApiResponse;
 import org.springframework.http.ResponseEntity;
@@ -53,7 +53,7 @@ public class MessageTemplateController {
 	public ResponseEntity<ApiResponse<Void>> updateMessageTemplate(
 		HttpServletRequest request,
 		@PathVariable(name = "templateId") Long templateId,
-		@RequestBody @Valid MessageTemplateUpdateRequest requestDto
+		@RequestBody @Valid UpdateMessageTemplateRequest requestDto
 	) {
 		messageTemplateService.updateMessageTemplate(
 			(Long)request.getAttribute("agentId"),

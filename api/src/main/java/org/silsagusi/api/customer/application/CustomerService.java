@@ -66,19 +66,19 @@ public class CustomerService {
 	public CustomerDto.Response getCustomerById(Long agentId, Long customerId) {
 		Customer customer = customerDataProvider.getCustomer(customerId);
 		customerDataProvider.validateAgentAccess(agentId, customer);
-		return CustomerDto.Response.of(customer);
+		return customerMapper.toCustomerResponse(customer);
 	}
 
 	public Page<CustomerDto.Response> getAllCustomers(Long agentId, Pageable pageable) {
 		Agent agent = agentDataProvider.getAgentById(agentId);
 
 		Page<Customer> customerPage = customerDataProvider.getAllByAgent(agent, pageable);
-		return customerPage.map(CustomerDto.Response::of);
+		return customerPage.map(customerMapper::toCustomerResponse);
 	}
 
 	public CustomerDto.Response getCustomerByPhone(String phone) {
 		Customer customer = customerDataProvider.getCustomerByPhone(phone);
-		return CustomerDto.Response.of(customer);
+		return customerMapper.toCustomerResponse(customer);
 	}
 
 	public String excelDownload() {
@@ -89,6 +89,6 @@ public class CustomerService {
 
 		CustomerSummaryInfo customerSummaryInfo = customerDataProvider.getCustomerSummary(agentId);
 
-		return CustomerSummaryResponse.of(customerSummaryInfo);
+		return customerMapper.toCustomerSummaryResponse(customerSummaryInfo);
 	}
 }

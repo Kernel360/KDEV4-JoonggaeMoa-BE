@@ -14,14 +14,4 @@ public class ComplexResponse {
 	private String name;
 	private String type;
 	private String approvedAt;
-
-	public static ComplexResponse of(ComplexResponse complexResponse) {
-		return ComplexResponse.builder()
-			.id(complexResponse.getId())
-			.name(complexResponse.getName())
-			.type(complexResponse.getType())
-			.approvedAt(complexResponse.getApprovedAt())
-			.build();
-	}
-
 }

@@ -38,7 +38,7 @@ public class AgentService {
 		Agent agent = agentDataProvider.getAgentByNameAndPhone(usernameRequest.getName(),
 			usernameRequest.getPhone());
 
-		return UsernameDto.Response.of(agent);
+		return agentMapper.toUsernameResponse(agent);
 	}
 
 	public void logout(String accessToken) {
@@ -47,7 +47,7 @@ public class AgentService {
 
 	public AgentDto.Response getAgent(Long agentId) {
 		Agent agent = agentDataProvider.getAgentById(agentId);
-		return AgentDto.Response.of(agent);
+		return agentMapper.toAgentResponse(agent);
 	}
 
 	public void updateAgent(Long agentId, UpdateAgentRequest updateAgentRequest) {

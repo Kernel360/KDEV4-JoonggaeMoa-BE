@@ -31,7 +31,7 @@ public class MessageService {
 
 	public Page<MessageDto.Response> getMessagePage(Long agentId, Pageable pageable) {
 		Page<Message> messagePage = messageDataProvider.getMessagePageByAgent(agentId, pageable);
-		return messagePage.map(MessageDto.Response::of);
+		return messagePage.map(messageMapper::toMessageResponse);
 	}
 
 	public void createMessages(MessageDto.Request messageRequest) {
@@ -56,12 +56,12 @@ public class MessageService {
 
 	public Page<MessageDto.Response> getReservedMessagePage(Long agentId, Pageable pageable) {
 		Page<Message> messagePage = messageDataProvider.getReservedMessagePageByAgent(agentId, pageable);
-		return messagePage.map(MessageDto.Response::of);
+		return messagePage.map(messageMapper::toMessageResponse);
 	}
 
 	public MessageDto.Response getReservedMessage(Long messageId) {
 		Message message = messageDataProvider.getMessage(messageId);
-		return MessageDto.Response.of(message);
+		return messageMapper.toMessageResponse(message);
 	}
 
 	public void deleteReservedMessage(Long agentId, Long messageId) {

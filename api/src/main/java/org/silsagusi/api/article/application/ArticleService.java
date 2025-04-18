@@ -36,7 +36,7 @@ public class ArticleService {
 
 		Page<Article> articlePage = articleDataProvider.getArticlePage(spec, pageable);
 
-		return articlePage.map(ArticleResponse::of);
+		return articlePage.map(articleMapper::toArticleResponse);
 	}
 
 	public List<RealEstateTypeSummaryResponse> getRealEstateTypeSummary(String period) {

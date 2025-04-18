@@ -16,7 +16,12 @@ public class MessageTemplateMapper {
 
 	public List<MessageTemplateDto.Response> toResponseDtos(List<MessageTemplate> messageTemplates) {
 		return messageTemplates.stream()
-			.map(MessageTemplateDto.Response::of)
-			.toList();
+			.map(messageTemplate ->
+				MessageTemplateDto.Response.builder()
+					.id(messageTemplate.getId())
+					.title(messageTemplate.getTitle())
+					.content(messageTemplate.getContent())
+					.build()
+			).toList();
 	}
 }

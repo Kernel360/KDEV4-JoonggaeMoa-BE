@@ -40,7 +40,7 @@ public class ContractService {
 
 	public Page<ContractDto.Response> getAllContracts(Long agentId, Pageable pageable) {
 		Page<ContractInfo> contractInfoPage = contractDataProvider.getAllContracts(agentId, pageable);
-		return contractInfoPage.map(ContractDto.Response::of);
+		return contractInfoPage.map(contractMapper::toContractResponse);
 	}
 
 	public ContractDetailDto.Response getContractById(Long agentId, String contractId) throws IOException {
@@ -48,7 +48,7 @@ public class ContractService {
 		contractDataProvider.validateAgentAccess(agentId, contract);
 
 		ContractDetailInfo contractDetailInfo = contractDataProvider.getContractInfo(contract);
-		return ContractDetailDto.Response.of(contractDetailInfo);
+		return contractMapper.toContractDetailResponse(contractDetailInfo);
 	}
 
 	public void deleteContract(Long agentId, String contractId) {
@@ -59,6 +59,6 @@ public class ContractService {
 
 	public ContractSummaryResponse getContractSummary(Long agentId) {
 		ContractSummaryInfo contractSummaryInfo = contractDataProvider.getSummary(agentId);
-		return ContractSummaryResponse.of(contractSummaryInfo);
+		return contractMapper.toContractSummaryResponse(contractSummaryInfo);
 	}
 }

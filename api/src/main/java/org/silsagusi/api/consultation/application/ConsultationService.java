@@ -58,25 +58,25 @@ public class ConsultationService {
 	public List<ConsultationDto.Response> getAllConsultationsByDate(Long agentId, LocalDateTime date) {
 
 		List<Consultation> consultationList = consultationDataProvider.getConsultationByDate(agentId, date);
-		return consultationList.stream().map(ConsultationDto.Response::of).toList();
+		return consultationList.stream().map(consultationMapper::toConsultationResponse).toList();
 	}
 
 	public ConsultationDto.Response getConsultation(Long consultationId) {
 		Consultation consultation = consultationDataProvider.getConsultation(consultationId);
-		return ConsultationDto.Response.of(consultation);
+		return consultationMapper.toConsultationResponse(consultation);
 	}
 
 	public ConsultationMonthResponse getMonthInformation(Long agentId, String date) {
 
 		ConsultationMonthInfo monthInformationCommand = consultationDataProvider.getMonthInformation(agentId, date);
-		return ConsultationMonthResponse.of(monthInformationCommand);
+		return consultationMapper.toConsultationMonthResponse(monthInformationCommand);
 	}
 
 	public ConsultationSummaryResponse getConsultationSummary(Long agentId) {
 
 		ConsultationSummaryInfo consultationSummaryInfo = consultationDataProvider.getSummary(agentId);
 
-		return ConsultationSummaryResponse.of(consultationSummaryInfo);
+		return consultationMapper.toConsultationSummaryResponse(consultationSummaryInfo);
 	}
 
 }
