@@ -1,6 +1,7 @@
 package org.silsagusi.core.domain.contract.entity;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import org.silsagusi.core.domain.customer.entity.Customer;
 
@@ -40,6 +41,9 @@ public class Contract {
 	@Column(name = "expired_at")
 	private LocalDate expiredAt;
 
+	@Column(name = "deleted_at")
+	private LocalDateTime deletedAt;
+	
 	private String url;
 
 	private Contract(
@@ -70,6 +74,10 @@ public class Contract {
 			expiredAt,
 			url
 		);
+	}
+
+	public void markAsDeleted() {
+		this.deletedAt = LocalDateTime.now();
 	}
 
 	public void update(
