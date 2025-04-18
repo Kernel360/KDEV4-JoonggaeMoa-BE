@@ -23,20 +23,6 @@ public class AgentDataProvider {
 		agentRepository.save(agent);
 	}
 
-	public void validateExist(Agent agent) {
-		if (agentRepository.existsByUsername(agent.getUsername())) {
-			throw new CustomException(ErrorCode.CONFLICT_USERNAME);
-		}
-
-		if (agentRepository.existsByPhone(agent.getPhone())) {
-			throw new CustomException(ErrorCode.CONFLICT_PHONE);
-		}
-
-		if (agentRepository.existsByEmail(agent.getEmail())) {
-			throw new CustomException(ErrorCode.CONFLICT_EMAIL);
-		}
-	}
-
 	public Agent getAgentById(Long agentId) {
 		return agentRepository.findById(agentId)
 			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));

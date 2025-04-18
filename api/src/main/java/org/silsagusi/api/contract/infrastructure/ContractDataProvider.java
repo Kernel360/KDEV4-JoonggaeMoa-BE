@@ -53,12 +53,6 @@ public class ContractDataProvider {
 		return contract;
 	}
 
-	public void validateAgentAccess(Long agentId, Contract contract) {
-		if (!contract.getCustomerLandlord().getAgent().getId().equals(agentId)) {
-			throw new CustomException(ErrorCode.FORBIDDEN);
-		}
-	}
-
 	public void deleteContract(Contract contract) {
 		contractRepository.delete(contract);
 	}

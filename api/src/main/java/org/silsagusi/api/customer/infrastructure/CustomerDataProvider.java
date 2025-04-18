@@ -1,7 +1,11 @@
 package org.silsagusi.api.customer.infrastructure;
 
-import com.amazonaws.services.s3.AmazonS3;
-import lombok.RequiredArgsConstructor;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.List;
+
 import org.silsagusi.api.agent.infrastructure.AgentRepository;
 import org.silsagusi.core.customResponse.exception.CustomException;
 import org.silsagusi.core.customResponse.exception.ErrorCode;
@@ -13,56 +17,38 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.List;
+import com.amazonaws.services.s3.AmazonS3;
+
+import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
 public class CustomerDataProvider {
 
-    private final AgentRepository agentRepository;
-    private final CustomerRepository customerRepository;
+	private final AgentRepository agentRepository;
+	private final CustomerRepository customerRepository;
 
-    private final AmazonS3 amazonS3;
-    private static final String S3_BUCKET_NAME = "joonggaemoa";
-    private static final String EXCEL_FORMAT_FILENAME = "format.xlsx";
+	private final AmazonS3 amazonS3;
+	private static final String S3_BUCKET_NAME = "joonggaemoa";
+	private static final String EXCEL_FORMAT_FILENAME = "format.xlsx";
 
-    public void createCustomer(Customer customer) {
-        customerRepository.save(customer);
-    }
+	public void createCustomer(Customer customer) {
+		customerRepository.save(customer);
+	}
 
-    public void validateExist(Agent agent, String phone, String email) {
-        if (customerRepository.existsByAgentAndPhone(agent, phone)) {
-            throw new CustomException(ErrorCode.CONFLICT_PHONE);
-        }
+	public void createCustomers(List<Customer> customers) {
+		customerRepository.saveAll(customers);
+	}
 
-        if (customerRepository.existsByAgentAndEmail(agent, email)) {
-            throw new CustomException(ErrorCode.CONFLICT_EMAIL);
-        }
-    }
+	public void deleteCustomer(Customer customer) {
+		customerRepository.delete(customer);
+	}
 
-    public void createCustomers(List<Customer> customers) {
-        customerRepository.saveAll(customers);
-    }
-
-    public void validateAgentAccess(Long agentId, Customer customer) {
-        if (!customer.getAgent().getId().equals(agentId)) {
-            throw new CustomException(ErrorCode.FORBIDDEN);
-        }
-    }
-
-    public void deleteCustomer(Customer customer) {
-        customerRepository.delete(customer);
-    }
-
-    public Customer getCustomer(Long customerId) {
-        Customer customer = customerRepository.findById(customerId)
-            .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_CUSTOMER));
-        return customer;
-    }
+	public Customer getCustomer(Long customerId) {
+		Customer customer = customerRepository.findById(customerId)
+			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_CUSTOMER));
+		return customer;
+	}
 
     public void updateCustomer(UpdateCustomerCommand updateCustomerCommand) {
         Customer customer = updateCustomerCommand.getCustomer();
@@ -73,49 +59,49 @@ public class CustomerDataProvider {
         customerRepository.save(customer);
     }
 
-    public Page<Customer> getAllByAgent(Agent agent, Pageable pageable) {
-        return customerRepository.findAllByAgent(agent, pageable);
-    }
+	public Page<Customer> getAllByAgent(Agent agent, Pageable pageable) {
+		return customerRepository.findAllByAgent(agent, pageable);
+	}
 
-    public Customer getCustomerByPhone(String phone) {
-        return customerRepository.findByPhone(phone).orElse(null);
-    }
+	public Customer getCustomerByPhone(String phone) {
+		return customerRepository.findByPhone(phone).orElse(null);
+	}
 
-    public String getExcelFormatFile() {
-        return amazonS3.getUrl(S3_BUCKET_NAME, EXCEL_FORMAT_FILENAME).toString();
-    }
+	public String getExcelFormatFile() {
+		return amazonS3.getUrl(S3_BUCKET_NAME, EXCEL_FORMAT_FILENAME).toString();
+	}
 
-    public CustomerSummaryInfo getCustomerSummary(Long agentId) {
-        LocalDateTime now = LocalDateTime.now();
+	public CustomerSummaryInfo getCustomerSummary(Long agentId) {
+		LocalDateTime now = LocalDateTime.now();
 
-        LocalDate today = LocalDate.now();
-        LocalDate thisWeekStart = today.with(DayOfWeek.MONDAY);
-        LocalDateTime thisWeekStartTime = thisWeekStart.atStartOfDay();
+		LocalDate today = LocalDate.now();
+		LocalDate thisWeekStart = today.with(DayOfWeek.MONDAY);
+		LocalDateTime thisWeekStartTime = thisWeekStart.atStartOfDay();
 
-        LocalDate lastWeekStart = thisWeekStart.minusWeeks(1);
-        LocalDate lastWeekEnd = thisWeekStart.minusDays(1);
-        LocalDateTime lastWeekStartTime = lastWeekStart.atStartOfDay();
-        LocalDateTime lastWeekEndTime = lastWeekEnd.atTime(LocalTime.MAX);
+		LocalDate lastWeekStart = thisWeekStart.minusWeeks(1);
+		LocalDate lastWeekEnd = thisWeekStart.minusDays(1);
+		LocalDateTime lastWeekStartTime = lastWeekStart.atStartOfDay();
+		LocalDateTime lastWeekEndTime = lastWeekEnd.atTime(LocalTime.MAX);
 
-        Long thisWeekCount = customerRepository.countByAgentIdAndCreatedAtBetween(agentId, thisWeekStartTime, now);
-        Long lastWeekCount = customerRepository.countByAgentIdAndCreatedAtBetween(agentId, lastWeekStartTime,
-            lastWeekEndTime);
+		Long thisWeekCount = customerRepository.countByAgentIdAndCreatedAtBetween(agentId, thisWeekStartTime, now);
+		Long lastWeekCount = customerRepository.countByAgentIdAndCreatedAtBetween(agentId, lastWeekStartTime,
+			lastWeekEndTime);
 
-        double changeRate;
-        if (lastWeekCount == 0) {
-            changeRate = thisWeekCount == 0 ? 0 : 100;
-        } else {
-            changeRate = ((double) (thisWeekCount - lastWeekCount) / lastWeekCount) * 100;
-        }
+		double changeRate;
+		if (lastWeekCount == 0) {
+			changeRate = thisWeekCount == 0 ? 0 : 100;
+		} else {
+			changeRate = ((double)(thisWeekCount - lastWeekCount) / lastWeekCount) * 100;
+		}
 
-        return CustomerSummaryInfo.builder().count(thisWeekCount).rate(changeRate).build();
+		return CustomerSummaryInfo.builder().count(thisWeekCount).rate(changeRate).build();
 
-    }
+	}
 
-    public List<Customer> getCustomerListByIdList(List<Long> customerIdList) {
-        return customerIdList.stream()
-            .map(id -> customerRepository.findById(id)
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER))
-            ).toList();
-    }
+	public List<Customer> getCustomerListByIdList(List<Long> customerIdList) {
+		return customerIdList.stream()
+			.map(id -> customerRepository.findById(id)
+				.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER))
+			).toList();
+	}
 }

@@ -11,6 +11,7 @@ import org.silsagusi.api.survey.application.dto.AnswerDto;
 import org.silsagusi.api.survey.application.dto.SurveyDto;
 import org.silsagusi.api.survey.application.mapper.SurveyMapper;
 import org.silsagusi.api.survey.infrastructure.dataProvider.SurveyDataProvider;
+import org.silsagusi.api.survey.infrastructure.validator.SurveyValidator;
 import org.silsagusi.core.domain.agent.Agent;
 import org.silsagusi.core.domain.consultation.entity.Consultation;
 import org.silsagusi.core.domain.customer.entity.Customer;
@@ -37,6 +38,7 @@ public class SurveyService {
 	private final NotificationDataProvider notificationDataProvider;
 	private final CustomerMapper customerMapper;
 	private final SurveyMapper surveyMapper;
+	private final SurveyValidator surveyValidator;
 
 	@Transactional
 	public void createSurvey(Long agentId, SurveyDto.CreateRequest surveyCreateRequest) {
@@ -52,7 +54,7 @@ public class SurveyService {
 		Agent agent = agentDataProvider.getAgentById(agentId);
 		Survey survey = surveyDataProvider.getSurvey(surveyId);
 
-		surveyDataProvider.validateSurveyWithAgent(agent, survey);
+		surveyValidator.validateAgentAccess(agent, survey);
 
 		surveyDataProvider.deleteSurvey(survey);
 	}
@@ -61,7 +63,7 @@ public class SurveyService {
 	public void updateSurvey(Long agentId, String surveyId, SurveyDto.UpdateRequest surveyUpdateRequest) {
 		Agent agent = agentDataProvider.getAgentById(agentId);
 		Survey survey = surveyDataProvider.getSurvey(surveyId);
-		surveyDataProvider.validateSurveyWithAgent(agent, survey);
+		surveyValidator.validateAgentAccess(agent, survey);
 
 		List<Question> questions = surveyMapper.fromUpdateDtoToQuestions(survey, surveyUpdateRequest.getQuestionList());
 
