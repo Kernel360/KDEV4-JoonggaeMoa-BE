@@ -6,6 +6,7 @@ import org.silsagusi.api.agent.infrastructure.AgentDataProvider;
 import org.silsagusi.api.customer.application.dto.CustomerDto;
 import org.silsagusi.api.customer.application.dto.CustomerSummaryResponse;
 import org.silsagusi.api.customer.infrastructure.CustomerDataProvider;
+import org.silsagusi.api.customer.infrastructure.CustomerValidator;
 import org.silsagusi.core.domain.agent.Agent;
 import org.silsagusi.core.domain.customer.command.UpdateCustomerCommand;
 import org.silsagusi.core.domain.customer.entity.Customer;
@@ -25,6 +26,7 @@ public class CustomerService {
 	private final AgentDataProvider agentDataProvider;
 	private final CustomerMapper customerMapper;
 	private final CustomerExcelParser customerExcelParser;
+	private final CustomerValidator customerValidator;
 
 	public void createCustomer(
 		Long agentId,
@@ -32,7 +34,7 @@ public class CustomerService {
 	) {
 		Agent agent = agentDataProvider.getAgentById(agentId);
 
-		customerDataProvider.validateExist(agent, customerRequestDto.getPhone(), customerRequestDto.getEmail());
+		customerValidator.validateExist(agent, customerRequestDto.getPhone(), customerRequestDto.getEmail());
 
 		Customer customer = customerMapper.toEntity(customerRequestDto, agent);
 
@@ -49,14 +51,14 @@ public class CustomerService {
 
 	public void deleteCustomer(Long agentId, Long customerId) {
 		Customer customer = customerDataProvider.getCustomer(customerId);
-		customerDataProvider.validateAgentAccess(agentId, customer);
+		customerValidator.validateAgentAccess(agentId, customer);
 
 		customerDataProvider.deleteCustomer(customer);
 	}
 
 	public void updateCustomer(Long agentId, Long customerId, CustomerDto.Request customerRequestDto) {
 		Customer customer = customerDataProvider.getCustomer(customerId);
-		customerDataProvider.validateAgentAccess(agentId, customer);
+		customerValidator.validateAgentAccess(agentId, customer);
 
 		UpdateCustomerCommand updateCustomerCommand = customerMapper.toUpdateCustomerCommand(customer,
 			customerRequestDto);
@@ -66,7 +68,7 @@ public class CustomerService {
 
 	public CustomerDto.Response getCustomerById(Long agentId, Long customerId) {
 		Customer customer = customerDataProvider.getCustomer(customerId);
-		customerDataProvider.validateAgentAccess(agentId, customer);
+		customerValidator.validateAgentAccess(agentId, customer);
 		return customerMapper.toCustomerResponse(customer);
 	}
 
@@ -75,11 +77,6 @@ public class CustomerService {
 
 		Page<Customer> customerPage = customerDataProvider.getAllByAgent(agent, pageable);
 		return customerPage.map(customerMapper::toCustomerResponse);
-	}
-
-	public CustomerDto.Response getCustomerByPhone(String phone) {
-		Customer customer = customerDataProvider.getCustomerByPhone(phone);
-		return customerMapper.toCustomerResponse(customer);
 	}
 
 	public String excelDownload() {

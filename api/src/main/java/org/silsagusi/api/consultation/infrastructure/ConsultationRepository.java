@@ -1,5 +1,10 @@
 package org.silsagusi.api.consultation.infrastructure;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+
 import org.silsagusi.core.domain.consultation.entity.Consultation;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -7,16 +12,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
-
 public interface ConsultationRepository extends JpaRepository<Consultation, Long> {
 
-	List<Consultation> findAllByCustomer_AgentIdAndDateBetween(Long agentId, LocalDateTime startdate,
+	List<Consultation> findAllByCustomer_AgentIdAndDateBetweenAndDeletedAtIsNull(Long agentId, LocalDateTime startdate,
 		LocalDateTime endDate);
 
-	Integer countByCustomer_AgentIdAndDateBetween(Long agentId, LocalDateTime startOfDay, LocalDateTime endOfDay);
+	Integer countByCustomer_AgentIdAndDateBetweenAndDeletedAtIsNull(Long agentId, LocalDateTime startOfDay,
+		LocalDateTime endOfDay);
 
 	Page<Consultation> findByDateBetweenAndConsultationStatus(
 		LocalDateTime start, LocalDateTime end,
@@ -28,14 +30,19 @@ public interface ConsultationRepository extends JpaRepository<Consultation, Long
 	@Query("SELECT COUNT(c) FROM consultations c " +
 		"WHERE DATE(c.date) = :today " +
 		"AND c.customer.agent.id = :agentId " +
-		"AND c.consultationStatus IN ('WAITING', 'CONFIRMED', 'COMPLETED')")
+		"AND c.consultationStatus IN ('WAITING', 'CONFIRMED', 'COMPLETED')" +
+		"AND c.deletedAt IS NULL"
+	)
 	int countTodayConsultations(@Param("agentId") Long agentId, @Param("today") LocalDate today);
 
 	// 오늘 남은 상담 (완료 안 된 것)
 	@Query("SELECT COUNT(c) FROM consultations c " +
 		"WHERE DATE(c.date) = :today " +
 		"AND c.customer.agent.id = :agentId " +
-		"AND c.consultationStatus IN ('WAITING', 'CONFIRMED')")
+		"AND c.consultationStatus IN ('WAITING', 'CONFIRMED')" +
+		"AND c.deletedAt IS NULL"
+	)
 	int countTodayRemaining(@Param("agentId") Long agentId, @Param("today") LocalDate today);
 
+	Optional<Consultation> findByIdAndDeletedAtIsNull(Long consultationId);
 }

@@ -1,5 +1,7 @@
 package org.silsagusi.core.domain.message.entity;
 
+import org.hibernate.annotations.DynamicUpdate;
+import org.silsagusi.core.domain.BaseEntity;
 import org.silsagusi.core.domain.agent.Agent;
 
 import jakarta.persistence.Column;
@@ -13,10 +15,11 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@DynamicUpdate
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity(name = "message_templates")
 @Getter
-public class MessageTemplate {
+public class MessageTemplate extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

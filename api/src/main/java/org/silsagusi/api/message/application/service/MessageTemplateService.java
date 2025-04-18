@@ -7,6 +7,7 @@ import org.silsagusi.api.message.application.dto.MessageTemplateDto;
 import org.silsagusi.api.message.application.dto.UpdateMessageTemplateRequest;
 import org.silsagusi.api.message.application.mapper.MessageTemplateMapper;
 import org.silsagusi.api.message.infrastructure.dataProvider.MessageTemplateDataProvider;
+import org.silsagusi.api.message.infrastructure.validator.MessageTemplateValidator;
 import org.silsagusi.core.domain.agent.Agent;
 import org.silsagusi.core.domain.message.entity.MessageTemplate;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,7 @@ public class MessageTemplateService {
 	private final AgentDataProvider agentDataProvider;
 	private final MessageTemplateDataProvider messageTemplateDataProvider;
 	private final MessageTemplateMapper messageTemplateMapper;
+	private final MessageTemplateValidator messageTemplateValidator;
 
 	public void createMessageTemplate(Long agentId, MessageTemplateDto.Request messageTemplateRequest) {
 		Agent agent = agentDataProvider.getAgentById(agentId);
@@ -39,17 +41,16 @@ public class MessageTemplateService {
 		Agent agent = agentDataProvider.getAgentById(agentId);
 		MessageTemplate messageTemplate = messageTemplateDataProvider.getMessageTemplateById(templateId);
 
-		messageTemplateDataProvider.validateMessageTemplateWithAgent(messageTemplate, agent);
+		messageTemplateValidator.validateAgentAccess(messageTemplate, agent);
 
-		messageTemplate.updateMessageTemplate(requestDto.getTitle(), requestDto.getContent());
-		messageTemplateDataProvider.updateMessageTemplate(messageTemplate);
-	}
+        messageTemplateDataProvider.updateMessageTemplate(requestDto.getTitle(), requestDto.getContent(), messageTemplate);
+    }
 
 	public void deleteMessageTemplate(Long agentId, Long templateId) {
 		Agent agent = agentDataProvider.getAgentById(agentId);
 		MessageTemplate messageTemplate = messageTemplateDataProvider.getMessageTemplateById(templateId);
 
-		messageTemplateDataProvider.validateMessageTemplateWithAgent(messageTemplate, agent);
+		messageTemplateValidator.validateAgentAccess(messageTemplate, agent);
 
 		messageTemplateDataProvider.deleteMessageTemplate(messageTemplate);
 	}

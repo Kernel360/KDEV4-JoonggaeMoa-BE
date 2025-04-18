@@ -3,8 +3,6 @@ package org.silsagusi.api.agent.infrastructure;
 import org.silsagusi.api.agent.exception.AgentNotFoundException;
 import org.silsagusi.api.auth.jwt.JwtProvider;
 import org.silsagusi.api.auth.jwt.RefreshTokenStore;
-import org.silsagusi.api.customResponse.exception.CustomException;
-import org.silsagusi.api.customResponse.exception.ErrorCode;
 import org.silsagusi.core.domain.agent.Agent;
 import org.silsagusi.core.domain.agent.command.UpdateAgentCommand;
 import org.springframework.stereotype.Component;
@@ -24,27 +22,14 @@ public class AgentDataProvider {
 		agentRepository.save(agent);
 	}
 
-	public void validateExist(Agent agent) {
-		if (agentRepository.existsByUsername(agent.getUsername())) {
-			throw new CustomException(ErrorCode.CONFLICT_USERNAME);
-		}
-
-		if (agentRepository.existsByPhone(agent.getPhone())) {
-			throw new CustomException(ErrorCode.CONFLICT_PHONE);
-		}
-
-		if (agentRepository.existsByEmail(agent.getEmail())) {
-			throw new CustomException(ErrorCode.CONFLICT_EMAIL);
-		}
-	}
-
 	public Agent getAgentById(Long agentId) {
-		return agentRepository.findById(agentId)
+
+		return agentRepository.findByIdAndDeletedAtIsNull(agentId)
 			.orElseThrow(() -> new AgentNotFoundException(agentId));
 	}
 
 	public Agent getAgentByNameAndPhone(String name, String phone) {
-		return agentRepository.findByNameAndPhone(name, phone)
+		return agentRepository.findByNameAndPhoneAndDeletedAtIsNull(name, phone)
 			.orElseThrow(() -> new AgentNotFoundException(name));
 	}
 

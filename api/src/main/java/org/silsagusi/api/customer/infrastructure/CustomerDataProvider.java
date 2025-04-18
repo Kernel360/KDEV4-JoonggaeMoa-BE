@@ -7,8 +7,6 @@ import java.time.LocalTime;
 import java.util.List;
 
 import org.silsagusi.api.agent.infrastructure.AgentRepository;
-import org.silsagusi.api.customResponse.exception.CustomException;
-import org.silsagusi.api.customResponse.exception.ErrorCode;
 import org.silsagusi.api.customer.exception.CustomerNotFoundException;
 import org.silsagusi.core.domain.agent.Agent;
 import org.silsagusi.core.domain.customer.command.UpdateCustomerCommand;
@@ -26,78 +24,49 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CustomerDataProvider {
 
-	private final AgentRepository agentRepository;
-	private final CustomerRepository customerRepository;
-
-	private final AmazonS3 amazonS3;
 	private static final String S3_BUCKET_NAME = "joonggaemoa";
 	private static final String EXCEL_FORMAT_FILENAME = "format.xlsx";
+	private final AgentRepository agentRepository;
+	private final CustomerRepository customerRepository;
+	private final AmazonS3 amazonS3;
 
 	public void createCustomer(Customer customer) {
 		customerRepository.save(customer);
-	}
-
-	public void validateExist(Agent agent, String phone, String email) {
-		if (customerRepository.existsByAgentAndPhone(agent, phone)) {
-			throw new CustomException(ErrorCode.CONFLICT_PHONE);
-		}
-
-		if (customerRepository.existsByAgentAndEmail(agent, email)) {
-			throw new CustomException(ErrorCode.CONFLICT_EMAIL);
-		}
 	}
 
 	public void createCustomers(List<Customer> customers) {
 		customerRepository.saveAll(customers);
 	}
 
-	public void validateAgentAccess(Long agentId, Customer customer) {
-		if (!customer.getAgent().getId().equals(agentId)) {
-			throw new CustomException(ErrorCode.FORBIDDEN);
-		}
-	}
-
 	public void deleteCustomer(Customer customer) {
-		customerRepository.delete(customer);
+		customer.markAsDeleted();
+		customerRepository.save(customer);
 	}
 
 	public Customer getCustomer(Long customerId) {
-		Customer customer = customerRepository.findById(customerId)
+
+		Customer customer = customerRepository.findByIdAndDeletedAtIsNull(customerId)
 			.orElseThrow(() -> new CustomerNotFoundException(customerId));
 		return customer;
 	}
 
 	public void updateCustomer(UpdateCustomerCommand updateCustomerCommand) {
-		// TODO @DynamicUpdate
 		Customer customer = updateCustomerCommand.getCustomer();
-		String name = updateCustomerCommand.getName();
-		LocalDate birthday = updateCustomerCommand.getBirthday();
-		String phone = updateCustomerCommand.getPhone();
-		String email = updateCustomerCommand.getEmail();
-		String job = updateCustomerCommand.getJob();
-		Boolean isVip = updateCustomerCommand.getIsVip();
-		String memo = updateCustomerCommand.getMemo();
-		Boolean consent = updateCustomerCommand.getConsent();
 
-		customer.updateCustomer(
-			(name == null || name.isBlank()) ? customer.getName() : name,
-			(birthday == null) ? customer.getBirthday() : birthday,
-			(phone == null || phone.isBlank()) ? customer.getPhone() : phone,
-			(email == null || email.isBlank()) ? customer.getEmail() : email,
-			(job == null || job.isBlank()) ? customer.getJob() : job,
-			(isVip == null) ? customer.getIsVip() : isVip,
-			(memo == null || memo.isBlank()) ? customer.getMemo() : memo,
-			(consent == null) ? customer.getConsent() : consent
-		);
+		customer.updateCustomer(updateCustomerCommand.getName(), updateCustomerCommand.getBirthday(),
+			updateCustomerCommand.getPhone(), updateCustomerCommand.getEmail(),
+			updateCustomerCommand.getJob(), updateCustomerCommand.getIsVip(), updateCustomerCommand.getMemo(),
+			updateCustomerCommand.getConsent());
+
 		customerRepository.save(customer);
 	}
 
 	public Page<Customer> getAllByAgent(Agent agent, Pageable pageable) {
-		return customerRepository.findAllByAgent(agent, pageable);
+		return customerRepository.findAllByAgentAndDeletedAtIsNull(agent, pageable);
 	}
 
 	public Customer getCustomerByPhone(String phone) {
-		return customerRepository.findByPhone(phone).orElse(null);
+		return customerRepository.findByPhoneAndDeletedAtIsNull(phone).orElse(null);
 	}
 
 	public String getExcelFormatFile() {
@@ -116,8 +85,10 @@ public class CustomerDataProvider {
 		LocalDateTime lastWeekStartTime = lastWeekStart.atStartOfDay();
 		LocalDateTime lastWeekEndTime = lastWeekEnd.atTime(LocalTime.MAX);
 
-		Long thisWeekCount = customerRepository.countByAgentIdAndCreatedAtBetween(agentId, thisWeekStartTime, now);
-		Long lastWeekCount = customerRepository.countByAgentIdAndCreatedAtBetween(agentId, lastWeekStartTime,
+		Long thisWeekCount = customerRepository.countByAgentIdAndCreatedAtBetweenAndDeletedAtIsNull(agentId,
+			thisWeekStartTime, now);
+		Long lastWeekCount = customerRepository.countByAgentIdAndCreatedAtBetweenAndDeletedAtIsNull(agentId,
+			lastWeekStartTime,
 			lastWeekEndTime);
 
 		double changeRate;
@@ -133,7 +104,8 @@ public class CustomerDataProvider {
 
 	public List<Customer> getCustomerListByIdList(List<Long> customerIdList) {
 		return customerIdList.stream()
-			.map(id -> customerRepository.findById(id)
+
+			.map(id -> customerRepository.findByIdAndDeletedAtIsNull(id)
 				.orElseThrow(() -> new CustomerNotFoundException(id))
 			).toList();
 	}

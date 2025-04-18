@@ -2,6 +2,9 @@ package org.silsagusi.core.domain.survey.entity;
 
 import java.util.List;
 
+import org.hibernate.annotations.DynamicUpdate;
+import org.silsagusi.core.domain.BaseEntity;
+
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
@@ -16,10 +19,11 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@DynamicUpdate
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity(name = "questions")
 @Getter
-public class Question {
+public class Question extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -34,11 +34,11 @@ public class SurveyDataProvider {
 	}
 
 	public Page<Survey> getSurveyPageByAgent(Agent agent, Pageable pageable) {
-		return surveyRepository.findAllByAgent(agent, pageable);
+		return surveyRepository.findAllByAgentAndDeletedAtIsNull(agent, pageable);
 	}
 
 	public Survey getSurvey(String surveyId) {
-		return surveyRepository.findById(surveyId)
+		return surveyRepository.findByIdAndDeletedAtIsNull(surveyId)
 			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
 	}
 
@@ -46,13 +46,7 @@ public class SurveyDataProvider {
 		questionRepository.deleteAll(survey.getQuestionList());
 		survey.getQuestionList().clear();
 
-		survey.updateSurveyTitleDescription(
-			(title == null || title.isBlank()) ? survey.getTitle() :
-				title,
-			(description == null || description.isBlank()) ?
-				survey.getDescription() :
-				description
-		);
+		survey.updateSurveyTitleDescription(title, description);
 
 		survey.getQuestionList().addAll(questionList);
 		questionRepository.saveAll(questionList);
@@ -60,8 +54,10 @@ public class SurveyDataProvider {
 	}
 
 	public void deleteSurvey(Survey survey) {
-		questionRepository.deleteAll(survey.getQuestionList());
-		surveyRepository.delete(survey);
+		survey.getQuestionList().forEach(Question::markAsDeleted);
+		survey.markAsDeleted();
+		questionRepository.saveAll(survey.getQuestionList());
+		surveyRepository.save(survey);
 	}
 
 	public void createAnswer(
@@ -82,12 +78,6 @@ public class SurveyDataProvider {
 	}
 
 	public Page<Answer> getAnswerPage(Long agentId, Pageable pageable) {
-		return answerRepository.findAllByCustomer_AgentId(agentId, pageable);
-	}
-
-	public void validateSurveyWithAgent(Agent agent, Survey survey) {
-		if (!survey.getAgent().equals(agent)) {
-			throw new CustomException(ErrorCode.FORBIDDEN);
-		}
+		return answerRepository.findAllByCustomer_AgentIdAndDeletedAtIsNull(agentId, pageable);
 	}
 }

@@ -1,8 +1,9 @@
 package org.silsagusi.core.domain.customer.entity;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
+import org.hibernate.annotations.DynamicUpdate;
+import org.silsagusi.core.domain.BaseEntity;
 import org.silsagusi.core.domain.agent.Agent;
 
 import jakarta.persistence.Column;
@@ -18,10 +19,11 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@DynamicUpdate
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity(name = "customers")
 @Getter
-public class Customer {
+public class Customer extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -45,9 +47,6 @@ public class Customer {
 
 	private Boolean consent;
 
-	@Column(name = "created_at")
-	private LocalDateTime createdAt;
-
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "agent_id", nullable = false)
 	private Agent agent;
@@ -63,7 +62,6 @@ public class Customer {
 		this.memo = memo;
 		this.consent = consent;
 		this.agent = agent;
-		createdAt = LocalDateTime.now();
 	}
 
 	public static Customer create(
