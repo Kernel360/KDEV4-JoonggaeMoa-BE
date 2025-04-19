@@ -218,3 +218,123 @@ jobs:
               echo "Rollback failed. Please check the logs."
               exit 1
             fi
+
+  cd-batch:
+    if: |
+      (github.event_name == 'push' && github.ref == 'refs/heads/release') ||
+      (github.event_name == 'pull_request' && github.event.pull_request.base.ref == 'release')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: make application-prod.yml
+        run: |
+          cd ./batch/src/main/resources
+          touch ./application-prod.yml
+          echo "${{ secrets.PROPERTIES_PROD}}" > ./application-prod.yml
+        shell: bash
+
+      - name: gradle build for Batch
+        run: |
+          export SPRING_PROFILES_ACTIVE=prod
+          ./gradlew :batch:build -x test
+
+      - name: Docker build & push for batch to prod
+        run: |
+          docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
+          docker build -f api/Dockerfile -t ${{secrets.DOCKER_USERNAME}}/joonggaemoa-batch ./batch
+          docker push ${{secrets.DOCKER_USERNAME}}/joonggaemoa-batch
+
+      - name: Deploy Batch to prod
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST_PROD_BATCH }}
+          username: ubuntu
+          key: ${{ secrets.PRIVATE_KEY }}
+          script: |
+
+            # 초기 상태 설정
+            DEPLOY_STATUS="success"
+
+            # 컨테이너, 이미지 확인
+            echo "Docker Imformations BATCH:"
+            sudo docker ps
+            sudo docker images
+
+            # 기존 컨테이너 ID 조회, 중지
+            OLD_CONTAINER_ID=$(sudo docker ps -aq --filter name=joonggaemoa-batch)
+            sudo docker stop $OLD_CONTAINER_ID 2>/dev/null || true
+
+            # 기존 'new-joonggaemoa-batch' 컨테이너 ID 조회 및 삭제
+            NEW_CONTAINER_ID=$(sudo docker ps -aq --filter name=new-joonggaemoa-batch)
+            if [ -n "$NEW_CONTAINER_ID" ]; then
+              echo "Stopping and removing existing new-joonggaemoa-batch container: $NEW_CONTAINER_ID"
+              sudo docker stop $NEW_CONTAINER_ID 2>/dev/null || true
+              sudo docker rm $NEW_CONTAINER_ID 2>/dev/null || true
+            fi
+
+            # 새로운 컨테이너 pull, run
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/joonggaemoa-batch
+            sudo docker run -d --name new-joonggaemoa-batch -p 8081:8081 \
+              -e SPRING_PROFILES_ACTIVE=prod \
+              ${{ secrets.DOCKER_USERNAME }}/joonggaemoa-batch
+
+            # log
+            sleep 10
+            sudo docker logs new-joonggaemoa-batch
+
+            # 컨테이너 실행 확인
+            if ! sudo docker ps | grep -q new-joonggaemoa-batch; then
+              echo "New Container failed to start"
+
+              # 새로운 컨테이너 실행 실패 시, 기존 컨테이너 재시작
+              if [ -n "$OLD_CONTAINER_ID" ]; then
+                DEPLOY_STATUS="failed"
+                echo "Restarting old container: $OLD_CONTAINER_ID"
+                sudo docker start $OLD_CONTAINER_ID
+
+                # 기존 컨테이너 재시작 확인
+                sleep 10
+                if sudo docker ps | grep -q "$OLD_CONTAINER_ID"; then
+                  echo "Rollback successful. Old container is running."
+                else
+                  echo "Rollback failed. Old container did not start properly."
+                  exit 1
+                fi
+              else
+                DEPLOY_STATUS="old_failed"
+                echo "No old container found. Rollback not possible."
+                exit 1
+              fi
+            else
+              echo "Removing old container..."
+              if [ -n "$OLD_CONTAINER_ID" ]; then
+                if sudo docker ps -a -q --no-trunc | grep -q "$OLD_CONTAINER_ID"; then
+                  sudo docker rm $OLD_CONTAINER_ID || echo "Warning: Failed to remove old container."
+                else
+                  echo "Old container already removed."
+                fi
+              fi
+              echo "Renaming new container to joonggaemoa-batch..."
+              if ! sudo docker rename new-joonggaemoa-batch joonggaemoa-batch; then
+                echo "Rename failed. Please check if the name already exists or another issue occurred."
+                exit 1
+              fi
+              sudo docker image prune -f 2>/dev/null || true
+            fi
+
+            echo "After Deploy:"
+            sudo docker ps
+            sudo docker images
+
+            echo "Deploy Status: $DEPLOY_STATUS"
+            if [ "$DEPLOY_STATUS" == "failed" ]; then
+              echo "New deploy failed. Please check the logs."
+              exit 1
+            elif [ "$DEPLOY_STATUS" == "old_failed" ]; then
+              echo "Rollback failed. Please check the logs."
+              exit 1
+            fi
