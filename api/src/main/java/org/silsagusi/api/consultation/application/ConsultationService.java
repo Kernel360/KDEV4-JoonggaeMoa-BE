@@ -64,6 +64,16 @@ public class ConsultationService {
 		consultationDataProvider.updateConsultation(consultation, updateConsultationCommand);
 	}
 
+	public ConsultationDto.Response getConsultation(Long consultationId) {
+		Consultation consultation = consultationDataProvider.getConsultation(consultationId);
+		return ConsultationDto.Response.fromConsultation(consultation);
+	}
+
+	public List<ConsultationDto.Response> getConsultationsByStatus(Long agentId, String month, String status) {
+		List<Consultation> consultations = consultationDataProvider.getConsultationsByStatus(agentId, month, status);
+		return consultations.stream().map(consultationMapper::toConsultationResponse).toList();
+	}
+
 	public List<ConsultationDto.Response> getAllConsultationsByDate(Long agentId, LocalDateTime date) {
 
 		List<Consultation> consultationList = consultationDataProvider.getConsultationByDate(agentId, date);

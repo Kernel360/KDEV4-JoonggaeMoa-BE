@@ -36,7 +36,28 @@ public class ConsultationController {
 	) {
 		consultationService.createConsultation(consultationRequestDto);
 		return ResponseEntity.ok(ApiResponse.ok());
+	}
 
+	@GetMapping("/api/consultations/{consultationId}")
+	public ResponseEntity<ApiResponse<ConsultationDto.Response>> getConsultation(
+		@PathVariable Long consultationId
+	) {
+		ConsultationDto.Response consultationResponse = consultationService.getConsultation(consultationId);
+		return ResponseEntity.ok(ApiResponse.ok(consultationResponse));
+	}
+
+	@GetMapping("/api/consultations/status")
+	public ResponseEntity<ApiResponse<List<ConsultationDto.Response>>> getConsultationsByStatus(
+		HttpServletRequest request,
+		@RequestParam String month, // 형식 : yyyy-MM
+		@RequestParam String status
+	) {
+		List<ConsultationDto.Response> consultationResponses = consultationService.getConsultationsByStatus(
+			(Long)request.getAttribute("agentId"),
+			month,
+			status
+		);
+		return ResponseEntity.ok(ApiResponse.ok(consultationResponses));
 	}
 
 	@GetMapping("/api/consultations/date")

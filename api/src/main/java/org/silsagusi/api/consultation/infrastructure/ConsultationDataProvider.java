@@ -39,6 +39,16 @@ public class ConsultationDataProvider {
 			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
 	}
 
+	public List<Consultation> getConsultationsByStatus(Long agentId, String month, String status) {
+		YearMonth yearMonth = YearMonth.parse(month);
+		LocalDateTime startOfMonth = yearMonth.atDay(1).atTime(LocalTime.MIN);
+		LocalDateTime endOfMonth = yearMonth.atEndOfMonth().atTime(LocalTime.MAX);
+
+		return consultationRepository.findAllByCustomer_Agent_IdAndDateBetweenAndConsultationStatusAndDeletedAtIsNull(
+			agentId,
+			startOfMonth, endOfMonth, ConsultationStatus.valueOf(status));
+	}
+
 	public Page<Consultation> getConsultationsByCustomer(Customer customer, Pageable pageable) {
 		return consultationRepository.findByCustomerAndDeletedAtIsNull(customer, pageable);
 	}
