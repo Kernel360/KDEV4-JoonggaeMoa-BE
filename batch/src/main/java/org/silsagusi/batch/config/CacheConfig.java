@@ -1,4 +1,4 @@
-package org.silsagusi.core.config;
+package org.silsagusi.batch.config;
 
 import java.util.concurrent.TimeUnit;
 
