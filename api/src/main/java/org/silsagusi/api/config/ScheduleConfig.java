@@ -41,6 +41,7 @@ public class ScheduleConfig {
 	private final ConsultationRepository consultationRepository;
 	private final NotificationDataProvider notificationDataProvider;
 
+	@Async
 	@Scheduled(cron = "0 0/30 * * * *", zone = "Asia/Seoul")
 	@Transactional
 	public void sendScheduledMessages() {
