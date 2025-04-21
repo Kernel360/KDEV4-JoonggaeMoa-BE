@@ -1,8 +1,10 @@
 package org.silsagusi.batch.scrape.naverland.batch;
 
-import java.time.LocalDateTime;
+import java.util.List;
 
-import org.silsagusi.batch.infrastructure.RegionScrapStatusRepository;
+import org.silsagusi.batch.infrastructure.ScrapeStatusRepository;
+import org.silsagusi.batch.scrape.naverland.service.NaverLandArticleRequestService;
+import org.silsagusi.core.domain.article.NaverLandScrapeStatus;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobScope;
@@ -15,32 +17,38 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Configuration
 @RequiredArgsConstructor
-public class ScrapResetJobConfig {
+public class NaverLandArticleBatchJobConfig {
 
-	private static final String JOB_NAME = "scrapStatusResetJob";
+	private static final String JOB_NAME = "naverArticleJob";
+
 	private final JobRepository jobRepository;
 	private final PlatformTransactionManager transactionManager;
-	private final RegionScrapStatusRepository regionScrapStatusRepository;
+	private final ScrapeStatusRepository scrapeStatusRepository;
+	private final NaverLandArticleRequestService naverLandArticleRequestService;
 
 	@Bean
-	public Job scrapStatusResetJob(Step scrapStatusResetStep) {
+	public Job naverArticleJob(Step naverArticleStep) {
 		return new JobBuilder(JOB_NAME, jobRepository)
-			.start(scrapStatusResetStep)
+			.start(naverArticleStep)
 			.build();
 	}
 
 	@Bean
 	@JobScope
-	public Step scrapStatusResetStep() {
+	public Step naverArticleStep() {
 		return new StepBuilder(JOB_NAME + "Step", jobRepository)
-			.tasklet(((contribution, chunkContext) -> {
-				LocalDateTime cutoff = LocalDateTime.now().minusDays(1);
-				regionScrapStatusRepository.resetAllScrapStatus(cutoff);
+			.tasklet((contribution, chunkContext) -> {
+				List<NaverLandScrapeStatus> regions = scrapeStatusRepository.findTop50ByCompletedFalseOrderByIdAsc();
+				for (NaverLandScrapeStatus status : regions) {
+					naverLandArticleRequestService.scrapArticles(status);
+				}
 				return RepeatStatus.FINISHED;
-			}), transactionManager)
+			}, transactionManager)
 			.build();
 	}
 }

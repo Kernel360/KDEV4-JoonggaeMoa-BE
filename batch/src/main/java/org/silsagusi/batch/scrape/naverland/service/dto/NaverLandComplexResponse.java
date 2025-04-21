@@ -5,9 +5,9 @@ import java.util.List;
 import lombok.Data;
 
 @Data
-public class NaverLandMobileComplexResponse {
+public class NaverLandComplexResponse {
 
-	private List<ComplexList> result;
+	private List<NaverLandComplex> result;
 
 	private boolean hasPaidPreSale;
 
@@ -16,7 +16,7 @@ public class NaverLandMobileComplexResponse {
 	private boolean isPreSale;
 
 	@Data
-	public static class ComplexList {
+	public static class NaverLandComplex {
 
 		// house complex number 단지번호
 		private String hscpNo;

@@ -5,16 +5,16 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class ClientAptResponse {
+public class ZigBangDanjiResponse {
 
 	private String localCode;
 
 	private Integer count;
 
-	private List<Apt> list;
+	private List<ZigBangComplex> list;
 
 	@Data
-	private static class Apt {
+	private static class ZigBangComplex {
 
 		private Integer areaHoId;
 

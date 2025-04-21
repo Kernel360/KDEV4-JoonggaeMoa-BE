@@ -5,7 +5,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class NaverLandMobileArticleResponse {
+public class NaverLandArticleResponse {
 
 	private String code;
 	private boolean hasPaidPreSale;
@@ -13,14 +13,11 @@ public class NaverLandMobileArticleResponse {
 	private boolean TIME;
 	private Integer z;
 	private Integer page;
-	private List<Body> body;
+	private List<NaverLandArticle> naverLandArticle;
 
 	// 네이버 부동산 매물 정보 API 응답값 형식
 	@Data
-	public static class Body {
-		// [주석 포맷]
-		// 영문 뜻, 한글 뜻
-		// 예시 (참고사항)
+	public static class NaverLandArticle {
 
 		// article number 매물 번호
 		private String atclNo;

@@ -13,9 +13,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Entity(name = "region_scrap_statuses")
+@Entity(name = "region_scrape_statuses")
 @Getter
-public class RegionScrapStatus {
+public class NaverLandScrapeStatus {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,7 +35,7 @@ public class RegionScrapStatus {
 
 	private String errorMessage;
 
-	public RegionScrapStatus(Region region, Integer lastScrapedPage, Boolean completed, LocalDateTime lastScrapedAt) {
+	public NaverLandScrapeStatus(Region region, Integer lastScrapedPage, Boolean completed, LocalDateTime lastScrapedAt) {
 		this.region = region;
 		this.lastScrapedPage = lastScrapedPage;
 		this.completed = completed;

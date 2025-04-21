@@ -8,10 +8,10 @@ import java.util.Objects;
 import org.silsagusi.batch.infrastructure.ArticleDataProvider;
 import org.silsagusi.batch.scrape.naverland.client.NaverLandApiClient;
 import org.silsagusi.batch.scrape.naverland.service.dto.KakaoMapAddressResponse;
-import org.silsagusi.batch.scrape.naverland.service.dto.NaverLandMobileArticleResponse;
+import org.silsagusi.batch.scrape.naverland.service.dto.NaverLandArticleResponse;
 import org.silsagusi.core.domain.article.Article;
 import org.silsagusi.core.domain.article.Region;
-import org.silsagusi.core.domain.article.RegionScrapStatus;
+import org.silsagusi.core.domain.article.NaverLandScrapeStatus;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -21,33 +21,33 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class NaverLandMobileArticleRequestService {
+public class NaverLandArticleRequestService {
 
 	private final NaverLandApiClient naverLandApiClient;
 	private final KakaoMapAddressLookupService addressLookupService;
 	private final ArticleDataProvider articleDataProvider;
 
 	@Async("scrapExecutor")
-	public void scrapArticles(RegionScrapStatus scrapStatus) {
+	public void scrapArticles(NaverLandScrapeStatus scrapeStatus) {
 		List<Article> articles = new ArrayList<>();
 
 		try {
-			Region region = scrapStatus.getRegion();
-			int page = scrapStatus.getLastScrapedPage();
+			Region region = scrapeStatus.getRegion();
+			int page = scrapeStatus.getLastScrapedPage();
 			boolean hasMore;
 
 			do {
-				NaverLandMobileArticleResponse response = naverLandApiClient.fetchArticleList(
+				NaverLandArticleResponse response = naverLandApiClient.fetchArticleList(
 					String.valueOf(page),
 					region.getCenterLat().toString(),
 					region.getCenterLon().toString(),
-					region.getCortarNo().toString()
+					region.getCortarNo()
 				);
 
-				articles.addAll(mapToArticles(response.getBody(), region));
+				articles.addAll(mapToArticles(response.getNaverLandArticle(), region));
 
 				page++;
-				scrapStatus.updatePage(page, LocalDateTime.now());
+				scrapeStatus.updatePage(page, LocalDateTime.now());
 
 				hasMore = response.isMore();
 
@@ -56,27 +56,25 @@ public class NaverLandMobileArticleRequestService {
 			} while (hasMore);
 
 			// 마지막 페이지까지 완료된 경우
-			if (!hasMore) {
-				scrapStatus.updateCompleted(true);
-			}
+			scrapeStatus.updateCompleted(true);
 		} catch (Exception e) {
-			log.error("스크랩 실패 : {}", scrapStatus.getRegion().getCortarNo(), e);
-			scrapStatus.updateFailed(true, e.getMessage());
+			log.error("스크랩 실패 : {}", scrapeStatus.getRegion().getCortarNo(), e);
+			scrapeStatus.updateFailed(true, e.getMessage());
 		} finally {
 			articleDataProvider.saveArticles(articles);
 		}
 	}
 
-	private List<Article> mapToArticles(List<NaverLandMobileArticleResponse.Body> bodies, Region region) {
+	private List<Article> mapToArticles(List<NaverLandArticleResponse.NaverLandArticle> bodies, Region region) {
 		return bodies.stream()
-			.map(body -> {
-				KakaoMapAddressResponse addr = addressLookupService.lookupAddress(body.getLat(), body.getLng());
+			.map(naverLandArticle -> {
+				KakaoMapAddressResponse addr = addressLookupService.lookupAddress(naverLandArticle.getLat(), naverLandArticle.getLng());
 
 				if (addr == null) {
 					return null;
 				}
 
-				return ArticleDataProvider.createArticle(body, region, addr);
+				return ArticleDataProvider.createArticle(naverLandArticle, region, addr);
 			})
 			.filter(Objects::nonNull)
 			.toList();

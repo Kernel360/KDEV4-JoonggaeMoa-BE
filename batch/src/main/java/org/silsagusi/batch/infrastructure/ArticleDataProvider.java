@@ -2,7 +2,7 @@ package org.silsagusi.batch.infrastructure;
 
 import lombok.RequiredArgsConstructor;
 import org.silsagusi.batch.scrape.naverland.service.dto.KakaoMapAddressResponse;
-import org.silsagusi.batch.scrape.naverland.service.dto.NaverLandMobileArticleResponse;
+import org.silsagusi.batch.scrape.naverland.service.dto.NaverLandArticleResponse;
 import org.silsagusi.core.domain.article.Article;
 import org.silsagusi.core.domain.article.Region;
 import org.silsagusi.core.domain.article.Tag;
@@ -26,36 +26,36 @@ public class ArticleDataProvider {
 	}
 
 	public static Article createArticle(
-		NaverLandMobileArticleResponse.Body body,
+		NaverLandArticleResponse.NaverLandArticle naverLandArticle,
 		Region region,
 		KakaoMapAddressResponse kakaoMapAddressResponse
 	) {
 		Article article = new Article(
-			body.getAtclNo(),
-			body.getCortarNo(),
-			body.getAtclNm(),
-			body.getRletTpNm(),
-			body.getTradTpNm(),
-			body.getFlrInfo(),
-			body.getPrc(),
-			body.getRentPrc(),
-			body.getSpc1(),
-			body.getSpc2(),
-			body.getDirection(),
-			parseConfirmedAt(body.getAtclCfmYmd()),
-			body.getRepImgUrl(),
-			body.getLat(),
-			body.getLng(),
-			body.getAtclFetrDesc(),
-			body.getCpNm(),
-			body.getRltrNm(),
-			body.getMinMviFee(),
-			body.getMaxMviFee(),
-			body.getSbwyInfo(),
-			body.getSvcCont(),
-			body.getGdrNm(),
-			body.getEtRoomCnt(),
-			body.getTradeCheckedByOwner(),
+			naverLandArticle.getAtclNo(),
+			naverLandArticle.getCortarNo(),
+			naverLandArticle.getAtclNm(),
+			naverLandArticle.getRletTpNm(),
+			naverLandArticle.getTradTpNm(),
+			naverLandArticle.getFlrInfo(),
+			naverLandArticle.getPrc(),
+			naverLandArticle.getRentPrc(),
+			naverLandArticle.getSpc1(),
+			naverLandArticle.getSpc2(),
+			naverLandArticle.getDirection(),
+			parseConfirmedAt(naverLandArticle.getAtclCfmYmd()),
+			naverLandArticle.getRepImgUrl(),
+			naverLandArticle.getLat(),
+			naverLandArticle.getLng(),
+			naverLandArticle.getAtclFetrDesc(),
+			naverLandArticle.getCpNm(),
+			naverLandArticle.getRltrNm(),
+			naverLandArticle.getMinMviFee(),
+			naverLandArticle.getMaxMviFee(),
+			naverLandArticle.getSbwyInfo(),
+			naverLandArticle.getSvcCont(),
+			naverLandArticle.getGdrNm(),
+			naverLandArticle.getEtRoomCnt(),
+			naverLandArticle.getTradeCheckedByOwner(),
 			region,
 			kakaoMapAddressResponse.getLotAddress(),
 			kakaoMapAddressResponse.getRoadAddress(),
@@ -72,8 +72,8 @@ public class ArticleDataProvider {
 		);
 
 		// 태그 리스트에 태그가 있을 시 추가
-		if (body.getTagList() != null && !body.getTagList().isEmpty()) {
-			for (String tagName : body.getTagList()) {
+		if (naverLandArticle.getTagList() != null && !naverLandArticle.getTagList().isEmpty()) {
+			for (String tagName : naverLandArticle.getTagList()) {
 				Tag tag = new Tag(tagName);
 				article.addTag(tag);
 			}

@@ -5,7 +5,7 @@ import java.util.List;
 import lombok.Data;
 
 @Data
-public class NaverLandNewRegionResponse {
+public class NaverLandRegionResponse {
 
 	private List<Region> regionList;
 
