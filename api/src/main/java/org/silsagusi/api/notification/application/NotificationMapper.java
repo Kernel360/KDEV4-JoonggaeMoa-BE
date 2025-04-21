@@ -13,6 +13,7 @@ public class NotificationMapper {
 			.type(notification.getType())
 			.content(notification.getContent())
 			.isRead(notification.getIsRead())
+			.createdAt(notification.getCreatedAt())
 			.build();
 	}
 }
