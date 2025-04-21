@@ -1,18 +1,15 @@
 package org.silsagusi.batch.scrape.naverland.service;
 
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
-import java.util.Set;
+import java.util.*;
 
 import ch.hsr.geohash.GeoHash;
 import org.jetbrains.annotations.Nullable;
 import org.silsagusi.batch.infrastructure.RegionRepository;
 import org.silsagusi.batch.infrastructure.ScrapeStatusRepository;
+import org.silsagusi.batch.scrape.naverland.client.NaverLandApiClient;
 import org.silsagusi.batch.scrape.naverland.service.dto.NaverLandRegionResponse;
 import org.silsagusi.core.domain.article.Region;
-import org.silsagusi.core.domain.article.NaverLandScrapeStatus;
+import org.silsagusi.core.domain.article.ScrapeStatus;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -30,6 +27,7 @@ public class RegionInitializer {
 
 	private final RegionRepository regionRepository;
 	private final ScrapeStatusRepository scrapeStatusRepository;
+	private final NaverLandApiClient naverLandApiClient;
 
 	@Transactional
 	@EventListener(ApplicationReadyEvent.class)
@@ -45,24 +43,31 @@ public class RegionInitializer {
 				continue;
 
 			try {
-				List<Region> regions = new NaverLandRegionResponse().getRegionList().stream()
-					.map(r -> {
+				NaverLandRegionResponse response = naverLandApiClient.fetchRegionList(bjdcode);
+
+				if (response == null || response.getRegionList() == null || response.getRegionList().isEmpty()) {
+					continue;
+				}
+
+				List<Region> regions = response.getRegionList().stream()
+					.map(it -> {
 						Region region = new Region(
-							r.getCortarNo(),
-							r.getCenterLat(),
-							r.getCenterLon(),
-							r.getCortarName(),
-							r.getCortarType()
+							it.getCortarNo(),
+							it.getCenterLat(),
+							it.getCenterLon(),
+							it.getCortarName(),
+							it.getCortarType()
 						);
-						region.updateGeohash(updateGeohashValue(r.getCenterLat(), r.getCenterLon()));
+						region.updateGeohash(updateGeohashValue(it.getCenterLat(), it.getCenterLon()));
 						return region;
 					})
 					.toList();
 
 				regionRepository.saveAll(regions);
+
 				scrapeStatusRepository.saveAll(
 					regions.stream()
-						.map(region -> new NaverLandScrapeStatus(
+						.map(region -> new ScrapeStatus(
 							region,
 							1,
 							false,
@@ -75,11 +80,10 @@ public class RegionInitializer {
 					.map(Region::getCortarNo)
 					.forEach(queue::add);
 
-				log.info("법정동 코드 {} 저장 완료. 현재 누적 저장 {}개 저장됨", bjdcode, regionRepository.count());
-				Thread.sleep(100);
+				Thread.sleep((long)(300 + Math.random() * 400));
 
 			} catch (Exception e) {
-				log.error("법정동 코드 {} 저장 에러 발생: {}", bjdcode, e.getCause());
+				log.error("법정동 코드 {} 저장 에러 발생: {}", bjdcode, e.getMessage());
 			}
 		}
 	}

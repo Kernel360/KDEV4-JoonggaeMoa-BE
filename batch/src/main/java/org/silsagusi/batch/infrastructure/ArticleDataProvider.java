@@ -3,9 +3,9 @@ package org.silsagusi.batch.infrastructure;
 import lombok.RequiredArgsConstructor;
 import org.silsagusi.batch.scrape.naverland.service.dto.KakaoMapAddressResponse;
 import org.silsagusi.batch.scrape.naverland.service.dto.NaverLandArticleResponse;
+import org.silsagusi.batch.scrape.zigbang.service.dto.ZigBangItemCatalogResponse;
 import org.silsagusi.core.domain.article.Article;
 import org.silsagusi.core.domain.article.Region;
-import org.silsagusi.core.domain.article.Tag;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -25,7 +26,7 @@ public class ArticleDataProvider {
 		articleRepository.saveAll(articles);
 	}
 
-	public static Article createArticle(
+	public static Article createNaverLandArticle(
 		NaverLandArticleResponse.NaverLandArticle naverLandArticle,
 		Region region,
 		KakaoMapAddressResponse kakaoMapAddressResponse
@@ -71,15 +72,75 @@ public class ArticleDataProvider {
 			kakaoMapAddressResponse.getZoneNo()
 		);
 
-		// 태그 리스트에 태그가 있을 시 추가
-		if (naverLandArticle.getTagList() != null && !naverLandArticle.getTagList().isEmpty()) {
-			for (String tagName : naverLandArticle.getTagList()) {
-				Tag tag = new Tag(tagName);
-				article.addTag(tag);
-			}
-		}
-
 		return article;
+	}
+
+	public static Article createZigBangArticle(
+		ZigBangItemCatalogResponse.ZigBangItemCatalog item
+	) {
+		Article article = new Article(
+			String.valueOf(item.getAreaHoId()),
+			null,
+			item.getAreaDanjiName() + " " + item.getDong(),
+			"아파트",
+			mapTranType(item.getTranType()),
+			item.getFloor(),
+			item.getDepositMin(),
+			item.getRentMin(),
+			item.getRoomTypeTitle().getM2(),
+			String.valueOf(item.getSizeM2()),
+			null,
+			null,
+			item.getThumbnailUrl(),
+			null,
+			null,
+			item.getItemTitle(),
+			mapItemType(item.getItemType()), // 거래유형
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null
+		);
+		return article;
+	}
+
+	private static String mapTranType(String tranType) {
+		if (Objects.equals(tranType, "trade")) {
+			return "매매";
+		} else if (Objects.equals(tranType, "charter")) {
+			return "전세";
+		} else if (Objects.equals(tranType, "rental")) {
+			return "월세";
+		} else {
+			return null;
+		}
+	}
+
+	private static String mapItemType(String itemType) {
+		if (Objects.equals(itemType, "partner")) {
+			return "직방(제휴 매물)"; // 직방 제휴 매물
+		} else if (Objects.equals(itemType, "self_ad")) {
+			return "직방(개인 매물)"; // 개인 매물, 유료 광고 적용됨
+		} else {
+			return "직방";
+		}
 	}
 
 	private static LocalDate parseConfirmedAt(String dateStr) {

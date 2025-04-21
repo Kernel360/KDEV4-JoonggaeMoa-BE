@@ -1,7 +1,6 @@
 package org.silsagusi.api.article.application.dto;
 
 import java.time.LocalDate;
-import java.util.List;
 
 import org.silsagusi.core.domain.article.Article;
 
@@ -28,7 +27,6 @@ public class ArticleResponse {
 	private Double latitude;
 	private Double longitude;
 	private String atclFetrDesc;
-	private List<String> tags;
 	private String companyName;
 	private String agentName;
 	private String subwayInfo;
@@ -50,7 +48,7 @@ public class ArticleResponse {
 		return ArticleResponse.builder()
 			.id(article.getId())
 			.articleCode(article.getArticleCode())
-			.dongCode(article.getDongCode())
+			.dongCode(article.getBjdCode())
 			.articleName(article.getArticleName())
 			.articleType(article.getArticleType())
 			.tradeType(article.getTradeType())
@@ -65,11 +63,6 @@ public class ArticleResponse {
 			.latitude(article.getLatitude())
 			.longitude(article.getLongitude())
 			.atclFetrDesc(article.getArticleDesc())
-			.tags(article.getTags().stream().map(
-				articleTag -> articleTag
-					.getTag()
-					.getName())
-				.toList())
 			.companyName(article.getCompanyName())
 			.agentName(article.getAgency())
 			.subwayInfo(article.getSubway())

@@ -18,7 +18,7 @@ import lombok.RequiredArgsConstructor;
 
 @Configuration
 @RequiredArgsConstructor
-public class ScrapeResetJobConfig {
+public class NaverLandScrapeResetJobConfig {
 
 	private static final String JOB_NAME = "scrapStatusResetJob";
 	private final JobRepository jobRepository;

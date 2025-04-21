@@ -16,7 +16,7 @@ public class ZigBangApiClient {
 
 	private final WebClient zigBangWebClient;
 
-	private ZigBangItemCatalogResponse fetchItemCatalog(String geohash) {
+	public ZigBangItemCatalogResponse fetchItemCatalog(String geohash) {
 		final String local_code = fetchLocalCode(geohash);
 		return zigBangWebClient.get()
 			.uri(uriBuilder -> uriBuilder.path(
@@ -27,7 +27,7 @@ public class ZigBangApiClient {
 //					.queryParam("tranTypeIn[2]", "rental") // 월세
 //					.queryParam("includeOfferItem", "true") // 신규 분양 포함
 					.queryParam("offset", "0")
-					.queryParam("limit", "100")
+					.queryParam("limit", "2100000000")
 					.build()
 			)
 			.accept(MediaType.APPLICATION_JSON)
@@ -36,11 +36,11 @@ public class ZigBangApiClient {
 			.block();
 	}
 
-	private String fetchLocalCode(String geohash) {
+	public String fetchLocalCode(String geohash) {
 		return Objects.requireNonNull(zigBangWebClient.get()
 				.uri(uriBuilder -> uriBuilder.path("/apt/locals/polygon")
 					.queryParam("geohash", geohash)
-					.queryParam("level", "local3")
+					.queryParam("level", "local3") // 동단위
 					.queryParam("polygon", "false")
 					.build())
 				.accept(MediaType.APPLICATION_JSON)
@@ -51,7 +51,7 @@ public class ZigBangApiClient {
 	}
 	// TODO: 로컬코드는 region initializer 로 넣기
 
-	private ZigBangDanjiResponse fetchDanjis(String geohash) {
+	public ZigBangDanjiResponse fetchDanjis(String geohash) {
 		return zigBangWebClient.get()
 			.uri(uriBuilder -> uriBuilder.path("/apt/locals/prices/on-danjis")
 //				.queryParam("minPynArea", "10평이하") // 최소 평수

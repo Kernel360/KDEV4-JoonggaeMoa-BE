@@ -55,7 +55,6 @@ public class ArticleMapper {
 			.zipCode(article.getZoneNo())
 			.imageUrl(article.getImageUrl())
 			.direction(article.getDirection())
-			.tags(article.getTags())
 			.subwayInfo(article.getSubwayInfo())
 			.companyId(article.getCompanyId())
 			.companyName(article.getCompanyName())

@@ -6,8 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity(name = "articles")
 @Getter
@@ -24,7 +22,7 @@ public class Article {
 	private Region region;
 
 	private String articleCode;     // atclNo 매물번호
-	private String dongCode;        // cortarNo 법정동코드
+	private String bjdCode;        // cortarNo 법정동코드
 	private String articleName;     // atclNm 매물이름 (아파트/오피스텔은 단지명, 빌라는 빌라, 상가는 일반상가 등)
 	private String articleType;     // rletTpNm 매물유형명 (아파트, 오피스텔 등)
 	private String tradeType;       // tradTpNm 거래유형 (매매, 전세 등)
@@ -39,10 +37,6 @@ public class Article {
 	private Double latitude;        // lat 위도
 	private Double longitude;       // lng 경도
 	private String articleDesc;     // articleDesc 매물 특징 설명
-
-	@OneToMany(mappedBy = "article", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<ArticleTag> tags = new ArrayList<>();  // tagList
-
 	private String companyName;     // cpNm 정보 제공 출처
 	private String agency;          // rltrNm 매물을 올린 공인중개사무소
 	private Integer priceRoomMin;   // minMviFee 최소 단기임대 비용
@@ -68,7 +62,7 @@ public class Article {
 	private String addressZipCode;
 
 	public Article(
-		String articleCode, String dongCode, String articleName,
+		String articleCode, String bjdCode, String articleName,
 		String articleType, String tradeType, String floors,
 		Integer priceSale, Integer priceRent, String areaSupply,
 		String areaExclusive, String direction, LocalDate confirmedAt,
@@ -83,7 +77,7 @@ public class Article {
 		String addressFullRoadNo2, String addressBuildingName, String addressZipCode
 	) {
 		this.articleCode = articleCode;
-		this.dongCode = dongCode;
+		this.bjdCode = bjdCode;
 		this.articleName = articleName;
 		this.articleType = articleType;
 		this.tradeType = tradeType;
@@ -120,10 +114,5 @@ public class Article {
 		this.addressFullRoadNo2 = addressFullRoadNo2;
 		this.addressBuildingName = addressBuildingName;
 		this.addressZipCode = addressZipCode;
-	}
-
-	public void addTag(Tag tag) {
-		ArticleTag articleTag = new ArticleTag(this, tag);
-		this.tags.add(articleTag);
 	}
 }

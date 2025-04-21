@@ -6,88 +6,48 @@ import java.util.List;
 
 @Data
 public class ZigBangDanjiResponse {
-
-	private String localCode;
-
-	private Integer count;
-
-	private List<ZigBangComplex> list;
+	private List<ZigBangDanji> filtered;
+	private List<String> unfiltered;
 
 	@Data
-	private static class ZigBangComplex {
-
-		private Integer areaHoId;
-
-		// 거래 종류
-		private String tranType;
-
-		private Integer areaDanjiId;
-
-		// 단지명
-		private String areaDanjiName;
-
-		private Integer danjiRoomTypeId;
-
-		// 구
-		private String local2;
-
-		// 동
-		private String local3;
-
-		private Boolean isPriceRange;
-
-		// 보증금(최소금액)
-		private Integer depositMin;
-
-		// 월세(최소금액)
-		private Integer rentMin;
-
-		private RoomTypeTitle roomTypeTitle;
-
-		private Double sizeContractM2;
-
-		private Double sizeM2;
-
+	public static class ZigBangDanji {
+		private Integer id;
+		private String name;
+		private Double lat;
+		private Double lng;
+		private Integer 총세대수;
+		private String 사용승인일;
+		private String 서비스구분;
+		private String real_type;
+		private String sido;
+		private String gugun;
 		private String dong;
-
-		private String floor;
-
-		// 매물 설명
-		private String itemTitle;
-
-		private Integer zzimCount;
-
-		private Boolean isZzim;
-
-		private Boolean isActualItemChecked;
-
-		private String thumbnailUrl;
-
-		private Boolean isFloorPlanThumbnail;
-
-		private Integer itemCount;
-
-		private List<ItemId> itemIdList;
-
-		// 이미지 URL 리스트
-		private List<String> agentThumbnailUrls;
+		private Boolean isNewStay;
+		private String image;
+		private List<String> view_sources;
+		private Boolean is후분양;
+		private List<Price> price;
 	}
 
 	@Data
-	private static class RoomTypeTitle {
-
-		private String m2;
-
-		private String p;
+	public static class Price {
+		private List<Sales> sales;
+		private List<Offer> offer;
 	}
 
 	@Data
-	private static class ItemId {
+	public static class Sales {
+		private Integer min;
+		private Integer max;
+		private Integer avg;
+		private Integer perArea;
+	}
 
-		// 매물 출처
-		private String itemSource;
-
-		private Integer itemId;
-
+	@Data
+	public static class Offer {
+		private Integer min;
+		private Integer max;
+		private Integer avg;
+		private Integer perArea;
 	}
 }

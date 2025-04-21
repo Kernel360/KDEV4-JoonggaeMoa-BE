@@ -13,7 +13,7 @@ public class NaverLandArticleResponse {
 	private boolean TIME;
 	private Integer z;
 	private Integer page;
-	private List<NaverLandArticle> naverLandArticle;
+	private List<NaverLandArticle> body;
 
 	// 네이버 부동산 매물 정보 API 응답값 형식
 	@Data
@@ -113,13 +113,6 @@ public class NaverLandArticleResponse {
 		// article feature? description 매물 특징 설명
 		// 테헤란로 밀접 삼성역과 포스코사거리 도보권 상권우수 사무실업무용 사용
 		private String atclFetrDesc;
-
-		// 태그 리스트
-		// 0	4년이내
-		// 1	역세권
-		// 2	방한개
-		// 3	화장실한개
-		private List<String> tagList;
 
 		// company id : 정보 제공 출처 코드
 		// NEONET : 부동산뱅크

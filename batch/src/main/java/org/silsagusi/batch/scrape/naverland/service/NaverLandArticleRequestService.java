@@ -11,7 +11,7 @@ import org.silsagusi.batch.scrape.naverland.service.dto.KakaoMapAddressResponse;
 import org.silsagusi.batch.scrape.naverland.service.dto.NaverLandArticleResponse;
 import org.silsagusi.core.domain.article.Article;
 import org.silsagusi.core.domain.article.Region;
-import org.silsagusi.core.domain.article.NaverLandScrapeStatus;
+import org.silsagusi.core.domain.article.ScrapeStatus;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +28,7 @@ public class NaverLandArticleRequestService {
 	private final ArticleDataProvider articleDataProvider;
 
 	@Async("scrapExecutor")
-	public void scrapArticles(NaverLandScrapeStatus scrapeStatus) {
+	public void scrapNaverArticles(ScrapeStatus scrapeStatus) {
 		List<Article> articles = new ArrayList<>();
 
 		try {
@@ -37,46 +37,53 @@ public class NaverLandArticleRequestService {
 			boolean hasMore;
 
 			do {
-				NaverLandArticleResponse response = naverLandApiClient.fetchArticleList(
+				NaverLandArticleResponse nlrResponse = naverLandApiClient.fetchArticleList(
 					String.valueOf(page),
 					region.getCenterLat().toString(),
 					region.getCenterLon().toString(),
 					region.getCortarNo()
 				);
 
-				articles.addAll(mapToArticles(response.getNaverLandArticle(), region));
-
-				page++;
+				articles.addAll(mapNaverLandToArticles(nlrResponse.getBody(), region));
 				scrapeStatus.updatePage(page, LocalDateTime.now());
-
-				hasMore = response.isMore();
+				hasMore = nlrResponse.isMore();
+				page++;
 
 				// 3~7초 랜덤 딜레이
-				Thread.sleep((long)(3000 + Math.random() * 4000));
+				Thread.sleep((long) (3000 + Math.random() * 4000));
 			} while (hasMore);
+
+			articleDataProvider.saveArticles(articles);
 
 			// 마지막 페이지까지 완료된 경우
 			scrapeStatus.updateCompleted(true);
+
 		} catch (Exception e) {
 			log.error("스크랩 실패 : {}", scrapeStatus.getRegion().getCortarNo(), e);
 			scrapeStatus.updateFailed(true, e.getMessage());
-		} finally {
-			articleDataProvider.saveArticles(articles);
 		}
 	}
 
-	private List<Article> mapToArticles(List<NaverLandArticleResponse.NaverLandArticle> bodies, Region region) {
+	private List<Article> mapNaverLandToArticles(
+		List<NaverLandArticleResponse.NaverLandArticle> bodies,
+		Region region
+	) {
 		return bodies.stream()
 			.map(naverLandArticle -> {
-				KakaoMapAddressResponse addr = addressLookupService.lookupAddress(naverLandArticle.getLat(), naverLandArticle.getLng());
+				KakaoMapAddressResponse addr =
+					addressLookupService.lookupAddress(
+						naverLandArticle.getLat(),
+						naverLandArticle.getLng()
+					);
 
 				if (addr == null) {
 					return null;
-				}
 
-				return ArticleDataProvider.createArticle(naverLandArticle, region, addr);
-			})
-			.filter(Objects::nonNull)
+				}
+				return ArticleDataProvider.createNaverLandArticle(
+					naverLandArticle, region, addr
+				);
+			}).filter(Objects::nonNull)
 			.toList();
 	}
 }
