@@ -10,8 +10,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.silsagusi.core.customResponse.exception.CustomException;
-import org.silsagusi.core.customResponse.exception.ErrorCode;
+import org.silsagusi.api.customResponse.exception.CustomException;
+import org.silsagusi.api.customResponse.exception.ErrorCode;
+import org.silsagusi.core.domain.consultation.command.UpdateConsultationCommand;
 import org.silsagusi.core.domain.consultation.entity.Consultation;
 import org.silsagusi.core.domain.consultation.entity.Consultation.ConsultationStatus;
 import org.silsagusi.core.domain.consultation.info.ConsultationMonthInfo;
@@ -33,23 +34,17 @@ public class ConsultationDataProvider {
 		Consultation consultation = new Consultation(
 			customer,
 			consultationDate,
-			ConsultationStatus.CONFIRMED
+			consultationStatus
 		);
 
 		consultationRepository.save(consultation);
 	}
 
 	public Consultation getConsultation(Long consultationId) {
-		Consultation consultation = consultationRepository.findById(consultationId)
+		Consultation consultation = consultationRepository.findByIdAndDeletedAtIsNull(consultationId)
 			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
 
 		return consultation;
-	}
-
-	public void validateAgentAccess(Long agentId, Consultation consultation) {
-		if (!consultation.getCustomer().getAgent().getId().equals(agentId)) {
-			throw new CustomException(ErrorCode.FORBIDDEN);
-		}
 	}
 
 	public void updateStatus(Consultation consultation, String consultationStatus) {
@@ -57,24 +52,11 @@ public class ConsultationDataProvider {
 		consultationRepository.save(consultation);
 	}
 
-	public void updateConcsultation(
-		Consultation consultation, LocalDateTime date, String purpose, String interestProperty, String interestLocation,
-		String contractType, String assetStatus, String memo, String consultationStatus
-	) {
-
-		consultation.updateConsultation(
-			(date == null) ? consultation.getDate() : date,
-			(purpose == null || purpose.isBlank()) ? consultation.getPurpose() : purpose,
-			(interestProperty == null || interestProperty.isBlank()) ? consultation.getInterestProperty() :
-				interestProperty,
-			(interestLocation == null || interestLocation.isBlank()) ? consultation.getInterestLocation() :
-				interestLocation,
-			(contractType == null || contractType.isBlank()) ? consultation.getContractType() : contractType,
-			(assetStatus == null || assetStatus.isBlank()) ? consultation.getAssetStatus() : assetStatus,
-			(memo == null || memo.isBlank()) ? consultation.getMemo() : memo,
-			(consultationStatus == null) ? consultation.getConsultationStatus() :
-				ConsultationStatus.valueOf(consultationStatus)
-		);
+	public void updateConsultation(Consultation consultation, UpdateConsultationCommand updateConsultationCommand) {
+		consultation.updateConsultation(updateConsultationCommand.getDate(), updateConsultationCommand.getPurpose(),
+			updateConsultationCommand.getInterestProperty(), updateConsultationCommand.getInterestLocation(),
+			updateConsultationCommand.getContractType(), updateConsultationCommand.getAssetStatus(),
+			updateConsultationCommand.getMemo());
 		consultationRepository.save(consultation);
 	}
 
@@ -82,7 +64,8 @@ public class ConsultationDataProvider {
 		LocalDateTime startOfDay = date.toLocalDate().atStartOfDay();
 		LocalDateTime endOfDay = date.toLocalDate().atTime(LocalTime.MAX);
 
-		List<Consultation> consultationList = consultationRepository.findAllByCustomer_AgentIdAndDateBetween(agentId,
+		List<Consultation> consultationList = consultationRepository.findAllByCustomer_AgentIdAndDateBetweenAndDeletedAtIsNull(
+			agentId,
 			startOfDay, endOfDay);
 		return consultationList;
 	}
@@ -95,7 +78,8 @@ public class ConsultationDataProvider {
 		int days = yearMonth.lengthOfMonth();
 
 		// status information
-		List<Consultation> consultations = consultationRepository.findAllByCustomer_AgentIdAndDateBetween(agentId,
+		List<Consultation> consultations = consultationRepository.findAllByCustomer_AgentIdAndDateBetweenAndDeletedAtIsNull(
+			agentId,
 			startOfMonth, endOfMonth);
 
 		Map<ConsultationStatus, Long> statusCountMap = consultations.stream()
@@ -110,7 +94,8 @@ public class ConsultationDataProvider {
 			LocalDateTime startOfDay = localDate.atTime(LocalTime.MIN);
 			LocalDateTime endOfDay = localDate.atTime(LocalTime.MAX);
 			dailyCount.set(i,
-				consultationRepository.countByCustomer_AgentIdAndDateBetween(agentId, startOfDay, endOfDay));
+				consultationRepository.countByCustomer_AgentIdAndDateBetweenAndDeletedAtIsNull(agentId, startOfDay,
+					endOfDay));
 		}
 
 		return ConsultationMonthInfo.builder()

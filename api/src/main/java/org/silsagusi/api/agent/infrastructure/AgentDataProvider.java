@@ -1,10 +1,10 @@
 package org.silsagusi.api.agent.infrastructure;
 
+import org.silsagusi.api.agent.exception.AgentNotFoundException;
 import org.silsagusi.api.auth.jwt.JwtProvider;
 import org.silsagusi.api.auth.jwt.RefreshTokenStore;
-import org.silsagusi.core.customResponse.exception.CustomException;
-import org.silsagusi.core.customResponse.exception.ErrorCode;
 import org.silsagusi.core.domain.agent.Agent;
+import org.silsagusi.core.domain.agent.command.UpdateAgentCommand;
 import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.Claims;
@@ -22,31 +22,22 @@ public class AgentDataProvider {
 		agentRepository.save(agent);
 	}
 
-	public void validateExist(Agent agent) {
-		if (agentRepository.existsByUsername(agent.getUsername())) {
-			throw new CustomException(ErrorCode.CONFLICT_USERNAME);
-		}
-
-		if (agentRepository.existsByPhone(agent.getPhone())) {
-			throw new CustomException(ErrorCode.CONFLICT_PHONE);
-		}
-
-		if (agentRepository.existsByEmail(agent.getEmail())) {
-			throw new CustomException(ErrorCode.CONFLICT_EMAIL);
-		}
-	}
-
 	public Agent getAgentById(Long agentId) {
-		return agentRepository.findById(agentId)
-			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
+
+		return agentRepository.findByIdAndDeletedAtIsNull(agentId)
+			.orElseThrow(() -> new AgentNotFoundException(agentId));
 	}
 
 	public Agent getAgentByNameAndPhone(String name, String phone) {
-		return agentRepository.findByNameAndPhone(name, phone)
-			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
+		return agentRepository.findByNameAndPhoneAndDeletedAtIsNull(name, phone)
+			.orElseThrow(() -> new AgentNotFoundException(name));
 	}
 
-	public void updateAgent(Agent agent) {
+	public void updateAgent(Agent agent, UpdateAgentCommand updateAgentCommand) {
+		agent.updateAgent(updateAgentCommand.getName(), updateAgentCommand.getPhone(), updateAgentCommand.getEmail(),
+			updateAgentCommand.getUsername(), updateAgentCommand.getOffice(), updateAgentCommand.getRegion(),
+			updateAgentCommand.getBusinessNo());
+
 		agentRepository.save(agent);
 	}
 

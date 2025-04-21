@@ -1,7 +1,5 @@
 package org.silsagusi.api.message.application.dto;
 
-import org.silsagusi.core.domain.message.entity.MessageTemplate;
-
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -30,13 +28,5 @@ public class MessageTemplateDto {
 		private Long id;
 		private String title;
 		private String content;
-
-		public static Response of(MessageTemplate messageTemplate) {
-			return Response.builder()
-				.id(messageTemplate.getId())
-				.title(messageTemplate.getTitle())
-				.content(messageTemplate.getContent())
-				.build();
-		}
 	}
 }

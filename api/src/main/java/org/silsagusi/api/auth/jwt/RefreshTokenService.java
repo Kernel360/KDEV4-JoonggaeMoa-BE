@@ -1,8 +1,8 @@
 package org.silsagusi.api.auth.jwt;
 
 import org.silsagusi.api.agent.infrastructure.AgentRepository;
-import org.silsagusi.core.customResponse.exception.CustomException;
-import org.silsagusi.core.customResponse.exception.ErrorCode;
+import org.silsagusi.api.customResponse.exception.CustomException;
+import org.silsagusi.api.customResponse.exception.ErrorCode;
 import org.silsagusi.core.domain.agent.Agent;
 import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Service;

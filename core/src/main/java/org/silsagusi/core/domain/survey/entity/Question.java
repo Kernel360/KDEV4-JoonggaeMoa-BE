@@ -2,6 +2,9 @@ package org.silsagusi.core.domain.survey.entity;
 
 import java.util.List;
 
+import org.hibernate.annotations.DynamicUpdate;
+import org.silsagusi.core.domain.BaseEntity;
+
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
@@ -16,10 +19,11 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@DynamicUpdate
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity(name = "questions")
 @Getter
-public class Question {
+public class Question extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,17 +44,17 @@ public class Question {
 	@CollectionTable(name = "question_options", joinColumns = @JoinColumn(name = "question_id"))
 	private List<String> options;
 
-	public Question(Survey survey,
-		String content,
-		String type,
-		Boolean isRequired,
-		List<String> options
-	) {
+	private Question(Survey survey, String content, String type, Boolean isRequired, List<String> options) {
 		this.survey = survey;
 		this.content = content;
 		this.type = type;
 		this.isRequired = isRequired;
 		this.options = options;
+	}
+
+	public static Question create(Survey survey, String content, String type, Boolean isRequired,
+		List<String> options) {
+		return new Question(survey, content, type, isRequired, options);
 	}
 
 	public void updateQuestion(

@@ -1,11 +1,9 @@
 package org.silsagusi.api.contract.application.dto;
 
+import java.time.LocalDate;
+
 import lombok.Builder;
 import lombok.Getter;
-
-import org.silsagusi.core.domain.contract.info.ContractDetailInfo;
-
-import java.time.LocalDate;
 
 public class ContractDetailDto {
 
@@ -24,22 +22,5 @@ public class ContractDetailDto {
 		private LocalDate createdAt;
 		private LocalDate expiredAt;
 		private String url;
-
-		public static Response of(ContractDetailInfo info) {
-			return Response.builder()
-				.id(info.getId())
-				.landlordId(info.getLandlordId())
-				.tenantId(info.getTenantId())
-				.landlordName(info.getLandlordName())
-				.tenantName(info.getLandlordName())
-				.landlordPhone(info.getLandlordPhone())
-				.tenantPhone(info.getTenantPhone())
-				.landlordEmail(info.getLandlordEmail())
-				.tenantEmail(info.getTenantEmail())
-				.createdAt(info.getCreatedAt())
-				.expiredAt(info.getExpiredAt())
-				.url(info.getUrl())
-				.build();
-		}
 	}
 }

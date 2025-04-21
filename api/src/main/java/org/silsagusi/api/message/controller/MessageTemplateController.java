@@ -2,10 +2,10 @@ package org.silsagusi.api.message.controller;
 
 import java.util.List;
 
-import org.silsagusi.api.message.application.MessageTemplateService;
+import org.silsagusi.api.customResponse.ApiResponse;
 import org.silsagusi.api.message.application.dto.MessageTemplateDto;
-import org.silsagusi.api.message.application.dto.MessageTemplateUpdateRequest;
-import org.silsagusi.core.customResponse.ApiResponse;
+import org.silsagusi.api.message.application.dto.UpdateMessageTemplateRequest;
+import org.silsagusi.api.message.application.service.MessageTemplateService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,7 +29,7 @@ public class MessageTemplateController {
 	public ResponseEntity<ApiResponse<List<MessageTemplateDto.Response>>> getMessageTemplateList(
 		HttpServletRequest request
 	) {
-		List<MessageTemplateDto.Response> responseList = messageTemplateService.getMessageTemplateList(
+		List<MessageTemplateDto.Response> responseList = messageTemplateService.getMessageTemplates(
 			(Long)request.getAttribute("agentId")
 		);
 
@@ -53,7 +53,7 @@ public class MessageTemplateController {
 	public ResponseEntity<ApiResponse<Void>> updateMessageTemplate(
 		HttpServletRequest request,
 		@PathVariable(name = "templateId") Long templateId,
-		@RequestBody @Valid MessageTemplateUpdateRequest requestDto
+		@RequestBody @Valid UpdateMessageTemplateRequest requestDto
 	) {
 		messageTemplateService.updateMessageTemplate(
 			(Long)request.getAttribute("agentId"),

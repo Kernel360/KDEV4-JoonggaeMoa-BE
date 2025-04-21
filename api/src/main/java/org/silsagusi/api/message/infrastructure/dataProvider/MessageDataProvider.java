@@ -1,10 +1,11 @@
 package org.silsagusi.api.message.infrastructure.dataProvider;
 
-import org.silsagusi.api.agent.infrastructure.AgentRepository;
+import java.util.List;
+
+import org.silsagusi.api.customResponse.exception.CustomException;
+import org.silsagusi.api.customResponse.exception.ErrorCode;
 import org.silsagusi.api.message.infrastructure.repository.MessageRepository;
-import org.silsagusi.core.customResponse.exception.CustomException;
-import org.silsagusi.core.customResponse.exception.ErrorCode;
-import org.silsagusi.core.domain.agent.Agent;
+import org.silsagusi.core.domain.message.command.UpdateMessageCommand;
 import org.silsagusi.core.domain.message.entity.Message;
 import org.silsagusi.core.domain.message.entity.SendStatus;
 import org.springframework.data.domain.Page;
@@ -17,50 +18,34 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class MessageDataProvider {
 
-	private final AgentRepository agentRepository;
 	private final MessageRepository messageRepository;
 
-	public void createMessage(Message message) {
-		messageRepository.save(message);
+	public void createMessages(List<Message> messages) {
+		messageRepository.saveAll(messages);
 	}
 
 	public Message getMessage(Long id) {
-		return messageRepository.findById(id)
+		return messageRepository.findByIdAndDeletedAtIsNull(id)
 			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
 	}
 
 	public Page<Message> getMessagePageByAgent(Long agentId, Pageable pageable) {
-		return messageRepository.findAllByCustomer_Agent_Id(agentId, pageable);
+		return messageRepository.findAllByCustomer_Agent_IdAndDeletedAtIsNull(agentId, pageable);
 	}
 
 	public Page<Message> getReservedMessagePageByAgent(Long agentId, Pageable pageable) {
-		return messageRepository.findAllByCustomer_Agent_IdAndSendStatus(agentId,
+		return messageRepository.findAllByCustomer_Agent_IdAndSendStatusAndDeletedAtIsNull(agentId,
 			SendStatus.PENDING, pageable);
 	}
 
-	public void updateMessage(Message message) {
+	public void updateMessage(Message message, UpdateMessageCommand updateMessageCommand) {
+		message.updateMessage(updateMessageCommand.getSendAt(), updateMessageCommand.getContent());
 		messageRepository.save(message);
 	}
 
 	public void deleteMessage(Message message) {
-		messageRepository.delete(message);
+		message.markAsDeleted();
+		messageRepository.save(message);
 	}
 
-	public String convertContent(String content, String customerName) {
-		if (content == null || customerName == null)
-			return content;
-		return content.replace("${이름}", customerName);
-	}
-
-	public void validateMessageWithAgent(Message message, Agent agent) {
-		if (!agent.equals(message.getCustomer().getAgent())) {
-			throw new CustomException(ErrorCode.UNAUTHORIZED);
-		}
-	}
-
-	public void validateMessageStatusEqualsPending(Message message) {
-		if (message.getSendStatus() != SendStatus.PENDING) {
-			throw new CustomException(ErrorCode.BAD_REQUEST);
-		}
-	}
 }

@@ -2,9 +2,10 @@ package org.silsagusi.api.auth.handler;
 
 import java.io.IOException;
 
-import org.silsagusi.core.customResponse.ApiResponse;
-import org.silsagusi.core.customResponse.exception.CustomException;
-import org.silsagusi.core.customResponse.exception.ErrorCode;
+import org.silsagusi.api.customResponse.ApiResponse;
+import org.silsagusi.api.customResponse.exception.CustomException;
+import org.silsagusi.api.customResponse.exception.ErrorCode;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
@@ -30,7 +31,7 @@ public class CustomAuthenticationEntryPointHandler implements AuthenticationEntr
 		ApiResponse<Void> errorResponse = ApiResponse.fail(customException);
 
 		response.setContentType("application/json;charset=UTF-8");
-		response.setStatus(customException.getHttpStatus().value()); // 401 Unauthorized
+		response.setStatus(HttpStatus.FORBIDDEN.value()); // 401 Unauthorized
 		response.getWriter().write(new ObjectMapper().writeValueAsString(errorResponse));
 	}
 }

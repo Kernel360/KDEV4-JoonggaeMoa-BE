@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class MessageTemplateUpdateRequest {
+public class UpdateMessageTemplateRequest {
 
 	private String title;
 	private String content;

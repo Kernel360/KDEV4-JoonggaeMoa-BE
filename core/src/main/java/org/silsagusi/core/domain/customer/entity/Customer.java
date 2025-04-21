@@ -1,19 +1,29 @@
 package org.silsagusi.core.domain.customer.entity;
 
-import jakarta.persistence.*;
+import java.time.LocalDate;
+
+import org.hibernate.annotations.DynamicUpdate;
+import org.silsagusi.core.domain.BaseEntity;
+import org.silsagusi.core.domain.agent.Agent;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
+import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import org.silsagusi.core.domain.agent.Agent;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-
+@DynamicUpdate
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity(name = "customers")
 @Getter
-public class Customer {
+public class Customer extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,24 +47,12 @@ public class Customer {
 
 	private Boolean consent;
 
-	@Column(name = "created_at")
-	private LocalDateTime createdAt;
-
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "agent_id", nullable = false)
 	private Agent agent;
 
-	public Customer(
-		String name,
-		LocalDate birthday,
-		String phone,
-		String email,
-		String job,
-		Boolean isVip,
-		String memo,
-		Boolean consent,
-		Agent agent
-	) {
+	private Customer(String name, LocalDate birthday, String phone, String email, String job, Boolean isVip,
+		String memo, Boolean consent, Agent agent) {
 		this.name = name;
 		this.birthday = birthday;
 		this.phone = phone;
@@ -64,21 +62,13 @@ public class Customer {
 		this.memo = memo;
 		this.consent = consent;
 		this.agent = agent;
-		createdAt = LocalDateTime.now();
 	}
 
-	public Customer(
-		String name,
-		String phone,
-		String email,
-		Boolean consent,
-		Agent agent
+	public static Customer create(
+		String name, LocalDate birthday, String phone, String email, String job, Boolean isVip, String memo,
+		Boolean consent, Agent agent
 	) {
-		this.name = name;
-		this.phone = phone;
-		this.email = email;
-		this.consent = consent;
-		this.agent = agent;
+		return new Customer(name, birthday, phone, email, job, isVip, memo, consent, agent);
 	}
 
 	public void updateCustomer(

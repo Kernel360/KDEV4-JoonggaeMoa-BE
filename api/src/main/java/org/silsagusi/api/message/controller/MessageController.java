@@ -1,9 +1,9 @@
 package org.silsagusi.api.message.controller;
 
-import org.silsagusi.api.message.application.MessageService;
+import org.silsagusi.api.customResponse.ApiResponse;
 import org.silsagusi.api.message.application.dto.MessageDto;
-import org.silsagusi.api.message.application.dto.MessageUpdateRequest;
-import org.silsagusi.core.customResponse.ApiResponse;
+import org.silsagusi.api.message.application.dto.UpdateMessageRequest;
+import org.silsagusi.api.message.application.service.MessageService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -42,7 +42,7 @@ public class MessageController {
 	public ResponseEntity<ApiResponse<Void>> createMessage(
 		@RequestBody @Valid MessageDto.Request messageRequest
 	) {
-		messageService.createMessage(messageRequest);
+		messageService.createMessages(messageRequest);
 		return ResponseEntity.ok(ApiResponse.ok());
 	}
 
@@ -50,12 +50,12 @@ public class MessageController {
 	public ResponseEntity<ApiResponse<Void>> updateMessage(
 		HttpServletRequest request,
 		@PathVariable Long messageId,
-		@RequestBody @Valid MessageUpdateRequest messageUpdateRequest
+		@RequestBody @Valid UpdateMessageRequest updateMessageRequest
 	) {
 		messageService.updateMessage(
 			(Long)request.getAttribute("agentId"),
 			messageId,
-			messageUpdateRequest
+			updateMessageRequest
 		);
 
 		return ResponseEntity.ok(ApiResponse.ok());

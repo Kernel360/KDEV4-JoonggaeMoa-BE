@@ -2,10 +2,10 @@ package org.silsagusi.api.agent.controller;
 
 import org.silsagusi.api.agent.application.AgentService;
 import org.silsagusi.api.agent.application.dto.AgentDto;
-import org.silsagusi.api.agent.application.dto.AgentUpdateRequest;
 import org.silsagusi.api.agent.application.dto.LoginRequest;
+import org.silsagusi.api.agent.application.dto.UpdateAgentRequest;
 import org.silsagusi.api.agent.application.dto.UsernameDto;
-import org.silsagusi.core.customResponse.ApiResponse;
+import org.silsagusi.api.customResponse.ApiResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -68,11 +68,11 @@ public class AgentController {
 	@PatchMapping("/api/agents")
 	public ResponseEntity<ApiResponse<Void>> updateAgent(
 		HttpServletRequest request,
-		@RequestBody @Valid AgentUpdateRequest agentUpdateRequest
+		@RequestBody @Valid UpdateAgentRequest updateAgentRequest
 	) {
 		agentService.updateAgent(
 			(Long)request.getAttribute("agentId"),
-			agentUpdateRequest
+			updateAgentRequest
 		);
 
 		return ResponseEntity.ok(ApiResponse.ok());

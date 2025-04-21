@@ -1,7 +1,5 @@
 package org.silsagusi.api.agent.application.dto;
 
-import org.silsagusi.core.domain.agent.Agent;
-
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -26,9 +24,5 @@ public class UsernameDto {
 	@AllArgsConstructor
 	public static class Response {
 		private String username;
-
-		public static Response of(Agent agent) {
-			return new Response(agent.getUsername());
-		}
 	}
 }

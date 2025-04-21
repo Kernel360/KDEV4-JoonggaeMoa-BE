@@ -6,6 +6,7 @@ import org.silsagusi.api.contract.application.dto.ContractDetailDto;
 import org.silsagusi.api.contract.application.dto.ContractDto;
 import org.silsagusi.api.contract.application.dto.ContractSummaryResponse;
 import org.silsagusi.api.contract.infrastructure.ContractDataProvider;
+import org.silsagusi.api.contract.infrastructure.ContractValidator;
 import org.silsagusi.api.customer.infrastructure.CustomerDataProvider;
 import org.silsagusi.core.domain.contract.entity.Contract;
 import org.silsagusi.core.domain.contract.info.ContractDetailInfo;
@@ -25,40 +26,41 @@ public class ContractService {
 
 	private final ContractDataProvider contractDataProvider;
 	private final CustomerDataProvider customerDataProvider;
+	private final ContractMapper contractMapper;
+	private final ContractValidator contractValidator;
 
-	public void createContract(ContractDto.Request contractRequestDto, MultipartFile file) throws IOException {
-		Customer customerLandlord = customerDataProvider.getCustomer(contractRequestDto.getLandlordId());
-		Customer customerTenant = customerDataProvider.getCustomer(contractRequestDto.getTenantId());
+	public void createContract(ContractDto.Request contractRequest, MultipartFile file) throws IOException {
+		Customer customerLandlord = customerDataProvider.getCustomer(contractRequest.getLandlordId());
+		Customer customerTenant = customerDataProvider.getCustomer(contractRequest.getTenantId());
 
-		contractDataProvider.createContract(
-			customerLandlord, customerTenant,
-			contractRequestDto.getCreatedAt(), contractRequestDto.getExpiredAt(),
-			file);
+		String filename = contractDataProvider.fileUpload(file);
+
+		Contract contract = contractMapper.toEntity(contractRequest, customerLandlord, customerTenant, filename);
+
+		contractDataProvider.createContract(contract);
 	}
 
 	public Page<ContractDto.Response> getAllContracts(Long agentId, Pageable pageable) {
 		Page<ContractInfo> contractInfoPage = contractDataProvider.getAllContracts(agentId, pageable);
-		return contractInfoPage.map(ContractDto.Response::of);
+		return contractInfoPage.map(contractMapper::toContractResponse);
 	}
 
 	public ContractDetailDto.Response getContractById(Long agentId, String contractId) throws IOException {
 		Contract contract = contractDataProvider.getContract(contractId);
-		contractDataProvider.validateAgentAccess(agentId, contract);
+		contractValidator.validateAgentAccess(agentId, contract);
 
 		ContractDetailInfo contractDetailInfo = contractDataProvider.getContractInfo(contract);
-		ContractDetailDto.Response contractDetailResponse = ContractDetailDto.Response.of(contractDetailInfo);
-
-		return contractDetailResponse;
+		return contractMapper.toContractDetailResponse(contractDetailInfo);
 	}
 
 	public void deleteContract(Long agentId, String contractId) {
 		Contract contract = contractDataProvider.getContract(contractId);
-		contractDataProvider.validateAgentAccess(agentId, contract);
+		contractValidator.validateAgentAccess(agentId, contract);
 		contractDataProvider.deleteContract(contract);
 	}
 
 	public ContractSummaryResponse getContractSummary(Long agentId) {
 		ContractSummaryInfo contractSummaryInfo = contractDataProvider.getSummary(agentId);
-		return ContractSummaryResponse.of(contractSummaryInfo);
+		return contractMapper.toContractSummaryResponse(contractSummaryInfo);
 	}
 }

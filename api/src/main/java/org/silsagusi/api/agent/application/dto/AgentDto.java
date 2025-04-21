@@ -1,7 +1,5 @@
 package org.silsagusi.api.agent.application.dto;
 
-import org.silsagusi.core.domain.agent.Agent;
-
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -56,18 +54,5 @@ public class AgentDto {
 		private String region;
 		private String businessNo;
 		private String role;
-
-		public static Response of(Agent agent) {
-			return AgentDto.Response.builder()
-				.id(agent.getId())
-				.name(agent.getName())
-				.phone(agent.getPhone())
-				.email(agent.getEmail())
-				.username(agent.getUsername())
-				.office(agent.getOffice())
-				.region(agent.getRegion())
-				.businessNo(agent.getBusinessNo())
-				.build();
-		}
 	}
 }

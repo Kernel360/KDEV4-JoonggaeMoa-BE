@@ -3,8 +3,6 @@ package org.silsagusi.api.survey.application.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.silsagusi.core.domain.survey.entity.Survey;
-
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -51,18 +49,5 @@ public class SurveyDto {
 		private String description;
 		private List<QuestionDto.Response> questionList;
 		private LocalDateTime createdAt;
-
-		public static Response of(Survey survey) {
-			List<QuestionDto.Response> questionResponseList = survey.getQuestionList()
-				.stream().map(QuestionDto.Response::of).toList();
-
-			return Response.builder()
-				.id(survey.getId())
-				.title(survey.getTitle())
-				.description(survey.getDescription())
-				.questionList(questionResponseList)
-				.createdAt(survey.getCreatedAt())
-				.build();
-		}
 	}
 }
