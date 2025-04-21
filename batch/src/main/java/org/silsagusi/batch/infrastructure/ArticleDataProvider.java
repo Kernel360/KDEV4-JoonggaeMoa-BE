@@ -1,18 +1,18 @@
 package org.silsagusi.batch.infrastructure;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-
+import lombok.RequiredArgsConstructor;
 import org.silsagusi.batch.scrape.naverland.service.dto.KakaoMapAddressResponse;
 import org.silsagusi.batch.scrape.naverland.service.dto.NaverLandMobileArticleResponse;
 import org.silsagusi.core.domain.article.Article;
 import org.silsagusi.core.domain.article.Region;
+import org.silsagusi.core.domain.article.Tag;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import lombok.RequiredArgsConstructor;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -30,7 +30,7 @@ public class ArticleDataProvider {
 		Region region,
 		KakaoMapAddressResponse kakaoMapAddressResponse
 	) {
-		return new Article(
+		Article article = new Article(
 			body.getAtclNo(),
 			body.getCortarNo(),
 			body.getAtclNm(),
@@ -47,10 +47,14 @@ public class ArticleDataProvider {
 			body.getLat(),
 			body.getLng(),
 			body.getAtclFetrDesc(),
-			body.getTagList(),
 			body.getCpNm(),
 			body.getRltrNm(),
+			body.getMinMviFee(),
+			body.getMaxMviFee(),
 			body.getSbwyInfo(),
+			body.getSvcCont(),
+			body.getGdrNm(),
+			body.getEtRoomCnt(),
 			body.getTradeCheckedByOwner(),
 			region,
 			kakaoMapAddressResponse.getLotAddress(),
@@ -66,6 +70,16 @@ public class ArticleDataProvider {
 			kakaoMapAddressResponse.getBuildingName(),
 			kakaoMapAddressResponse.getZoneNo()
 		);
+
+		// 태그 리스트에 태그가 있을 시 추가
+		if (body.getTagList() != null && !body.getTagList().isEmpty()) {
+			for (String tagName : body.getTagList()) {
+				Tag tag = new Tag(tagName);
+				article.addTag(tag);
+			}
+		}
+
+		return article;
 	}
 
 	private static LocalDate parseConfirmedAt(String dateStr) {

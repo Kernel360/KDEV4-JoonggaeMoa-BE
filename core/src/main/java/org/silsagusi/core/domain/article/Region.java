@@ -1,8 +1,5 @@
 package org.silsagusi.core.domain.article;
 
-import com.fasterxml.jackson.databind.PropertyNamingStrategies;
-import com.fasterxml.jackson.databind.annotation.JsonNaming;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -16,7 +13,6 @@ import lombok.ToString;
 @ToString
 @Entity(name = "regions")
 @Getter
-@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class Region {
 
 	@Id
@@ -57,7 +53,7 @@ public class Region {
 		this.cortarType = cortarType;
 	}
 
-	public void update(String geohash) {
+	public void updateGeohash(String geohash) {
 		this.geohash = geohash;
 	}
 }

@@ -18,7 +18,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ArticleDataProvider {
 
-	private static final String REAL_ESTATE_TYPE = "realEstateType";
+	private static final String REAL_ESTATE_TYPE = "articleType";
 	private static final String TRADE_TYPE = "tradeType";
 	private static final String PRICE = "price";
 
@@ -63,7 +63,7 @@ public class ArticleDataProvider {
 	}
 
 	public List<ArticleTypeRatioProjection> getRealEstateTypeRatio(LocalDate from) {
-		return articleRepository.countByRealEstateTypeSince(from);
+		return articleRepository.countByArticleTypeSince(from);
 	}
 
 	public List<ArticleTypeRatioProjection> getTradeTypeRatio(LocalDate from) {

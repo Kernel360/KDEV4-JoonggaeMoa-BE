@@ -33,10 +33,6 @@ public class RegionInitializer {
 	@Transactional
 	@EventListener(ApplicationReadyEvent.class)
 	public void init() {
-		if (regionRepository.count() > 0) {
-			log.info("지역 정보 이미 크롤링됨. 저장된 지역: {}개", regionRepository.count());
-		}
-		// 리셋할 수 있는 다른 방법은?
 
 		Queue<String> queue = new LinkedList<>();
 		Set<String> visited = new HashSet<>();
@@ -46,44 +42,75 @@ public class RegionInitializer {
 			String code = queue.poll();
 			if (!visited.add(code))
 				continue;
-			NaverLandNewRegionResponse response = naverLandApiClient.fetchRegionList(code);
 
-			if (response.getRegionList().isEmpty())
-				continue;
+			try {
+				NaverLandNewRegionResponse response = naverLandApiClient.fetchRegionList(code);
 
-			List<Region> regions = response.getRegionList().stream()
-				.map(it -> new Region(
-					it.getCortarNo(),
-					it.getCenterLat(),
-					it.getCenterLon(),
-					it.getCortarName(),
-					it.getCortarType()
-				))
-				.toList();
+				if (response == null || response.getRegionList() == null || response.getRegionList().isEmpty()) {
+					log.info("No regions found for code: {}", code);
+					continue;
+				}
 
-			regionRepository.saveAll(regions);
-			regionScrapStatusRepository.saveAll(
+				List<Region> regions = response.getRegionList().stream()
+					.map(it -> new Region(
+						it.getCortarNo(),
+						it.getCenterLat(),
+						it.getCenterLon(),
+						it.getCortarName(),
+						it.getCortarType()
+					))
+					.toList();
+
+				regionRepository.saveAll(regions);
+				regionScrapStatusRepository.saveAll(
+					regions.stream()
+						.map(region -> new RegionScrapStatus(region, 1, false, null))
+						.toList()
+				);
+
 				regions.stream()
-					.map(region -> new RegionScrapStatus(region, 1, false, null))
-					.toList()
-			);
-
-			regions.stream()
-				.map(Region::getCortarNo)
-				.forEach(queue::add);
-			log.info("{}개 지역 저장 완료", regionRepository.count());
+					.map(Region::getCortarNo)
+					.forEach(queue::add);
+				log.info("{}개 지역 저장 완료, 현재 코드: {}", regionRepository.count(), code);
+			} catch (Exception e) {
+				log.error("Error processing region with code: {}, error: {}", code, e.getMessage(), e);
+				// Continue with the next region even if this one fails
+			}
 		}
 
-		List<Region> dvsnRegions = regionRepository.findByCortarType("dvsn");
-		dvsnRegions.forEach(region -> {
-			String hash = GeoHash.withCharacterPrecision(
-				region.getCenterLat(),
-				region.getCenterLon(),
-				12
-			).toBase32();
-			region.update(hash);
-		});
-		regionRepository.saveAll(dvsnRegions);
-		log.info("직방 크롤링을 위한 지오해시값 저장 완료. RegionInitializer 종료");
+		try {
+			List<Region> dvsnRegions = regionRepository.findByCortarType("dvsn");
+			if (dvsnRegions == null || dvsnRegions.isEmpty()) {
+				log.info("No division regions found to update geohash values");
+			} else {
+				log.info("Updating geohash values for {} division regions", dvsnRegions.size());
+
+				for (Region region : dvsnRegions) {
+					try {
+						if (region.getCenterLat() == null || region.getCenterLon() == null) {
+							log.warn("Region with ID {} has null latitude or longitude, skipping geohash update", region.getId());
+							continue;
+						}
+
+						String hash = GeoHash.withCharacterPrecision(
+							region.getCenterLat(),
+							region.getCenterLon(),
+							12
+						).toBase32();
+						region.updateGeohash(hash);
+					} catch (Exception e) {
+						log.error("Error updating geohash for region with ID {}: {}", region.getId(), e.getMessage(), e);
+						// Continue with the next region even if this one fails
+					}
+				}
+
+				regionRepository.saveAll(dvsnRegions);
+				log.info("직방 크롤링을 위한 지오해시값 저장 완료");
+			}
+		} catch (Exception e) {
+			log.error("Error updating geohash values: {}", e.getMessage(), e);
+		}
+
+		log.info("RegionInitializer 종료");
 	}
 }

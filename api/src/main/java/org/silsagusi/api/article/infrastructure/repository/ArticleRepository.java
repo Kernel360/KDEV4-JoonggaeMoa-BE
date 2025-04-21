@@ -17,7 +17,7 @@ public interface ArticleRepository extends JpaRepository<Article, Long>, JpaSpec
 		    WHERE a.confirmedAt >= :startDate
 		    GROUP BY a.articleType
 		""")
-	List<ArticleTypeRatioProjection> countByRealEstateTypeSince(LocalDate startDate);
+	List<ArticleTypeRatioProjection> countByArticleTypeSince(LocalDate startDate);
 
 	// 거래 방식(TradeType) 비율
 	@Query("""

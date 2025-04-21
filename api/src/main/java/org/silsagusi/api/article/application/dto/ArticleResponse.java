@@ -20,8 +20,8 @@ public class ArticleResponse {
 	private String floors;
 	private Integer priceSale;
 	private Integer priceRent;
-	private Double areaSupply;
-	private Double areaExclusive;
+	private String areaSupply;
+	private String areaExclusive;
 	private String direction;
 	private LocalDate confirmedAt;
 	private String imageUrl;
@@ -64,24 +64,28 @@ public class ArticleResponse {
 			.imageUrl(article.getImageUrl())
 			.latitude(article.getLatitude())
 			.longitude(article.getLongitude())
-			.atclFetrDesc(article.getAtclFetrDesc())
-			.tags(article.getTags())
+			.atclFetrDesc(article.getArticleDesc())
+			.tags(article.getTags().stream().map(
+				articleTag -> articleTag
+					.getTag()
+					.getName())
+				.toList())
 			.companyName(article.getCompanyName())
-			.agentName(article.getAgentName())
-			.subwayInfo(article.getSubwayInfo())
+			.agentName(article.getAgency())
+			.subwayInfo(article.getSubway())
 			.isChecked(article.getIsChecked())
-			.lotAddress(article.getLotAddress())
-			.roadAddress(article.getRoadAddress())
-			.city(article.getCity())
-			.district(article.getDistrict())
-			.town(article.getTown())
-			.mainAddressNo(article.getMainAddressNo())
-			.subAddressNo(article.getSubAddressNo())
-			.roadName(article.getRoadName())
-			.mainBuildingNo(article.getMainBuildingNo())
-			.subBuildingNo(article.getSubBuildingNo())
-			.buildingName(article.getBuildingName())
-			.zipCode(article.getZipCode())
+			.lotAddress(article.getAddressFullLot())
+			.roadAddress(article.getAddressFullRoad())
+			.city(article.getAddress1SiDo())
+			.district(article.getAddress2SiGunGu())
+			.town(article.getAddress3DongEupMyeon())
+			.mainAddressNo(article.getAddressFullLotNo1())
+			.subAddressNo(article.getAddressFullLotNo2())
+			.roadName(article.getAddressFullRoadName())
+			.mainBuildingNo(article.getAddressFullRoadNo1())
+			.subBuildingNo(article.getAddressFullRoadNo2())
+			.buildingName(article.getAddressBuildingName())
+			.zipCode(article.getAddressZipCode())
 			.build();
 	}
 }

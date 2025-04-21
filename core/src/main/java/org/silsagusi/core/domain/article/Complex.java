@@ -12,7 +12,6 @@ import lombok.ToString;
 @ToString
 @Entity(name = "complexes")
 @Getter
-@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class Complex {
 
 	@Id

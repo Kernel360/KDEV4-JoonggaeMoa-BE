@@ -24,7 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 public class NaverLandMobileArticleRequestService {
 
 	private final NaverLandApiClient naverLandApiClient;
-	private final KakaoMapAddressLookupInterface addressLookupService;
+	private final KakaoMapAddressLookupService addressLookupService;
 	private final ArticleDataProvider articleDataProvider;
 
 	@Async("scrapExecutor")
@@ -41,7 +41,7 @@ public class NaverLandMobileArticleRequestService {
 					String.valueOf(page),
 					region.getCenterLat().toString(),
 					region.getCenterLon().toString(),
-					region.getCortarNo()
+					region.getCortarNo().toString()
 				);
 
 				articles.addAll(mapToArticles(response.getBody(), region));
@@ -53,7 +53,7 @@ public class NaverLandMobileArticleRequestService {
 
 				// 3~7초 랜덤 딜레이
 				Thread.sleep((long)(3000 + Math.random() * 4000));
-			} while (hasMore && page <= 10);
+			} while (hasMore);
 
 			// 마지막 페이지까지 완료된 경우
 			if (!hasMore) {

@@ -1,28 +1,17 @@
 package org.silsagusi.core.domain.article;
 
-import java.time.LocalDate;
-import java.util.List;
-
-import com.fasterxml.jackson.databind.PropertyNamingStrategies;
-import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import jakarta.persistence.CollectionTable;
-import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity(name = "articles")
 @Getter
-@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Article {
 
 	@Id
@@ -35,59 +24,63 @@ public class Article {
 	private Region region;
 
 	private String articleCode;     // atclNo 매물번호
-	private String dongCode;       // cortarNo 법정동코드
+	private String dongCode;        // cortarNo 법정동코드
 	private String articleName;     // atclNm 매물이름 (아파트/오피스텔은 단지명, 빌라는 빌라, 상가는 일반상가 등)
 	private String articleType;     // rletTpNm 매물유형명 (아파트, 오피스텔 등)
 	private String tradeType;       // tradTpNm 거래유형 (매매, 전세 등)
 	private String floors;          // flrInfo 매물층수/건물층수
 	private Integer priceSale;      // prc 매매가/보증금
 	private Integer priceRent;      // rentPrc 월세
-	private Double areaSupply;      // spc1 공급면적 (단위: 제곱미터)
-	private Double areaExclusive;   // spc2 전용면적 (단위: 제곱미터)
+	private String areaSupply;      // spc1 공급면적 (단위: 제곱미터)
+	private String areaExclusive;   // spc2 전용면적 (단위: 제곱미터)
 	private String direction;       // direction 방향 (남향, 북향 등)
 	private LocalDate confirmedAt;  // atclCfmYmd 건물 사용승인일
 	private String imageUrl;        // repImgUrl 대표 이미지 URL
 	private Double latitude;        // lat 위도
 	private Double longitude;       // lng 경도
-	private String atclFetrDesc;    // atclFetrDesc 매물 특징 설명
+	private String articleDesc;     // articleDesc 매물 특징 설명
 
-	@ElementCollection
-	@CollectionTable(name = "article_tags", joinColumns = @JoinColumn(name = "article_tags_id"))
-	@Column(name = "tag")
-	private List<String> tags;      // tagList
+	@OneToMany(mappedBy = "article", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<ArticleTag> tags = new ArrayList<>();  // tagList
 
-	private String companyName;     // cpNm 정보 제공 출처명
-	private String agentName;       // rltrNm 매물을 올린 공인중개사 사무소명
-	private String subwayInfo;      // sbwyInfo 주변 지하철명
+	private String companyName;     // cpNm 정보 제공 출처
+	private String agency;          // rltrNm 매물을 올린 공인중개사무소
+	private Integer priceRoomMin;   // minMviFee 최소 단기임대 비용
+	private Integer priceRoomMax;   // maxMviFee 최대 단기임대 비용
+	private String subway;          // sbwyInfo 주변 지하철역
+	private String articleDescRoom; // svcCont 고시원 기본 정보
+	private String articleDescMw;   // gdrNm 고시원 특징
+	private Integer emptyRoomCount; // etRoomCnt 빈방 수
 	private Boolean isChecked;      // tradeCheckedByOwner 실매물 확인 여부
 
 
-	private String lotAddress;
-	private String roadAddress;
-	private String city;
-	private String district;
-	private String town;
-	private String mainAddressNo;
-	private String subAddressNo;
-	private String roadName;
-	private String mainBuildingNo;
-	private String subBuildingNo;
-	private String buildingName;
-	private String zipCode;
+	private String addressFullLot;
+	private String addressFullRoad;
+	private String address1SiDo;
+	private String address2SiGunGu;
+	private String address3DongEupMyeon;
+	private String addressFullLotNo1;
+	private String addressFullLotNo2;
+	private String addressFullRoadName;
+	private String addressFullRoadNo1;
+	private String addressFullRoadNo2;
+	private String addressBuildingName;
+	private String addressZipCode;
 
 	public Article(
 		String articleCode, String dongCode, String articleName,
 		String articleType, String tradeType, String floors,
-		Integer priceSale, Integer priceRent, Double areaSupply,
-		Double areaExclusive, String direction, LocalDate confirmedAt,
+		Integer priceSale, Integer priceRent, String areaSupply,
+		String areaExclusive, String direction, LocalDate confirmedAt,
 		String imageUrl, Double latitude, Double longitude,
-		String atclFetrDesc, List<String> tags,
-		String companyName, String agentName,
-		String subwayInfo, Boolean isChecked, Region region,
-		String lotAddress, String roadAddress, String city,
-		String district, String town, String mainAddressNo,
-		String subAddressNo, String roadName, String mainBuildingNo,
-		String subBuildingNo, String buildingName, String zipCode
+		String articleDesc, String companyName,
+		String agency, Integer priceRoomMin, Integer priceRoomMax,
+		String subway, String articleDescRoom, String articleDescMw,
+		Integer emptyRoomCount, Boolean isChecked, Region region,
+		String addressFullLot, String addressFullRoad, String address2City,
+		String address2SiGunGu, String address3DongEupMyeon, String addressFullLotNo1,
+		String addressFullLotNo2, String addressFullRoadName, String addressFullRoadNo1,
+		String addressFullRoadNo2, String addressBuildingName, String addressZipCode
 	) {
 		this.articleCode = articleCode;
 		this.dongCode = dongCode;
@@ -104,24 +97,33 @@ public class Article {
 		this.imageUrl = imageUrl;
 		this.latitude = latitude;
 		this.longitude = longitude;
-		this.atclFetrDesc = atclFetrDesc;
-		this.tags = tags;
+		this.articleDesc = articleDesc;
 		this.companyName = companyName;
-		this.agentName = agentName;
-		this.subwayInfo = subwayInfo;
+		this.agency = agency;
+		this.priceRoomMin = priceRoomMin;
+		this.priceRoomMax = priceRoomMax;
+		this.subway = subway;
+		this.articleDescRoom = articleDescRoom;
+		this.articleDescMw = articleDescMw;
+		this.emptyRoomCount = emptyRoomCount;
 		this.isChecked = isChecked;
 		this.region = region;
-		this.lotAddress = lotAddress;
-		this.roadAddress = roadAddress;
-		this.city = city;
-		this.district = district;
-		this.town = town;
-		this.mainAddressNo = mainAddressNo;
-		this.subAddressNo = subAddressNo;
-		this.roadName = roadName;
-		this.mainBuildingNo = mainBuildingNo;
-		this.subBuildingNo = subBuildingNo;
-		this.buildingName = buildingName;
-		this.zipCode = zipCode;
+		this.addressFullLot = addressFullLot;
+		this.addressFullRoad = addressFullRoad;
+		this.address1SiDo = address2City;
+		this.address2SiGunGu = address2SiGunGu;
+		this.address3DongEupMyeon = address3DongEupMyeon;
+		this.addressFullLotNo1 = addressFullLotNo1;
+		this.addressFullLotNo2 = addressFullLotNo2;
+		this.addressFullRoadName = addressFullRoadName;
+		this.addressFullRoadNo1 = addressFullRoadNo1;
+		this.addressFullRoadNo2 = addressFullRoadNo2;
+		this.addressBuildingName = addressBuildingName;
+		this.addressZipCode = addressZipCode;
+	}
+
+	public void addTag(Tag tag) {
+		ArticleTag articleTag = new ArticleTag(this, tag);
+		this.tags.add(articleTag);
 	}
 }

@@ -81,11 +81,11 @@ public class NaverLandMobileArticleResponse {
 
 		// 1st spec 공급면적 (단위: 제곱미터)
 		// 68E㎡ (E: Estimated 예상값)
-		private Double spc1;
+		private String spc1;
 
 		// 2nd spec 전용면적 (단위: 제곱미터)
 		// 전용42E (E: Estimated 예상값)
-		private Double spc2;
+		private String spc2;
 
 		// 방향 (남향, 북향 등)
 		private String direction;
@@ -129,14 +129,29 @@ public class NaverLandMobileArticleResponse {
 		// bizmk : 매경부동산
 		private String cpid;
 
-		// company name 정보 제공 출처명
+		// company name 정보 제공 출처
 		private String cpNm;
 
-		// real estate trader name 매물을 올린 공인중개사 사무소명
+		// real estate trader name 매물을 올린 공인중개사무소
 		private String rltrNm;
 
-		// subway info 주변 지하철명
+		// minimum moving? fee 최소 단기임대 비용
+		private Integer minMviFee;
+
+		// maximum moving? fee 최대 단기임대 비용
+		private Integer maxMviFee;
+
+		// subway info 주변 지하철역
 		private String sbwyInfo;
+
+		// 고시원 기본 정보
+		private String svcCont;
+
+		// 고시원 특징 (남녀공용, 남녀층구분, 여성전용 등)
+		private String gdrNm;
+
+		// empty room count 빈방 수
+		private Integer etRoomCnt;
 
 		// trade price in hangul 한글 거래가?
 		// 빈 값이어서 무슨 역할인지 모르겠음
