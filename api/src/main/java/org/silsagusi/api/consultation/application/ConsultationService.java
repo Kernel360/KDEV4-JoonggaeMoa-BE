@@ -37,8 +37,9 @@ public class ConsultationService {
 	public void createConsultation(ConsultationDto.Request consultationRequestDto) {
 		Customer customer = customerDataProvider.getCustomer(consultationRequestDto.getCustomerId());
 
-		consultationDataProvider.createConsultation(customer, consultationRequestDto.getDate(),
-			Consultation.ConsultationStatus.CONFIRMED);
+		Consultation consultation = consultationMapper.consultationRequestToEntity(customer, consultationRequestDto);
+
+		consultationDataProvider.createConsultation(consultation);
 	}
 
 	public void updateConsultationStatus(Long agentId, Long consultationId, String consultationStatus) {

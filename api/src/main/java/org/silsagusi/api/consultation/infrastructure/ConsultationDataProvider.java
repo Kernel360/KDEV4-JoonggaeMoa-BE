@@ -30,15 +30,7 @@ public class ConsultationDataProvider {
 
 	private final ConsultationRepository consultationRepository;
 
-	public void createConsultation(Customer customer, LocalDateTime consultationDate,
-		ConsultationStatus consultationStatus) {
-
-		Consultation consultation = Consultation.create(
-			customer,
-			consultationDate,
-			consultationStatus
-		);
-
+	public void createConsultation(Consultation consultation) {
 		consultationRepository.save(consultation);
 	}
 

@@ -31,6 +31,10 @@ public class ConsultationDto {
 		@JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Seoul")
 		@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
 		private LocalDateTime date;
+
+		private String purpose;
+
+		private String memo;
 	}
 
 	@Getter

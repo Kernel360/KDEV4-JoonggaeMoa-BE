@@ -3,6 +3,7 @@ package org.silsagusi.api.survey.application;
 import java.util.List;
 
 import org.silsagusi.api.agent.infrastructure.AgentDataProvider;
+import org.silsagusi.api.consultation.application.ConsultationMapper;
 import org.silsagusi.api.consultation.infrastructure.ConsultationDataProvider;
 import org.silsagusi.api.customer.application.CustomerMapper;
 import org.silsagusi.api.customer.infrastructure.CustomerDataProvider;
@@ -39,6 +40,7 @@ public class SurveyService {
 	private final CustomerMapper customerMapper;
 	private final SurveyMapper surveyMapper;
 	private final SurveyValidator surveyValidator;
+	private final ConsultationMapper consultationMapper;
 
 	@Transactional
 	public void createSurvey(Long agentId, SurveyDto.CreateRequest surveyCreateRequest) {
@@ -103,11 +105,9 @@ public class SurveyService {
 		}
 
 		if (Boolean.TRUE.equals(answerRequest.getApplyConsultation())) {
-			consultationDataProvider.createConsultation(
-				customer,
-				answerRequest.getConsultAt(),
-				Consultation.ConsultationStatus.WAITING
-			);
+			Consultation consultation = consultationMapper.answerRequestToEntity(customer,
+				answerRequest.getConsultAt());
+			consultationDataProvider.createConsultation(consultation);
 		}
 
 		// 응답 추가
