@@ -33,7 +33,7 @@ public class ConsultationDataProvider {
 	public void createConsultation(Customer customer, LocalDateTime consultationDate,
 		ConsultationStatus consultationStatus) {
 
-		Consultation consultation = new Consultation(
+		Consultation consultation = Consultation.create(
 			customer,
 			consultationDate,
 			consultationStatus
@@ -58,8 +58,6 @@ public class ConsultationDataProvider {
 
 	public void updateConsultation(Consultation consultation, UpdateConsultationCommand updateConsultationCommand) {
 		consultation.updateConsultation(updateConsultationCommand.getDate(), updateConsultationCommand.getPurpose(),
-			updateConsultationCommand.getInterestProperty(), updateConsultationCommand.getInterestLocation(),
-			updateConsultationCommand.getContractType(), updateConsultationCommand.getAssetStatus(),
 			updateConsultationCommand.getMemo());
 		consultationRepository.save(consultation);
 	}

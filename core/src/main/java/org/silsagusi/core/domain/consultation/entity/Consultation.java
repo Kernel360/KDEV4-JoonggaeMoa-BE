@@ -42,21 +42,13 @@ public class Consultation extends BaseEntity {
 
 	private String purpose;
 
-	private String interestProperty;
-
-	private String interestLocation;
-
-	private String contractType;
-
-	private String assetStatus;
-
 	private String memo;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "consultation_status")
 	private ConsultationStatus consultationStatus;
 
-	public Consultation(
+	private Consultation(
 		Customer customer,
 		LocalDateTime date,
 		ConsultationStatus consultationStatus
@@ -66,6 +58,10 @@ public class Consultation extends BaseEntity {
 		this.consultationStatus = consultationStatus;
 	}
 
+	public static Consultation create(Customer customer, LocalDateTime date, ConsultationStatus consultationStatus) {
+		return new Consultation(customer, date, consultationStatus);
+	}
+
 	public void updateStatus(ConsultationStatus consultationStatus) {
 		this.consultationStatus = consultationStatus;
 	}
@@ -73,18 +69,10 @@ public class Consultation extends BaseEntity {
 	public void updateConsultation(
 		LocalDateTime date,
 		String purpose,
-		String interestProperty,
-		String interestLocation,
-		String contractType,
-		String assetStatus,
 		String memo
 	) {
 		this.date = date;
 		this.purpose = purpose;
-		this.interestProperty = interestProperty;
-		this.interestLocation = interestLocation;
-		this.contractType = contractType;
-		this.assetStatus = assetStatus;
 		this.memo = memo;
 	}
 

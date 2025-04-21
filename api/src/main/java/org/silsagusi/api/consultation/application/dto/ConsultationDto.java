@@ -49,14 +49,6 @@ public class ConsultationDto {
 
 		private String purpose;
 
-		private String interestProperty;
-
-		private String interestLocation;
-
-		private String contractType;
-
-		private String assetStatus;
-
 		private String memo;
 
 		private String consultationStatus;
@@ -69,10 +61,6 @@ public class ConsultationDto {
 				.customerPhone(consultation.getCustomer().getPhone())
 				.date(consultation.getDate())
 				.purpose(consultation.getPurpose())
-				.interestProperty(consultation.getInterestProperty())
-				.interestLocation(consultation.getInterestLocation())
-				.contractType(consultation.getContractType())
-				.assetStatus(consultation.getAssetStatus())
 				.memo(consultation.getMemo())
 				.consultationStatus(consultation.getConsultationStatus().toString())
 				.build();

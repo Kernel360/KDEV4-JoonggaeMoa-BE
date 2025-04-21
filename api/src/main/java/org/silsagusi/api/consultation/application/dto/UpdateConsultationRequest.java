@@ -17,9 +17,5 @@ public class UpdateConsultationRequest {
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
 	private LocalDateTime date;
 	private String purpose;
-	private String interestProperty;
-	private String interestLocation;
-	private String contractType;
-	private String assetStatus;
 	private String memo;
 }

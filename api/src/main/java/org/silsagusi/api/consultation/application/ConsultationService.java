@@ -79,7 +79,6 @@ public class ConsultationService {
 		CustomerDto.Response customerResponse = customerMapper.toCustomerResponse(customer);
 
 		return new ConsultationHistoryDto(customerResponse, consultationResponses);
-
 	}
 
 	public ConsultationMonthResponse getMonthInformation(Long agentId, String date) {
@@ -94,5 +93,4 @@ public class ConsultationService {
 
 		return consultationMapper.toConsultationSummaryResponse(consultationSummaryInfo);
 	}
-
 }
