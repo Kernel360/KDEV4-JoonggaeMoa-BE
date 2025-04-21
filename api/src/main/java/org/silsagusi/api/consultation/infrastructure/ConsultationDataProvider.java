@@ -18,6 +18,8 @@ import org.silsagusi.core.domain.consultation.entity.Consultation.ConsultationSt
 import org.silsagusi.core.domain.consultation.info.ConsultationMonthInfo;
 import org.silsagusi.core.domain.consultation.info.ConsultationSummaryInfo;
 import org.silsagusi.core.domain.customer.entity.Customer;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
@@ -41,10 +43,12 @@ public class ConsultationDataProvider {
 	}
 
 	public Consultation getConsultation(Long consultationId) {
-		Consultation consultation = consultationRepository.findByIdAndDeletedAtIsNull(consultationId)
+		return consultationRepository.findByIdAndDeletedAtIsNull(consultationId)
 			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
+	}
 
-		return consultation;
+	public Page<Consultation> getConsultationsByCustomer(Customer customer, Pageable pageable) {
+		return consultationRepository.findByCustomerAndDeletedAtIsNull(customer, pageable);
 	}
 
 	public void updateStatus(Consultation consultation, String consultationStatus) {

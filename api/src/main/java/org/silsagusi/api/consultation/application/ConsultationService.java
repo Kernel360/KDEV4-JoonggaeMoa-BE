@@ -4,17 +4,22 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import org.silsagusi.api.consultation.application.dto.ConsultationDto;
+import org.silsagusi.api.consultation.application.dto.ConsultationHistoryDto;
 import org.silsagusi.api.consultation.application.dto.ConsultationMonthResponse;
 import org.silsagusi.api.consultation.application.dto.ConsultationSummaryResponse;
 import org.silsagusi.api.consultation.application.dto.UpdateConsultationRequest;
 import org.silsagusi.api.consultation.infrastructure.ConsultationDataProvider;
 import org.silsagusi.api.consultation.infrastructure.ConsultationValidator;
+import org.silsagusi.api.customer.application.CustomerMapper;
+import org.silsagusi.api.customer.application.dto.CustomerDto;
 import org.silsagusi.api.customer.infrastructure.CustomerDataProvider;
 import org.silsagusi.core.domain.consultation.command.UpdateConsultationCommand;
 import org.silsagusi.core.domain.consultation.entity.Consultation;
 import org.silsagusi.core.domain.consultation.info.ConsultationMonthInfo;
 import org.silsagusi.core.domain.consultation.info.ConsultationSummaryInfo;
 import org.silsagusi.core.domain.customer.entity.Customer;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
@@ -27,6 +32,7 @@ public class ConsultationService {
 	private final CustomerDataProvider customerDataProvider;
 	private final ConsultationMapper consultationMapper;
 	private final ConsultationValidator consultationValidator;
+	private final CustomerMapper customerMapper;
 
 	public void createConsultation(ConsultationDto.Request consultationRequestDto) {
 		Customer customer = customerDataProvider.getCustomer(consultationRequestDto.getCustomerId());
@@ -63,9 +69,17 @@ public class ConsultationService {
 		return consultationList.stream().map(consultationMapper::toConsultationResponse).toList();
 	}
 
-	public ConsultationDto.Response getConsultation(Long consultationId) {
-		Consultation consultation = consultationDataProvider.getConsultation(consultationId);
-		return consultationMapper.toConsultationResponse(consultation);
+	public ConsultationHistoryDto getConsultationsByCustomer(Long consultationId, Pageable pageable) {
+		Customer customer = customerDataProvider.getCustomer(consultationId);
+		Page<Consultation> consultations = consultationDataProvider.getConsultationsByCustomer(customer,
+			pageable);
+
+		Page<ConsultationDto.Response> consultationResponses = consultations.map(
+			ConsultationDto.Response::fromConsultation);
+		CustomerDto.Response customerResponse = customerMapper.toCustomerResponse(customer);
+
+		return new ConsultationHistoryDto(customerResponse, consultationResponses);
+
 	}
 
 	public ConsultationMonthResponse getMonthInformation(Long agentId, String date) {

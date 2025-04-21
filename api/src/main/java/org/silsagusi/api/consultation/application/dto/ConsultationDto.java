@@ -2,6 +2,7 @@ package org.silsagusi.api.consultation.application.dto;
 
 import java.time.LocalDateTime;
 
+import org.silsagusi.core.domain.consultation.entity.Consultation;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -59,5 +60,22 @@ public class ConsultationDto {
 		private String memo;
 
 		private String consultationStatus;
+
+		public static Response fromConsultation(Consultation consultation) {
+			return Response.builder()
+				.consultationId(consultation.getId())
+				.customerId(consultation.getCustomer().getId())
+				.customerName(consultation.getCustomer().getName())
+				.customerPhone(consultation.getCustomer().getPhone())
+				.date(consultation.getDate())
+				.purpose(consultation.getPurpose())
+				.interestProperty(consultation.getInterestProperty())
+				.interestLocation(consultation.getInterestLocation())
+				.contractType(consultation.getContractType())
+				.assetStatus(consultation.getAssetStatus())
+				.memo(consultation.getMemo())
+				.consultationStatus(consultation.getConsultationStatus().toString())
+				.build();
+		}
 	}
 }
