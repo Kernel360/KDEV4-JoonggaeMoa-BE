@@ -4,5 +4,6 @@ public enum NotificationType {
 	CONNECTION,
 	SURVEY,
 	CONSULTATION,
-	CONTRACT
+	CONTRACT,
+	MESSAGE
 }

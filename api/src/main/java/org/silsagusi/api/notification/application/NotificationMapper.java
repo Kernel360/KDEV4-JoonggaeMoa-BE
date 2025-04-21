@@ -1,6 +1,6 @@
-package org.silsagusi.api.notify.application;
+package org.silsagusi.api.notification.application;
 
-import org.silsagusi.api.notify.application.dto.NotificationDto;
+import org.silsagusi.api.notification.application.dto.NotificationDto;
 import org.silsagusi.core.domain.notification.entity.Notification;
 import org.springframework.stereotype.Component;
 
@@ -13,6 +13,7 @@ public class NotificationMapper {
 			.type(notification.getType())
 			.content(notification.getContent())
 			.isRead(notification.getIsRead())
+			.createdAt(notification.getCreatedAt())
 			.build();
 	}
 }

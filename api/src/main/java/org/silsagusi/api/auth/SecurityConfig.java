@@ -38,21 +38,21 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-	private final CustomAuthenticationEntryPointHandler customAuthenticationEntryPointHandler;
-	private final CustomAccessDeniedHandler customAccessDeniedHandler;
-	private final JwtProvider jwtProvider;
-	private final ObjectMapper objectMapper;
-	private final CustomUserDetailsService customUserDetailsService;
-	private final RefreshTokenStore refreshTokenStore;
-
 	private static final String[] AUTH_WHITELIST = {
 		"/api/agents/login",
 		"/api/agents/signup",
 		"/api/refresh-token",
 		"/api/customers/**",
 		"/swagger-ui/**",
-		"/v3/api-docs/**"
+		"/v3/api-docs/**",
+		"/api/notification/subscribe"
 	};
+	private final CustomAuthenticationEntryPointHandler customAuthenticationEntryPointHandler;
+	private final CustomAccessDeniedHandler customAccessDeniedHandler;
+	private final JwtProvider jwtProvider;
+	private final ObjectMapper objectMapper;
+	private final CustomUserDetailsService customUserDetailsService;
+	private final RefreshTokenStore refreshTokenStore;
 
 	@Bean
 	public BCryptPasswordEncoder passwordEncoder() {

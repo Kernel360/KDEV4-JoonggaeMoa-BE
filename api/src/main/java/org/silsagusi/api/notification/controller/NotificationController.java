@@ -1,11 +1,11 @@
-package org.silsagusi.api.notify.controller;
+package org.silsagusi.api.notification.controller;
 
 import java.util.List;
 
 import org.silsagusi.api.auth.jwt.JwtProvider;
 import org.silsagusi.api.customResponse.ApiResponse;
-import org.silsagusi.api.notify.application.NotificationService;
-import org.silsagusi.api.notify.application.dto.NotificationDto;
+import org.silsagusi.api.notification.application.NotificationService;
+import org.silsagusi.api.notification.application.dto.NotificationDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
