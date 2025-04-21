@@ -6,7 +6,7 @@ import org.silsagusi.api.agent.infrastructure.AgentDataProvider;
 import org.silsagusi.api.consultation.infrastructure.ConsultationDataProvider;
 import org.silsagusi.api.customer.application.CustomerMapper;
 import org.silsagusi.api.customer.infrastructure.CustomerDataProvider;
-import org.silsagusi.api.notify.infrastructure.NotificationDataProvider;
+import org.silsagusi.api.notification.infrastructure.NotificationDataProvider;
 import org.silsagusi.api.survey.application.dto.AnswerDto;
 import org.silsagusi.api.survey.application.dto.SurveyDto;
 import org.silsagusi.api.survey.application.mapper.SurveyMapper;

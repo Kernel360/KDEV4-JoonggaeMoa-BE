@@ -8,7 +8,7 @@ import java.util.List;
 import org.silsagusi.api.consultation.infrastructure.ConsultationRepository;
 import org.silsagusi.api.contract.infrastructure.ContractRepository;
 import org.silsagusi.api.message.infrastructure.repository.MessageRepository;
-import org.silsagusi.api.notify.infrastructure.NotificationDataProvider;
+import org.silsagusi.api.notification.infrastructure.NotificationDataProvider;
 import org.silsagusi.core.domain.agent.Agent;
 import org.silsagusi.core.domain.consultation.entity.Consultation;
 import org.silsagusi.core.domain.contract.entity.Contract;

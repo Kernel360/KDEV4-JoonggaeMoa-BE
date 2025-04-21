@@ -1,9 +1,9 @@
-package org.silsagusi.api.notify.application;
+package org.silsagusi.api.notification.application;
 
 import java.util.List;
 
-import org.silsagusi.api.notify.application.dto.NotificationDto;
-import org.silsagusi.api.notify.infrastructure.NotificationDataProvider;
+import org.silsagusi.api.notification.application.dto.NotificationDto;
+import org.silsagusi.api.notification.infrastructure.NotificationDataProvider;
 import org.silsagusi.core.domain.notification.entity.Notification;
 import org.silsagusi.core.domain.notification.entity.NotificationType;
 import org.springframework.stereotype.Service;

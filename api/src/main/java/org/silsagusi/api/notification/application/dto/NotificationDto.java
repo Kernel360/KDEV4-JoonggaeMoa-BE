@@ -1,4 +1,4 @@
-package org.silsagusi.api.notify.application.dto;
+package org.silsagusi.api.notification.application.dto;
 
 import org.silsagusi.core.domain.notification.entity.NotificationType;
 
