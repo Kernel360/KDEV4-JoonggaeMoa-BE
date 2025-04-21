@@ -15,8 +15,8 @@ import lombok.RequiredArgsConstructor;
 @Service
 public class NotificationService {
 
-	private NotificationDataProvider notificationDataProvider;
-	private NotificationMapper notificationMapper;
+	private final NotificationDataProvider notificationDataProvider;
+	private final NotificationMapper notificationMapper;
 
 	public SseEmitter subscribe(Long agentId) {
 		SseEmitter emitter = notificationDataProvider.subscribe(agentId);
