@@ -46,6 +46,9 @@ public interface ConsultationRepository extends JpaRepository<Consultation, Long
 
 	Page<Consultation> findByCustomerAndDeletedAtIsNull(Customer customer, Pageable pageable);
 
+	List<Consultation> findByCustomerAndDateBetweenAndDeletedAtIsNull(Customer customer, LocalDateTime start,
+		LocalDateTime end);
+
 	List<Consultation> findAllByCustomer_Agent_IdAndDateBetweenAndConsultationStatusAndDeletedAtIsNull(
 		Long customerAgentId, LocalDateTime start, LocalDateTime end,
 		Consultation.ConsultationStatus consultationStatus);

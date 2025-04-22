@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.silsagusi.core.domain.contract.entity.Contract;
+import org.silsagusi.core.domain.customer.entity.Customer;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -25,4 +26,20 @@ public interface ContractRepository extends JpaRepository<Contract, String> {
 	long countByCustomerLandlord_Agent_IdAndStartedAt(Long agentId, LocalDate startedAt);
 
 	Optional<Contract> findByIdAndDeletedAtIsNull(String contractId);
+
+	@Query("""
+		    SELECT c FROM contracts c
+		    WHERE 
+		        (c.customerLandlord = :customer OR c.customerTenant = :customer)
+		        AND (
+		            (c.createdAt BETWEEN :start AND :end)
+		            OR
+		            (c.expiredAt BETWEEN :start AND :end)
+		        )
+		""")
+	List<Contract> findContractsByCustomerAndDateRange(
+		@Param("customer") Customer customer,
+		@Param("start") LocalDate start,
+		@Param("end") LocalDate end
+	);
 }

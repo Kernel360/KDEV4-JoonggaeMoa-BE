@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import org.silsagusi.core.domain.customer.entity.Customer;
 import org.silsagusi.core.domain.message.entity.Message;
 import org.silsagusi.core.domain.message.entity.SendStatus;
 import org.springframework.data.domain.Page;
@@ -25,6 +26,9 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
 		LocalDateTime start,
 		LocalDateTime end
 	);
+
+	List<Message> findByCustomerAndSendAtBetweenAndDeletedAtIsNull(Customer customer, LocalDateTime start,
+		LocalDateTime end);
 
 	Optional<Message> findByIdAndDeletedAtIsNull(Long id);
 }
