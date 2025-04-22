@@ -22,6 +22,9 @@ public class CustomerMapper {
 			customerRequestDto.getIsVip(),
 			customerRequestDto.getMemo(),
 			customerRequestDto.getConsent(),
+			customerRequestDto.getInterestProperty(),
+			customerRequestDto.getInterestLocation(),
+			customerRequestDto.getAssetStatus(),
 			agent
 		);
 	}
@@ -37,6 +40,9 @@ public class CustomerMapper {
 			.isVip(customerRequestDto.getIsVip())
 			.memo(customerRequestDto.getMemo())
 			.consent(customerRequestDto.getConsent())
+			.interestProperty(customerRequestDto.getInterestProperty())
+			.interestLocation(customerRequestDto.getInterestLocation())
+			.assetStatus(customerRequestDto.getAssetStatus())
 			.build();
 	}
 
@@ -50,6 +56,9 @@ public class CustomerMapper {
 			null,
 			null,
 			answerRequest.getConsent(),
+			null,
+			null,
+			null,
 			agent
 		);
 	}
@@ -65,6 +74,9 @@ public class CustomerMapper {
 			.isVip(customer.getIsVip())
 			.memo(customer.getMemo())
 			.consent(customer.getConsent())
+			.interestProperty(customer.getInterestProperty())
+			.interestLocation(customer.getInterestLocation())
+			.assetStatus(customer.getAssetStatus())
 			.build();
 	}
 

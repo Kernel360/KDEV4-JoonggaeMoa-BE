@@ -6,7 +6,6 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
-import org.silsagusi.api.agent.infrastructure.AgentRepository;
 import org.silsagusi.api.customer.exception.CustomerNotFoundException;
 import org.silsagusi.core.domain.agent.Agent;
 import org.silsagusi.core.domain.customer.command.UpdateCustomerCommand;
@@ -26,7 +25,6 @@ public class CustomerDataProvider {
 
 	private static final String S3_BUCKET_NAME = "joonggaemoa";
 	private static final String EXCEL_FORMAT_FILENAME = "format.xlsx";
-	private final AgentRepository agentRepository;
 	private final CustomerRepository customerRepository;
 	private final AmazonS3 amazonS3;
 
@@ -44,19 +42,18 @@ public class CustomerDataProvider {
 	}
 
 	public Customer getCustomer(Long customerId) {
-
-		Customer customer = customerRepository.findByIdAndDeletedAtIsNull(customerId)
+		return customerRepository.findByIdAndDeletedAtIsNull(customerId)
 			.orElseThrow(() -> new CustomerNotFoundException(customerId));
-		return customer;
 	}
 
 	public void updateCustomer(UpdateCustomerCommand updateCustomerCommand) {
 		Customer customer = updateCustomerCommand.getCustomer();
 
 		customer.updateCustomer(updateCustomerCommand.getName(), updateCustomerCommand.getBirthday(),
-			updateCustomerCommand.getPhone(), updateCustomerCommand.getEmail(),
-			updateCustomerCommand.getJob(), updateCustomerCommand.getIsVip(), updateCustomerCommand.getMemo(),
-			updateCustomerCommand.getConsent());
+			updateCustomerCommand.getPhone(), updateCustomerCommand.getEmail(), updateCustomerCommand.getJob(),
+			updateCustomerCommand.getIsVip(), updateCustomerCommand.getMemo(), updateCustomerCommand.getConsent(),
+			updateCustomerCommand.getInterestProperty(), updateCustomerCommand.getInterestLocation(),
+			updateCustomerCommand.getAssetStatus());
 
 		customerRepository.save(customer);
 	}
@@ -88,8 +85,7 @@ public class CustomerDataProvider {
 		Long thisWeekCount = customerRepository.countByAgentIdAndCreatedAtBetweenAndDeletedAtIsNull(agentId,
 			thisWeekStartTime, now);
 		Long lastWeekCount = customerRepository.countByAgentIdAndCreatedAtBetweenAndDeletedAtIsNull(agentId,
-			lastWeekStartTime,
-			lastWeekEndTime);
+			lastWeekStartTime, lastWeekEndTime);
 
 		double changeRate;
 		if (lastWeekCount == 0) {

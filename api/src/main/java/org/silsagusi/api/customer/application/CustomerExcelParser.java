@@ -42,6 +42,9 @@ public class CustomerExcelParser {
 							row.getCell(5).getBooleanCellValue(),
 							row.getCell(6).getStringCellValue(),
 							row.getCell(7).getBooleanCellValue(),
+							null,
+							null,
+							null,
 							agent
 						);
 
