@@ -1,10 +1,10 @@
-package org.silsagusi.batch.naverland.batch;
+package org.silsagusi.batch.scrape.zigbang.batch;
 
-import java.util.List;
-
-import org.silsagusi.batch.infrastructure.RegionScrapStatusRepository;
-import org.silsagusi.batch.naverland.service.NaverLandArticleRequestService;
-import org.silsagusi.core.domain.article.RegionScrapStatus;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.silsagusi.batch.infrastructure.ScrapeStatusRepository;
+import org.silsagusi.batch.scrape.zigbang.service.ZigBangItemCatalogRequestService;
+import org.silsagusi.core.domain.article.ScrapeStatus;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobScope;
@@ -16,39 +16,38 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.util.List;
 
 @Slf4j
 @Configuration
 @RequiredArgsConstructor
-public class NaverArticleBatchJobConfig {
-
-	private static final String JOB_NAME = "naverArticleJob";
+public class ZigBangArticleBatchJobConfig {
+	private static final String JOB_NAME = "zigBangArticleJob";
 
 	private final JobRepository jobRepository;
 	private final PlatformTransactionManager transactionManager;
-	private final RegionScrapStatusRepository regionScrapStatusRepository;
-	private final NaverLandArticleRequestService naverLandArticleRequestService;
+	private final ScrapeStatusRepository scrapeStatusRepository;
+	private final ZigBangItemCatalogRequestService zigBangItemCatalogRequestService;
 
 	@Bean
-	public Job naverArticleJob(Step naverArticleStep) {
+	public Job zigBangArticleJob(Step zigBangArticleStep) {
 		return new JobBuilder(JOB_NAME, jobRepository)
-			.start(naverArticleStep)
+			.start(zigBangArticleStep)
 			.build();
 	}
 
 	@Bean
 	@JobScope
-	public Step naverArticleStep() {
+	public Step zigBangArticleStep() {
 		return new StepBuilder(JOB_NAME + "Step", jobRepository)
 			.tasklet((contribution, chunkContext) -> {
-				List<RegionScrapStatus> regions = regionScrapStatusRepository.findTop50ByCompletedFalseOrderByIdAsc();
-				for (RegionScrapStatus status : regions) {
-					naverLandArticleRequestService.scrapArticles(status);
+				List<ScrapeStatus> regions = scrapeStatusRepository.findTop50ByCompletedFalseOrderByIdAsc();
+				for (ScrapeStatus status : regions) {
+					zigBangItemCatalogRequestService.scrapZigBangItemCatalogs(status);
 				}
 				return RepeatStatus.FINISHED;
 			}, transactionManager)
 			.build();
 	}
+
 }

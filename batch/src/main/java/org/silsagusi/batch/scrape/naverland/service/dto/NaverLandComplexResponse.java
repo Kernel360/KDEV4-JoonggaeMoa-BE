@@ -1,13 +1,13 @@
-package org.silsagusi.batch.naverland.service.dto;
-
-import java.util.List;
+package org.silsagusi.batch.scrape.naverland.service.dto;
 
 import lombok.Data;
 
-@Data
-public class ClientComplexResponse {
+import java.util.List;
 
-	private List<ComplexList> result;
+@Data
+public class NaverLandComplexResponse {
+
+	private List<NaverLandComplex> result;
 
 	private boolean hasPaidPreSale;
 
@@ -16,7 +16,7 @@ public class ClientComplexResponse {
 	private boolean isPreSale;
 
 	@Data
-	public static class ComplexList {
+	public static class NaverLandComplex {
 
 		// house complex number 단지번호
 		private String hscpNo;

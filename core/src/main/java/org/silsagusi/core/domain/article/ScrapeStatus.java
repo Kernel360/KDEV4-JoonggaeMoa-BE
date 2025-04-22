@@ -1,21 +1,16 @@
 package org.silsagusi.core.domain.article;
 
-import java.time.LocalDateTime;
-
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Entity(name = "region_scrap_statuses")
+@Entity(name = "scrape_statuses")
 @Getter
-public class RegionScrapStatus {
+public class ScrapeStatus {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,7 +30,7 @@ public class RegionScrapStatus {
 
 	private String errorMessage;
 
-	public RegionScrapStatus(Region region, Integer lastScrapedPage, Boolean completed, LocalDateTime lastScrapedAt) {
+	public ScrapeStatus(Region region, Integer lastScrapedPage, Boolean completed, LocalDateTime lastScrapedAt) {
 		this.region = region;
 		this.lastScrapedPage = lastScrapedPage;
 		this.completed = completed;

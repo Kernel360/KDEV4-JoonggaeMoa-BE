@@ -18,12 +18,12 @@ public interface ContractRepository extends JpaRepository<Contract, String> {
 	List<Contract> findByExpiredAtAndDeletedAtIsNull(LocalDate expiredAt);
 
 	@Query("SELECT COUNT(c) FROM contracts c WHERE c.customerLandlord.agent.id = :agentId " +
-		"AND c.createdAt <= :today AND c.expiredAt >= :today AND c.deletedAt IS NULL"
+		"AND c.startedAt <= :today AND c.expiredAt >= :today AND c.deletedAt IS NULL"
 	)
 	long countInProgress(@Param("agentId") Long agentId, @Param("today") LocalDate today);
 
 	// 특정 날짜에 생성된 계약 수
-	long countByCustomerLandlord_Agent_IdAndCreatedAt(Long agentId, LocalDate createdAt);
+	long countByCustomerLandlord_Agent_IdAndStartedAt(Long agentId, LocalDate startedAt);
 
 	Optional<Contract> findByIdAndDeletedAtIsNull(String contractId);
 

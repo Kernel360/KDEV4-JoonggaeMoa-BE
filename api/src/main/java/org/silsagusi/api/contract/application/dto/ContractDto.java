@@ -30,7 +30,7 @@ public class ContractDto {
 		@NotNull
 		@JsonFormat(pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
 		@DateTimeFormat(pattern = "yyyy-MM-dd")
-		private LocalDate createdAt;
+		private LocalDate startedAt;
 
 		@NotNull
 		@JsonFormat(pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
@@ -44,7 +44,7 @@ public class ContractDto {
 		private String id;
 		private String landlordName;
 		private String tenantName;
-		private LocalDate createdAt;
+		private LocalDate startedAt;
 		private LocalDate expiredAt;
 		private String url;
 	}
