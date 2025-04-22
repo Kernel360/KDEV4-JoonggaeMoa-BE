@@ -35,7 +35,7 @@ public class Contract {
 	@JoinColumn(name = "tenant_id")
 	private Customer customerTenant;
 
-	@Column(name = "created_at")
+	@Column(name = "started_at")
 	private LocalDate startedAt;
 
 	@Column(name = "expired_at")
