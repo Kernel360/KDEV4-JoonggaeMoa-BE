@@ -47,6 +47,14 @@ public class Customer extends BaseEntity {
 
 	private Boolean consent;
 
+	// private String interestProperty;
+	//
+	// private String interestLocation;
+	//
+	// private String contractType;
+	//
+	// private String assetStatus;
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "agent_id", nullable = false)
 	private Agent agent;
