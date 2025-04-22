@@ -4,12 +4,14 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.time.LocalDate;
 
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@ToString
 @Entity(name = "articles")
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Article {
 
 	@Id

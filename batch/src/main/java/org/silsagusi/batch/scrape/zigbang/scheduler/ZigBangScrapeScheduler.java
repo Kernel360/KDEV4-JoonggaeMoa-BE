@@ -26,8 +26,7 @@ public class ZigBangScrapeScheduler {
 	private static final String RESET_SCRAP_JOB_NAME = "scrapStatusResetJob";
 	private static final String TIME_STAMP = "timeStamp";
 
-	// 기본값: 30분마다 실행
-	@Scheduled(initialDelay = 15000, fixedRate = 1800000) // 1800000ms = 30분
+	@Scheduled(initialDelay = 5000, fixedRate = 1800000) // 어플리케이션 실행 5초 후 30분 간격으로 실행
 	public void scrapZigBang() throws
 		NoSuchJobException,
 		JobInstanceAlreadyCompleteException,

@@ -76,7 +76,8 @@ public class ArticleDataProvider {
 	}
 
 	public static Article createZigBangArticle(
-		ZigBangItemCatalogResponse.ZigBangItemCatalog item
+		ZigBangItemCatalogResponse.ZigBangItemCatalog item,
+		Region region
 	) {
 		Article article = new Article(
 			String.valueOf(item.getAreaHoId()),
@@ -95,7 +96,7 @@ public class ArticleDataProvider {
 			null,
 			null,
 			item.getItemTitle(),
-			mapItemType(item.getItemType()), // 거래유형
+			mapItemType(item.getItemType()),
 			null,
 			null,
 			null,
@@ -104,7 +105,7 @@ public class ArticleDataProvider {
 			null,
 			null,
 			null,
-			null,
+			region,
 			null,
 			null,
 			null,
@@ -121,6 +122,7 @@ public class ArticleDataProvider {
 		return article;
 	}
 
+	// 거래 유형
 	private static String mapTranType(String tranType) {
 		if (Objects.equals(tranType, "trade")) {
 			return "매매";
@@ -133,6 +135,7 @@ public class ArticleDataProvider {
 		}
 	}
 
+	// 매물 출처
 	private static String mapItemType(String itemType) {
 		if (Objects.equals(itemType, "partner")) {
 			return "직방(제휴 매물)"; // 직방 제휴 매물
