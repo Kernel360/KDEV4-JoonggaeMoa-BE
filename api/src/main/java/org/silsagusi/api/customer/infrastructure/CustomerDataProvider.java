@@ -115,7 +115,7 @@ public class CustomerDataProvider {
 						.id(contract.getId())
 						.type("CONTRACT")
 						.role(role)
-						.startDate(contract.getCreatedAt())
+						.startDate(contract.getStartedAt())
 						.endDate(contract.getExpiredAt())
 						.build(
 						));
