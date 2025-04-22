@@ -3,6 +3,7 @@ package org.silsagusi.core.domain.contract.entity;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import org.silsagusi.core.domain.BaseEntity;
 import org.silsagusi.core.domain.customer.entity.Customer;
 
 import jakarta.persistence.Column;
@@ -20,7 +21,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity(name = "contracts")
 @Getter
-public class Contract {
+public class Contract extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
