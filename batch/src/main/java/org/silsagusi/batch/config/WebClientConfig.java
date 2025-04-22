@@ -1,4 +1,4 @@
-package org.silsagusi.core.config;
+package org.silsagusi.batch.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

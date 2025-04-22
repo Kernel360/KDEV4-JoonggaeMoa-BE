@@ -1,4 +1,6 @@
-package org.silsagusi.api.notify.application.dto;
+package org.silsagusi.api.notification.application.dto;
+
+import java.time.LocalDateTime;
 
 import org.silsagusi.core.domain.notification.entity.NotificationType;
 
@@ -14,5 +16,6 @@ public class NotificationDto {
 		private NotificationType type;
 		private String content;
 		private boolean isRead;
+		private LocalDateTime createdAt;
 	}
 }

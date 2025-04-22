@@ -1,4 +1,4 @@
-package org.silsagusi.api.notify.infrastructure;
+package org.silsagusi.api.notification.infrastructure;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

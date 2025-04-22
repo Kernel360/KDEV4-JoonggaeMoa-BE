@@ -18,6 +18,8 @@ import org.silsagusi.core.domain.consultation.entity.Consultation.ConsultationSt
 import org.silsagusi.core.domain.consultation.info.ConsultationMonthInfo;
 import org.silsagusi.core.domain.consultation.info.ConsultationSummaryInfo;
 import org.silsagusi.core.domain.customer.entity.Customer;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
@@ -28,23 +30,27 @@ public class ConsultationDataProvider {
 
 	private final ConsultationRepository consultationRepository;
 
-	public void createConsultation(Customer customer, LocalDateTime consultationDate,
-		ConsultationStatus consultationStatus) {
-
-		Consultation consultation = new Consultation(
-			customer,
-			consultationDate,
-			consultationStatus
-		);
-
+	public void createConsultation(Consultation consultation) {
 		consultationRepository.save(consultation);
 	}
 
 	public Consultation getConsultation(Long consultationId) {
-		Consultation consultation = consultationRepository.findByIdAndDeletedAtIsNull(consultationId)
+		return consultationRepository.findByIdAndDeletedAtIsNull(consultationId)
 			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
+	}
 
-		return consultation;
+	public List<Consultation> getConsultationsByStatus(Long agentId, String month, String status) {
+		YearMonth yearMonth = YearMonth.parse(month);
+		LocalDateTime startOfMonth = yearMonth.atDay(1).atTime(LocalTime.MIN);
+		LocalDateTime endOfMonth = yearMonth.atEndOfMonth().atTime(LocalTime.MAX);
+
+		return consultationRepository.findAllByCustomer_Agent_IdAndDateBetweenAndConsultationStatusAndDeletedAtIsNull(
+			agentId,
+			startOfMonth, endOfMonth, ConsultationStatus.valueOf(status));
+	}
+
+	public Page<Consultation> getConsultationsByCustomer(Customer customer, Pageable pageable) {
+		return consultationRepository.findByCustomerAndDeletedAtIsNull(customer, pageable);
 	}
 
 	public void updateStatus(Consultation consultation, String consultationStatus) {
@@ -54,8 +60,6 @@ public class ConsultationDataProvider {
 
 	public void updateConsultation(Consultation consultation, UpdateConsultationCommand updateConsultationCommand) {
 		consultation.updateConsultation(updateConsultationCommand.getDate(), updateConsultationCommand.getPurpose(),
-			updateConsultationCommand.getInterestProperty(), updateConsultationCommand.getInterestLocation(),
-			updateConsultationCommand.getContractType(), updateConsultationCommand.getAssetStatus(),
 			updateConsultationCommand.getMemo());
 		consultationRepository.save(consultation);
 	}
