@@ -1,7 +1,6 @@
 package org.silsagusi.batch.scrape.naverland.batch;
 
-import java.time.LocalDateTime;
-
+import lombok.RequiredArgsConstructor;
 import org.silsagusi.batch.infrastructure.ScrapeStatusRepository;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -14,7 +13,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import lombok.RequiredArgsConstructor;
+import java.time.LocalDateTime;
 
 @Configuration
 @RequiredArgsConstructor

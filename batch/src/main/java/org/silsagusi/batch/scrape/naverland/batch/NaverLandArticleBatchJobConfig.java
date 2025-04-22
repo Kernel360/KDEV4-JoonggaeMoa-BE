@@ -1,7 +1,7 @@
 package org.silsagusi.batch.scrape.naverland.batch;
 
-import java.util.List;
-
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.silsagusi.batch.infrastructure.ScrapeStatusRepository;
 import org.silsagusi.batch.scrape.naverland.service.NaverLandArticleRequestService;
 import org.silsagusi.core.domain.article.ScrapeStatus;
@@ -16,8 +16,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.util.List;
 
 @Slf4j
 @Configuration

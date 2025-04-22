@@ -1,5 +1,6 @@
 package org.silsagusi.batch.scrape.zigbang.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.silsagusi.batch.infrastructure.ArticleDataProvider;
@@ -18,6 +19,7 @@ import java.util.Objects;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional
 public class ZigBangItemCatalogRequestService {
 
 	private final ZigBangApiClient zigbangApiClient;

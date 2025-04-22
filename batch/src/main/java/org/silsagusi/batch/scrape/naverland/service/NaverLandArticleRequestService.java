@@ -1,10 +1,8 @@
 package org.silsagusi.batch.scrape.naverland.service;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.silsagusi.batch.infrastructure.ArticleDataProvider;
 import org.silsagusi.batch.scrape.naverland.client.NaverLandApiClient;
 import org.silsagusi.batch.scrape.naverland.service.dto.KakaoMapAddressResponse;
@@ -15,12 +13,15 @@ import org.silsagusi.core.domain.article.ScrapeStatus;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional
 public class NaverLandArticleRequestService {
 
 	private final NaverLandApiClient naverLandApiClient;
@@ -61,6 +62,9 @@ public class NaverLandArticleRequestService {
 		} catch (Exception e) {
 			log.error("스크랩 실패 : {}", scrapeStatus.getRegion().getCortarNo(), e);
 			scrapeStatus.updateFailed(true, e.getMessage());
+
+			// 예외를 다시 던져서 트랜잭션 롤백
+			throw new RuntimeException("스크랩 실패", e);
 		}
 	}
 

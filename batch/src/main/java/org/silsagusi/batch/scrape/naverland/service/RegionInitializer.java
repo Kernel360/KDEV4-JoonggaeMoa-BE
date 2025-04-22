@@ -1,8 +1,8 @@
 package org.silsagusi.batch.scrape.naverland.service;
 
-import java.util.*;
-
 import ch.hsr.geohash.GeoHash;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Nullable;
 import org.silsagusi.batch.infrastructure.RegionRepository;
 import org.silsagusi.batch.infrastructure.ScrapeStatusRepository;
@@ -15,10 +15,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-
-import static java.lang.Thread.sleep;
+import java.util.*;
 
 @Slf4j
 @Component

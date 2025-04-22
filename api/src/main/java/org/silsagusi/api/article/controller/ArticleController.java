@@ -1,12 +1,9 @@
 package org.silsagusi.api.article.controller;
 
-import java.util.List;
-
+import lombok.RequiredArgsConstructor;
 import org.silsagusi.api.article.application.ArticleService;
-import org.silsagusi.api.article.application.RegionService;
 import org.silsagusi.api.article.application.dto.ArticleResponse;
 import org.silsagusi.api.article.application.dto.RealEstateTypeSummaryResponse;
-import org.silsagusi.api.article.application.dto.RegionResponse;
 import org.silsagusi.api.article.application.dto.TradeTypeSummaryResponse;
 import org.silsagusi.api.customResponse.ApiResponse;
 import org.springframework.data.domain.Page;
@@ -16,7 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import lombok.RequiredArgsConstructor;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor

@@ -1,11 +1,10 @@
 package org.silsagusi.api.article.application.dto;
 
-import java.time.LocalDate;
-
-import org.silsagusi.core.domain.article.Article;
-
 import lombok.Builder;
 import lombok.Getter;
+import org.silsagusi.core.domain.article.Article;
+
+import java.time.LocalDate;
 
 @Getter
 @Builder
