@@ -1,9 +1,9 @@
-package org.silsagusi.batch.naverland.service.dto;
+package org.silsagusi.batch.scrape.naverland.service.dto;
 
 import lombok.Getter;
 
 @Getter
-public class AddressResponse {
+public class KakaoMapAddressResponse {
 	private final String lotAddress;
 	private final String roadAddress;
 	private final String city;
@@ -17,7 +17,7 @@ public class AddressResponse {
 	private final String buildingName;
 	private final String zoneNo;
 
-	public AddressResponse(
+	public KakaoMapAddressResponse(
 		String lotAddress,
 		String roadAddress,
 		String city,

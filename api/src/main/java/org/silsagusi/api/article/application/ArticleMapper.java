@@ -1,7 +1,5 @@
 package org.silsagusi.api.article.application;
 
-import java.util.List;
-
 import org.silsagusi.api.article.application.dto.ArticleResponse;
 import org.silsagusi.api.article.application.dto.RealEstateTypeSummaryResponse;
 import org.silsagusi.api.article.application.dto.RegionResponse;
@@ -10,6 +8,8 @@ import org.silsagusi.core.domain.article.Article;
 import org.silsagusi.core.domain.article.Region;
 import org.silsagusi.core.domain.article.projection.ArticleTypeRatioProjection;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Component
 public class ArticleMapper {
@@ -37,32 +37,32 @@ public class ArticleMapper {
 	public ArticleResponse toArticleResponse(Article article) {
 		return ArticleResponse.builder()
 			.id(article.getId())
+			.bjdCode(article.getBjdCode())
+			.articleName(article.getArticleName())
+			.articleType(article.getArticleType())
+			.tradeType(article.getTradeType())
+			.floors(article.getFloors())
+			.priceSale(article.getPriceSale())
+			.priceRent(article.getPriceRent())
+			.areaSupply(article.getAreaSupply())
+			.areaExclusive(article.getAreaExclusive())
+			.direction(article.getDirection())
+			.confirmedAt(article.getConfirmedAt())
+			.imageUrl(article.getImageUrl())
 			.latitude(article.getLatitude())
 			.longitude(article.getLongitude())
-			.cortarNo(article.getCortarNo())
-			.articleNo(article.getArticleNo())
-			.name(article.getName())
-			.realEstateType(article.getRealEstateType())
-			.tradeType(article.getTradeType())
-			.price(article.getPrice() + "")
-			.rentPrice(article.getRentPrice())
-			.lotAddressName(article.getLotAddressName())
-			.roadAddressName(article.getRoadAddressName())
-			.zipCode(article.getZoneNo())
-			.confirmedAt(article.getConfirmedAt())
-			.lotAddressName(article.getLotAddressName())
-			.roadAddressName(article.getRoadAddressName())
-			.zipCode(article.getZoneNo())
-			.imageUrl(article.getImageUrl())
-			.direction(article.getDirection())
-			.tags(article.getTags())
-			.subwayInfo(article.getSubwayInfo())
-			.companyId(article.getCompanyId())
+			.articleDesc(article.getArticleDesc())
 			.companyName(article.getCompanyName())
-			.agentName(article.getAgentName())
-			.cortarName(article.getRegion().getCortarName())
+			.agency(article.getAgency())
+			.priceRoomMin(article.getPriceRoomMin())
+			.priceRoomMax(article.getPriceRoomMax())
+			.subway(article.getSubway())
+			.articleDescRoom(article.getArticleDescRoom())
+			.articleDescMw(article.getArticleDescMw())
+			.emptyRoomCount(article.getEmptyRoomCount())
+			.isChecked(article.getIsChecked())
 			.build();
-	}
+		}
 
 	public RegionResponse toRegionResponse(Region region) {
 		return RegionResponse.builder()

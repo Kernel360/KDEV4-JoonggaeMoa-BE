@@ -75,6 +75,9 @@ dependencies {
 
     // native library for DNS resolution on macOS
     implementation 'io.netty:netty-resolver-dns-native-macos:4.1.68.Final:osx-aarch_64'
+
+    // GeoHash
+    implementation 'ch.hsr:geohash:1.4.0'
 }
 
 tasks.named('test') {

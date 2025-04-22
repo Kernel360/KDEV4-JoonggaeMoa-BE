@@ -1,5 +1,6 @@
-package org.silsagusi.batch.naverland.scheduler;
+package org.silsagusi.batch.scrape.naverland.scheduler;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.JobParametersInvalidException;
@@ -13,22 +14,19 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import lombok.RequiredArgsConstructor;
-
 @Component
 @EnableScheduling
 @RequiredArgsConstructor
-public class NaverLandScheduler {
+public class NaverLandScrapeScheduler {
 
 	private final JobLauncher jobLauncher;
 	private final JobRegistry jobRegistry;
 
-	private static final String SCRAP_JOB_NAME = "naverArticleJob";
+	private static final String SCRAP_JOB_NAME = "naverLandArticleJob";
 	private static final String RESET_SCRAP_JOB_NAME = "scrapStatusResetJob";
 	private static final String TIME_STAMP = "timeStamp";
 
-	// 기본값: 30분마다 실행
-	@Scheduled(initialDelay = 5000, fixedRate = 1800000) // 1800000ms = 30분
+	@Scheduled(initialDelay = 1800000, fixedRate = 7200000) // 어플리케이션 시작 30분 이후 2시간 간격으로 실행
 	public void scrapNaverLand() throws
 		NoSuchJobException,
 		JobInstanceAlreadyCompleteException,

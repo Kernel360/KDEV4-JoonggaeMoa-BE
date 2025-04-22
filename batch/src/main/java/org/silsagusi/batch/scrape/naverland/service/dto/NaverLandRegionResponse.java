@@ -1,11 +1,11 @@
-package org.silsagusi.batch.naverland.service.dto;
-
-import java.util.List;
+package org.silsagusi.batch.scrape.naverland.service.dto;
 
 import lombok.Data;
 
+import java.util.List;
+
 @Data
-public class ClientRegionResponse {
+public class NaverLandRegionResponse {
 
 	private List<Region> regionList;
 
