@@ -1,11 +1,11 @@
 package org.silsagusi.core.domain.contract.info;
 
-import lombok.Builder;
-import lombok.Getter;
+import java.time.LocalDate;
 
 import org.silsagusi.core.domain.contract.entity.Contract;
 
-import java.time.LocalDate;
+import lombok.Builder;
+import lombok.Getter;
 
 @Getter
 @Builder
@@ -19,7 +19,7 @@ public class ContractDetailInfo {
 	private String tenantPhone;
 	private String landlordEmail;
 	private String tenantEmail;
-	private LocalDate createdAt;
+	private LocalDate startedAt;
 	private LocalDate expiredAt;
 	private String url;
 
@@ -34,7 +34,7 @@ public class ContractDetailInfo {
 			.tenantPhone(contract.getCustomerTenant().getPhone())
 			.landlordEmail(contract.getCustomerLandlord().getEmail())
 			.tenantEmail(contract.getCustomerTenant().getEmail())
-			.createdAt(contract.getCreatedAt())
+			.startedAt(contract.getStartedAt())
 			.expiredAt(contract.getExpiredAt())
 			.build();
 	}

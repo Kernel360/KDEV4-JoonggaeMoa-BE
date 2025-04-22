@@ -19,7 +19,7 @@ public class ContractDetailDto {
 		private String tenantPhone;
 		private String landlordEmail;
 		private String tenantEmail;
-		private LocalDate createdAt;
+		private LocalDate startedAt;
 		private LocalDate expiredAt;
 		private String url;
 	}

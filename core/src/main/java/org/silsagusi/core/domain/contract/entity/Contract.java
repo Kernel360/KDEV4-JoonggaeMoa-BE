@@ -36,26 +36,26 @@ public class Contract {
 	private Customer customerTenant;
 
 	@Column(name = "created_at")
-	private LocalDate createdAt;
+	private LocalDate startedAt;
 
 	@Column(name = "expired_at")
 	private LocalDate expiredAt;
 
 	@Column(name = "deleted_at")
 	private LocalDateTime deletedAt;
-	
+
 	private String url;
 
 	private Contract(
 		Customer customerLandlordId,
 		Customer customerTenantId,
-		LocalDate createdAt,
+		LocalDate startedAt,
 		LocalDate expiredAt,
 		String url
 	) {
 		this.customerLandlord = customerLandlordId;
 		this.customerTenant = customerTenantId;
-		this.createdAt = createdAt;
+		this.startedAt = startedAt;
 		this.expiredAt = expiredAt;
 		this.url = url;
 	}
@@ -63,14 +63,14 @@ public class Contract {
 	public static Contract create(
 		Customer customerLandlordId,
 		Customer customerTenantId,
-		LocalDate createdAt,
+		LocalDate startedAt,
 		LocalDate expiredAt,
 		String url
 	) {
 		return new Contract(
 			customerLandlordId,
 			customerTenantId,
-			createdAt,
+			startedAt,
 			expiredAt,
 			url
 		);
@@ -81,11 +81,11 @@ public class Contract {
 	}
 
 	public void update(
-		LocalDate createdAt,
+		LocalDate startedAt,
 		LocalDate expiredAt,
 		String url
 	) {
-		this.createdAt = createdAt;
+		this.startedAt = startedAt;
 		this.expiredAt = expiredAt;
 		this.url = url;
 	}

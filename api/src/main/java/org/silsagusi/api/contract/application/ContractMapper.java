@@ -20,7 +20,7 @@ public class ContractMapper {
 		return Contract.create(
 			customerLandlord,
 			customerTenant,
-			contractRequest.getCreatedAt(),
+			contractRequest.getStartedAt(),
 			contractRequest.getExpiredAt(),
 			filename
 		);
@@ -37,7 +37,7 @@ public class ContractMapper {
 			.tenantPhone(info.getTenantPhone())
 			.landlordEmail(info.getLandlordEmail())
 			.tenantEmail(info.getTenantEmail())
-			.createdAt(info.getCreatedAt())
+			.startedAt(info.getStartedAt())
 			.expiredAt(info.getExpiredAt())
 			.url(info.getUrl())
 			.build();
@@ -48,7 +48,7 @@ public class ContractMapper {
 			.id(info.getId())
 			.landlordName(info.getLandlordName())
 			.tenantName(info.getTenantName())
-			.createdAt(info.getCreatedAt())
+			.startedAt(info.getStartedAt())
 			.expiredAt(info.getExpiredAt())
 			.url(info.getUrl())
 			.build();
