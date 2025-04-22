@@ -12,7 +12,7 @@ import lombok.Getter;
 public class ArticleResponse {
 	private Long id;
 	private String articleCode;
-	private String dongCode;
+	private String bjdCode;
 	private String articleName;
 	private String articleType;
 	private String tradeType;
@@ -26,11 +26,17 @@ public class ArticleResponse {
 	private String imageUrl;
 	private Double latitude;
 	private Double longitude;
-	private String atclFetrDesc;
+	private String articleDesc;
 	private String companyName;
-	private String agentName;
-	private String subwayInfo;
+	private String agency;
+	private Integer priceRoomMin;
+	private Integer priceRoomMax;
+	private String subway;
+	private String articleDescRoom;
+	private String articleDescMw;
+	private Integer emptyRoomCount;
 	private Boolean isChecked;
+
 	private String lotAddress;
 	private String roadAddress;
 	private String city;
@@ -48,7 +54,7 @@ public class ArticleResponse {
 		return ArticleResponse.builder()
 			.id(article.getId())
 			.articleCode(article.getArticleCode())
-			.dongCode(article.getBjdCode())
+			.bjdCode(article.getBjdCode())
 			.articleName(article.getArticleName())
 			.articleType(article.getArticleType())
 			.tradeType(article.getTradeType())
@@ -62,10 +68,15 @@ public class ArticleResponse {
 			.imageUrl(article.getImageUrl())
 			.latitude(article.getLatitude())
 			.longitude(article.getLongitude())
-			.atclFetrDesc(article.getArticleDesc())
+			.articleDesc(article.getArticleDesc())
 			.companyName(article.getCompanyName())
-			.agentName(article.getAgency())
-			.subwayInfo(article.getSubway())
+			.agency(article.getAgency())
+			.priceRoomMin(article.getPriceRoomMin())
+			.priceRoomMax(article.getPriceRoomMax())
+			.subway(article.getSubway())
+			.articleDescRoom(article.getArticleDescRoom())
+			.articleDescMw(article.getArticleDescMw())
+			.emptyRoomCount(article.getEmptyRoomCount())
 			.isChecked(article.getIsChecked())
 			.lotAddress(article.getAddressFullLot())
 			.roadAddress(article.getAddressFullRoad())
