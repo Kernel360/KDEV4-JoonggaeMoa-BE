@@ -2,10 +2,8 @@ package org.silsagusi.batch.infrastructure.dataProvider;
 
 import lombok.RequiredArgsConstructor;
 import org.silsagusi.batch.infrastructure.repository.ComplexRepository;
-import org.silsagusi.batch.scrape.naverland.service.dto.KakaoMapAddressResponse;
 import org.silsagusi.batch.scrape.naverland.service.dto.NaverLandComplexResponse;
 import org.silsagusi.core.domain.article.Complex;
-import org.silsagusi.core.domain.article.Region;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;

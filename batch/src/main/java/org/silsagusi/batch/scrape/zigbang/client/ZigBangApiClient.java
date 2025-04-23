@@ -1,16 +1,11 @@
 package org.silsagusi.batch.scrape.zigbang.client;
 
 import lombok.RequiredArgsConstructor;
-import org.silsagusi.batch.infrastructure.repository.RegionRepository;
 import org.silsagusi.batch.scrape.zigbang.service.dto.ZigBangDanjiResponse;
 import org.silsagusi.batch.scrape.zigbang.service.dto.ZigBangItemCatalogResponse;
-import org.silsagusi.batch.scrape.zigbang.service.dto.ZigBangLocalCodeResponse;
-import org.silsagusi.core.domain.article.Region;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
-
-import java.util.Objects;
 
 @Component
 @RequiredArgsConstructor
