@@ -16,7 +16,7 @@ public class ComplexController {
 
 	private final ComplexService complexService;
 
-	@GetMapping("/api/naverbudongsan/complexes")
+	@GetMapping("/api/complexes")
 	public ResponseEntity<ApiResponse<List<ComplexResponse>>> getComplexes() {
 		List<ComplexResponse> complexResponseList = complexService.getComplexes().stream()
 			.map(complex -> new ComplexResponse()).toList();

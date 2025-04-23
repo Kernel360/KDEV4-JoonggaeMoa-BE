@@ -2,7 +2,7 @@ package org.silsagusi.batch.scrape.zigbang.batch;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.silsagusi.batch.infrastructure.ScrapeStatusRepository;
+import org.silsagusi.batch.infrastructure.repository.ScrapeStatusRepository;
 import org.silsagusi.batch.scrape.zigbang.service.ZigBangItemCatalogRequestService;
 import org.silsagusi.core.domain.article.ScrapeStatus;
 import org.springframework.batch.core.Job;

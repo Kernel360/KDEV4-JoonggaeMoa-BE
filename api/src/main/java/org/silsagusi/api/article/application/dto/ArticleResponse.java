@@ -13,7 +13,8 @@ public class ArticleResponse {
 	private String articleCode;
 	private String bjdCode;
 	private String articleName;
-	private String articleType;
+	private String buildingTypeCode;
+	private String buildingType;
 	private String tradeType;
 	private String floors;
 	private Integer priceSale;
@@ -28,34 +29,28 @@ public class ArticleResponse {
 	private String articleDesc;
 	private String companyName;
 	private String agency;
-	private Integer priceRoomMin;
-	private Integer priceRoomMax;
+//	private Integer priceRoomMin;
+//	private Integer priceRoomMax;
 	private String subway;
-	private String articleDescRoom;
-	private String articleDescMw;
-	private Integer emptyRoomCount;
+//	private String articleDescRoom;
+//	private String articleDescMw;
+//	private Integer emptyRoomCount;
 	private Boolean isChecked;
+	private String addressFullLot;
+	private String addressFullRoad;
+	private String address1SiDo;
+	private String address2SiGunGu;
+	private String address3DongEupMyeon;
 
-	private String lotAddress;
-	private String roadAddress;
-	private String city;
-	private String district;
-	private String town;
-	private String mainAddressNo;
-	private String subAddressNo;
-	private String roadName;
-	private String mainBuildingNo;
-	private String subBuildingNo;
-	private String buildingName;
-	private String zipCode;
-
+	// TODO : 이거 무엇에 쓰는 물건잉교
 	public static ArticleResponse of(Article article) {
 		return ArticleResponse.builder()
 			.id(article.getId())
 			.articleCode(article.getArticleCode())
 			.bjdCode(article.getBjdCode())
 			.articleName(article.getArticleName())
-			.articleType(article.getArticleType())
+			.buildingTypeCode(article.getBuildingTypeCode())
+			.buildingType(article.getBuildingType())
 			.tradeType(article.getTradeType())
 			.floors(article.getFloors())
 			.priceSale(article.getPriceSale())
@@ -70,25 +65,13 @@ public class ArticleResponse {
 			.articleDesc(article.getArticleDesc())
 			.companyName(article.getCompanyName())
 			.agency(article.getAgency())
-			.priceRoomMin(article.getPriceRoomMin())
-			.priceRoomMax(article.getPriceRoomMax())
 			.subway(article.getSubway())
-			.articleDescRoom(article.getArticleDescRoom())
-			.articleDescMw(article.getArticleDescMw())
-			.emptyRoomCount(article.getEmptyRoomCount())
 			.isChecked(article.getIsChecked())
-			.lotAddress(article.getAddressFullLot())
-			.roadAddress(article.getAddressFullRoad())
-			.city(article.getAddress1SiDo())
-			.district(article.getAddress2SiGunGu())
-			.town(article.getAddress3DongEupMyeon())
-			.mainAddressNo(article.getAddressFullLotNo1())
-			.subAddressNo(article.getAddressFullLotNo2())
-			.roadName(article.getAddressFullRoadName())
-			.mainBuildingNo(article.getAddressFullRoadNo1())
-			.subBuildingNo(article.getAddressFullRoadNo2())
-			.buildingName(article.getAddressBuildingName())
-			.zipCode(article.getAddressZipCode())
+			.addressFullLot(article.getAddressFullLot())
+			.addressFullRoad(article.getAddressFullRoad())
+			.address1SiDo(article.getAddress1SiDo())
+			.address2SiGunGu(article.getAddress2SiGunGu())
+			.address3DongEupMyeon(article.getAddress3DongEupMyeon())
 			.build();
 	}
 }

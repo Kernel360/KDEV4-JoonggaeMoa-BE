@@ -1,7 +1,7 @@
 package org.silsagusi.batch.scrape.naverland.batch;
 
 import lombok.RequiredArgsConstructor;
-import org.silsagusi.batch.infrastructure.ScrapeStatusRepository;
+import org.silsagusi.batch.infrastructure.repository.ScrapeStatusRepository;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobScope;

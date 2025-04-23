@@ -2,8 +2,8 @@ package org.silsagusi.batch.scrape.naverland.batch;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.silsagusi.batch.infrastructure.ScrapeStatusRepository;
-import org.silsagusi.batch.scrape.naverland.service.NaverLandArticleRequestService;
+import org.silsagusi.batch.infrastructure.repository.ScrapeStatusRepository;
+import org.silsagusi.batch.scrape.naverland.service.NaverLandRequestService;
 import org.silsagusi.core.domain.article.ScrapeStatus;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -28,7 +28,7 @@ public class NaverLandArticleBatchJobConfig {
 	private final JobRepository jobRepository;
 	private final PlatformTransactionManager transactionManager;
 	private final ScrapeStatusRepository scrapeStatusRepository;
-	private final NaverLandArticleRequestService naverLandArticleRequestService;
+	private final NaverLandRequestService naverLandRequestService;
 
 	@Bean
 	public Job naverLandArticleJob(Step naverLandArticleStep) {
@@ -44,7 +44,7 @@ public class NaverLandArticleBatchJobConfig {
 			.tasklet((contribution, chunkContext) -> {
 				List<ScrapeStatus> regions = scrapeStatusRepository.findTop50ByCompletedFalseOrderByIdAsc();
 				for (ScrapeStatus status : regions) {
-					naverLandArticleRequestService.scrapNaverArticles(status);
+					naverLandRequestService.scrapNaverArticles(status);
 				}
 				return RepeatStatus.FINISHED;
 			}, transactionManager)

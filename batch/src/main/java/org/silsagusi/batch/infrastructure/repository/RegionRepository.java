@@ -1,4 +1,4 @@
-package org.silsagusi.batch.infrastructure;
+package org.silsagusi.batch.infrastructure.repository;
 
 import org.silsagusi.core.domain.article.Region;
 import org.springframework.data.jpa.repository.JpaRepository;

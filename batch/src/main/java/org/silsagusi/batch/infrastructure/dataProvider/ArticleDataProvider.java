@@ -1,6 +1,7 @@
-package org.silsagusi.batch.infrastructure;
+package org.silsagusi.batch.infrastructure.dataProvider;
 
 import lombok.RequiredArgsConstructor;
+import org.silsagusi.batch.infrastructure.repository.ArticleRepository;
 import org.silsagusi.batch.scrape.naverland.service.dto.KakaoMapAddressResponse;
 import org.silsagusi.batch.scrape.naverland.service.dto.NaverLandArticleResponse;
 import org.silsagusi.batch.scrape.zigbang.service.dto.ZigBangItemCatalogResponse;
@@ -35,6 +36,7 @@ public class ArticleDataProvider {
 			naverLandArticle.getAtclNo(),
 			naverLandArticle.getCortarNo(),
 			naverLandArticle.getAtclNm(),
+			naverLandArticle.getRletTpCd(),
 			naverLandArticle.getRletTpNm(),
 			naverLandArticle.getTradTpNm(),
 			naverLandArticle.getFlrInfo(),
@@ -44,80 +46,57 @@ public class ArticleDataProvider {
 			naverLandArticle.getSpc2(),
 			naverLandArticle.getDirection(),
 			parseConfirmedAt(naverLandArticle.getAtclCfmYmd()),
-			naverLandArticle.getRepImgUrl(),
+			"https://landthumb-phinf.pstatic.net" + naverLandArticle.getRepImgUrl(),
 			naverLandArticle.getLat(),
 			naverLandArticle.getLng(),
 			naverLandArticle.getAtclFetrDesc(),
 			naverLandArticle.getCpNm(),
 			naverLandArticle.getRltrNm(),
-			naverLandArticle.getMinMviFee(),
-			naverLandArticle.getMaxMviFee(),
 			naverLandArticle.getSbwyInfo(),
-			naverLandArticle.getSvcCont(),
-			naverLandArticle.getGdrNm(),
-			naverLandArticle.getEtRoomCnt(),
 			naverLandArticle.getTradeCheckedByOwner(),
 			region,
 			kakaoMapAddressResponse.getLotAddress(),
 			kakaoMapAddressResponse.getRoadAddress(),
 			kakaoMapAddressResponse.getCity(),
 			kakaoMapAddressResponse.getDistrict(),
-			kakaoMapAddressResponse.getRegion(),
-			kakaoMapAddressResponse.getMainAddressNo(),
-			kakaoMapAddressResponse.getSubAddressNo(),
-			kakaoMapAddressResponse.getRoadName(),
-			kakaoMapAddressResponse.getMainBuildingNo(),
-			kakaoMapAddressResponse.getSubBuildingNo(),
-			kakaoMapAddressResponse.getBuildingName(),
-			kakaoMapAddressResponse.getZoneNo()
+			kakaoMapAddressResponse.getRegion()
 		);
-
 		return article;
 	}
 
 	public static Article createZigBangArticle(
-		ZigBangItemCatalogResponse.ZigBangItemCatalog item,
+		ZigBangItemCatalogResponse item,
 		Region region
+
 	) {
 		Article article = new Article(
-			String.valueOf(item.getAreaHoId()),
+			String.valueOf(item.getList().get(0).getAreaDanjiId()),
 			null,
-			item.getAreaDanjiName() + " " + item.getDong(),
+			item.getList().get(0).getAreaDanjiName() + " " + item.getList().get(0).getDong(),
+			null,
 			"아파트",
-			mapTranType(item.getTranType()),
-			item.getFloor(),
-			item.getDepositMin(),
-			item.getRentMin(),
-			item.getRoomTypeTitle().getM2(),
-			String.valueOf(item.getSizeM2()),
+			mapTranType(item.getList().get(0).getTranType()),
+			item.getList().get(0).getFloor(),
+			item.getList().get(0).getDepositMin(),
+			item.getList().get(0).getRentMin(),
+			item.getList().get(0).getRoomTypeTitle().getM2(),
+			String.valueOf(item.getList().get(0).getSizeM2()),
 			null,
 			null,
-			item.getThumbnailUrl(),
+			item.getList().get(0).getThumbnailUrl(),
+			item.getLat(),
+			item.getLng(),
+			item.getList().get(0).getItemTitle(),
+			mapItemType(item.getList().get(0).getItemType()),
 			null,
 			null,
-			item.getItemTitle(),
-			mapItemType(item.getItemType()),
-			null,
-			null,
-			null,
-			null,
-			null,
-			null,
-			null,
-			null,
+			mapIsChecked(item.getList().get(0).getItemType()),
 			region,
+			item.getLocal1() + item.getLocal2() + item.getLocal3(),
 			null,
-			null,
-			null,
-			null,
-			null,
-			null,
-			null,
-			null,
-			null,
-			null,
-			null,
-			null
+			item.getLocal1(),
+			item.getList().get(0).getLocal2(),
+			item.getList().get(0).getLocal3()
 		);
 		return article;
 	}
@@ -143,6 +122,17 @@ public class ArticleDataProvider {
 			return "직방(개인 매물)"; // 개인 매물, 유료 광고 적용됨
 		} else {
 			return "직방";
+		}
+	}
+
+	// 확인매물여부
+	private static Boolean mapIsChecked(String itemType) {
+		if (Objects.equals(itemType, "partner")) {
+			return true; // 직방 제휴 매물
+		} else if (Objects.equals(itemType, "self_ad")) {
+			return true; // 개인 매물, 유료 광고 적용됨
+		} else {
+			return false;
 		}
 	}
 

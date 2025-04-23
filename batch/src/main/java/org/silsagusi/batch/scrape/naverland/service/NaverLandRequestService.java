@@ -2,7 +2,7 @@ package org.silsagusi.batch.scrape.naverland.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.silsagusi.batch.infrastructure.ArticleDataProvider;
+import org.silsagusi.batch.infrastructure.dataProvider.ArticleDataProvider;
 import org.silsagusi.batch.scrape.naverland.client.NaverLandApiClient;
 import org.silsagusi.batch.scrape.naverland.service.dto.KakaoMapAddressResponse;
 import org.silsagusi.batch.scrape.naverland.service.dto.NaverLandArticleResponse;
@@ -20,7 +20,7 @@ import java.util.Objects;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class NaverLandArticleRequestService {
+public class NaverLandRequestService {
 
 	private final NaverLandApiClient naverLandApiClient;
 	private final KakaoMapAddressLookupService addressLookupService;
