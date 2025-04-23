@@ -89,6 +89,9 @@ dependencies {
 
     // aop
     implementation 'org.springframework.boot:spring-boot-starter-aop'
+
+    // AWS cloudwatch
+    implementation 'ca.pjer:logback-awslogs-appender:1.6.0'
 }
 
 tasks.named('bootJar') { // bootJar 세팅을 켜기

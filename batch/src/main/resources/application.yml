@@ -41,6 +41,7 @@ spring:
       max-request-size: 10MB #전체 최대 크기 제한
 
 logging:
+  config: classpath:logback-spring.xml
   level:
     org.hibernate.sql: debug
 
@@ -49,6 +50,9 @@ cloud:
     credentials:
       access-key: ${S3_ACCESS_KEY}
       secret-key: ${S3_SECRET_KEY}
+    cloudwatch:
+      access-key: ${CLOUDWATCH_ACCESS_KEY}
+      secret-key: ${CLOUDWATCH_SECRET_KEY}
     s3:
       bucket: joonggaemoa
     region:
