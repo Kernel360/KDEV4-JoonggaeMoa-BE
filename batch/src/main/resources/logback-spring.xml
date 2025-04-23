@@ -2,6 +2,7 @@
 
     <springProperty name="AWS_ACCESS_KEY" source="cloud.aws.cloudwatch.access-key"/>
     <springProperty name="AWS_SECRET_KEY" source="cloud.aws.cloudwatch.secret-key"/>
+    <springProperty name="DISCORD_WEBHOOK_URL" source="logging.discord.webhook-url"/>
 
     <conversionRule conversionWord="clr" converterClass="org.springframework.boot.logging.logback.ColorConverter"/>
     <conversionRule conversionWord="wex"
@@ -35,10 +36,39 @@
         <secretAccessKey>${AWS_SECRET_KEY}</secretAccessKey>
     </appender>
 
+    <appender name="DISCORD" class="com.github.napstr.logback.DiscordAppender">
+        <webhookUri>${DISCORD_WEBHOOK_URL}</webhookUri>
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <pattern>
+                \n━━━━━━━━━━━━━━━━━━━━━━━ 🛑 **ERROR LOG** 🛑 ━━━━━━━━━━━━━━━━━━━━━━━
+                \n📅 **Time**: %d{yyyy-MM-dd HH:mm:ss.SSS}
+                \n🧵 **Thread**: [%thread]
+                \n📍 **Location**: [%logger{2}.%M:%L]
+                \n⚠️ **Level**: %-5level
+                \n📝 **Message**:
+                \n%msg
+                \n
+                \n🔎 **StackTrace**:
+                \n%ex{full}
+                \n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            </pattern>
+        </layout>
+        <username>[에러 발생]</username>
+        <tts>false</tts>
+    </appender>
+
+    <appender name="ASYNC_DISCORD" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="DISCORD"/>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
+    </appender>
+
     <springProfile name="prod">
         <root level="info">
             <appender-ref ref="CONSOLE"/>
             <appender-ref ref="AWS_LOGS"/>
+            <appender-ref ref="ASYNC_DISCORD"/>
         </root>
     </springProfile>
 

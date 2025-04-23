@@ -42,6 +42,8 @@ spring:
 
 logging:
   config: classpath:logback-spring.xml
+  discord:
+    webhook-url: ${DISCORD_WEBHOOK}
   level:
     org.hibernate.sql: debug
 
