@@ -5,11 +5,11 @@ import java.util.List;
 
 import org.silsagusi.api.auth.filter.JwtAuthenticationFilter;
 import org.silsagusi.api.auth.filter.JwtAuthorizationFilter;
-import org.silsagusi.api.exception.handler.CustomAccessDeniedHandler;
-import org.silsagusi.api.exception.handler.CustomAuthenticationEntryPointHandler;
 import org.silsagusi.api.auth.jwt.JwtProvider;
 import org.silsagusi.api.auth.jwt.RefreshTokenStore;
 import org.silsagusi.api.auth.userDetails.CustomUserDetailsService;
+import org.silsagusi.api.exception.handler.CustomAccessDeniedHandler;
+import org.silsagusi.api.exception.handler.CustomAuthenticationEntryPointHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -45,7 +45,8 @@ public class SecurityConfig {
 		"/api/customers/**",
 		"/swagger-ui/**",
 		"/v3/api-docs/**",
-		"/api/notification/subscribe"
+		"/api/notification/subscribe",
+		"/api/inquiries/**"
 	};
 	private final CustomAuthenticationEntryPointHandler customAuthenticationEntryPointHandler;
 	private final CustomAccessDeniedHandler customAccessDeniedHandler;
