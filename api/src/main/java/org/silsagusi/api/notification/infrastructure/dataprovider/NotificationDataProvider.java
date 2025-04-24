@@ -10,6 +10,8 @@ import org.silsagusi.api.notification.infrastructure.repository.NotificationRepo
 import org.silsagusi.core.domain.notification.entity.Notification;
 import org.silsagusi.core.domain.notification.entity.NotificationType;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import lombok.RequiredArgsConstructor;
@@ -36,6 +38,7 @@ public class NotificationDataProvider {
 		return emitter;
 	}
 
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public void notify(Long agentId, NotificationType type, String content) {
 
 		boolean alreadyNotified = notificationRepository.existsByAgentIdAndTypeAndContent(agentId, type, content);
@@ -77,7 +80,6 @@ public class NotificationDataProvider {
 
 	public void markNotificationRead(Notification notification) {
 		notification.markRead();
-		notificationRepository.save(notification);
 	}
 
 }

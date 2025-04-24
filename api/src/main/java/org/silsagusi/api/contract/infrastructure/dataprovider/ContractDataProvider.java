@@ -56,7 +56,6 @@ public class ContractDataProvider {
 
 	public void deleteContract(Contract contract) {
 		contract.markAsDeleted();
-		contractRepository.save(contract);
 	}
 
 	public ContractSummaryInfo getSummary(Long agentId) {

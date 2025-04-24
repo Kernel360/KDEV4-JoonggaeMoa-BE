@@ -16,6 +16,7 @@ public enum ErrorCode {
 	VALIDATION_FAILED(4003, "잘못된 데이터 형식입니다."),
 	PAYLOAD_TOO_LARGE(4004, "요청 데이터 길이가 초과되었습니다."),
 	METHOD_NOT_ALLOWED(4005, "지원하지 않는 HTTP 메서드입니다."),
+	PASSWORD_NOT_VALID(4006, "비밀번호가 일치하지 않습니다."),
 
 	// 401X - 인증 오류
 	UNAUTHORIZED(4010, "토큰이 없습니다."),

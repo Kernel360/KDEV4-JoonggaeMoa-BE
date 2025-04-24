@@ -18,6 +18,7 @@ import org.silsagusi.core.domain.customer.info.CustomerSummaryInfo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import lombok.RequiredArgsConstructor;
@@ -32,6 +33,7 @@ public class CustomerService {
 	private final CustomerExcelParser customerExcelParser;
 	private final CustomerValidator customerValidator;
 
+	@Transactional
 	public void createCustomer(
 		Long agentId,
 		CustomerDto.Request customerRequestDto
@@ -45,6 +47,7 @@ public class CustomerService {
 		customerDataProvider.createCustomer(customer);
 	}
 
+	@Transactional
 	public void bulkCreateCustomer(Long agentId, MultipartFile file) {
 		Agent agent = agentDataProvider.getAgentById(agentId);
 
@@ -53,6 +56,7 @@ public class CustomerService {
 		customerDataProvider.createCustomers(customers);
 	}
 
+	@Transactional
 	public void deleteCustomer(Long agentId, Long customerId) {
 		Customer customer = customerDataProvider.getCustomer(customerId);
 		customerValidator.validateAgentAccess(agentId, customer);
@@ -60,6 +64,7 @@ public class CustomerService {
 		customerDataProvider.deleteCustomer(customer);
 	}
 
+	@Transactional
 	public void updateCustomer(Long agentId, Long customerId, CustomerDto.Request customerRequestDto) {
 		Customer customer = customerDataProvider.getCustomer(customerId);
 		customerValidator.validateAgentAccess(agentId, customer);
@@ -70,6 +75,7 @@ public class CustomerService {
 		customerDataProvider.updateCustomer(updateCustomerCommand);
 	}
 
+	@Transactional(readOnly = true)
 	public CustomerHistoryResponse getCustomerById(Long agentId, Long customerId) {
 		Customer customer = customerDataProvider.getCustomer(customerId);
 		customerValidator.validateAgentAccess(agentId, customer);
@@ -77,6 +83,7 @@ public class CustomerService {
 		return CustomerHistoryResponse.of(customer, customerHistoryInfos);
 	}
 
+	@Transactional(readOnly = true)
 	public Page<CustomerDto.Response> getAllCustomers(Long agentId, Pageable pageable) {
 		Agent agent = agentDataProvider.getAgentById(agentId);
 
@@ -84,10 +91,12 @@ public class CustomerService {
 		return customerPage.map(customerMapper::toCustomerResponse);
 	}
 
+	@Transactional
 	public String excelDownload() {
 		return customerDataProvider.getExcelFormatFile();
 	}
 
+	@Transactional(readOnly = true)
 	public CustomerSummaryResponse getCustomerSummary(Long agentId) {
 
 		CustomerSummaryInfo customerSummaryInfo = customerDataProvider.getCustomerSummary(agentId);
