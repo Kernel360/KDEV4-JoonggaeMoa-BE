@@ -50,7 +50,6 @@ public class CustomerDataProvider {
 
 	public void deleteCustomer(Customer customer) {
 		customer.markAsDeleted();
-		customerRepository.save(customer);
 	}
 
 	public Customer getCustomer(Long customerId) {
@@ -66,8 +65,6 @@ public class CustomerDataProvider {
 			updateCustomerCommand.getIsVip(), updateCustomerCommand.getMemo(), updateCustomerCommand.getConsent(),
 			updateCustomerCommand.getInterestProperty(), updateCustomerCommand.getInterestLocation(),
 			updateCustomerCommand.getAssetStatus());
-
-		customerRepository.save(customer);
 	}
 
 	public Page<Customer> getAllByAgent(Agent agent, Pageable pageable) {

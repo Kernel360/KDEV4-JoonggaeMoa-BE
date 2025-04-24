@@ -40,12 +40,10 @@ public class MessageDataProvider {
 
 	public void updateMessage(Message message, UpdateMessageCommand updateMessageCommand) {
 		message.updateMessage(updateMessageCommand.getSendAt(), updateMessageCommand.getContent());
-		messageRepository.save(message);
 	}
 
 	public void deleteMessage(Message message) {
 		message.markAsDeleted();
-		messageRepository.save(message);
 	}
 
 }

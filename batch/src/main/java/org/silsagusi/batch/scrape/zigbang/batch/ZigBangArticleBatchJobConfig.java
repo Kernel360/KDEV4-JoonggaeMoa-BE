@@ -1,13 +1,14 @@
 package org.silsagusi.batch.scrape.zigbang.batch;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.util.List;
+
 import org.silsagusi.batch.infrastructure.ScrapeStatusRepository;
 import org.silsagusi.batch.scrape.zigbang.service.ZigBangItemCatalogRequestService;
 import org.silsagusi.core.domain.article.ScrapeStatus;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.configuration.annotation.JobScope;
+import org.springframework.batch.core.configuration.JobRegistry;
+import org.springframework.batch.core.configuration.support.ReferenceJobFactory;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
@@ -16,7 +17,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import java.util.List;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Configuration
@@ -25,19 +27,27 @@ public class ZigBangArticleBatchJobConfig {
 	private static final String JOB_NAME = "zigBangArticleJob";
 
 	private final JobRepository jobRepository;
+	private final JobRegistry jobRegistry;
 	private final PlatformTransactionManager transactionManager;
 	private final ScrapeStatusRepository scrapeStatusRepository;
 	private final ZigBangItemCatalogRequestService zigBangItemCatalogRequestService;
 
 	@Bean
 	public Job zigBangArticleJob(Step zigBangArticleStep) {
-		return new JobBuilder(JOB_NAME, jobRepository)
+		Job job = new JobBuilder(JOB_NAME, jobRepository)
 			.start(zigBangArticleStep)
 			.build();
+
+		try {
+			jobRegistry.register(new ReferenceJobFactory(job));
+		} catch (Exception e) {
+			throw new RuntimeException("Failed to register job", e);
+		}
+
+		return job;
 	}
 
 	@Bean
-	@JobScope
 	public Step zigBangArticleStep() {
 		return new StepBuilder(JOB_NAME + "Step", jobRepository)
 			.tasklet((contribution, chunkContext) -> {
