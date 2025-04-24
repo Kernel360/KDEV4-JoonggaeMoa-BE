@@ -11,12 +11,14 @@ import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.repeat.RepeatStatus;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 
+import lombok.RequiredArgsConstructor;
+
 @Configuration
+@RequiredArgsConstructor
 public class NaverLandScrapeResetJobConfig {
 
 	private static final String JOB_NAME = "scrapStatusResetJob";
@@ -24,18 +26,6 @@ public class NaverLandScrapeResetJobConfig {
 	private final JobRegistry jobRegistry;
 	private final PlatformTransactionManager transactionManager;
 	private final ScrapeStatusRepository scrapeStatusRepository;
-
-	public NaverLandScrapeResetJobConfig(
-		JobRepository jobRepository,
-		JobRegistry jobRegistry,
-		@Qualifier("metaTransactionManager") PlatformTransactionManager transactionManager,
-		ScrapeStatusRepository scrapeStatusRepository
-	) {
-		this.jobRepository = jobRepository;
-		this.jobRegistry = jobRegistry;
-		this.transactionManager = transactionManager;
-		this.scrapeStatusRepository = scrapeStatusRepository;
-	}
 
 	@Bean
 	public Job scrapeStatusResetJob(Step scrapeStatusResetStep) {

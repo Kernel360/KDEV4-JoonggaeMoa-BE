@@ -13,15 +13,16 @@ import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.repeat.RepeatStatus;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Configuration
+@RequiredArgsConstructor
 public class NaverLandArticleBatchJobConfig {
 
 	private static final String JOB_NAME = "naverLandArticleJob";
@@ -31,20 +32,6 @@ public class NaverLandArticleBatchJobConfig {
 	private final PlatformTransactionManager transactionManager;
 	private final ScrapeStatusRepository scrapeStatusRepository;
 	private final NaverLandArticleRequestService naverLandArticleRequestService;
-
-	public NaverLandArticleBatchJobConfig(
-		JobRepository jobRepository,
-		JobRegistry jobRegistry,
-		@Qualifier("metaTransactionManager") PlatformTransactionManager transactionManager,
-		ScrapeStatusRepository scrapeStatusRepository,
-		NaverLandArticleRequestService naverLandArticleRequestService
-	) {
-		this.jobRepository = jobRepository;
-		this.jobRegistry = jobRegistry;
-		this.transactionManager = transactionManager;
-		this.scrapeStatusRepository = scrapeStatusRepository;
-		this.naverLandArticleRequestService = naverLandArticleRequestService;
-	}
 
 	@Bean
 	public Job naverLandArticleJob(Step naverLandArticleStep) {

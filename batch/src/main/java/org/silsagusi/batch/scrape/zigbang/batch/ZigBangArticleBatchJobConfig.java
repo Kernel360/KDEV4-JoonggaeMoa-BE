@@ -13,15 +13,16 @@ import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.repeat.RepeatStatus;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Configuration
+@RequiredArgsConstructor
 public class ZigBangArticleBatchJobConfig {
 	private static final String JOB_NAME = "zigBangArticleJob";
 
@@ -30,20 +31,6 @@ public class ZigBangArticleBatchJobConfig {
 	private final PlatformTransactionManager transactionManager;
 	private final ScrapeStatusRepository scrapeStatusRepository;
 	private final ZigBangItemCatalogRequestService zigBangItemCatalogRequestService;
-
-	public ZigBangArticleBatchJobConfig(
-		JobRepository jobRepository,
-		JobRegistry jobRegistry,
-		@Qualifier("metaTransactionManager") PlatformTransactionManager transactionManager,
-		ScrapeStatusRepository scrapeStatusRepository,
-		ZigBangItemCatalogRequestService zigBangItemCatalogRequestService
-	) {
-		this.jobRepository = jobRepository;
-		this.jobRegistry = jobRegistry;
-		this.transactionManager = transactionManager;
-		this.scrapeStatusRepository = scrapeStatusRepository;
-		this.zigBangItemCatalogRequestService = zigBangItemCatalogRequestService;
-	}
 
 	@Bean
 	public Job zigBangArticleJob(Step zigBangArticleStep) {
