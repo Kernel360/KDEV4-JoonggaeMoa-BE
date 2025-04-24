@@ -34,13 +34,9 @@ public class AgentDataProvider {
 	}
 
 	public void updateAgent(Agent agent, UpdateAgentCommand updateAgentCommand) {
-		System.out.println("변경 전 : " + agent.getBusinessNo());
-
 		agent.updateAgent(updateAgentCommand.getName(), updateAgentCommand.getPhone(), updateAgentCommand.getEmail(),
 			updateAgentCommand.getUsername(), updateAgentCommand.getOffice(), updateAgentCommand.getRegion(),
 			updateAgentCommand.getBusinessNo());
-
-		System.out.println("변경 후 : " + agent.getBusinessNo());
 	}
 
 	public void deleteRefreshTokenByAccessToken(String accessToken) {

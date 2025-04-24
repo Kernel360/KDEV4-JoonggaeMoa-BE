@@ -36,6 +36,7 @@ public interface ContractRepository extends JpaRepository<Contract, String> {
 		            OR
 		            (c.expiredAt BETWEEN :start AND :end)
 		        )
+				        AND c.deletedAt IS NULL
 		""")
 	List<Contract> findContractsByCustomerAndDateRange(
 		@Param("customer") Customer customer,

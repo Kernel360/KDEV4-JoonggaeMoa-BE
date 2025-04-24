@@ -11,6 +11,7 @@ import org.silsagusi.api.message.infrastructure.dataProvider.MessageTemplateData
 import org.silsagusi.core.domain.agent.Agent;
 import org.silsagusi.core.domain.message.entity.MessageTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 
@@ -23,6 +24,7 @@ public class MessageTemplateService {
 	private final MessageTemplateMapper messageTemplateMapper;
 	private final MessageTemplateValidator messageTemplateValidator;
 
+	@Transactional
 	public void createMessageTemplate(Long agentId, MessageTemplateDto.Request messageTemplateRequest) {
 		Agent agent = agentDataProvider.getAgentById(agentId);
 		MessageTemplate messageTemplate = messageTemplateMapper.toEntity(agent, messageTemplateRequest);
@@ -30,6 +32,7 @@ public class MessageTemplateService {
 		messageTemplateDataProvider.createMessageTemplate(messageTemplate);
 	}
 
+	@Transactional(readOnly = true)
 	public List<MessageTemplateDto.Response> getMessageTemplates(Long agentId) {
 		Agent agent = agentDataProvider.getAgentById(agentId);
 		List<MessageTemplate> messageTemplates = messageTemplateDataProvider.getMessageTemplateList(agent);
@@ -37,6 +40,7 @@ public class MessageTemplateService {
 		return messageTemplateMapper.toResponseDtos(messageTemplates);
 	}
 
+	@Transactional
 	public void updateMessageTemplate(Long agentId, Long templateId, UpdateMessageTemplateRequest requestDto) {
 		Agent agent = agentDataProvider.getAgentById(agentId);
 		MessageTemplate messageTemplate = messageTemplateDataProvider.getMessageTemplateById(templateId);
@@ -47,6 +51,7 @@ public class MessageTemplateService {
 			messageTemplate);
 	}
 
+	@Transactional
 	public void deleteMessageTemplate(Long agentId, Long templateId) {
 		Agent agent = agentDataProvider.getAgentById(agentId);
 		MessageTemplate messageTemplate = messageTemplateDataProvider.getMessageTemplateById(templateId);

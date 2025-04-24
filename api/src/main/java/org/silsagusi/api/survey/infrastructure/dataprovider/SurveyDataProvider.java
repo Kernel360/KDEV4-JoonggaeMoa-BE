@@ -50,14 +50,11 @@ public class SurveyDataProvider {
 
 		survey.getQuestionList().addAll(questionList);
 		questionRepository.saveAll(questionList);
-		surveyRepository.save(survey);
 	}
 
 	public void deleteSurvey(Survey survey) {
 		survey.getQuestionList().forEach(Question::markAsDeleted);
 		survey.markAsDeleted();
-		questionRepository.saveAll(survey.getQuestionList());
-		surveyRepository.save(survey);
 	}
 
 	public void createAnswer(

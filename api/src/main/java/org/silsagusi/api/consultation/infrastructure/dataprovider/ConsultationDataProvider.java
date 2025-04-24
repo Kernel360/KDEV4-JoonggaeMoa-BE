@@ -56,13 +56,11 @@ public class ConsultationDataProvider {
 
 	public void updateStatus(Consultation consultation, String consultationStatus) {
 		consultation.updateStatus(Consultation.ConsultationStatus.valueOf(consultationStatus));
-		consultationRepository.save(consultation);
 	}
 
 	public void updateConsultation(Consultation consultation, UpdateConsultationCommand updateConsultationCommand) {
 		consultation.updateConsultation(updateConsultationCommand.getDate(), updateConsultationCommand.getPurpose(),
 			updateConsultationCommand.getMemo());
-		consultationRepository.save(consultation);
 	}
 
 	public List<Consultation> getConsultationByDate(Long agentId, LocalDateTime date) {
