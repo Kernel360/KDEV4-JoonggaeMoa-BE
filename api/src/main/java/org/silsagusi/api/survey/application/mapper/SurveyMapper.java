@@ -3,7 +3,7 @@ package org.silsagusi.api.survey.application.mapper;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.silsagusi.api.customer.application.CustomerMapper;
+import org.silsagusi.api.customer.application.mapper.CustomerMapper;
 import org.silsagusi.api.survey.application.dto.AnswerDto;
 import org.silsagusi.api.survey.application.dto.QuestionAnswerResponse;
 import org.silsagusi.api.survey.application.dto.QuestionDto;

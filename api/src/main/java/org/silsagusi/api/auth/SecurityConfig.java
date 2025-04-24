@@ -5,8 +5,8 @@ import java.util.List;
 
 import org.silsagusi.api.auth.filter.JwtAuthenticationFilter;
 import org.silsagusi.api.auth.filter.JwtAuthorizationFilter;
-import org.silsagusi.api.auth.handler.CustomAccessDeniedHandler;
-import org.silsagusi.api.auth.handler.CustomAuthenticationEntryPointHandler;
+import org.silsagusi.api.exception.handler.CustomAccessDeniedHandler;
+import org.silsagusi.api.exception.handler.CustomAuthenticationEntryPointHandler;
 import org.silsagusi.api.auth.jwt.JwtProvider;
 import org.silsagusi.api.auth.jwt.RefreshTokenStore;
 import org.silsagusi.api.auth.userDetails.CustomUserDetailsService;

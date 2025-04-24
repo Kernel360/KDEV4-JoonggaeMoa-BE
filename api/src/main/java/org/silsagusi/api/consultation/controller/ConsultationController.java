@@ -3,13 +3,13 @@ package org.silsagusi.api.consultation.controller;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.silsagusi.api.consultation.application.ConsultationService;
 import org.silsagusi.api.consultation.application.dto.ConsultationDto;
 import org.silsagusi.api.consultation.application.dto.ConsultationHistoryDto;
 import org.silsagusi.api.consultation.application.dto.ConsultationMonthResponse;
 import org.silsagusi.api.consultation.application.dto.ConsultationSummaryResponse;
 import org.silsagusi.api.consultation.application.dto.UpdateConsultationRequest;
-import org.silsagusi.api.customResponse.ApiResponse;
+import org.silsagusi.api.consultation.application.service.ConsultationService;
+import org.silsagusi.api.response.ApiResponse;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

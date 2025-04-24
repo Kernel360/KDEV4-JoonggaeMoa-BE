@@ -15,6 +15,7 @@ java {
 
 repositories {
     mavenCentral()
+    maven { url 'https://jitpack.io' }
 }
 
 dependencies {
@@ -78,6 +79,15 @@ dependencies {
 
     // GeoHash
     implementation 'ch.hsr:geohash:1.4.0'
+
+    // aop
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
+
+    // AWS cloudwatch
+    implementation 'ca.pjer:logback-awslogs-appender:1.6.0'
+
+    // discord webhook
+    implementation('com.github.napstr:logback-discord-appender:1.0.0')
 }
 
 tasks.named('test') {

@@ -1,7 +1,7 @@
 package org.silsagusi.api.survey.controller;
 
-import org.silsagusi.api.customResponse.ApiResponse;
-import org.silsagusi.api.survey.application.SurveyService;
+import org.silsagusi.api.response.ApiResponse;
+import org.silsagusi.api.survey.application.service.SurveyService;
 import org.silsagusi.api.survey.application.dto.AnswerDto;
 import org.silsagusi.api.survey.application.dto.SurveyDto;
 import org.springframework.data.domain.Page;

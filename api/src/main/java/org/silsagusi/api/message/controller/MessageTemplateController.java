@@ -2,7 +2,7 @@ package org.silsagusi.api.message.controller;
 
 import java.util.List;
 
-import org.silsagusi.api.customResponse.ApiResponse;
+import org.silsagusi.api.response.ApiResponse;
 import org.silsagusi.api.message.application.dto.MessageTemplateDto;
 import org.silsagusi.api.message.application.dto.UpdateMessageTemplateRequest;
 import org.silsagusi.api.message.application.service.MessageTemplateService;

@@ -1,10 +1,10 @@
 package org.silsagusi.api.customer.controller;
 
-import org.silsagusi.api.customResponse.ApiResponse;
-import org.silsagusi.api.customer.application.CustomerService;
+import org.silsagusi.api.response.ApiResponse;
 import org.silsagusi.api.customer.application.dto.CustomerDto;
 import org.silsagusi.api.customer.application.dto.CustomerHistoryResponse;
 import org.silsagusi.api.customer.application.dto.CustomerSummaryResponse;
+import org.silsagusi.api.customer.application.service.CustomerService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
