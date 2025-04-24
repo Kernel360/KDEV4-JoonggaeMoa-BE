@@ -56,7 +56,7 @@ public class SurveyMapper {
 		List<List<String>> answerList) {
 		List<QuestionAnswerPair> pairList = new ArrayList<>();
 		for (int i = 0; i < questionList.size(); i++) {
-			QuestionAnswerPair pair = new QuestionAnswerPair(
+			QuestionAnswerPair pair = QuestionAnswerPair.create(
 				questionList.get(i),
 				answerList.get(i)
 			);
