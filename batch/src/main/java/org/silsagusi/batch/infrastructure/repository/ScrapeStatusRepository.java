@@ -20,5 +20,5 @@ public interface ScrapeStatusRepository extends JpaRepository<ScrapeStatus, Long
 	@Transactional
 	@Query("update scrape_statuses s set s.completed = false, s.lastScrapedPage = 1 "
 		+ "where s.lastScrapedAt < :cutoff")
-	void resetAllScrapStatus(@Param("cutoff") LocalDateTime cutoff);
+	void resetAllScrapeStatus(@Param("cutoff") LocalDateTime cutoff);
 }

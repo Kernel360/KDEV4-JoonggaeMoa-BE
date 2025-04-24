@@ -14,21 +14,28 @@ public class ScrapeStatus {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "scrape_status_id", nullable = false)
 	private Long id;
 
 	@OneToOne
 	@JoinColumn(name = "region_id", nullable = false, unique = true)
 	private Region region;
 
+	@Column(name = "last_scraped_page")
 	private Integer lastScrapedPage;
 
+	@Column(name = "completed")
 	private Boolean completed;
 
+	@Column(name = "last_scraped_at")
 	private LocalDateTime lastScrapedAt;
 
 	private Boolean failed;
 
+	@Column(name = "error_message")
 	private String errorMessage;
+
+	private String source;
 
 	public ScrapeStatus(Region region, Integer lastScrapedPage, Boolean completed, LocalDateTime lastScrapedAt) {
 		this.region = region;
@@ -37,9 +44,10 @@ public class ScrapeStatus {
 		this.lastScrapedAt = lastScrapedAt;
 	}
 
-	public void updatePage(Integer page, LocalDateTime lastScrapedAt) {
+	public void updatePage(Integer page, LocalDateTime lastScrapedAt, String source) {
 		this.lastScrapedPage = page;
 		this.lastScrapedAt = lastScrapedAt;
+		this.source = source;
 	}
 
 	public void updateCompleted(Boolean completed) {

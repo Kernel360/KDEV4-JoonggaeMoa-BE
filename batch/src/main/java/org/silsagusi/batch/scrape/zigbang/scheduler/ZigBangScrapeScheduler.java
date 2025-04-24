@@ -22,8 +22,8 @@ public class ZigBangScrapeScheduler {
 	private final JobLauncher jobLauncher;
 	private final JobRegistry jobRegistry;
 
-	private static final String SCRAP_JOB_NAME = "zigBangItemCatalogJob";
-	private static final String RESET_SCRAP_JOB_NAME = "scrapStatusResetJob";
+	private static final String SCRAPE_JOB_NAME = "zigBangItemCatalogJob";
+	private static final String RESET_SCRAPE_JOB_NAME = "zigBangScrapeStatusResetJob";
 	private static final String TIME_STAMP = "timeStamp";
 
 	@Scheduled(initialDelay = 0, fixedRate = 1800000) // 어플리케이션 실행 30초 후 30분 간격으로 실행
@@ -38,7 +38,7 @@ public class ZigBangScrapeScheduler {
 			.addLong(TIME_STAMP, System.currentTimeMillis())
 			.toJobParameters();
 
-		jobLauncher.run(jobRegistry.getJob(SCRAP_JOB_NAME), jobParameters);
+		jobLauncher.run(jobRegistry.getJob(SCRAPE_JOB_NAME), jobParameters);
 	}
 
 	// 새벽 3시에 초기화
@@ -53,6 +53,6 @@ public class ZigBangScrapeScheduler {
 			.addLong(TIME_STAMP, System.currentTimeMillis())
 			.toJobParameters();
 
-		jobLauncher.run(jobRegistry.getJob(RESET_SCRAP_JOB_NAME), jobParameters);
+		jobLauncher.run(jobRegistry.getJob(RESET_SCRAPE_JOB_NAME), jobParameters);
 	}
 }

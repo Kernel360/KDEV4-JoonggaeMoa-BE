@@ -1,4 +1,4 @@
-package org.silsagusi.batch.scrape.naverland.batch;
+package org.silsagusi.batch.scrape.zigbang.batch;
 
 import lombok.RequiredArgsConstructor;
 import org.silsagusi.batch.infrastructure.repository.ScrapeStatusRepository;
@@ -17,9 +17,9 @@ import java.time.LocalDateTime;
 
 @Configuration
 @RequiredArgsConstructor
-public class NaverLandScrapeResetJobConfig {
+public class ZigBangScrapeResetJobConfig {
 
-	private static final String JOB_NAME = "scrapeStatusResetJob";
+	private static final String JOB_NAME = "zigBangScrapeStatusResetJob";
 	private final JobRepository jobRepository;
 	private final PlatformTransactionManager transactionManager;
 	private final ScrapeStatusRepository scrapeStatusRepository;

@@ -28,15 +28,15 @@ public class NaverLandRequestService {
 
 	@Async("scrapExecutor")
 	public void scrapNaverArticles(ScrapeStatus scrapeStatus) {
-		List<Article> articles = new ArrayList<>();
 
+		List<Article> articles = new ArrayList<>();
 		try {
 			Region region = scrapeStatus.getRegion();
 			log.info("네이버 부동산 스크랩 시작: 지역 코드 {}", scrapeStatus.getRegion().getCortarNo());
 
 			if (!"sec".equals(region.getCortarType())) {
-			    log.info("cortarType이 sec가 아니므로 스크랩을 건너뜁니다: 지역 코드 {}", region.getCortarNo());
-			    return;
+				log.info("cortarType이 sec가 아니므로 스크랩을 건너뜁니다: 지역 코드 {}", region.getCortarNo());
+				return;
 			}
 
 			int page = scrapeStatus.getLastScrapedPage();
@@ -62,7 +62,7 @@ public class NaverLandRequestService {
 				articles.addAll(pageArticles);
 				totalFetched += pageArticles.size();
 
-				scrapeStatus.updatePage(page, LocalDateTime.now());
+				scrapeStatus.updatePage(page, LocalDateTime.now(), "네이버부동산");
 				hasMore = nlrResponse.isMore();
 				page++;
 
