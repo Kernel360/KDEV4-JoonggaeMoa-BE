@@ -1,11 +1,10 @@
 package org.silsagusi.api.inquiry.controller;
 
-import java.util.List;
-
 import org.silsagusi.api.inquiry.application.dto.InquiryAnswerDto;
 import org.silsagusi.api.inquiry.application.dto.InquiryDto;
 import org.silsagusi.api.inquiry.application.service.InquiryService;
 import org.silsagusi.api.response.ApiResponse;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -53,10 +52,10 @@ public class InquiryController {
 	}
 
 	@GetMapping("/api/inquiries")
-	public ResponseEntity<ApiResponse<List<InquiryDto.Response>>> getInquiries(
+	public ResponseEntity<ApiResponse<Page<InquiryDto.Response>>> getInquiries(
 		Pageable pageable
 	) {
-		List<InquiryDto.Response> inquiries = inquiryService.getAllInquiry(pageable);
+		Page<InquiryDto.Response> inquiries = inquiryService.getAllInquiry(pageable);
 		return ResponseEntity.ok(ApiResponse.ok(inquiries));
 	}
 

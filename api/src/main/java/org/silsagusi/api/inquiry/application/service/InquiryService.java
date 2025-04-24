@@ -1,7 +1,5 @@
 package org.silsagusi.api.inquiry.application.service;
 
-import java.util.List;
-
 import org.silsagusi.api.agent.infrastructure.dataprovider.AgentDataProvider;
 import org.silsagusi.api.inquiry.application.dto.InquiryAnswerDto;
 import org.silsagusi.api.inquiry.application.dto.InquiryDto;
@@ -52,9 +50,9 @@ public class InquiryService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<InquiryDto.Response> getAllInquiry(Pageable pageable) {
+	public Page<InquiryDto.Response> getAllInquiry(Pageable pageable) {
 		Page<Inquiry> inquiries = inquiryDataProvider.getInquiries(pageable);
-		return inquiries.stream().map(InquiryDto.Response::from).toList();
+		return inquiries.map(InquiryDto.Response::from);
 	}
 
 	@Transactional(readOnly = true)
