@@ -60,7 +60,7 @@ public class InquiryController {
 	}
 
 	@GetMapping("/api/inquiries/{inquiryId}")
-	public ResponseEntity<ApiResponse<InquiryDto.Response>> updateConsultation(
+	public ResponseEntity<ApiResponse<InquiryDto.Response>> getInquiry(
 		@PathVariable("inquiryId") Long inquiryId
 	) {
 		InquiryDto.Response inquiry = inquiryService.getInquiry(inquiryId);
