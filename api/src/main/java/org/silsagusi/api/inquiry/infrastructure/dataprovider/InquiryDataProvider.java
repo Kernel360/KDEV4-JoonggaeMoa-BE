@@ -4,9 +4,11 @@ import java.util.List;
 
 import org.silsagusi.api.exception.CustomException;
 import org.silsagusi.api.exception.ErrorCode;
+import org.silsagusi.api.inquiry.infrastructure.repository.InquiryAnswerRepository;
 import org.silsagusi.api.inquiry.infrastructure.repository.InquiryRepository;
 import org.silsagusi.core.domain.inquiry.command.UpdateInquiryCommand;
 import org.silsagusi.core.domain.inquiry.entity.Inquiry;
+import org.silsagusi.core.domain.inquiry.entity.InquiryAnswer;
 import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
@@ -16,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 public class InquiryDataProvider {
 
 	private final InquiryRepository inquiryRepository;
+	private final InquiryAnswerRepository inquiryAnswerRepository;
 
 	public void createInquiry(Inquiry inquiry) {
 		inquiryRepository.save(inquiry);
@@ -41,4 +44,11 @@ public class InquiryDataProvider {
 		return inquiryRepository.findAllByDeletedAtIsNull();
 	}
 
+	public void createInquiryAnswer(InquiryAnswer inquiryAnswer) {
+		inquiryAnswerRepository.save(inquiryAnswer);
+	}
+
+	public void markAsAnswered(Inquiry inquiry) {
+		inquiry.markAsAnswered();
+	}
 }

@@ -58,4 +58,8 @@ public class Inquiry extends BaseEntity {
 		this.content = content;
 	}
 
+	public void markAsAnswered() {
+		this.isAnswered = true;
+	}
+
 }

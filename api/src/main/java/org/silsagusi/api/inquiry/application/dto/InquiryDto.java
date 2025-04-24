@@ -1,5 +1,8 @@
 package org.silsagusi.api.inquiry.application.dto;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 import org.silsagusi.core.domain.inquiry.entity.Inquiry;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -62,13 +65,25 @@ public class InquiryDto {
 		private String name;
 		private String title;
 		private String content;
+		private LocalDateTime createdAt;
+		private LocalDateTime updatedAt;
+		private List<InquiryAnswerDto.Response> answers;
 
 		public static Response from(Inquiry inquiry) {
+
+			List<InquiryAnswerDto.Response> answers = inquiry.getAnswers()
+				.stream()
+				.map(InquiryAnswerDto.Response::from)
+				.toList();
+
 			return Response.builder()
 				.id(inquiry.getId())
 				.name(inquiry.getName())
 				.title(inquiry.getTitle())
 				.content(inquiry.getContent())
+				.createdAt(inquiry.getCreatedAt())
+				.updatedAt(inquiry.getUpdatedAt())
+				.answers(answers)
 				.build();
 		}
 	}

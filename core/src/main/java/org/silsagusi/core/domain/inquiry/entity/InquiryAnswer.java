@@ -4,6 +4,8 @@ import org.hibernate.annotations.DynamicUpdate;
 import org.silsagusi.core.domain.BaseEntity;
 import org.silsagusi.core.domain.agent.Agent;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -27,12 +29,23 @@ public class InquiryAnswer extends BaseEntity {
 
 	@ManyToOne
 	@JoinColumn(name = "inquiry_id")
+	@JsonIgnore
 	private Inquiry inquiry;
 
 	@ManyToOne
 	@JoinColumn(name = "agent_id")
+	@JsonIgnore
 	private Agent agent;
 
 	private String content;
 
+	private InquiryAnswer(Inquiry inquiry, Agent agent, String content) {
+		this.inquiry = inquiry;
+		this.agent = agent;
+		this.content = content;
+	}
+
+	public static InquiryAnswer create(Inquiry inquiry, Agent agent, String content) {
+		return new InquiryAnswer(inquiry, agent, content);
+	}
 }

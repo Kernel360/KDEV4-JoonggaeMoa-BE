@@ -2,6 +2,7 @@ package org.silsagusi.api.inquiry.controller;
 
 import java.util.List;
 
+import org.silsagusi.api.inquiry.application.dto.InquiryAnswerDto;
 import org.silsagusi.api.inquiry.application.dto.InquiryDto;
 import org.silsagusi.api.inquiry.application.service.InquiryService;
 import org.silsagusi.api.response.ApiResponse;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -62,6 +64,16 @@ public class InquiryController {
 	) {
 		InquiryDto.Response inquiry = inquiryService.getInquiry(inquiryId);
 		return ResponseEntity.ok(ApiResponse.ok(inquiry));
+	}
+
+	@PostMapping("/api/inquiry/{inquiryId}")
+	public ResponseEntity<ApiResponse<Void>> writeInquiryAnswer(
+		HttpServletRequest request,
+		@PathVariable("inquiryId") Long inquiryId,
+		@RequestBody @Valid InquiryAnswerDto.Request inquiryAnswerRequest
+	) {
+		inquiryService.createInquiryAnswer((Long)request.getAttribute("agentId"), inquiryId, inquiryAnswerRequest);
+		return ResponseEntity.ok(ApiResponse.ok());
 	}
 
 }
