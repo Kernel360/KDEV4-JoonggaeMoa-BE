@@ -2,7 +2,6 @@ package org.silsagusi.api.inquiry.application.service;
 
 import java.util.List;
 
-import org.silsagusi.api.agent.application.validator.AgentValidator;
 import org.silsagusi.api.agent.infrastructure.dataprovider.AgentDataProvider;
 import org.silsagusi.api.inquiry.application.dto.InquiryAnswerDto;
 import org.silsagusi.api.inquiry.application.dto.InquiryDto;
@@ -30,7 +29,6 @@ public class InquiryService {
 	private final InquiryAnswerMapper inquiryAnswerMapper;
 	private final InquiryValidator inquiryValidator;
 	private final AgentDataProvider agentDataProvider;
-	private final AgentValidator agentValidator;
 
 	@Transactional
 	public void createInquiry(InquiryDto.CreateRequest inquiryCreateRequest) {
