@@ -50,7 +50,7 @@ public class LogAspect {
 			params.put("request", URLDecoder.decode(request.getRequestURL().toString(), "UTF-8"));
 			params.put("user", request.getUserPrincipal().getName());
 		} catch (Exception e) {
-			log.error("LoggerAspect Error", e);
+			log.warn("LoggerAspect Error");
 		}
 
 		log.info("[Controller Request] Handler: {}", handler);
