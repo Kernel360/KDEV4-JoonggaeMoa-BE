@@ -131,6 +131,7 @@ public class SurveyService {
 		);
 	}
 
+	@Transactional(readOnly = true)
 	public Page<AnswerDto.Response> getAllAnswers(Long agentId, Pageable pageable) {
 		Page<Answer> answerPage = surveyDataProvider.getAnswerPage(agentId, pageable);
 

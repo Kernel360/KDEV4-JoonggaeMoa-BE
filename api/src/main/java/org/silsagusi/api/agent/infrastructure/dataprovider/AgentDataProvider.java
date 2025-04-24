@@ -1,9 +1,9 @@
 package org.silsagusi.api.agent.infrastructure.dataprovider;
 
-import org.silsagusi.api.exception.AgentNotFoundException;
 import org.silsagusi.api.agent.infrastructure.reposiroty.AgentRepository;
 import org.silsagusi.api.auth.jwt.JwtProvider;
 import org.silsagusi.api.auth.jwt.RefreshTokenStore;
+import org.silsagusi.api.exception.AgentNotFoundException;
 import org.silsagusi.core.domain.agent.Agent;
 import org.silsagusi.core.domain.agent.command.UpdateAgentCommand;
 import org.springframework.stereotype.Component;
@@ -24,7 +24,6 @@ public class AgentDataProvider {
 	}
 
 	public Agent getAgentById(Long agentId) {
-
 		return agentRepository.findByIdAndDeletedAtIsNull(agentId)
 			.orElseThrow(() -> new AgentNotFoundException(agentId));
 	}
@@ -38,8 +37,6 @@ public class AgentDataProvider {
 		agent.updateAgent(updateAgentCommand.getName(), updateAgentCommand.getPhone(), updateAgentCommand.getEmail(),
 			updateAgentCommand.getUsername(), updateAgentCommand.getOffice(), updateAgentCommand.getRegion(),
 			updateAgentCommand.getBusinessNo());
-
-		agentRepository.save(agent);
 	}
 
 	public void deleteRefreshTokenByAccessToken(String accessToken) {

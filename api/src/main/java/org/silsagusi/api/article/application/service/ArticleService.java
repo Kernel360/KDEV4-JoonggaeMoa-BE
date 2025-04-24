@@ -14,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +27,7 @@ public class ArticleService {
 	private final ArticleDataProvider articleDataProvider;
 	private final ArticleMapper articleMapper;
 
+	@Transactional(readOnly = true)
 	public Page<ArticleResponse> getAllArticles(
 		Pageable pageable,
 		List<String> realEstateType,
@@ -40,6 +42,7 @@ public class ArticleService {
 		return articlePage.map(articleMapper::toArticleResponse);
 	}
 
+	@Transactional(readOnly = true)
 	public List<RealEstateTypeSummaryResponse> getRealEstateTypeSummary(String period) {
 		LocalDate from = articleDataProvider.calculateStartDate(period);
 
@@ -51,6 +54,7 @@ public class ArticleService {
 		return articleMapper.toRealEstateTypeSummaryResponse(realEstateTypeRatioProjections, realEstateTotalCount);
 	}
 
+	@Transactional(readOnly = true)
 	public List<TradeTypeSummaryResponse> getTradeTypeSummary(String period) {
 		LocalDate from = articleDataProvider.calculateStartDate(period);
 

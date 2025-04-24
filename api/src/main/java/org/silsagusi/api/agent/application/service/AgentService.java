@@ -15,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class AgentService {
 
@@ -35,6 +34,7 @@ public class AgentService {
 		messageTemplateDataProvider.createDefaultMessageTemplate(agent);
 	}
 
+	@Transactional
 	public UsernameDto.Response getAgentByNameAndPhone(UsernameDto.Request usernameRequest) {
 		Agent agent = agentDataProvider.getAgentByNameAndPhone(usernameRequest.getName(),
 			usernameRequest.getPhone());
@@ -42,15 +42,18 @@ public class AgentService {
 		return agentMapper.toUsernameResponse(agent);
 	}
 
+	@Transactional
 	public void logout(String accessToken) {
 		agentDataProvider.deleteRefreshTokenByAccessToken(accessToken);
 	}
 
+	@Transactional(readOnly = true)
 	public AgentDto.Response getAgent(Long agentId) {
 		Agent agent = agentDataProvider.getAgentById(agentId);
 		return agentMapper.toAgentResponse(agent);
 	}
 
+	@Transactional
 	public void updateAgent(Long agentId, UpdateAgentRequest updateAgentRequest) {
 		Agent agent = agentDataProvider.getAgentById(agentId);
 
