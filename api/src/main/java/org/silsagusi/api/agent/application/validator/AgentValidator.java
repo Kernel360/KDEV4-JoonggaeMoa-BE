@@ -1,4 +1,4 @@
-package org.silsagusi.api.agent.infrastructure.validator;
+package org.silsagusi.api.agent.application.validator;
 
 import org.silsagusi.api.agent.infrastructure.reposiroty.AgentRepository;
 import org.silsagusi.api.exception.CustomException;

@@ -7,8 +7,8 @@ import org.silsagusi.api.customer.infrastructure.dataprovider.CustomerDataProvid
 import org.silsagusi.api.message.application.dto.MessageDto;
 import org.silsagusi.api.message.application.dto.UpdateMessageRequest;
 import org.silsagusi.api.message.application.mapper.MessageMapper;
+import org.silsagusi.api.message.application.validator.MessageValidator;
 import org.silsagusi.api.message.infrastructure.dataProvider.MessageDataProvider;
-import org.silsagusi.api.message.infrastructure.validator.MessageValidator;
 import org.silsagusi.core.domain.agent.Agent;
 import org.silsagusi.core.domain.customer.entity.Customer;
 import org.silsagusi.core.domain.message.command.UpdateMessageCommand;

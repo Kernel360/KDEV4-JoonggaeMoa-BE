@@ -1,4 +1,4 @@
-package org.silsagusi.api.survey.infrastructure.validator;
+package org.silsagusi.api.survey.application.validator;
 
 import org.silsagusi.api.exception.CustomException;
 import org.silsagusi.api.exception.ErrorCode;

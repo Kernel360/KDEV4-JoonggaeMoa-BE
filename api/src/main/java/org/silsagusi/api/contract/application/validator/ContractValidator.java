@@ -1,4 +1,4 @@
-package org.silsagusi.api.contract.infrastructure.validator;
+package org.silsagusi.api.contract.application.validator;
 
 import org.silsagusi.api.exception.CustomException;
 import org.silsagusi.api.exception.ErrorCode;

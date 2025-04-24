@@ -11,8 +11,8 @@ import org.silsagusi.api.notification.infrastructure.dataprovider.NotificationDa
 import org.silsagusi.api.survey.application.dto.AnswerDto;
 import org.silsagusi.api.survey.application.dto.SurveyDto;
 import org.silsagusi.api.survey.application.mapper.SurveyMapper;
+import org.silsagusi.api.survey.application.validator.SurveyValidator;
 import org.silsagusi.api.survey.infrastructure.dataprovider.SurveyDataProvider;
-import org.silsagusi.api.survey.infrastructure.validator.SurveyValidator;
 import org.silsagusi.core.domain.agent.Agent;
 import org.silsagusi.core.domain.consultation.entity.Consultation;
 import org.silsagusi.core.domain.customer.entity.Customer;
