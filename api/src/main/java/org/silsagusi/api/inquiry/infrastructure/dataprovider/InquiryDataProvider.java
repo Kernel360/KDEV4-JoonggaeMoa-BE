@@ -27,12 +27,10 @@ public class InquiryDataProvider {
 	public void updateInquiry(Inquiry inquiry, UpdateInquiryCommand updateInquiryCommand) {
 		inquiry.updateInquiry(updateInquiryCommand.getName(), updateInquiryCommand.getTitle(),
 			updateInquiryCommand.getContent());
-		inquiryRepository.save(inquiry);
 	}
 
 	public void deleteInquiry(Inquiry inquiry) {
 		inquiry.markAsDeleted();
-		inquiryRepository.save(inquiry);
 	}
 
 	public Inquiry getInquiry(Long inquiryId) {

@@ -15,8 +15,8 @@ import org.silsagusi.core.domain.inquiry.command.UpdateInquiryCommand;
 import org.silsagusi.core.domain.inquiry.entity.Inquiry;
 import org.silsagusi.core.domain.inquiry.entity.InquiryAnswer;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -51,13 +51,13 @@ public class InquiryService {
 		inquiryDataProvider.deleteInquiry(inquiry);
 	}
 
-	@Transactional
+	@Transactional(readOnly = true)
 	public List<InquiryDto.Response> getAllInquiry() {
 		List<Inquiry> inquiries = inquiryDataProvider.getInquiries();
 		return inquiries.stream().map(InquiryDto.Response::from).toList();
 	}
 
-	@Transactional
+	@Transactional(readOnly = true)
 	public InquiryDto.Response getInquiry(Long inquiryId) {
 		Inquiry inquiry = inquiryDataProvider.getInquiry(inquiryId);
 		return InquiryDto.Response.from(inquiry);
