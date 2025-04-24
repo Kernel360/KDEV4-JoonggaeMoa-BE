@@ -14,6 +14,8 @@ import org.silsagusi.core.domain.agent.Agent;
 import org.silsagusi.core.domain.inquiry.command.UpdateInquiryCommand;
 import org.silsagusi.core.domain.inquiry.entity.Inquiry;
 import org.silsagusi.core.domain.inquiry.entity.InquiryAnswer;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -52,8 +54,8 @@ public class InquiryService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<InquiryDto.Response> getAllInquiry() {
-		List<Inquiry> inquiries = inquiryDataProvider.getInquiries();
+	public List<InquiryDto.Response> getAllInquiry(Pageable pageable) {
+		Page<Inquiry> inquiries = inquiryDataProvider.getInquiries(pageable);
 		return inquiries.stream().map(InquiryDto.Response::from).toList();
 	}
 

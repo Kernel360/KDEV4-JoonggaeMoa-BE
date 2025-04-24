@@ -6,6 +6,7 @@ import org.silsagusi.api.inquiry.application.dto.InquiryAnswerDto;
 import org.silsagusi.api.inquiry.application.dto.InquiryDto;
 import org.silsagusi.api.inquiry.application.service.InquiryService;
 import org.silsagusi.api.response.ApiResponse;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -53,8 +54,9 @@ public class InquiryController {
 
 	@GetMapping("/api/inquiry")
 	public ResponseEntity<ApiResponse<List<InquiryDto.Response>>> getInquiries(
+		Pageable pageable
 	) {
-		List<InquiryDto.Response> inquiries = inquiryService.getAllInquiry();
+		List<InquiryDto.Response> inquiries = inquiryService.getAllInquiry(pageable);
 		return ResponseEntity.ok(ApiResponse.ok(inquiries));
 	}
 

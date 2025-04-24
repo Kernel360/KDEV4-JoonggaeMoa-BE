@@ -1,7 +1,5 @@
 package org.silsagusi.api.inquiry.infrastructure.dataprovider;
 
-import java.util.List;
-
 import org.silsagusi.api.exception.CustomException;
 import org.silsagusi.api.exception.ErrorCode;
 import org.silsagusi.api.inquiry.infrastructure.repository.InquiryAnswerRepository;
@@ -9,6 +7,8 @@ import org.silsagusi.api.inquiry.infrastructure.repository.InquiryRepository;
 import org.silsagusi.core.domain.inquiry.command.UpdateInquiryCommand;
 import org.silsagusi.core.domain.inquiry.entity.Inquiry;
 import org.silsagusi.core.domain.inquiry.entity.InquiryAnswer;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
@@ -38,8 +38,8 @@ public class InquiryDataProvider {
 			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
 	}
 
-	public List<Inquiry> getInquiries() {
-		return inquiryRepository.findAllByDeletedAtIsNull();
+	public Page<Inquiry> getInquiries(Pageable pageable) {
+		return inquiryRepository.findAllByDeletedAtIsNull(pageable);
 	}
 
 	public void createInquiryAnswer(InquiryAnswer inquiryAnswer) {
