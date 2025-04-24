@@ -11,11 +11,12 @@ import org.silsagusi.core.domain.agent.Agent;
 import org.silsagusi.core.domain.agent.command.UpdateAgentCommand;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class AgentService {
 
@@ -35,6 +36,7 @@ public class AgentService {
 		messageTemplateDataProvider.createDefaultMessageTemplate(agent);
 	}
 
+	@Transactional
 	public UsernameDto.Response getAgentByNameAndPhone(UsernameDto.Request usernameRequest) {
 		Agent agent = agentDataProvider.getAgentByNameAndPhone(usernameRequest.getName(),
 			usernameRequest.getPhone());
@@ -42,20 +44,31 @@ public class AgentService {
 		return agentMapper.toUsernameResponse(agent);
 	}
 
+	@Transactional
 	public void logout(String accessToken) {
 		agentDataProvider.deleteRefreshTokenByAccessToken(accessToken);
 	}
 
+	@Transactional(readOnly = true)
 	public AgentDto.Response getAgent(Long agentId) {
 		Agent agent = agentDataProvider.getAgentById(agentId);
 		return agentMapper.toAgentResponse(agent);
 	}
 
+	private final EntityManager em;
+
+	@Transactional
 	public void updateAgent(Long agentId, UpdateAgentRequest updateAgentRequest) {
 		Agent agent = agentDataProvider.getAgentById(agentId);
 
 		UpdateAgentCommand updateAgentCommand = agentMapper.toCommand(updateAgentRequest);
 
+		System.out.println("트랜잭션 활성화 여부 : " + TransactionSynchronizationManager.isActualTransactionActive());
+
 		agentDataProvider.updateAgent(agent, updateAgentCommand);
+
+		System.out.println("Before flush");
+		em.flush();
+		System.out.println("After flush");
 	}
 }
