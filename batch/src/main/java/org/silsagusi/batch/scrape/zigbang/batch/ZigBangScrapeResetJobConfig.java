@@ -4,7 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.silsagusi.batch.infrastructure.repository.ScrapeStatusRepository;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
+import org.springframework.batch.core.configuration.JobRegistry;
 import org.springframework.batch.core.configuration.annotation.JobScope;
+import org.springframework.batch.core.configuration.support.ReferenceJobFactory;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
@@ -20,19 +22,28 @@ import java.time.LocalDateTime;
 public class ZigBangScrapeResetJobConfig {
 
 	private static final String JOB_NAME = "zigBangScrapeStatusResetJob";
+
+	private final JobRegistry jobRegistry;
 	private final JobRepository jobRepository;
 	private final PlatformTransactionManager transactionManager;
 	private final ScrapeStatusRepository scrapeStatusRepository;
 
 	@Bean
 	public Job zigBangScrapeStatusResetJob(Step zigBangScrapeStatusResetStep) {
-		return new JobBuilder(JOB_NAME, jobRepository)
+		Job job = new JobBuilder(JOB_NAME, jobRepository)
 			.start(zigBangScrapeStatusResetStep)
 			.build();
+
+		try {
+			jobRegistry.register(new ReferenceJobFactory(job));
+		} catch (Exception e) {
+			throw new RuntimeException("Failed to register job", e);
+		}
+
+		return job;
 	}
 
 	@Bean
-	@JobScope
 	public Step zigBangScrapeStatusResetStep() {
 		return new StepBuilder(JOB_NAME + "Step", jobRepository)
 			.tasklet(((contribution, chunkContext) -> {

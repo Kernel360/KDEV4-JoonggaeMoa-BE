@@ -1,7 +1,5 @@
 package org.silsagusi.api.article.application.mapper;
 
-import java.util.List;
-
 import org.silsagusi.api.article.application.dto.ArticleResponse;
 import org.silsagusi.api.article.application.dto.RealEstateTypeSummaryResponse;
 import org.silsagusi.api.article.application.dto.RegionResponse;
@@ -10,6 +8,8 @@ import org.silsagusi.core.domain.article.Article;
 import org.silsagusi.core.domain.article.Region;
 import org.silsagusi.core.domain.article.projection.ArticleTypeRatioProjection;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Component
 public class ArticleMapper {

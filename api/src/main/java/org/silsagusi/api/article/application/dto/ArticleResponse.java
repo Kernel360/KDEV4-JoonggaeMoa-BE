@@ -2,7 +2,6 @@ package org.silsagusi.api.article.application.dto;
 
 import lombok.Builder;
 import lombok.Getter;
-import org.silsagusi.core.domain.article.Article;
 
 import java.time.LocalDate;
 

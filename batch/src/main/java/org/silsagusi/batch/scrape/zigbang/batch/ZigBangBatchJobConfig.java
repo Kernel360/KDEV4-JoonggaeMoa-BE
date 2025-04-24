@@ -1,7 +1,5 @@
 package org.silsagusi.batch.scrape.zigbang.batch;
 
-import jakarta.annotation.PostConstruct;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.silsagusi.batch.infrastructure.repository.RegionRepository;
 import org.silsagusi.batch.infrastructure.repository.ScrapeStatusRepository;
@@ -10,11 +8,13 @@ import org.silsagusi.core.domain.article.Region;
 import org.silsagusi.core.domain.article.ScrapeStatus;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.configuration.annotation.JobScope;
+import org.springframework.batch.core.configuration.JobRegistry;
+import org.springframework.batch.core.configuration.support.ReferenceJobFactory;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.repeat.RepeatStatus;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -23,31 +23,54 @@ import java.util.List;
 
 @Slf4j
 @Configuration
-@RequiredArgsConstructor
 public class ZigBangBatchJobConfig {
 
 	private static final String JOB_NAME = "zigBangItemCatalogJob";
 
+	private final JobRegistry jobRegistry;
 	private final JobRepository jobRepository;
 	private final PlatformTransactionManager transactionManager;
 	private final ScrapeStatusRepository scrapeStatusRepository;
 	private final ZigBangRequestService zigBangRequestService;
 	private final RegionRepository regionRepository;
 
+	public ZigBangBatchJobConfig(
+		JobRegistry jobRegistry,
+		JobRepository jobRepository,
+		@Qualifier("metaTransactionManager")
+		PlatformTransactionManager transactionManager,
+		ScrapeStatusRepository scrapeStatusRepository,
+		ZigBangRequestService zigBangRequestService,
+		RegionRepository regionRepository) {
+		this.jobRegistry = jobRegistry;
+		this.jobRepository = jobRepository;
+		this.transactionManager = transactionManager;
+		this.scrapeStatusRepository = scrapeStatusRepository;
+		this.zigBangRequestService = zigBangRequestService;
+		this.regionRepository = regionRepository;
+	}
+
 	@Bean
 	public Job zigBangItemCatalogJob(
 		Step initZigBangScrapeStatusStep,
 		Step zigBangItemCatalogStep) {
-		return new JobBuilder(JOB_NAME, jobRepository)
+		Job job = new JobBuilder(JOB_NAME, jobRepository)
 			.start(initZigBangScrapeStatusStep)
 			.next(zigBangItemCatalogStep)
 			.build();
+
+		try {
+			jobRegistry.register(new ReferenceJobFactory(job));
+		} catch (Exception e) {
+			throw new RuntimeException("Failed to register job", e);
+		}
+
+		return job;
 	}
 
 	@Bean
-	@JobScope
 	public Step initZigBangScrapeStatusStep() {
-		return new StepBuilder(JOB_NAME + "Step", jobRepository)
+		return new StepBuilder("initZigBangScrapeStatusStep", jobRepository)
 			.tasklet((contribution, chunkContext) -> {
 				List<Region> regions = regionRepository.findAllByCortarType("sec");
 				for (Region region : regions) {
@@ -65,7 +88,6 @@ public class ZigBangBatchJobConfig {
 	}
 
 	@Bean
-	@JobScope
 	public Step zigBangItemCatalogStep() {
 		return new StepBuilder(JOB_NAME + "Step", jobRepository)
 			.tasklet((contribution, chunkContext) -> {

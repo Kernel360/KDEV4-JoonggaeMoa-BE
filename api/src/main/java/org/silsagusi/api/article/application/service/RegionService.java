@@ -1,14 +1,13 @@
 package org.silsagusi.api.article.application.service;
 
-import java.util.List;
-
+import lombok.RequiredArgsConstructor;
 import org.silsagusi.api.article.application.dto.RegionResponse;
 import org.silsagusi.api.article.application.mapper.ArticleMapper;
 import org.silsagusi.api.article.infrastructure.dataProvider.RegionDataProvider;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import lombok.RequiredArgsConstructor;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor

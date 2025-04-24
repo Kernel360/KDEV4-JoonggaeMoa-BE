@@ -4,8 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.silsagusi.batch.infrastructure.dataProvider.ArticleDataProvider;
 import org.silsagusi.batch.infrastructure.repository.ArticleRepository;
-import org.silsagusi.batch.infrastructure.repository.RegionRepository;
-import org.silsagusi.batch.infrastructure.repository.ScrapeStatusRepository;
 import org.silsagusi.batch.scrape.zigbang.client.ZigBangApiClient;
 import org.silsagusi.batch.scrape.zigbang.service.dto.ZigBangItemCatalogResponse;
 import org.silsagusi.core.domain.article.Article;
