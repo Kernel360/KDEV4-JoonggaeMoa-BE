@@ -34,7 +34,7 @@ public class InquiryController {
 		return ResponseEntity.ok(ApiResponse.ok());
 	}
 
-	@PatchMapping("/api/inquiries{inquiryId}")
+	@PatchMapping("/api/inquiries/{inquiryId}")
 	public ResponseEntity<ApiResponse<Void>> updateInquiry(
 		@PathVariable("inquiryId") Long inquiryId,
 		@RequestBody @Valid InquiryDto.UpdateRequest updateInquiryRequest
@@ -43,7 +43,7 @@ public class InquiryController {
 		return ResponseEntity.ok(ApiResponse.ok());
 	}
 
-	@DeleteMapping("/api/inquiries{inquiryId}")
+	@DeleteMapping("/api/inquiries/{inquiryId}")
 	public ResponseEntity<ApiResponse<Void>> deleteInquiry(
 		@PathVariable("inquiryId") Long inquiryId,
 		@RequestBody @Valid InquiryDto.PasswordRequest passwordRequest
@@ -60,7 +60,7 @@ public class InquiryController {
 		return ResponseEntity.ok(ApiResponse.ok(inquiries));
 	}
 
-	@GetMapping("/api/inquiries{inquiryId}")
+	@GetMapping("/api/inquiries/{inquiryId}")
 	public ResponseEntity<ApiResponse<InquiryDto.Response>> updateConsultation(
 		@PathVariable("inquiryId") Long inquiryId
 	) {
@@ -68,7 +68,7 @@ public class InquiryController {
 		return ResponseEntity.ok(ApiResponse.ok(inquiry));
 	}
 
-	@PostMapping("/api/inquiries{inquiryId}")
+	@PostMapping("/api/inquiries/{inquiryId}")
 	public ResponseEntity<ApiResponse<Void>> writeInquiryAnswer(
 		HttpServletRequest request,
 		@PathVariable("inquiryId") Long inquiryId,

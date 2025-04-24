@@ -46,7 +46,7 @@ public class SecurityConfig {
 		"/swagger-ui/**",
 		"/v3/api-docs/**",
 		"/api/notification/subscribe",
-		"/api/inquiry/**"
+		"/api/inquiries/**"
 	};
 	private final CustomAuthenticationEntryPointHandler customAuthenticationEntryPointHandler;
 	private final CustomAccessDeniedHandler customAccessDeniedHandler;
