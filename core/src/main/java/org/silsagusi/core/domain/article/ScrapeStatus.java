@@ -9,6 +9,8 @@ import java.time.LocalDateTime;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity(name = "scrape_statuses")
+@Table(uniqueConstraints =
+	@UniqueConstraint(columnNames = { "region_id", "source" }))
 @Getter
 public class ScrapeStatus {
 
@@ -17,8 +19,8 @@ public class ScrapeStatus {
 	@Column(name = "scrape_status_id", nullable = false)
 	private Long id;
 
-	@OneToOne
-	@JoinColumn(name = "region_id", nullable = false, unique = true)
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "region_id", nullable = false)
 	private Region region;
 
 	@Column(name = "last_scraped_page")

@@ -21,7 +21,7 @@ public class Article {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "region_id", nullable = false)
-	private Region region;
+	private Region region_id;
 
 	@Column(name = "article_code")
 	private String articleCode;      // atclNo 매물번호
@@ -108,7 +108,7 @@ public class Article {
 		this.agency = agency;
 		this.subway = subway;
 		this.isChecked = is_checked;
-		this.region = region;
+		this.region_id = region;
 		this.addressFullLot = addressFullLot;
 		this.addressFullRoad = addressFullRoad;
 		this.address1SiDo = address2_city;

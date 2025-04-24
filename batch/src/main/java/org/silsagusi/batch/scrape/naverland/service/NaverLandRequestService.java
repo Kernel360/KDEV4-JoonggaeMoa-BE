@@ -27,18 +27,14 @@ public class NaverLandRequestService {
 	private final NaverLandApiClient naverLandApiClient;
 	private final KakaoMapAddressLookupService addressLookupService;
 	private final ArticleDataProvider articleDataProvider;
-	private final RegionRepository regionRepository;
-	private final ScrapeStatusRepository scrapeStatusRepository;
 
-	@Async("scrapExecutor")
-	public void scrapNaverArticles(ScrapeStatus scrapeStatus) {
-
-		saveNaverLandRegionsToScrapeStatus();
+	@Async("scrapeExecutor")
+	public void scrapNaverLand(ScrapeStatus scrapeStatus) {
 		List<Article> articles = new ArrayList<>();
 
 		try {
 			Region region = scrapeStatus.getRegion();
-			log.info("네이버 부동산 스크랩 시작: 지역 코드 {}", scrapeStatus.getRegion().getCortarNo());
+			log.info("네이버 부동산 스크랩 시작: 지역 코드 {}", region.getCortarNo());
 
 			if (!"sec".equals(region.getCortarType())) {
 				log.info("cortarType이 sec가 아니므로 스크랩을 건너뜁니다: 지역 코드 {}", region.getCortarNo());
@@ -125,21 +121,5 @@ public class NaverLandRequestService {
 				);
 			}).filter(Objects::nonNull)
 			.toList();
-	}
-
-	public void saveNaverLandRegionsToScrapeStatus() {
-		List<Region> regions = regionRepository.findAll();
-
-		scrapeStatusRepository.saveAll(
-			regions.stream()
-				.map(region -> new ScrapeStatus(
-					region,
-					1,
-					false,
-					null,
-					"네이버부동산"
-				))
-				.toList()
-		);
 	}
 }

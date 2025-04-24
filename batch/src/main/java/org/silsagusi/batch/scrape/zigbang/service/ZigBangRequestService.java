@@ -20,18 +20,16 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class ZigBangItemCatalogRequestService {
+public class ZigBangRequestService {
 
 	private final ZigBangApiClient zigbangApiClient;
 	private final ArticleDataProvider articleDataProvider;
 	private final ArticleRepository articleRepository;
-	private final RegionRepository regionRepository;
-	private final ScrapeStatusRepository scrapeStatusRepository;
 
-	@Async("scrapExecutor")
-	public void scrapZigBangItemCatalogs(ScrapeStatus scrapeStatus) {
-		saveZigBangRegionsToScrapeStatus();
+	@Async("scrapeExecutor")
+	public void scrapZigBang(ScrapeStatus scrapeStatus) {
 		List<Article> articles = new ArrayList<>();
+
 		try {
 			Region region = scrapeStatus.getRegion();
 			log.info("직방 스크랩 시작: 지역 코드 {}", region.getCortarNo());
@@ -66,21 +64,4 @@ public class ZigBangItemCatalogRequestService {
 			}
 		}
 	}
-
-	public void saveZigBangRegionsToScrapeStatus() {
-		List<Region> regions = regionRepository.findAll();
-
-		scrapeStatusRepository.saveAll(
-			regions.stream()
-				.map(region -> new ScrapeStatus(
-					region,
-					1,
-					false,
-					null,
-					"직방"
-				))
-				.toList()
-		);
-	}
-
 }

@@ -11,13 +11,13 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 @EnableAsync
 public class AsyncConfig {
 
-	@Bean(name = "scrapExecutor")
-	public Executor scrapExecutor() {
+	@Bean(name = "scrapeExecutor")
+	public Executor scrapeExecutor() {
 		ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
 		executor.setCorePoolSize(1);
 		executor.setMaxPoolSize(5);
 		executor.setQueueCapacity(100);
-		executor.setThreadNamePrefix("scrapExecutor-");
+		executor.setThreadNamePrefix("scrapeExecutor-");
 		executor.initialize();
 		return executor;
 	}

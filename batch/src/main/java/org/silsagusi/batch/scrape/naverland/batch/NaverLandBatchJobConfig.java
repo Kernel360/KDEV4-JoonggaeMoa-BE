@@ -1,9 +1,12 @@
 package org.silsagusi.batch.scrape.naverland.batch;
 
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.silsagusi.batch.infrastructure.repository.RegionRepository;
 import org.silsagusi.batch.infrastructure.repository.ScrapeStatusRepository;
 import org.silsagusi.batch.scrape.naverland.service.NaverLandRequestService;
+import org.silsagusi.core.domain.article.Region;
 import org.silsagusi.core.domain.article.ScrapeStatus;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -21,7 +24,7 @@ import java.util.List;
 @Slf4j
 @Configuration
 @RequiredArgsConstructor
-public class NaverLandArticleBatchJobConfig {
+public class NaverLandBatchJobConfig {
 
 	private static final String JOB_NAME = "naverLandArticleJob";
 
@@ -29,11 +32,38 @@ public class NaverLandArticleBatchJobConfig {
 	private final PlatformTransactionManager transactionManager;
 	private final ScrapeStatusRepository scrapeStatusRepository;
 	private final NaverLandRequestService naverLandRequestService;
+	private final RegionRepository regionRepository;
 
 	@Bean
-	public Job naverLandArticleJob(Step naverLandArticleStep) {
+	public Job naverLandArticleJob(
+		Step initNaverLandScrapeStatusStep,
+		Step naverLandArticleStep) {
 		return new JobBuilder(JOB_NAME, jobRepository)
-			.start(naverLandArticleStep)
+			.start(initNaverLandScrapeStatusStep)
+			.next(naverLandArticleStep)
+			.build();
+	}
+
+	@Bean
+	@JobScope
+	@PostConstruct
+	public Step initNaverLandScrapeStatusStep() {
+		return new StepBuilder(JOB_NAME + "Step", jobRepository)
+			.tasklet((contribution, chunkContext) -> {
+				List<Region> regions = regionRepository.findAll();
+				scrapeStatusRepository.saveAll(
+					regions.stream()
+						.map(region -> new ScrapeStatus(
+							region,
+							1,
+							false,
+							null,
+							"네이버부동산"
+						))
+						.toList()
+				);
+				return RepeatStatus.FINISHED;
+			}, transactionManager)
 			.build();
 	}
 
@@ -44,7 +74,7 @@ public class NaverLandArticleBatchJobConfig {
 			.tasklet((contribution, chunkContext) -> {
 				List<ScrapeStatus> regions = scrapeStatusRepository.findTop50ByCompletedFalseOrderByIdAsc();
 				for (ScrapeStatus status : regions) {
-					naverLandRequestService.scrapNaverArticles(status);
+					naverLandRequestService.scrapNaverLand(status);
 				}
 				return RepeatStatus.FINISHED;
 			}, transactionManager)

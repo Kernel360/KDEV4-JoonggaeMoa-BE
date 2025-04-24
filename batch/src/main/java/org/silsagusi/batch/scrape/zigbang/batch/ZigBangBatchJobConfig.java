@@ -1,9 +1,12 @@
 package org.silsagusi.batch.scrape.zigbang.batch;
 
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.silsagusi.batch.infrastructure.repository.RegionRepository;
 import org.silsagusi.batch.infrastructure.repository.ScrapeStatusRepository;
-import org.silsagusi.batch.scrape.zigbang.service.ZigBangItemCatalogRequestService;
+import org.silsagusi.batch.scrape.zigbang.service.ZigBangRequestService;
+import org.silsagusi.core.domain.article.Region;
 import org.silsagusi.core.domain.article.ScrapeStatus;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -21,18 +24,47 @@ import java.util.List;
 @Slf4j
 @Configuration
 @RequiredArgsConstructor
-public class ZigBangItemCatalogBatchJobConfig {
+public class ZigBangBatchJobConfig {
+
 	private static final String JOB_NAME = "zigBangItemCatalogJob";
 
 	private final JobRepository jobRepository;
 	private final PlatformTransactionManager transactionManager;
 	private final ScrapeStatusRepository scrapeStatusRepository;
-	private final ZigBangItemCatalogRequestService zigBangItemCatalogRequestService;
+	private final ZigBangRequestService zigBangRequestService;
+	private final RegionRepository regionRepository;
 
 	@Bean
-	public Job zigBangItemCatalogJob(Step zigBangItemCatalogStep) {
+	public Job zigBangItemCatalogJob(
+		Step initZigBangScrapeStatusStep,
+		Step zigBangItemCatalogStep) {
 		return new JobBuilder(JOB_NAME, jobRepository)
-			.start(zigBangItemCatalogStep)
+			.start(initZigBangScrapeStatusStep)
+			.next(zigBangItemCatalogStep)
+			.build();
+	}
+
+	@Bean
+	@JobScope
+	@PostConstruct
+	public Step initZigBangScrapeStatusStep() {
+		return new StepBuilder(JOB_NAME + "Step", jobRepository)
+			.tasklet((contribution, chunkContext) -> {
+				List<Region> regions = regionRepository.findAll();
+				scrapeStatusRepository.saveAll(
+					regions.stream()
+						.map(region -> new ScrapeStatus(
+							region,
+							1,
+							false,
+							null,
+							"직방"
+						))
+						.toList()
+				);
+
+				return RepeatStatus.FINISHED;
+			}, transactionManager)
 			.build();
 	}
 
@@ -43,11 +75,10 @@ public class ZigBangItemCatalogBatchJobConfig {
 			.tasklet((contribution, chunkContext) -> {
 				List<ScrapeStatus> regions = scrapeStatusRepository.findTop50ByCompletedFalseOrderByIdAsc();
 				for (ScrapeStatus status : regions) {
-					zigBangItemCatalogRequestService.scrapZigBangItemCatalogs(status);
+					zigBangRequestService.scrapZigBang(status);
 				}
 				return RepeatStatus.FINISHED;
 			}, transactionManager)
 			.build();
 	}
-
 }

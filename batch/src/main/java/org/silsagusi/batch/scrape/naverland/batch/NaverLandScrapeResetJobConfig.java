@@ -19,21 +19,21 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class NaverLandScrapeResetJobConfig {
 
-	private static final String JOB_NAME = "scrapeStatusResetJob";
+	private static final String JOB_NAME = "naverLandScrapeStatusResetJob";
 	private final JobRepository jobRepository;
 	private final PlatformTransactionManager transactionManager;
 	private final ScrapeStatusRepository scrapeStatusRepository;
 
 	@Bean
-	public Job scrapeStatusResetJob(Step scrapeStatusResetStep) {
+	public Job naverLandScrapeStatusResetJob(Step naverLandScrapeStatusResetStep) {
 		return new JobBuilder(JOB_NAME, jobRepository)
-			.start(scrapeStatusResetStep)
+			.start(naverLandScrapeStatusResetStep)
 			.build();
 	}
 
 	@Bean
 	@JobScope
-	public Step scrapeStatusResetStep() {
+	public Step naverLandScrapeStatusResetStep() {
 		return new StepBuilder(JOB_NAME + "Step", jobRepository)
 			.tasklet(((contribution, chunkContext) -> {
 				LocalDateTime cutoff = LocalDateTime.now().minusDays(1);

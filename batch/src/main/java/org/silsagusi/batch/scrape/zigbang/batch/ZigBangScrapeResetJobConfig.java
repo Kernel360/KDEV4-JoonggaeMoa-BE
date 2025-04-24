@@ -25,15 +25,15 @@ public class ZigBangScrapeResetJobConfig {
 	private final ScrapeStatusRepository scrapeStatusRepository;
 
 	@Bean
-	public Job scrapeStatusResetJob(Step scrapeStatusResetStep) {
+	public Job zigBangScrapeStatusResetJob(Step zigBangScrapeStatusResetStep) {
 		return new JobBuilder(JOB_NAME, jobRepository)
-			.start(scrapeStatusResetStep)
+			.start(zigBangScrapeStatusResetStep)
 			.build();
 	}
 
 	@Bean
 	@JobScope
-	public Step scrapeStatusResetStep() {
+	public Step zigBangScrapeStatusResetStep() {
 		return new StepBuilder(JOB_NAME + "Step", jobRepository)
 			.tasklet(((contribution, chunkContext) -> {
 				LocalDateTime cutoff = LocalDateTime.now().minusDays(1);

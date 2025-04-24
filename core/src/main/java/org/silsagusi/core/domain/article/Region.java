@@ -30,8 +30,7 @@ public class Region {
 
 	public Region(
 		String cortarNo, Double centerLat, Double centerLon,
-		String cortarName, String cortarType, String geohash,
-		String zigBangLocalCode
+		String cortarName, String cortarType, String geohash
 	) {
 		this.cortarNo = cortarNo;
 		this.centerLat = centerLat;
