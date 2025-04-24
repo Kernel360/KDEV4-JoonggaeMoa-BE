@@ -52,8 +52,7 @@ public class Inquiry extends BaseEntity {
 		return new Inquiry(name, password, title, content);
 	}
 
-	public void updateInquiry(String name, String title, String content) {
-		this.name = name;
+	public void updateInquiry(String title, String content) {
 		this.title = title;
 		this.content = content;
 	}
