@@ -41,37 +41,4 @@ public class ArticleResponse {
 	private String address1SiDo;
 	private String address2SiGunGu;
 	private String address3DongEupMyeon;
-
-	// TODO : 이거 무엇에 쓰는 물건잉교
-	public static ArticleResponse of(Article article) {
-		return ArticleResponse.builder()
-			.id(article.getId())
-			.articleCode(article.getArticleCode())
-			.bjdCode(article.getBjdCode())
-			.articleName(article.getArticleName())
-			.buildingTypeCode(article.getBuildingTypeCode())
-			.buildingType(article.getBuildingType())
-			.tradeType(article.getTradeType())
-			.floors(article.getFloors())
-			.priceSale(article.getPriceSale())
-			.priceRent(article.getPriceRent())
-			.areaSupply(article.getAreaSupply())
-			.areaExclusive(article.getAreaExclusive())
-			.direction(article.getDirection())
-			.confirmedAt(article.getConfirmedAt())
-			.imageUrl(article.getImageUrl())
-			.latitude(article.getLatitude())
-			.longitude(article.getLongitude())
-			.articleDesc(article.getArticleDesc())
-			.companyName(article.getCompanyName())
-			.agency(article.getAgency())
-			.subway(article.getSubway())
-			.isChecked(article.getIsChecked())
-			.addressFullLot(article.getAddressFullLot())
-			.addressFullRoad(article.getAddressFullRoad())
-			.address1SiDo(article.getAddress1SiDo())
-			.address2SiGunGu(article.getAddress2SiGunGu())
-			.address3DongEupMyeon(article.getAddress3DongEupMyeon())
-			.build();
-	}
 }

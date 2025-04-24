@@ -21,8 +21,8 @@ import java.util.List;
 @Slf4j
 @Configuration
 @RequiredArgsConstructor
-public class ZigBangArticleBatchJobConfig {
-	private static final String JOB_NAME = "zigBangArticleJob";
+public class ZigBangItemCatalogBatchJobConfig {
+	private static final String JOB_NAME = "zigBangItemCatalogJob";
 
 	private final JobRepository jobRepository;
 	private final PlatformTransactionManager transactionManager;
@@ -30,15 +30,15 @@ public class ZigBangArticleBatchJobConfig {
 	private final ZigBangItemCatalogRequestService zigBangItemCatalogRequestService;
 
 	@Bean
-	public Job zigBangArticleJob(Step zigBangArticleStep) {
+	public Job zigBangItemCatalogJob(Step zigBangItemCatalogStep) {
 		return new JobBuilder(JOB_NAME, jobRepository)
-			.start(zigBangArticleStep)
+			.start(zigBangItemCatalogStep)
 			.build();
 	}
 
 	@Bean
 	@JobScope
-	public Step zigBangArticleStep() {
+	public Step zigBangItemCatalogStep() {
 		return new StepBuilder(JOB_NAME + "Step", jobRepository)
 			.tasklet((contribution, chunkContext) -> {
 				List<ScrapeStatus> regions = scrapeStatusRepository.findTop50ByCompletedFalseOrderByIdAsc();

@@ -25,33 +25,22 @@ public class ZigBangItemCatalogRequestService {
 	private final ArticleRepository articleRepository;
 
 	@Async("scrapExecutor")
-	public void scrapZigBangItemCatalogs(ScrapeStatus scrapeStatus) throws InterruptedException {
+	public void scrapZigBangItemCatalogs(ScrapeStatus scrapeStatus) {
 		List<Article> articles = new ArrayList<>();
-
 		try {
-			log.info("직방 스크랩 시작: 지역 코드 {}", scrapeStatus.getRegion().getCortarNo());
 			Region region = scrapeStatus.getRegion();
-
+			log.info("직방 스크랩 시작: 지역 코드 {}", region.getCortarNo());
 			// 읍면동 단위의 지역 범위만 스크랩 후 데이터 저장
 			if (!"sec".equals(region.getCortarType())) {
 				log.info("범위가 읍면동이 아니므로 스크랩을 건너뜁니다: 지역 코드 {}", region.getCortarNo());
 				return;
 			}
 
-			String localCode = region.getZigBangLocalCode();
-			ZigBangItemCatalogResponse catalog = zigbangApiClient.fetchItemCatalog(localCode);
-			log.info("직방 데이터 조회 성공: 지역 코드 {}, 매물 수 {}",
-			scrapeStatus.getRegion().getCortarNo(),
-			catalog.getList() != null ? catalog.getList().size() : 0);
-
-			// Replace the current implementation with this
-			if (catalog.getList() != null && !catalog.getList().isEmpty()) {
-				articles.addAll(mapZigBangToArticles(List.of(catalog), scrapeStatus.getRegion()));
-			} else {
-				log.warn("직방 데이터 목록이 비어 있습니다: 지역 코드 {}", scrapeStatus.getRegion().getCortarNo());
-			}
-			int count = articles.size();
-			log.info("직방 스크랩 완료: 지역 코드 {}, 처리된 매물 수 {}", scrapeStatus.getRegion().getCortarNo(), count);
+			String localCode = region.getCortarNo().substring(0, 8);
+			ZigBangItemCatalogResponse response = zigbangApiClient.fetchItemCatalog(localCode);
+			int count = response.getCount();
+			log.info("직방 스크랩 완료: 지역 코드 {}, 처리된 매물 수 {}",
+				scrapeStatus.getRegion().getCortarNo(), count);
 		} catch (Exception e) {
 			log.error("직방 스크랩 실패: 지역 코드 {}, 에러 메시지: {}",
 				scrapeStatus.getRegion().getCortarNo(), e.getMessage(), e);
@@ -60,8 +49,8 @@ public class ZigBangItemCatalogRequestService {
 			try {
 				articleDataProvider.saveArticles(articles);
 				scrapeStatus.updateCompleted(true);
-				int count = articleRepository.saveAll(articles).size();
-				if (count != 0) {
+				int savedCount = articleRepository.saveAll(articles).size();
+				if (savedCount != 0) {
 					log.info("직방 매물 저장 완료: 지역 코드 {}, 저장된 매물 수 {}",
 					scrapeStatus.getRegion().getCortarNo(), articles.size());
 					Thread.sleep((long) (Math.random() * 10000));
@@ -71,16 +60,5 @@ public class ZigBangItemCatalogRequestService {
 					scrapeStatus.getRegion().getCortarNo(), e.getMessage(), e);
 			}
 		}
-	}
-
-	private List<Article> mapZigBangToArticles(
-		List<ZigBangItemCatalogResponse> items,
-		Region region
-	) {
-		return items.stream()
-			.map(item
-				-> ArticleDataProvider.createZigBangArticle(item, region)
-			)
-			.toList();
 	}
 }

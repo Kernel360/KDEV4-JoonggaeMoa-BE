@@ -39,7 +39,8 @@ public class ArticleMapper {
 			.id(article.getId())
 			.bjdCode(article.getBjdCode())
 			.articleName(article.getArticleName())
-			.articleType(article.getArticleType())
+			.buildingTypeCode(article.getBuildingTypeCode())
+			.buildingType(article.getBuildingType())
 			.tradeType(article.getTradeType())
 			.floors(article.getFloors())
 			.priceSale(article.getPriceSale())
@@ -54,12 +55,7 @@ public class ArticleMapper {
 			.articleDesc(article.getArticleDesc())
 			.companyName(article.getCompanyName())
 			.agency(article.getAgency())
-			.priceRoomMin(article.getPriceRoomMin())
-			.priceRoomMax(article.getPriceRoomMax())
 			.subway(article.getSubway())
-			.articleDescRoom(article.getArticleDescRoom())
-			.articleDescMw(article.getArticleDescMw())
-			.emptyRoomCount(article.getEmptyRoomCount())
 			.isChecked(article.getIsChecked())
 			.build();
 		}

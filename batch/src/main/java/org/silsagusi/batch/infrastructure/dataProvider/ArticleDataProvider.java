@@ -64,7 +64,7 @@ public class ArticleDataProvider {
 		return article;
 	}
 
-	public static Article createZigBangArticle(
+	public static Article createZigBangItemCatalog(
 		ZigBangItemCatalogResponse item,
 		Region region
 

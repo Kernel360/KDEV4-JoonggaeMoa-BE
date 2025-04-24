@@ -16,19 +16,17 @@ public class Region {
 	@Column(name = "region_id", nullable = false)
 	private Long id;
 
-	@Column(name = "district_code")
+	@Column(name = "bjd_code")
 	private String cortarNo; // 법정동 코드
 	@Column(name = "latitude")
 	private Double centerLat; // 화면 정가운데 위도
 	@Column(name = "longitude")
 	private Double centerLon; // 화면 정가운데 경도
-	@Column(name = "area")
+	@Column(name = "address")
 	private String cortarName; // 법정동명
-	@Column(name = "type")
+	@Column(name = "category")
 	private String cortarType; // 법정동 유형
 	private String geohash; // 지오 해쉬
-	@Column(name = "zigbang_local_code")
-	private String zigBangLocalCode; // 직방 지역 코드
 
 	public Region(
 		String cortarNo, Double centerLat, Double centerLon,
@@ -41,6 +39,5 @@ public class Region {
 		this.cortarName = cortarName;
 		this.cortarType = cortarType;
 		this.geohash = geohash;
-		this.zigBangLocalCode = zigBangLocalCode;
 	}
 }
