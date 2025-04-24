@@ -15,7 +15,7 @@ public class AsyncConfig {
 	public Executor scrapeExecutor() {
 		ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
 		executor.setCorePoolSize(1);
-		executor.setMaxPoolSize(5);
+		executor.setMaxPoolSize(10);
 		executor.setQueueCapacity(100);
 		executor.setThreadNamePrefix("scrapeExecutor-");
 		executor.initialize();

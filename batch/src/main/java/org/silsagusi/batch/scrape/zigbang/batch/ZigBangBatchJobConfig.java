@@ -49,7 +49,7 @@ public class ZigBangBatchJobConfig {
 	public Step initZigBangScrapeStatusStep() {
 		return new StepBuilder(JOB_NAME + "Step", jobRepository)
 			.tasklet((contribution, chunkContext) -> {
-				List<Region> regions = regionRepository.findAll();
+				List<Region> regions = regionRepository.findAllByCortarType("sec");
 				for (Region region : regions) {
 					scrapeStatusRepository.upsertNative(
 						region.getId(),
@@ -69,7 +69,7 @@ public class ZigBangBatchJobConfig {
 	public Step zigBangItemCatalogStep() {
 		return new StepBuilder(JOB_NAME + "Step", jobRepository)
 			.tasklet((contribution, chunkContext) -> {
-				List<ScrapeStatus> regions = scrapeStatusRepository.findTop50ByCompletedFalseOrderByIdAsc();
+				List<ScrapeStatus> regions = scrapeStatusRepository.findAll();
 				for (ScrapeStatus status : regions) {
 					zigBangRequestService.scrapZigBang(status);
 				}

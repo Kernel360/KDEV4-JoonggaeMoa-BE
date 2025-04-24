@@ -65,38 +65,38 @@ public class ArticleDataProvider {
 	}
 
 	public static Article createZigBangItemCatalog(
-		ZigBangItemCatalogResponse item,
+		ZigBangItemCatalogResponse.ZigBangItemCatalog item,
 		Region region
 
 	) {
 		Article article = new Article(
-			String.valueOf(item.getList().get(0).getAreaDanjiId()),
+			String.valueOf(item.getAreaDanjiId()),
 			null,
-			item.getList().get(0).getAreaDanjiName() + " " + item.getList().get(0).getDong(),
+			item.getAreaDanjiName() + " " + item.getDong(),
 			null,
 			"아파트",
-			mapTranType(item.getList().get(0).getTranType()),
-			item.getList().get(0).getFloor(),
-			item.getList().get(0).getDepositMin(),
-			item.getList().get(0).getRentMin(),
-			item.getList().get(0).getRoomTypeTitle().getM2(),
-			String.valueOf(item.getList().get(0).getSizeM2()),
+			mapTranType(item.getTranType()),
+			item.getFloor(),
+			item.getDepositMin(),
+			item.getRentMin(),
+			item.getRoomTypeTitle().getM2(),
+			String.valueOf(item.getSizeM2()),
 			null,
 			null,
-			item.getList().get(0).getThumbnailUrl(),
-			item.getLat(),
-			item.getLng(),
-			item.getList().get(0).getItemTitle(),
-			mapItemType(item.getList().get(0).getItemType()),
+			item.getThumbnailUrl(),
 			null,
 			null,
-			mapIsChecked(item.getList().get(0).getItemType()),
+			item.getItemTitle(),
+			mapItemType(item.getItemType()),
+			null,
+			null,
+			mapIsChecked(item.getItemType()),
 			region,
-			item.getLocal1() + item.getLocal2() + item.getLocal3(),
 			null,
-			item.getLocal1(),
-			item.getList().get(0).getLocal2(),
-			item.getList().get(0).getLocal3()
+			null,
+			null,
+			item.getLocal2(),
+			item.getLocal3()
 		);
 		return article;
 	}

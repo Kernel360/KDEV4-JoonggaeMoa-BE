@@ -1,6 +1,5 @@
 package org.silsagusi.batch.scrape.naverland.batch;
 
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.silsagusi.batch.infrastructure.repository.RegionRepository;
@@ -49,7 +48,7 @@ public class NaverLandBatchJobConfig {
 	public Step initNaverLandScrapeStatusStep() {
 		return new StepBuilder(JOB_NAME + "Step", jobRepository)
 			.tasklet((contribution, chunkContext) -> {
-				List<Region> regions = regionRepository.findAll();
+				List<Region> regions = regionRepository.findAllByCortarType("sec");
 				for (Region region : regions) {
 					scrapeStatusRepository.upsertNative(
 						region.getId(),
@@ -69,7 +68,7 @@ public class NaverLandBatchJobConfig {
 	public Step naverLandArticleStep() {
 		return new StepBuilder(JOB_NAME + "Step", jobRepository)
 			.tasklet((contribution, chunkContext) -> {
-				List<ScrapeStatus> regions = scrapeStatusRepository.findTop50ByCompletedFalseOrderByIdAsc();
+				List<ScrapeStatus> regions = scrapeStatusRepository.findAll();
 				for (ScrapeStatus status : regions) {
 					naverLandRequestService.scrapNaverLand(status);
 				}

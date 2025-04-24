@@ -15,6 +15,8 @@ public interface ScrapeStatusRepository extends JpaRepository<ScrapeStatus, Long
 
 	List<ScrapeStatus> findTop1ByCompletedFalseOrderByIdAsc();
 
+
+
 	@Query("update scrape_statuses s set s.completed = false, s.lastScrapedPage = 1 "
 		+ "where s.lastScrapedAt < :cutoff")
 	void resetAllScrapeStatus(@Param("cutoff") LocalDateTime cutoff);

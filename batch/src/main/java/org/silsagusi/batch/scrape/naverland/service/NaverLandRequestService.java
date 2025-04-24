@@ -32,29 +32,26 @@ public class NaverLandRequestService {
 
 		try {
 			Region region = scrapeStatus.getRegion();
-
-			if (!"sec".equals(region.getCortarType())) {
-				return;
-			}
+			log.info("[네이버 부동산] {} 호출 중", region.getCortarName());
 
 			int page = scrapeStatus.getLastScrapedPage();
 			boolean hasMore;
 			int totalFetched = 0;
 
 			do {
-				NaverLandArticleResponse nlrResponse = naverLandApiClient.fetchArticleList(
+				NaverLandArticleResponse response = naverLandApiClient.fetchArticleList(
 					String.valueOf(page),
 					region.getCenterLat().toString(),
 					region.getCenterLon().toString(),
 					region.getCortarNo()
 				);
 
-				List<Article> pageArticles = mapNaverLandToArticles(nlrResponse.getBody(), region);
+				List<Article> pageArticles = mapNaverLandToArticles(response.getBody(), region);
 				articles.addAll(pageArticles);
 				totalFetched += pageArticles.size();
 
 				scrapeStatus.updatePage(page, LocalDateTime.now(), "네이버부동산");
-				hasMore = nlrResponse.isMore();
+				hasMore = response.isMore();
 				page++;
 
 				Thread.sleep((long) (3000 + Math.random() * 4000));
