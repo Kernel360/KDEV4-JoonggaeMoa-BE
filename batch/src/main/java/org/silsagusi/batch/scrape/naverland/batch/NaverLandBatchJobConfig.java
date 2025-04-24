@@ -46,22 +46,19 @@ public class NaverLandBatchJobConfig {
 
 	@Bean
 	@JobScope
-	@PostConstruct
 	public Step initNaverLandScrapeStatusStep() {
 		return new StepBuilder(JOB_NAME + "Step", jobRepository)
 			.tasklet((contribution, chunkContext) -> {
 				List<Region> regions = regionRepository.findAll();
-				scrapeStatusRepository.saveAll(
-					regions.stream()
-						.map(region -> new ScrapeStatus(
-							region,
-							1,
-							false,
-							null,
-							"네이버부동산"
-						))
-						.toList()
-				);
+				for (Region region : regions) {
+					scrapeStatusRepository.upsertNative(
+						region.getId(),
+						1,
+						false,
+						null,
+						"네이버부동산"
+					);
+				}
 				return RepeatStatus.FINISHED;
 			}, transactionManager)
 			.build();
