@@ -37,11 +37,14 @@ public class ScrapeStatus {
 
 	private String source;
 
-	public ScrapeStatus(Region region, Integer lastScrapedPage, Boolean completed, LocalDateTime lastScrapedAt) {
+	public ScrapeStatus(
+		Region region, Integer lastScrapedPage, Boolean completed,
+		LocalDateTime lastScrapedAt, String source) {
 		this.region = region;
 		this.lastScrapedPage = lastScrapedPage;
 		this.completed = completed;
 		this.lastScrapedAt = lastScrapedAt;
+		this.source = source;
 	}
 
 	public void updatePage(Integer page, LocalDateTime lastScrapedAt, String source) {

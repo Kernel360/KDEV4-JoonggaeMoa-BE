@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.silsagusi.batch.infrastructure.dataProvider.ArticleDataProvider;
 import org.silsagusi.batch.infrastructure.repository.ArticleRepository;
+import org.silsagusi.batch.infrastructure.repository.RegionRepository;
+import org.silsagusi.batch.infrastructure.repository.ScrapeStatusRepository;
 import org.silsagusi.batch.scrape.zigbang.client.ZigBangApiClient;
 import org.silsagusi.batch.scrape.zigbang.service.dto.ZigBangItemCatalogResponse;
 import org.silsagusi.core.domain.article.Article;
@@ -23,9 +25,12 @@ public class ZigBangItemCatalogRequestService {
 	private final ZigBangApiClient zigbangApiClient;
 	private final ArticleDataProvider articleDataProvider;
 	private final ArticleRepository articleRepository;
+	private final RegionRepository regionRepository;
+	private final ScrapeStatusRepository scrapeStatusRepository;
 
 	@Async("scrapExecutor")
 	public void scrapZigBangItemCatalogs(ScrapeStatus scrapeStatus) {
+		saveZigBangRegionsToScrapeStatus();
 		List<Article> articles = new ArrayList<>();
 		try {
 			Region region = scrapeStatus.getRegion();
@@ -61,4 +66,21 @@ public class ZigBangItemCatalogRequestService {
 			}
 		}
 	}
+
+	public void saveZigBangRegionsToScrapeStatus() {
+		List<Region> regions = regionRepository.findAll();
+
+		scrapeStatusRepository.saveAll(
+			regions.stream()
+				.map(region -> new ScrapeStatus(
+					region,
+					1,
+					false,
+					null,
+					"직방"
+				))
+				.toList()
+		);
+	}
+
 }

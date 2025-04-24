@@ -3,6 +3,8 @@ package org.silsagusi.batch.scrape.naverland.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.silsagusi.batch.infrastructure.dataProvider.ArticleDataProvider;
+import org.silsagusi.batch.infrastructure.repository.RegionRepository;
+import org.silsagusi.batch.infrastructure.repository.ScrapeStatusRepository;
 import org.silsagusi.batch.scrape.naverland.client.NaverLandApiClient;
 import org.silsagusi.batch.scrape.naverland.service.dto.KakaoMapAddressResponse;
 import org.silsagusi.batch.scrape.naverland.service.dto.NaverLandArticleResponse;
@@ -25,11 +27,15 @@ public class NaverLandRequestService {
 	private final NaverLandApiClient naverLandApiClient;
 	private final KakaoMapAddressLookupService addressLookupService;
 	private final ArticleDataProvider articleDataProvider;
+	private final RegionRepository regionRepository;
+	private final ScrapeStatusRepository scrapeStatusRepository;
 
 	@Async("scrapExecutor")
 	public void scrapNaverArticles(ScrapeStatus scrapeStatus) {
 
+		saveNaverLandRegionsToScrapeStatus();
 		List<Article> articles = new ArrayList<>();
+
 		try {
 			Region region = scrapeStatus.getRegion();
 			log.info("네이버 부동산 스크랩 시작: 지역 코드 {}", scrapeStatus.getRegion().getCortarNo());
@@ -44,7 +50,7 @@ public class NaverLandRequestService {
 			int totalFetched = 0;
 
 			do {
-				log.info("네이버 부동산 페이지 조회 시작: 지역 코드 {}, 페이지 {}", 
+				log.info("네이버 부동산 페이지 조회 시작: 지역 코드 {}, 페이지 {}",
 					region.getCortarNo(), page);
 
 				NaverLandArticleResponse nlrResponse = naverLandApiClient.fetchArticleList(
@@ -55,7 +61,7 @@ public class NaverLandRequestService {
 				);
 
 				int pageItemCount = nlrResponse.getBody() != null ? nlrResponse.getBody().size() : 0;
-				log.info("네이버 부동산 페이지 조회 성공: 지역 코드 {}, 페이지 {}, 매물 수 {}", 
+				log.info("네이버 부동산 페이지 조회 성공: 지역 코드 {}, 페이지 {}, 매물 수 {}",
 					region.getCortarNo(), page, pageItemCount);
 
 				List<Article> pageArticles = mapNaverLandToArticles(nlrResponse.getBody(), region);
@@ -66,8 +72,8 @@ public class NaverLandRequestService {
 				hasMore = nlrResponse.isMore();
 				page++;
 
-				log.info("네이버 부동산 페이지 처리 완료: 지역 코드 {}, 페이지 {}, 처리된 매물 수 {}, 다음 페이지 존재: {}", 
-					region.getCortarNo(), page-1, pageArticles.size(), hasMore);
+				log.info("네이버 부동산 페이지 처리 완료: 지역 코드 {}, 페이지 {}, 처리된 매물 수 {}, 다음 페이지 존재: {}",
+					region.getCortarNo(), page - 1, pageArticles.size(), hasMore);
 
 				// 3~7초 랜덤 딜레이
 				Thread.sleep((long) (3000 + Math.random() * 4000));
@@ -75,21 +81,21 @@ public class NaverLandRequestService {
 
 			try {
 				articleDataProvider.saveArticles(articles);
-				log.info("네이버 부동산 매물 저장 완료: 지역 코드 {}, 저장된 매물 수 {}", 
+				log.info("네이버 부동산 매물 저장 완료: 지역 코드 {}, 저장된 매물 수 {}",
 					scrapeStatus.getRegion().getCortarNo(), articles.size());
 			} catch (Exception e) {
-				log.error("네이버 부동산 매물 저장 실패: 지역 코드 {}, 에러 메시지: {}", 
+				log.error("네이버 부동산 매물 저장 실패: 지역 코드 {}, 에러 메시지: {}",
 					scrapeStatus.getRegion().getCortarNo(), e.getMessage(), e);
 				throw e; // 예외를 다시 던져서 트랜잭션 롤백
 			}
 
 			// 마지막 페이지까지 완료된 경우
 			scrapeStatus.updateCompleted(true);
-			log.info("네이버 부동산 스크랩 완료: 지역 코드 {}, 총 처리된 매물 수 {}, 총 페이지 수 {}", 
-				scrapeStatus.getRegion().getCortarNo(), totalFetched, page-1);
+			log.info("네이버 부동산 스크랩 완료: 지역 코드 {}, 총 처리된 매물 수 {}, 총 페이지 수 {}",
+				scrapeStatus.getRegion().getCortarNo(), totalFetched, page - 1);
 
 		} catch (Exception e) {
-			log.error("네이버 부동산 스크랩 실패: 지역 코드 {}, 에러 메시지: {}", 
+			log.error("네이버 부동산 스크랩 실패: 지역 코드 {}, 에러 메시지: {}",
 				scrapeStatus.getRegion().getCortarNo(), e.getMessage(), e);
 			scrapeStatus.updateFailed(true, e.getMessage());
 
@@ -119,5 +125,21 @@ public class NaverLandRequestService {
 				);
 			}).filter(Objects::nonNull)
 			.toList();
+	}
+
+	public void saveNaverLandRegionsToScrapeStatus() {
+		List<Region> regions = regionRepository.findAll();
+
+		scrapeStatusRepository.saveAll(
+			regions.stream()
+				.map(region -> new ScrapeStatus(
+					region,
+					1,
+					false,
+					null,
+					"네이버부동산"
+				))
+				.toList()
+		);
 	}
 }
