@@ -2,12 +2,12 @@ package org.silsagusi.api.message.application.service;
 
 import java.util.List;
 
-import org.silsagusi.api.agent.infrastructure.AgentDataProvider;
+import org.silsagusi.api.agent.infrastructure.dataprovider.AgentDataProvider;
 import org.silsagusi.api.message.application.dto.MessageTemplateDto;
 import org.silsagusi.api.message.application.dto.UpdateMessageTemplateRequest;
 import org.silsagusi.api.message.application.mapper.MessageTemplateMapper;
+import org.silsagusi.api.message.application.validator.MessageTemplateValidator;
 import org.silsagusi.api.message.infrastructure.dataProvider.MessageTemplateDataProvider;
-import org.silsagusi.api.message.infrastructure.validator.MessageTemplateValidator;
 import org.silsagusi.core.domain.agent.Agent;
 import org.silsagusi.core.domain.message.entity.MessageTemplate;
 import org.springframework.stereotype.Service;
@@ -43,8 +43,9 @@ public class MessageTemplateService {
 
 		messageTemplateValidator.validateAgentAccess(messageTemplate, agent);
 
-        messageTemplateDataProvider.updateMessageTemplate(requestDto.getTitle(), requestDto.getContent(), messageTemplate);
-    }
+		messageTemplateDataProvider.updateMessageTemplate(requestDto.getTitle(), requestDto.getContent(),
+			messageTemplate);
+	}
 
 	public void deleteMessageTemplate(Long agentId, Long templateId) {
 		Agent agent = agentDataProvider.getAgentById(agentId);

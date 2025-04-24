@@ -47,20 +47,19 @@ public class Customer extends BaseEntity {
 
 	private Boolean consent;
 
-	// private String interestProperty;
-	//
-	// private String interestLocation;
-	//
-	// private String contractType;
-	//
-	// private String assetStatus;
+	private String interestProperty;
+
+	private String interestLocation;
+
+	private String assetStatus;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "agent_id", nullable = false)
 	private Agent agent;
 
 	private Customer(String name, LocalDate birthday, String phone, String email, String job, Boolean isVip,
-		String memo, Boolean consent, Agent agent) {
+		String memo, Boolean consent, String interestProperty, String interestLocation, String assetStatus,
+		Agent agent) {
 		this.name = name;
 		this.birthday = birthday;
 		this.phone = phone;
@@ -69,25 +68,23 @@ public class Customer extends BaseEntity {
 		this.isVip = isVip;
 		this.memo = memo;
 		this.consent = consent;
+		this.interestProperty = interestProperty;
+		this.interestLocation = interestLocation;
+		this.assetStatus = assetStatus;
 		this.agent = agent;
 	}
 
 	public static Customer create(
 		String name, LocalDate birthday, String phone, String email, String job, Boolean isVip, String memo,
-		Boolean consent, Agent agent
+		Boolean consent, String interestProperty, String interestLocation, String assetStatus, Agent agent
 	) {
-		return new Customer(name, birthday, phone, email, job, isVip, memo, consent, agent);
+		return new Customer(name, birthday, phone, email, job, isVip, memo, consent, interestProperty, interestLocation,
+			assetStatus, agent);
 	}
 
 	public void updateCustomer(
-		String name,
-		LocalDate birthday,
-		String phone,
-		String email,
-		String job,
-		Boolean isVip,
-		String memo,
-		Boolean consent
+		String name, LocalDate birthday, String phone, String email, String job, Boolean isVip, String memo,
+		Boolean consent, String interestProperty, String interestLocation, String assetStatus
 	) {
 		this.name = name;
 		this.birthday = birthday;
@@ -97,6 +94,8 @@ public class Customer extends BaseEntity {
 		this.isVip = isVip;
 		this.memo = memo;
 		this.consent = consent;
+		this.interestProperty = interestProperty;
+		this.interestLocation = interestLocation;
+		this.assetStatus = assetStatus;
 	}
-
 }

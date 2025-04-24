@@ -1,8 +1,8 @@
 package org.silsagusi.api.auth.jwt;
 
-import org.silsagusi.api.customResponse.ApiResponse;
-import org.silsagusi.api.customResponse.exception.CustomException;
-import org.silsagusi.api.customResponse.exception.ErrorCode;
+import org.silsagusi.api.response.ApiResponse;
+import org.silsagusi.api.exception.CustomException;
+import org.silsagusi.api.exception.ErrorCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;

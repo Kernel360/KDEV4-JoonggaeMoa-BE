@@ -1,6 +1,6 @@
 package org.silsagusi.api.auth.userDetails;
 
-import org.silsagusi.api.agent.infrastructure.AgentRepository;
+import org.silsagusi.api.agent.infrastructure.reposiroty.AgentRepository;
 import org.silsagusi.core.domain.agent.Agent;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

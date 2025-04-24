@@ -2,6 +2,7 @@ package org.silsagusi.api.customer.application.dto;
 
 import java.time.LocalDate;
 
+import org.silsagusi.core.domain.customer.entity.Customer;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -49,6 +50,12 @@ public class CustomerDto {
 
 		@NotNull
 		private Boolean consent;
+
+		private String interestProperty;
+
+		private String interestLocation;
+
+		private String assetStatus;
 	}
 
 	@Getter
@@ -63,6 +70,9 @@ public class CustomerDto {
 		private Boolean isVip;
 		private String memo;
 		private Boolean consent;
+		private String interestProperty;
+		private String interestLocation;
+		private String assetStatus;
 	}
 
 	@Getter
@@ -77,5 +87,25 @@ public class CustomerDto {
 		private Boolean isVip;
 		private String memo;
 		private Boolean consent;
+		private String interestProperty;
+		private String interestLocation;
+		private String assetStatus;
+
+		public static Response of(Customer customer) {
+			return Response.builder()
+				.id(customer.getId())
+				.name(customer.getName())
+				.birthday(customer.getBirthday())
+				.phone(customer.getPhone())
+				.email(customer.getEmail())
+				.job(customer.getJob())
+				.isVip(customer.getIsVip())
+				.memo(customer.getMemo())
+				.consent(customer.getConsent())
+				.interestProperty(customer.getInterestProperty())
+				.interestLocation(customer.getInterestLocation())
+				.assetStatus(customer.getAssetStatus())
+				.build();
+		}
 	}
 }

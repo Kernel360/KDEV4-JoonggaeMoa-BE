@@ -1,7 +1,7 @@
 package org.silsagusi.api.customer.exception;
 
-import org.silsagusi.api.customResponse.exception.CustomException;
-import org.silsagusi.api.customResponse.exception.ErrorCode;
+import org.silsagusi.api.exception.CustomException;
+import org.silsagusi.api.exception.ErrorCode;
 
 public class CustomerNotFoundException extends CustomException {
 

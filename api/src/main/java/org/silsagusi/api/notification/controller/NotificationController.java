@@ -3,8 +3,8 @@ package org.silsagusi.api.notification.controller;
 import java.util.List;
 
 import org.silsagusi.api.auth.jwt.JwtProvider;
-import org.silsagusi.api.customResponse.ApiResponse;
-import org.silsagusi.api.notification.application.NotificationService;
+import org.silsagusi.api.response.ApiResponse;
+import org.silsagusi.api.notification.application.service.NotificationService;
 import org.silsagusi.api.notification.application.dto.NotificationDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
