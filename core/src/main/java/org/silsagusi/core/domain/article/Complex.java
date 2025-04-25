@@ -19,6 +19,10 @@ public class Complex {
 	@Column(name = "complex_id", nullable = false)
 	private Long id;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "region_id", nullable = false)
+	private Region region_id;
+
 	@Column(name = "complex_code")
 	private String complexCode; // 단지 고유 번호
 	@Column(name = "complex_name")
@@ -50,9 +54,9 @@ public class Complex {
 	@Column(name = "size_max")
 	private String sizeMax; // 최대 전용면적 (㎡)
 	@Column(name = "price_sale_initial_min")
-	private String priceSaleInitialMin; // 최소 분양가 (일반적으로 0으로 표시됨)
+	private Integer priceSaleInitialMin; // 최소 분양가 (일반적으로 0으로 표시됨)
 	@Column(name = "price_sale_initial_max")
-	private String priceSaleInitialMax; // 최대 분양가 (일반적으로 0으로 표시됨)
+	private Integer priceSaleInitialMax; // 최대 분양가 (일반적으로 0으로 표시됨)
 	@Column(name = "tour_exists")
 	private Boolean tourExists; // 투어 가능 여부
 	@Column(name = "is_seismic")
@@ -66,9 +70,9 @@ public class Complex {
 		Integer countHouseholdGeneral, LocalDate confirmedAt,
 		Integer countDeal, Integer countLease, Integer countRent,
 		Integer countRentShortTerm, Integer countArticles,
-		String sizeMin, String sizeMax, String priceSaleInitialMin,
-		String priceSaleInitialMax, Boolean tourExists,
-		Boolean isSeismic, Integer countElevator
+		String sizeMin, String sizeMax, Integer priceSaleInitialMin,
+		Integer priceSaleInitialMax, Boolean tourExists,
+		Boolean isSeismic, Integer countElevator, Region region_id
 	) {
 		this.complexCode = complexCode;
 		this.complexName = complexName;
@@ -90,5 +94,6 @@ public class Complex {
 		this.tourExists = tourExists;
 		this.isSeismic = isSeismic;
 		this.countElevator = countElevator;
+		this.region_id = region_id;
 	}
 }

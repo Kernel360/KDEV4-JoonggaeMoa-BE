@@ -17,22 +17,16 @@ public class KakaoMapAddressLookupService implements KakaoMapAddressLookupInterf
 
 	@Override
 	@Cacheable(value = "addressCache", key = "#latitude + ':' + #longitude")
-	public KakaoMapAddressResponse lookupAddress(double latitude, double longitude)
-		throws NullPointerException {
-
-		// Call Kakao API client to fetch address JSON
+	public KakaoMapAddressResponse lookupAddress(double latitude, double longitude) throws NullPointerException {
 		KakaoMapCoord2AddressResponse response = kakaoMapApiClient.getAddr(longitude, latitude);
 
 		if (response == null || response.getDocuments() == null || response.getDocuments().isEmpty()) {
-			log.warn("No address found for lat={}, lon={}", latitude, longitude);
-			return null;  // or throw if no address found
+			return null;
 		}
-
 		KakaoMapCoord2AddressResponse.Document doc = response.getDocuments().get(0);
 
 		if (doc.getAddress() == null) {
-			log.warn("주소 정보 없음: lat={}, lon={}", latitude, longitude);
-			return null;  // Return null or handle as needed
+			return null;
 		} else {
 			String lotAddress = doc.getAddress().getLotAddressName();
 			String city = doc.getAddress().getCity();
@@ -42,8 +36,8 @@ public class KakaoMapAddressLookupService implements KakaoMapAddressLookupInterf
 			String subAddressNo = doc.getAddress().getSubAddressNo();
 
 			if (doc.getRoadAddress() == null) {
-				log.warn("도로명 주소 정보 없음: lat={}, lon={}", latitude, longitude);
-				return new KakaoMapAddressResponse(lotAddress, null,
+				return new KakaoMapAddressResponse(
+					lotAddress, null,
 					city, district, town, mainAddressNo, subAddressNo,
 					null, null, null, null, null);
 			} else {
@@ -54,7 +48,8 @@ public class KakaoMapAddressLookupService implements KakaoMapAddressLookupInterf
 				String buildingName = doc.getRoadAddress().getBuildingName();
 				String zoneNo = doc.getRoadAddress().getZoneNo();
 
-				return new KakaoMapAddressResponse(lotAddress, roadAddress,
+				return new KakaoMapAddressResponse(
+					lotAddress, roadAddress,
 					city, district, town, mainAddressNo, subAddressNo,
 					roadName, mainBuildingNo, subBuildingNo, buildingName, zoneNo);
 			}

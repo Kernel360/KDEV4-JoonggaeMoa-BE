@@ -1,7 +1,9 @@
 package org.silsagusi.batch.scrape.naverland.service.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Data
@@ -35,7 +37,8 @@ public class NaverLandArticleResponse {
 		private String spc1;  // 공급면적 (단위: 제곱미터) (68E㎡ (E: Estimated 예상값))
 		private String spc2;  // 전용면적 (단위: 제곱미터) (전용42E (E: Estimated 예상값))
 		private String direction;  // 방향 (남향, 북향 등)
-		private String atclCfmYmd;  // 건물 사용승인일 (25.04.16.)
+		@JsonFormat(pattern = "yy.MM.dd.")
+		private LocalDate atclCfmYmd;  // 건물 사용승인일 (25.04.16.)
 		private String repImgUrl;  // 대표 이미지 URL (BASE URL : https://landthumb-phinf.pstatic.net/)
 		private String repImgTpCd;  // 대표 이미지 타입 코드 (빈 값과 SITE가 붙은 값의 차이를 모르겠음)
 		private String repImgThumb;  // 대표 이미지 썸네일 (f130_98) (무슨 역할인지 모르겠음..)

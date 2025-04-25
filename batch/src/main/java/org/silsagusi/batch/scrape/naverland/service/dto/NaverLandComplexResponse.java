@@ -1,5 +1,7 @@
 package org.silsagusi.batch.scrape.naverland.service.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -22,6 +24,8 @@ public class NaverLandComplexResponse {
 		private Integer totDongCnt; // 총 동 수
 		private Integer totHsehCnt; // 총 세대 수
 		private Integer genHsehCnt; // 일반 세대 수 (일반적으로 0으로 표시됨)
+		@JsonFormat(pattern = "yyyy.MM.dd.")
+		@JsonDeserialize(using = FlexibleDateDeserializer.class)
 		private LocalDate useAprvYmd; // 사용 승인일 (예: “2025.02.”)
 		private Integer dealCnt; // 매매 건수
 		private Integer leaseCnt; // 전세 건수

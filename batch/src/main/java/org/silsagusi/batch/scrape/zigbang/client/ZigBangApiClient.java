@@ -32,7 +32,7 @@ public class ZigBangApiClient {
 			.block();
 	}
 
-	public ZigBangDanjiResponse fetchDanjis(String geohash) {
+	public ZigBangDanjiResponse fetchDanji(String geohash) {
 		return zigBangWebClient.get()
 			.uri(uriBuilder -> uriBuilder.path("/apt/locals/prices/on-danjis")
 //				.queryParam("minPynArea", "10평이하") // 최소 평수

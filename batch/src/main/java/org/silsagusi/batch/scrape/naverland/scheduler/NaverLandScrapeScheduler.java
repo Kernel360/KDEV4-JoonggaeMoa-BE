@@ -26,7 +26,7 @@ public class NaverLandScrapeScheduler {
 	private static final String RESET_SCRAPE_JOB_NAME = "naverLandScrapeStatusResetJob";
 	private static final String TIME_STAMP = "timeStamp";
 
-	@Scheduled(initialDelay = 0, fixedRate = 7200000) // 어플리케이션 시작 0분 이후 2시간 간격으로 실행
+	@Scheduled(initialDelay = 10000, fixedRate = 7200000) // 어플리케이션 시작 10초 이후 2시간 간격으로 실행
 	public void scrapNaverLand() throws
 		NoSuchJobException,
 		JobInstanceAlreadyCompleteException,

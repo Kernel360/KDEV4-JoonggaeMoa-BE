@@ -3,7 +3,9 @@ package org.silsagusi.batch.infrastructure.dataProvider;
 import lombok.RequiredArgsConstructor;
 import org.silsagusi.batch.infrastructure.repository.ComplexRepository;
 import org.silsagusi.batch.scrape.naverland.service.dto.NaverLandComplexResponse;
+import org.silsagusi.batch.scrape.zigbang.service.dto.ZigBangDanjiResponse;
 import org.silsagusi.core.domain.article.Complex;
+import org.silsagusi.core.domain.article.Region;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,40 +23,59 @@ public class ComplexDataProvider {
 		complexRepository.saveAll(complexes);
 	}
 
-	public Complex createNaverLandComplex(
-		NaverLandComplexResponse.NaverLandComplex naverLandComplex
-	) {
-		Complex complex = new Complex(
-			naverLandComplex.getHscpNo(),
-			naverLandComplex.getHscpNm(),
-			naverLandComplex.getHscpTypeCd(),
-			naverLandComplex.getHscpTypeNm(),
-			naverLandComplex.getTotDongCnt(),
-			naverLandComplex.getTotHsehCnt(),
-			naverLandComplex.getGenHsehCnt(),
-			naverLandComplex.getUseAprvYmd(),
-			naverLandComplex.getDealCnt(),
-			naverLandComplex.getLeaseCnt(),
-			naverLandComplex.getRentCnt(),
-			naverLandComplex.getStrmRentCnt(),
-			naverLandComplex.getTotalAtclCnt(),
-			naverLandComplex.getMinSpc(),
-			naverLandComplex.getMaxSpc(),
-			naverLandComplex.getIsalePrcMin(),
-			naverLandComplex.getIsalePrcMax(),
-			naverLandComplex.getTourExist(),
-			naverLandComplex.getIsSeismic(),
-			naverLandComplex.getTotalElevatorCount()
+	public static Complex createNaverLandComplex(
+		NaverLandComplexResponse.NaverLandComplex dto, Region region) {
+		return new Complex(
+			dto.getHscpNo(),                   // complexCode
+			dto.getHscpNm(),                   // complexName
+			dto.getHscpTypeCd(),               // buildingTypeCode
+			dto.getHscpTypeNm(),               // buildingType
+			dto.getTotDongCnt(),               // countDong
+			dto.getTotHsehCnt(),               // countHousehold
+			dto.getGenHsehCnt(),               // countHouseholdGeneral
+			dto.getUseAprvYmd(),               // confirmedAt
+			dto.getDealCnt(),                  // countDeal
+			dto.getLeaseCnt(),                 // countLease
+			dto.getRentCnt(),                  // countRent
+			dto.getStrmRentCnt(),              // countRentShortTerm
+			dto.getTotalAtclCnt(),             // countArticles
+			dto.getMinSpc(),                   // sizeMin
+			dto.getMaxSpc(),                   // sizeMax
+			Integer.valueOf(dto.getIsalePrcMin()),// priceSaleInitialMin
+			Integer.valueOf(dto.getIsalePrcMax()),// priceSaleInitialMax
+			Boolean.FALSE,                     // tourExists
+			Boolean.FALSE,                     // isSeismic
+			dto.getTotalElevatorCount(),       // countElevator
+			region
 		);
-			return complex;
 	}
 
-//	public Complex createZigBangComplex(
-//		String complex_code, String complex_name
-//		) {
-//		Complex complex = new Complex(
-//
-//		);
-//		return complex;
-//	}
+	public static Complex createZigBangDanji(
+		ZigBangDanjiResponse.ZigBangDanji dto, Region region) {
+		return new Complex(
+			null,       // complexCode
+			dto.getName(),          // complexName
+			null,                   // buildingTypeCode
+			dto.getReal_type(),     // buildingType
+			null,                   // countDong
+			dto.get총세대수(),        // countHousehold
+			null,                   // countHouseholdGeneral
+			dto.get사용승인일(),       // confirmedAt
+			null,                   // countDeal
+			null,                   // countLease
+			null,                   // countRent
+			null,                   // countRentShortTerm
+			null,                   // countArticles
+			null,                   // sizeMin
+			null,                   // sizeMax
+			(dto.getPrice() != null && dto.getPrice().getSales() != null && dto.getPrice().getSales().getMin() != null
+			    ? dto.getPrice().getSales().getMin() : 0), // priceSaleInitialMin
+			(dto.getPrice() != null && dto.getPrice().getSales() != null && dto.getPrice().getSales().getMax() != null
+			    ? dto.getPrice().getSales().getMax() : 0), // priceSaleInitialMax
+			Boolean.FALSE,          // tourExists
+			Boolean.FALSE,          // isSeismic
+			null,                   // countElevator
+			region
+		);
+	}
 }

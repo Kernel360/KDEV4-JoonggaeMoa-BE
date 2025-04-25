@@ -3,17 +3,20 @@ package org.silsagusi.batch.scrape.zigbang.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.silsagusi.batch.infrastructure.dataProvider.ArticleDataProvider;
-import org.silsagusi.batch.infrastructure.repository.ArticleRepository;
+import org.silsagusi.batch.infrastructure.dataProvider.ComplexDataProvider;
+import org.silsagusi.batch.scrape.naverland.service.KakaoMapAddressLookupService;
+import org.silsagusi.batch.scrape.naverland.service.dto.KakaoMapAddressResponse;
 import org.silsagusi.batch.scrape.zigbang.client.ZigBangApiClient;
+import org.silsagusi.batch.scrape.zigbang.service.dto.ZigBangDanjiResponse;
 import org.silsagusi.batch.scrape.zigbang.service.dto.ZigBangItemCatalogResponse;
 import org.silsagusi.core.domain.article.Article;
+import org.silsagusi.core.domain.article.Complex;
 import org.silsagusi.core.domain.article.Region;
 import org.silsagusi.core.domain.article.ScrapeStatus;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -21,27 +24,47 @@ import java.util.List;
 public class ZigBangRequestService {
 
 	private final ZigBangApiClient zigbangApiClient;
+	private final KakaoMapAddressLookupService addressLookupService;
 	private final ArticleDataProvider articleDataProvider;
-	private final ArticleRepository articleRepository;
+	private final ComplexDataProvider complexDataProvider;
 
 	@Async("scrapeExecutor")
 	public void scrapZigBang(ScrapeStatus scrapeStatus) throws InterruptedException {
 		List<Article> articles = new ArrayList<>();
 		Region region = scrapeStatus.getRegion();
 		String localCode = region.getCortarNo().substring(0, 8);
-		ZigBangItemCatalogResponse response = zigbangApiClient.fetchItemCatalog(localCode);
+		String geohash = region.getGeohash().substring(0,5);
 
-		for (ZigBangItemCatalogResponse.ZigBangItemCatalog item : response.getList()) {
-			Article article = ArticleDataProvider.createZigBangItemCatalog(item, region);
+		List<Complex> allComplexes = new ArrayList<>();
+		Set<Integer> seenDanjiIds = new HashSet<>();
+		Map<Integer, Complex> idToComplex = new HashMap<>();
+
+		// 단지 스크래핑
+		ZigBangDanjiResponse danjiResp = zigbangApiClient.fetchDanji(geohash);
+		for (ZigBangDanjiResponse.ZigBangDanji dto : danjiResp.getFiltered()) {
+			if (seenDanjiIds.add(dto.getId())) {
+				Complex danji = ComplexDataProvider.createZigBangDanji(dto, region);
+				allComplexes.add(danji);
+				idToComplex.put(dto.getId(), danji);
+			}
+		}
+
+		// 매물 스크래핑
+		ZigBangItemCatalogResponse itemResp = zigbangApiClient.fetchItemCatalog(localCode);
+		for (ZigBangItemCatalogResponse.ZigBangItemCatalog item : itemResp.getList()) {
+			Complex complex = idToComplex.get(item.getAreaDanjiId());
+			KakaoMapAddressResponse kakaoResp = addressLookupService.lookupAddress(
+					danjiResp.getFiltered().get(0).getLat(), danjiResp.getFiltered().get(0).getLng()
+				);
+
+			Article article = ArticleDataProvider.createZigBangItemCatalog(item, danjiResp, kakaoResp, region, complex);
 			articles.add(article);
 		}
 
 		articleDataProvider.saveArticles(articles);
+		complexDataProvider.saveComplexes(allComplexes);
 		scrapeStatus.updateCompleted(true);
 
-		int savedCount = articleRepository.saveAll(articles).size();
-		if (savedCount != 0) {
-			Thread.sleep((long) (Math.random() * 10000));
-		}
+		Thread.sleep((long) (Math.random() * 1000));
 	}
 }

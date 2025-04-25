@@ -3,7 +3,6 @@ package org.silsagusi.batch.scrape.naverland.client;
 import lombok.RequiredArgsConstructor;
 import org.silsagusi.batch.scrape.naverland.service.dto.NaverLandArticleResponse;
 import org.silsagusi.batch.scrape.naverland.service.dto.NaverLandComplexResponse;
-import org.silsagusi.batch.scrape.naverland.service.dto.NaverLandRegionResponse;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -13,7 +12,6 @@ import org.springframework.web.reactive.function.client.WebClient;
 public class NaverLandApiClient {
 
 	private final WebClient naverWebClient;
-	private final WebClient naverRegionWebClient;
 
 	private static final String RLET_TP_CD
 		= "APT:OPST:VL:JWJT:DDDGG:SGJT:HOJT:SG:SMS";
@@ -78,16 +76,5 @@ public class NaverLandApiClient {
 
 	public NaverLandComplexResponse fetchComplexList(String page, String lat, String lon, String cortarNo) {
 		return fetchList("/cluster/ajax/complexList", lat, lon, cortarNo, page, NaverLandComplexResponse.class);
-	}
-
-	public NaverLandRegionResponse fetchRegionList(String cortarNo) {
-		return naverRegionWebClient.get()
-			.uri(uriBuilder -> uriBuilder.path("/api/regions/list")
-				.queryParam("cortarNo", cortarNo)
-				.build())
-			.accept(MediaType.APPLICATION_JSON)
-			.retrieve()
-			.bodyToMono(NaverLandRegionResponse.class)
-			.block();
 	}
 }

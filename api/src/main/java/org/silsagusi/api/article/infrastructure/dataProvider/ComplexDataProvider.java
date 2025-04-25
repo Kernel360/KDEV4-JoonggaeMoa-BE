@@ -10,11 +10,9 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 public class ComplexDataProvider {
-
 	private final ComplexRepository complexRepository;
 
 	public List<Complex> getComplexes() {
 		return complexRepository.findAll();
 	}
-
 }
