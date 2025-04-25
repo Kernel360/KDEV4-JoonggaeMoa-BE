@@ -61,8 +61,8 @@ public class ZigBangRequestService {
 			articles.add(article);
 		}
 
-		articleDataProvider.saveArticles(articles);
 		complexDataProvider.saveComplexes(allComplexes);
+		articleDataProvider.saveArticles(articles);
 		scrapeStatus.updateCompleted(true);
 
 		Thread.sleep((long) (Math.random() * 1000));
