@@ -46,7 +46,7 @@ public class ContractService {
 	@Transactional(readOnly = true)
 	public Page<ContractDto.Response> getAllContracts(Long agentId, Pageable pageable) {
 		Page<ContractInfo> contractInfoPage = contractDataProvider.getAllContracts(agentId, pageable);
-		return contractInfoPage.map(contractMapper::toContractResponse);
+		return contractInfoPage.map(ContractDto::toResponse);
 	}
 
 	@Transactional(readOnly = true)
@@ -55,7 +55,7 @@ public class ContractService {
 		contractValidator.validateAgentAccess(agentId, contract);
 
 		ContractDetailInfo contractDetailInfo = contractDataProvider.getContractInfo(contract);
-		return contractMapper.toContractDetailResponse(contractDetailInfo);
+		return ContractDetailDto.toResponse(contractDetailInfo);
 	}
 
 	@Transactional
@@ -68,6 +68,6 @@ public class ContractService {
 	@Transactional(readOnly = true)
 	public ContractSummaryResponse getContractSummary(Long agentId) {
 		ContractSummaryInfo contractSummaryInfo = contractDataProvider.getSummary(agentId);
-		return contractMapper.toContractSummaryResponse(contractSummaryInfo);
+		return ContractSummaryResponse.toResponse(contractSummaryInfo);
 	}
 }

@@ -39,7 +39,7 @@ public class AgentService {
 		Agent agent = agentDataProvider.getAgentByNameAndPhone(usernameRequest.getName(),
 			usernameRequest.getPhone());
 
-		return agentMapper.toUsernameResponse(agent);
+		return UsernameDto.toResponse(agent);
 	}
 
 	@Transactional
@@ -50,14 +50,14 @@ public class AgentService {
 	@Transactional(readOnly = true)
 	public AgentDto.Response getAgent(Long agentId) {
 		Agent agent = agentDataProvider.getAgentById(agentId);
-		return agentMapper.toAgentResponse(agent);
+		return AgentDto.toResponse(agent);
 	}
 
 	@Transactional
 	public void updateAgent(Long agentId, UpdateAgentRequest updateAgentRequest) {
 		Agent agent = agentDataProvider.getAgentById(agentId);
 
-		UpdateAgentCommand updateAgentCommand = agentMapper.toCommand(updateAgentRequest);
+		UpdateAgentCommand updateAgentCommand = UpdateAgentRequest.toCommand(updateAgentRequest);
 
 		agentDataProvider.updateAgent(agent, updateAgentCommand);
 	}
