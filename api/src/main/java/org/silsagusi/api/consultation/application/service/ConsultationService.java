@@ -63,7 +63,7 @@ public class ConsultationService {
 
 		consultationValidator.validateAgentAccess(agentId, consultation);
 
-		UpdateConsultationCommand updateConsultationCommand = consultationMapper.toUpdateConsultationCommand(
+		UpdateConsultationCommand updateConsultationCommand = UpdateConsultationRequest.toCommand(
 			updateConsultationRequest);
 
 		consultationDataProvider.updateConsultation(consultation, updateConsultationCommand);
@@ -72,21 +72,21 @@ public class ConsultationService {
 	@Transactional(readOnly = true)
 	public ConsultationDto.Response getConsultation(Long consultationId) {
 		Consultation consultation = consultationDataProvider.getConsultation(consultationId);
-		return ConsultationDto.Response.fromConsultation(consultation);
+		return ConsultationDto.toResponse(consultation);
 	}
 
 	@Transactional(readOnly = true)
 	public List<ConsultationDto.Response> getConsultationsByStatus(Long agentId, String month, String status) {
 		List<Consultation> consultations = consultationDataProvider.getConsultationsByStatus(agentId, month, status);
 
-		return consultations.stream().map(consultationMapper::toConsultationResponse).toList();
+		return consultations.stream().map(ConsultationDto::toResponse).toList();
 	}
 
 	@Transactional(readOnly = true)
 	public List<ConsultationDto.Response> getAllConsultationsByDate(Long agentId, LocalDateTime date) {
 		List<Consultation> consultationList = consultationDataProvider.getConsultationByDate(agentId, date);
 
-		return consultationList.stream().map(consultationMapper::toConsultationResponse).toList();
+		return consultationList.stream().map(ConsultationDto::toResponse).toList();
 	}
 
 	@Transactional(readOnly = true)
@@ -96,8 +96,8 @@ public class ConsultationService {
 			pageable);
 
 		Page<ConsultationDto.Response> consultationResponses = consultations.map(
-			ConsultationDto.Response::fromConsultation);
-		CustomerDto.Response customerResponse = customerMapper.toCustomerResponse(customer);
+			ConsultationDto::toResponse);
+		CustomerDto.Response customerResponse = CustomerDto.toResponse(customer);
 
 		return new ConsultationHistoryDto(customerResponse, consultationResponses);
 	}
@@ -106,13 +106,13 @@ public class ConsultationService {
 	public ConsultationMonthResponse getMonthInformation(Long agentId, String date) {
 		ConsultationMonthInfo monthInformationCommand = consultationDataProvider.getMonthInformation(agentId, date);
 
-		return consultationMapper.toConsultationMonthResponse(monthInformationCommand);
+		return ConsultationMonthResponse.toResponse(monthInformationCommand);
 	}
 
 	@Transactional(readOnly = true)
 	public ConsultationSummaryResponse getConsultationSummary(Long agentId) {
 		ConsultationSummaryInfo consultationSummaryInfo = consultationDataProvider.getSummary(agentId);
 
-		return consultationMapper.toConsultationSummaryResponse(consultationSummaryInfo);
+		return ConsultationSummaryResponse.toResponse(consultationSummaryInfo);
 	}
 }

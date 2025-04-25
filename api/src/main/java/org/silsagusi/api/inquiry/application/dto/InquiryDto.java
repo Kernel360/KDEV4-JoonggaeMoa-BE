@@ -3,16 +3,19 @@ package org.silsagusi.api.inquiry.application.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.silsagusi.core.domain.inquiry.command.UpdateInquiryCommand;
 import org.silsagusi.core.domain.inquiry.entity.Inquiry;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class InquiryDto {
 
 	@Getter
@@ -55,8 +58,6 @@ public class InquiryDto {
 
 	@Getter
 	@Builder
-	@NoArgsConstructor
-	@AllArgsConstructor
 	public static class Response {
 		private Long id;
 		private String name;
@@ -65,24 +66,6 @@ public class InquiryDto {
 		private LocalDateTime createdAt;
 		private LocalDateTime updatedAt;
 		private List<InquiryAnswerDto.Response> answers;
-
-		public static Response from(Inquiry inquiry) {
-
-			List<InquiryAnswerDto.Response> answers = inquiry.getAnswers()
-				.stream()
-				.map(InquiryAnswerDto.Response::from)
-				.toList();
-
-			return Response.builder()
-				.id(inquiry.getId())
-				.name(inquiry.getName())
-				.title(inquiry.getTitle())
-				.content(inquiry.getContent())
-				.createdAt(inquiry.getCreatedAt())
-				.updatedAt(inquiry.getUpdatedAt())
-				.answers(answers)
-				.build();
-		}
 	}
 
 	@Getter
@@ -92,4 +75,27 @@ public class InquiryDto {
 		private String password;
 	}
 
+	public static Response toResponse(Inquiry inquiry) {
+		List<InquiryAnswerDto.Response> answers = inquiry.getAnswers()
+			.stream()
+			.map(InquiryAnswerDto::toResponse)
+			.toList();
+
+		return Response.builder()
+			.id(inquiry.getId())
+			.name(inquiry.getName())
+			.title(inquiry.getTitle())
+			.content(inquiry.getContent())
+			.createdAt(inquiry.getCreatedAt())
+			.updatedAt(inquiry.getUpdatedAt())
+			.answers(answers)
+			.build();
+	}
+
+	public static UpdateInquiryCommand toCommand(UpdateRequest inquiryUpdateRequest) {
+		return UpdateInquiryCommand.builder()
+			.title(inquiryUpdateRequest.getTitle())
+			.content(inquiryUpdateRequest.getContent())
+			.build();
+	}
 }

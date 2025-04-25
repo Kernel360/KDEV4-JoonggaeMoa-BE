@@ -37,25 +37,29 @@ public class CustomerHistoryResponse {
 		public enum HistoryType {
 			CONSULTATION, CONTRACT, MESSAGE, SURVEY
 		}
+
+		public static History create(CustomerHistoryInfo info) {
+			return History.builder()
+				.id(info.getId())
+				.type(History.HistoryType.valueOf(info.getType()))
+				.date(info.getDate())
+				.purpose(info.getPurpose())
+				.startDate(info.getStartDate())
+				.endDate(info.getEndDate())
+				.content(info.getContent())
+				.sendStatus(info.getSendStatus())
+				.build();
+		}
 	}
 
-	public static CustomerHistoryResponse of(Customer customer, List<CustomerHistoryInfo> customerHistoryInfos) {
+	public static CustomerHistoryResponse toResponse(Customer customer,
+		List<CustomerHistoryInfo> customerHistoryInfos) {
 		return CustomerHistoryResponse.builder()
-			.customer(CustomerDto.Response.of(customer))
+			.customer(CustomerDto.toResponse(customer))
 			.history(
 				customerHistoryInfos.stream()
-					.map(info ->
-						History.builder()
-							.id(info.getId())
-							.type(History.HistoryType.valueOf(info.getType()))
-							.date(info.getDate())
-							.purpose(info.getPurpose())
-							.startDate(info.getStartDate())
-							.endDate(info.getEndDate())
-							.content(info.getContent())
-							.sendStatus(info.getSendStatus())
-							.build()
-					).toList()
+					.map(History::create)
+					.toList()
 			).build();
 	}
 }
