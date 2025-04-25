@@ -1,6 +1,8 @@
 package org.silsagusi.api.customer.application.mapper;
 
 import org.silsagusi.api.customer.application.dto.CustomerDto;
+import org.silsagusi.api.customer.application.dto.CustomerExcelDto;
+import org.silsagusi.api.customer.application.dto.CustomerSummaryResponse;
 import org.silsagusi.api.survey.application.dto.AnswerDto;
 import org.silsagusi.core.domain.agent.Agent;
 import org.silsagusi.core.domain.customer.entity.Customer;
@@ -25,6 +27,7 @@ public class CustomerMapper {
 			agent
 		);
 	}
+
 
 	public Customer fromAnswerDtoToEntity(AnswerDto.Request answerRequest, Agent agent) {
 		return Customer.create(
