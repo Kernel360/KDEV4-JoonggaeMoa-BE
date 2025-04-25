@@ -1,6 +1,6 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '3.4.3'
+    id 'org.springframework.boot' version '3.4.4'
     id 'io.spring.dependency-management' version '1.1.7'
 }
 
@@ -24,37 +24,31 @@ repositories {
 }
 
 dependencies {
-    // Spring
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-
-    // Security
-    implementation 'org.springframework.boot:spring-boot-starter-security'
-
-    // Validation
-    implementation 'org.springframework.boot:spring-boot-starter-validation'
-
-    // springdoc openapi
-    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2'
-
-    // DB
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    runtimeOnly 'com.mysql:mysql-connector-j'
-
-    // Lombok
-    compileOnly 'org.projectlombok:lombok'
-    annotationProcessor 'org.projectlombok:lombok'
-
-    //Jwt
-    implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
-    implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
-    implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
-
-    // Test
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.springframework.security:spring-security-test'
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
-tasks.named('test') {
+test {
     useJUnitPlatform()
 }
+
+//subprojects {
+//    apply plugin: 'java'
+//    apply plugin: 'org.springframework.boot'
+//    apply plugin: 'io.spring.dependency-management'
+//
+//    dependencies { // 롬복은 공통적으로 사용하는 의존성이니 여기서 끌어다 사용
+//        compileOnly 'org.projectlombok:lombok'
+//        annotationProcessor 'org.projectlombok:lombok'
+//    }
+//
+//    tasks.named('bootJar') { //빌드할 때 bootjar 파일로 하겠다는 의미
+//        enabled = false
+//    }
+//
+//    tasks.named('jar') { //빌드할 때 jar 파일로 하겠다는 의미
+//        enabled = true
+//    }
+//
+//    tasks.named('test') {
+//        useJUnitPlatform()
+//    }
+//}
