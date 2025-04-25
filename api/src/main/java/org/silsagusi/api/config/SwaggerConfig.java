@@ -1,5 +1,8 @@
 package org.silsagusi.api.config;
 
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -8,9 +11,13 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
+import io.swagger.v3.oas.models.servers.Server;
 
 @Configuration
 public class SwaggerConfig {
+
+	@Value("${server.url}")
+	private String serverUrl;
 
 	@Bean
 	public OpenAPI openAPI() {
@@ -18,6 +25,7 @@ public class SwaggerConfig {
 			.addSecurityItem(new SecurityRequirement().addList("AccessToken"))
 			.components(new Components()
 				.addSecuritySchemes(("AccessToken"), createAPIKeyScheme()))
+			.servers(List.of(server()))
 			.info(apiInfo());
 	}
 
@@ -31,5 +39,11 @@ public class SwaggerConfig {
 		return new SecurityScheme().type(SecurityScheme.Type.HTTP)
 			.bearerFormat("JWT")
 			.scheme("bearer");
+	}
+
+	private Server server() {
+		Server server = new Server();
+		server.setUrl(serverUrl);
+		return server;
 	}
 }
