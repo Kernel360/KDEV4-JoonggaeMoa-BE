@@ -72,14 +72,4 @@ public class Contract extends BaseEntity {
 			url
 		);
 	}
-
-	public void update(
-		LocalDate startedAt,
-		LocalDate expiredAt,
-		String url
-	) {
-		this.startedAt = startedAt;
-		this.expiredAt = expiredAt;
-		this.url = url;
-	}
 }
