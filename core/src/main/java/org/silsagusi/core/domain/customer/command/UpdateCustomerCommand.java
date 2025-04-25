@@ -19,4 +19,7 @@ public class UpdateCustomerCommand {
 	private Boolean isVip;
 	private String memo;
 	private Boolean consent;
+	private String interestProperty;
+	private String interestLocation;
+	private String assetStatus;
 }

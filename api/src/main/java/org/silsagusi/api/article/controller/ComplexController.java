@@ -2,9 +2,9 @@ package org.silsagusi.api.article.controller;
 
 import java.util.List;
 
-import org.silsagusi.api.article.application.ComplexService;
 import org.silsagusi.api.article.application.dto.ComplexResponse;
-import org.silsagusi.api.customResponse.ApiResponse;
+import org.silsagusi.api.article.application.service.ComplexService;
+import org.silsagusi.api.response.ApiResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;

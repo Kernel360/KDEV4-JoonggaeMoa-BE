@@ -5,10 +5,10 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
-import org.silsagusi.api.consultation.infrastructure.ConsultationRepository;
-import org.silsagusi.api.contract.infrastructure.ContractRepository;
+import org.silsagusi.api.consultation.infrastructure.repository.ConsultationRepository;
+import org.silsagusi.api.contract.infrastructure.repository.ContractRepository;
 import org.silsagusi.api.message.infrastructure.repository.MessageRepository;
-import org.silsagusi.api.notify.infrastructure.NotificationDataProvider;
+import org.silsagusi.api.notification.infrastructure.dataprovider.NotificationDataProvider;
 import org.silsagusi.core.domain.agent.Agent;
 import org.silsagusi.core.domain.consultation.entity.Consultation;
 import org.silsagusi.core.domain.contract.entity.Contract;
@@ -22,6 +22,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -40,7 +41,9 @@ public class ScheduleConfig {
 	private final ConsultationRepository consultationRepository;
 	private final NotificationDataProvider notificationDataProvider;
 
+	@Async
 	@Scheduled(cron = "0 0/30 * * * *", zone = "Asia/Seoul")
+	@Transactional
 	public void sendScheduledMessages() {
 		log.info("Starting Send Message Scheduler");
 
@@ -69,6 +72,11 @@ public class ScheduleConfig {
 
 				message.updateSendStatus(SendStatus.SENT);
 				messageRepository.save(message);
+
+				String content = String.format("고객 %s님에게 예약 문자 [%s]가 발송되었습니다", customer.getName(),
+					message.getContent());
+
+				notificationDataProvider.notify(agent.getId(), NotificationType.MESSAGE, content);
 			} catch (Exception e) {
 				log.error("Error processing reserved message", e);
 				message.updateSendStatus(SendStatus.FAILED);
@@ -80,6 +88,7 @@ public class ScheduleConfig {
 
 	@Async
 	@Scheduled(cron = "0 0/30 * * * *", zone = TIME_ZONE)
+	@Transactional
 	public void notifyTodayConsultations() {
 		log.info("Checking today's consultation schedule start");
 
@@ -109,6 +118,7 @@ public class ScheduleConfig {
 
 	@Async
 	@Scheduled(cron = "0 0 * * * *", zone = TIME_ZONE)
+	@Transactional
 	public void notifyContractExpiry() {
 		log.info("Checking contract expiration schedule start");
 

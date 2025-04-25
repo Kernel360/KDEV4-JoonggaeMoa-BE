@@ -1,11 +1,10 @@
 package org.silsagusi.api.article.infrastructure.dataProvider;
 
-import java.time.LocalDate;
-import java.util.List;
+import lombok.RequiredArgsConstructor;
 
 import org.silsagusi.api.article.infrastructure.repository.ArticleRepository;
-import org.silsagusi.api.customResponse.exception.CustomException;
-import org.silsagusi.api.customResponse.exception.ErrorCode;
+import org.silsagusi.api.exception.CustomException;
+import org.silsagusi.api.exception.ErrorCode;
 import org.silsagusi.core.domain.article.Article;
 import org.silsagusi.core.domain.article.projection.ArticleTypeRatioProjection;
 import org.springframework.data.domain.Page;
@@ -13,13 +12,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
-import lombok.RequiredArgsConstructor;
+import java.time.LocalDate;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
 public class ArticleDataProvider {
 
-	private static final String REAL_ESTATE_TYPE = "realEstateType";
+	private static final String REAL_ESTATE_TYPE = "articleType";
 	private static final String TRADE_TYPE = "tradeType";
 	private static final String PRICE = "price";
 
@@ -64,7 +64,7 @@ public class ArticleDataProvider {
 	}
 
 	public List<ArticleTypeRatioProjection> getRealEstateTypeRatio(LocalDate from) {
-		return articleRepository.countByRealEstateTypeSince(from);
+		return articleRepository.countByArticleTypeSince(from);
 	}
 
 	public List<ArticleTypeRatioProjection> getTradeTypeRatio(LocalDate from) {
