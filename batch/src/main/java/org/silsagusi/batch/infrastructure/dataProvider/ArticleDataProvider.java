@@ -46,7 +46,7 @@ public class ArticleDataProvider {
 			naverLandArticle.getSpc2(),
 			naverLandArticle.getDirection(),
 			parseConfirmedAt(naverLandArticle.getAtclCfmYmd()),
-			"https://landthumb-phinf.pstatic.net" + naverLandArticle.getRepImgUrl(),
+			naverLandArticle.getRepImgUrl() == null ? null : "https://landthumb-phinf.pstatic.net" + naverLandArticle.getRepImgUrl(),
 			naverLandArticle.getLat(),
 			naverLandArticle.getLng(),
 			naverLandArticle.getAtclFetrDesc(),

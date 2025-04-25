@@ -25,34 +25,23 @@ public class ZigBangRequestService {
 	private final ArticleRepository articleRepository;
 
 	@Async("scrapeExecutor")
-	public void scrapZigBang(ScrapeStatus scrapeStatus) {
+	public void scrapZigBang(ScrapeStatus scrapeStatus) throws InterruptedException {
 		List<Article> articles = new ArrayList<>();
+		Region region = scrapeStatus.getRegion();
+		String localCode = region.getCortarNo().substring(0, 8);
+		ZigBangItemCatalogResponse response = zigbangApiClient.fetchItemCatalog(localCode);
 
-		try {
-			Region region = scrapeStatus.getRegion();
-			log.info("[직방] {} 호출 중", region.getCortarName());
+		for (ZigBangItemCatalogResponse.ZigBangItemCatalog item : response.getList()) {
+			Article article = ArticleDataProvider.createZigBangItemCatalog(item, region);
+			articles.add(article);
+		}
 
-			String localCode = region.getCortarNo().substring(0, 8);
-			ZigBangItemCatalogResponse response = zigbangApiClient.fetchItemCatalog(localCode);
+		articleDataProvider.saveArticles(articles);
+		scrapeStatus.updateCompleted(true);
 
-			for (ZigBangItemCatalogResponse.ZigBangItemCatalog item : response.getList()) {
-				Article article = ArticleDataProvider.createZigBangItemCatalog(item, region);
-				articles.add(article);
-			}
-
-			articleDataProvider.saveArticles(articles);
-			scrapeStatus.updateCompleted(true);
-
-			int savedCount = articleRepository.saveAll(articles).size();
-			if (savedCount != 0) {
-				log.info("직방 매물 저장 완료: 지역 코드 {}, 저장된 매물 수 {}",
-					scrapeStatus.getRegion().getCortarNo(), articles.size());
-				Thread.sleep((long) (Math.random() * 10000));
-			}
-		} catch (Exception e) {
-			log.error("직방 스크랩 실패: 지역 코드 {}, 에러 메시지: {}",
-				scrapeStatus.getRegion().getCortarNo(), e.getMessage(), e);
-			scrapeStatus.updateFailed(true, e.getMessage());
+		int savedCount = articleRepository.saveAll(articles).size();
+		if (savedCount != 0) {
+			Thread.sleep((long) (Math.random() * 10000));
 		}
 	}
 }

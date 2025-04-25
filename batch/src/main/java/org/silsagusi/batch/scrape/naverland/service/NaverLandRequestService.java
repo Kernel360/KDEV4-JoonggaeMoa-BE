@@ -27,79 +27,36 @@ public class NaverLandRequestService {
 	private final ArticleDataProvider articleDataProvider;
 
 	@Async("scrapeExecutor")
-	public void scrapNaverLand(ScrapeStatus scrapeStatus) {
+	public void scrapNaverLand(ScrapeStatus scrapeStatus) throws InterruptedException {
 		List<Article> articles = new ArrayList<>();
 
-		try {
-			Region region = scrapeStatus.getRegion();
-			log.info("[네이버 부동산] {} 호출 중", region.getCortarName());
+		Region region = scrapeStatus.getRegion();
 
-			int page = scrapeStatus.getLastScrapedPage();
-			boolean hasMore;
-			int totalFetched = 0;
+		int page = scrapeStatus.getLastScrapedPage();
+		boolean hasMore;
 
-			do {
-				NaverLandArticleResponse response = naverLandApiClient.fetchArticleList(
-					String.valueOf(page),
-					region.getCenterLat().toString(),
-					region.getCenterLon().toString(),
-					region.getCortarNo()
-				);
-
-				List<Article> pageArticles = mapNaverLandToArticles(response.getBody(), region);
-				articles.addAll(pageArticles);
-				totalFetched += pageArticles.size();
-
-				scrapeStatus.updatePage(page, LocalDateTime.now(), "네이버부동산");
-				hasMore = response.isMore();
-				page++;
-
-				Thread.sleep((long) (3000 + Math.random() * 4000));
-			} while (hasMore);
-
-			try {
-				articleDataProvider.saveArticles(articles);
-			} catch (Exception e) {
-				log.error("네이버 부동산 매물 저장 실패: 지역 코드 {}, 에러 메시지: {}",
-					scrapeStatus.getRegion().getCortarNo(), e.getMessage(), e);
-				throw e; // 예외를 다시 던져서 트랜잭션 롤백
-			}
-
-			// 마지막 페이지까지 완료된 경우
-			scrapeStatus.updateCompleted(true);
-			log.info("네이버 부동산 스크랩 완료: 지역 코드 {}, 총 처리된 매물 수 {}, 총 페이지 수 {}",
-				scrapeStatus.getRegion().getCortarNo(), totalFetched, page - 1);
-
-		} catch (Exception e) {
-			log.error("네이버 부동산 스크랩 실패: 지역 코드 {}, 에러 메시지: {}",
-				scrapeStatus.getRegion().getCortarNo(), e.getMessage(), e);
-			scrapeStatus.updateFailed(true, e.getMessage());
-
-			// 예외를 다시 던져서 트랜잭션 롤백
-			throw new RuntimeException("네이버 부동산 스크랩 실패", e);
-		}
+		do {
+			NaverLandArticleResponse response = naverLandApiClient.fetchArticleList(
+				String.valueOf(page), region.getCenterLat().toString(), region.getCenterLon().toString(),
+				region.getCortarNo());
+			List<Article> pageArticles = mapNaverLandToArticles(response.getBody(), region);
+			articles.addAll(pageArticles);
+			scrapeStatus.updatePage(page, LocalDateTime.now(), "네이버부동산");
+			hasMore = response.isMore();
+			page++;
+			Thread.sleep((long) (3000 + Math.random() * 4000));
+		} while (hasMore);
+		articleDataProvider.saveArticles(articles);
+		scrapeStatus.updateCompleted(true);
 	}
 
-	private List<Article> mapNaverLandToArticles(
-		List<NaverLandArticleResponse.NaverLandArticle> bodies,
-		Region region
-	) {
+	private List<Article> mapNaverLandToArticles(List<NaverLandArticleResponse.NaverLandArticle> bodies, Region region) {
 		return bodies.stream()
 			.map(naverLandArticle -> {
 				KakaoMapAddressResponse addr =
-					addressLookupService.lookupAddress(
-						naverLandArticle.getLat(),
-						naverLandArticle.getLng()
-					);
-
-				if (addr == null) {
-					return null;
-
-				}
-				return ArticleDataProvider.createNaverLandArticle(
-					naverLandArticle, region, addr
-				);
-			}).filter(Objects::nonNull)
+					addressLookupService.lookupAddress(naverLandArticle.getLat(), naverLandArticle.getLng());
+				return ArticleDataProvider.createNaverLandArticle(naverLandArticle, region, addr);
+			})
 			.toList();
 	}
 }

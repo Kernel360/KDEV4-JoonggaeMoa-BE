@@ -16,7 +16,7 @@ public class NaverLandApiClient {
 	private final WebClient naverRegionWebClient;
 
 	private static final String RLET_TP_CD
-		= "APT:OPST:VL:ABYG:OBYG:JGC:JWJT:DDDGG:SGJT:HOJT:JGB:OR:GSW:SG:SMS:GJCG:GM:TJ:APTHGJ";
+		= "APT:OPST:VL:JWJT:DDDGG:SGJT:HOJT:SG:SMS";
 		// 매물 유형 (real estate type code)
 		// 아파트 : APT
 		// 오피스텔 : OPST
