@@ -14,11 +14,18 @@ public class QuestionAnswerPair {
 	private String question;
 	private List<String> answer;
 
-	public QuestionAnswerPair(
+	private QuestionAnswerPair(
 		String question,
 		List<String> answer
 	) {
 		this.question = question;
 		this.answer = answer;
+	}
+
+	public static QuestionAnswerPair create(
+		String question,
+		List<String> answer
+	) {
+		return new QuestionAnswerPair(question, answer);
 	}
 }

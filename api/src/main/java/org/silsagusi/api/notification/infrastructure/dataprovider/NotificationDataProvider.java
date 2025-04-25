@@ -48,7 +48,7 @@ public class NotificationDataProvider {
 			return;
 		}
 
-		Notification notification = new Notification(
+		Notification notification = Notification.create(
 			agentId, type, content
 		);
 
