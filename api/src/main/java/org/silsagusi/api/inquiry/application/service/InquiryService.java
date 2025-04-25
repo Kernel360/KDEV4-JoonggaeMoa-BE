@@ -1,6 +1,12 @@
 package org.silsagusi.api.inquiry.application.service;
 
 import org.silsagusi.api.agent.infrastructure.dataprovider.AgentDataProvider;
+import org.silsagusi.api.consultation.application.mapper.ConsultationMapper;
+import org.silsagusi.api.consultation.infrastructure.dataprovider.ConsultationDataProvider;
+import org.silsagusi.api.customer.application.dto.CustomerDto;
+import org.silsagusi.api.customer.application.mapper.CustomerMapper;
+import org.silsagusi.api.customer.application.validator.CustomerValidator;
+import org.silsagusi.api.customer.infrastructure.dataprovider.CustomerDataProvider;
 import org.silsagusi.api.inquiry.application.dto.InquiryAnswerDto;
 import org.silsagusi.api.inquiry.application.dto.InquiryDto;
 import org.silsagusi.api.inquiry.application.mapper.InquiryAnswerMapper;
@@ -8,6 +14,8 @@ import org.silsagusi.api.inquiry.application.mapper.InquiryMapper;
 import org.silsagusi.api.inquiry.application.validator.InquiryValidator;
 import org.silsagusi.api.inquiry.infrastructure.dataprovider.InquiryDataProvider;
 import org.silsagusi.core.domain.agent.Agent;
+import org.silsagusi.core.domain.consultation.entity.Consultation;
+import org.silsagusi.core.domain.customer.entity.Customer;
 import org.silsagusi.core.domain.inquiry.command.UpdateInquiryCommand;
 import org.silsagusi.core.domain.inquiry.entity.Inquiry;
 import org.silsagusi.core.domain.inquiry.entity.InquiryAnswer;
@@ -27,6 +35,11 @@ public class InquiryService {
 	private final InquiryAnswerMapper inquiryAnswerMapper;
 	private final InquiryValidator inquiryValidator;
 	private final AgentDataProvider agentDataProvider;
+	private final CustomerDataProvider customerDataProvider;
+	private final CustomerMapper customerMapper;
+	private final ConsultationMapper consultationMapper;
+	private final ConsultationDataProvider consultationDataProvider;
+	private final CustomerValidator customerValidator;
 
 	@Transactional
 	public void createInquiry(InquiryDto.CreateRequest inquiryCreateRequest) {
@@ -70,4 +83,24 @@ public class InquiryService {
 		inquiryDataProvider.createInquiryAnswer(inquiryAnswer);
 	}
 
+	@Transactional
+	public void createConsultation(InquiryDto.ConsultationRequest inquiryConsultationRequest) {
+		Agent agent = agentDataProvider.getAgentById(inquiryConsultationRequest.getAgentId());
+		Customer customer = customerDataProvider.getCustomerByPhone(inquiryConsultationRequest.getPhone());
+		if (customer == null) {
+			CustomerDto.Request customerRequest = CustomerDto.Request.builder()
+				.name(inquiryConsultationRequest.getName())
+				.email(inquiryConsultationRequest.getEmail())
+				.phone((inquiryConsultationRequest.getPhone()))
+				.consent(inquiryConsultationRequest.getConsent())
+				.build();
+			customer = customerMapper.toEntity(customerRequest, agent);
+			customerDataProvider.createCustomer(customer);
+		}
+
+		Consultation consultation = consultationMapper.answerRequestToEntity(customer,
+			inquiryConsultationRequest.getConsultAt());
+		consultationDataProvider.createConsultation(consultation);
+
+	}
 }

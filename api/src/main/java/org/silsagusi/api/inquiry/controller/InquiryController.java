@@ -77,4 +77,12 @@ public class InquiryController {
 		return ResponseEntity.ok(ApiResponse.ok());
 	}
 
+	@PostMapping("/api/inquiries/consultation")
+	public ResponseEntity<ApiResponse<Void>> createConsultation(
+		@RequestBody @Valid InquiryDto.ConsultationRequest inquiryConsultationRequest
+	) {
+		inquiryService.createConsultation(inquiryConsultationRequest);
+		return ResponseEntity.ok(ApiResponse.ok());
+	}
+
 }
