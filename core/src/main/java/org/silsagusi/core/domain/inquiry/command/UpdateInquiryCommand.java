@@ -6,8 +6,7 @@ import lombok.Getter;
 @Getter
 @Builder
 public class UpdateInquiryCommand {
-	private String name;
-	
+
 	private String title;
 
 	private String content;
