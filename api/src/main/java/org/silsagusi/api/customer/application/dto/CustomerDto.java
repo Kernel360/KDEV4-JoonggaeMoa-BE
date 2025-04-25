@@ -23,6 +23,7 @@ import lombok.NoArgsConstructor;
 public class CustomerDto {
 
 	@Getter
+	@Builder
 	@NoArgsConstructor
 	@AllArgsConstructor
 	@Schema(name = "CustomerRequestDto")
