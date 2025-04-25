@@ -100,7 +100,7 @@ public class SurveyService {
 
 		Customer customer = customerDataProvider.getCustomerByPhone(answerRequest.getPhone());
 		if (customer == null) {
-			Customer newCustomer = customerMapper.answerDtoToCustomer(answerRequest, agent);
+			Customer newCustomer = customerMapper.fromAnswerDtoToCustomer(answerRequest, agent);
 			customerDataProvider.createCustomer(newCustomer);
 		}
 
