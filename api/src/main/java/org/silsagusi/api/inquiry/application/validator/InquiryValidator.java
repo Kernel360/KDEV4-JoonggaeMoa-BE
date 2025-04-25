@@ -12,7 +12,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class InquiryValidator {
 
-	private BCryptPasswordEncoder bCryptPasswordEncoder;
+	private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
 	public void validatePassword(Inquiry inquiry, final String password) {
 		if (!bCryptPasswordEncoder.matches(password, inquiry.getPassword())) {

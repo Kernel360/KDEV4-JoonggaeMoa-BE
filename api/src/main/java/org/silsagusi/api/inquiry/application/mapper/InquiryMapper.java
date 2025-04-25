@@ -23,10 +23,8 @@ public class InquiryMapper {
 
 	public UpdateInquiryCommand toUpdateCommand(InquiryDto.UpdateRequest inquiryUpdateRequest) {
 		return UpdateInquiryCommand.builder()
-			.name(inquiryUpdateRequest.getName())
-			.password(inquiryUpdateRequest.getPassword())
 			.title(inquiryUpdateRequest.getTitle())
-			.password(inquiryUpdateRequest.getPassword())
+			.content(inquiryUpdateRequest.getContent())
 			.build();
 	}
 
