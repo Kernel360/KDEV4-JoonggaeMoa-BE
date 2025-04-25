@@ -54,7 +54,7 @@ public class InquiryService {
 	public void updateInquiry(Long inquiryId, InquiryDto.UpdateRequest inquiryUpdateRequest) {
 		Inquiry inquiry = inquiryDataProvider.getInquiry(inquiryId);
 		inquiryValidator.validatePassword(inquiry, inquiryUpdateRequest.getPassword());
-		UpdateInquiryCommand updateInquiryCommand = inquiryMapper.toUpdateCommand(inquiryUpdateRequest);
+		UpdateInquiryCommand updateInquiryCommand = InquiryDto.toCommand(inquiryUpdateRequest);
 		inquiryDataProvider.updateInquiry(inquiry, updateInquiryCommand);
 	}
 
@@ -68,13 +68,13 @@ public class InquiryService {
 	@Transactional(readOnly = true)
 	public Page<InquiryDto.Response> getAllInquiry(Pageable pageable) {
 		Page<Inquiry> inquiries = inquiryDataProvider.getInquiries(pageable);
-		return inquiries.map(InquiryDto.Response::from);
+		return inquiries.map(InquiryDto::toResponse);
 	}
 
 	@Transactional(readOnly = true)
 	public InquiryDto.Response getInquiry(Long inquiryId) {
 		Inquiry inquiry = inquiryDataProvider.getInquiry(inquiryId);
-		return InquiryDto.Response.from(inquiry);
+		return InquiryDto.toResponse(inquiry);
 	}
 
 	@Transactional

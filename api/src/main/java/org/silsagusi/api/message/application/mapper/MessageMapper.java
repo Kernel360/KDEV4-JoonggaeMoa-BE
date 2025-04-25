@@ -3,10 +3,7 @@ package org.silsagusi.api.message.application.mapper;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.silsagusi.api.message.application.dto.MessageDto;
-import org.silsagusi.api.message.application.dto.UpdateMessageRequest;
 import org.silsagusi.core.domain.customer.entity.Customer;
-import org.silsagusi.core.domain.message.command.UpdateMessageCommand;
 import org.silsagusi.core.domain.message.entity.Message;
 import org.springframework.stereotype.Component;
 
@@ -24,25 +21,5 @@ public class MessageMapper {
 		if (content == null || customerName == null)
 			return content;
 		return content.replace("${이름}", customerName);
-	}
-
-	public UpdateMessageCommand toUpdateMessageCommand(UpdateMessageRequest updateMessageRequest) {
-		return UpdateMessageCommand.builder()
-			.content(updateMessageRequest.getContent())
-			.sendAt(updateMessageRequest.getSendAt())
-			.build();
-	}
-
-	public MessageDto.Response toMessageResponse(Message message) {
-		return MessageDto.Response.builder()
-			.id(message.getId())
-			.customerId(message.getCustomer().getId())
-			.customerName(message.getCustomer().getName())
-			.customerPhone(message.getCustomer().getPhone())
-			.content(message.getContent())
-			.createdAt(message.getCreatedAt())
-			.sendStatus(message.getSendStatus() + "")
-			.sendAt(message.getSendAt())
-			.build();
 	}
 }

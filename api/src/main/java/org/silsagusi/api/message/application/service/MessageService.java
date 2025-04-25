@@ -35,7 +35,7 @@ public class MessageService {
 	@Transactional(readOnly = true)
 	public Page<MessageDto.Response> getMessagePage(Long agentId, Pageable pageable) {
 		Page<Message> messagePage = messageDataProvider.getMessagePageByAgent(agentId, pageable);
-		return messagePage.map(messageMapper::toMessageResponse);
+		return messagePage.map(MessageDto::toResponse);
 	}
 
 	@Transactional
@@ -56,20 +56,20 @@ public class MessageService {
 		messageValidator.validateAgentAccess(message, agent);
 		messageValidator.validateMessageStatusEqualsPending(message);
 
-		UpdateMessageCommand updateMessageCommand = messageMapper.toUpdateMessageCommand(updateMessageRequest);
+		UpdateMessageCommand updateMessageCommand = UpdateMessageRequest.toCommand(updateMessageRequest);
 		messageDataProvider.updateMessage(message, updateMessageCommand);
 	}
 
 	@Transactional(readOnly = true)
 	public Page<MessageDto.Response> getReservedMessagePage(Long agentId, Pageable pageable) {
 		Page<Message> messagePage = messageDataProvider.getReservedMessagePageByAgent(agentId, pageable);
-		return messagePage.map(messageMapper::toMessageResponse);
+		return messagePage.map(MessageDto::toResponse);
 	}
 
 	@Transactional(readOnly = true)
 	public MessageDto.Response getReservedMessage(Long messageId) {
 		Message message = messageDataProvider.getMessage(messageId);
-		return messageMapper.toMessageResponse(message);
+		return MessageDto.toResponse(message);
 	}
 
 	@Transactional

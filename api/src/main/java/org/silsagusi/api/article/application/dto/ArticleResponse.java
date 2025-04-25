@@ -1,10 +1,11 @@
 package org.silsagusi.api.article.application.dto;
 
-import lombok.Builder;
-import lombok.Getter;
+import java.time.LocalDate;
+
 import org.silsagusi.core.domain.article.Article;
 
-import java.time.LocalDate;
+import lombok.Builder;
+import lombok.Getter;
 
 @Getter
 @Builder
@@ -49,10 +50,9 @@ public class ArticleResponse {
 	private String buildingName;
 	private String zipCode;
 
-	public static ArticleResponse of(Article article) {
+	public static ArticleResponse toResponse(Article article) {
 		return ArticleResponse.builder()
 			.id(article.getId())
-			.articleCode(article.getArticleCode())
 			.bjdCode(article.getBjdCode())
 			.articleName(article.getArticleName())
 			.articleType(article.getArticleType())
@@ -77,18 +77,6 @@ public class ArticleResponse {
 			.articleDescMw(article.getArticleDescMw())
 			.emptyRoomCount(article.getEmptyRoomCount())
 			.isChecked(article.getIsChecked())
-			.lotAddress(article.getAddressFullLot())
-			.roadAddress(article.getAddressFullRoad())
-			.city(article.getAddress1SiDo())
-			.district(article.getAddress2SiGunGu())
-			.town(article.getAddress3DongEupMyeon())
-			.mainAddressNo(article.getAddressFullLotNo1())
-			.subAddressNo(article.getAddressFullLotNo2())
-			.roadName(article.getAddressFullRoadName())
-			.mainBuildingNo(article.getAddressFullRoadNo1())
-			.subBuildingNo(article.getAddressFullRoadNo2())
-			.buildingName(article.getAddressBuildingName())
-			.zipCode(article.getAddressZipCode())
 			.build();
 	}
 }
