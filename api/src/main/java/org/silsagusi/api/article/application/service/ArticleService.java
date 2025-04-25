@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.silsagusi.api.article.application.dto.ArticleResponse;
 import org.silsagusi.api.article.application.dto.RealEstateTypeSummaryResponse;
 import org.silsagusi.api.article.application.dto.TradeTypeSummaryResponse;
-import org.silsagusi.api.article.application.mapper.ArticleMapper;
 import org.silsagusi.api.article.infrastructure.dataProvider.ArticleDataProvider;
 import org.silsagusi.core.domain.article.Article;
 import org.silsagusi.core.domain.article.projection.ArticleTypeRatioProjection;
@@ -24,7 +23,6 @@ import java.util.List;
 public class ArticleService {
 
 	private final ArticleDataProvider articleDataProvider;
-	private final ArticleMapper articleMapper;
 
 	@Transactional(readOnly = true)
 	public Page<ArticleResponse> getAllArticles(
@@ -38,11 +36,11 @@ public class ArticleService {
 
 		Page<Article> articlePage = articleDataProvider.getArticlePage(spec, pageable);
 
-		return articlePage.map(articleMapper::toArticleResponse);
+		return articlePage.map(ArticleResponse::toResponse);
 	}
 
 	@Transactional(readOnly = true)
-	public List<RealEstateTypeSummaryResponse> getRealEstateTypeSummary(String period) {
+	public RealEstateTypeSummaryResponse getRealEstateTypeSummary(String period) {
 		LocalDate from = articleDataProvider.calculateStartDate(period);
 
 		List<ArticleTypeRatioProjection> realEstateTypeRatioProjections = articleDataProvider.getRealEstateTypeRatio(
@@ -50,17 +48,17 @@ public class ArticleService {
 
 		long realEstateTotalCount = articleDataProvider.sumArticleCount(realEstateTypeRatioProjections);
 
-		return articleMapper.toRealEstateTypeSummaryResponse(realEstateTypeRatioProjections, realEstateTotalCount);
+		return new RealEstateTypeSummaryResponse(realEstateTypeRatioProjections, realEstateTotalCount);
 	}
 
 	@Transactional(readOnly = true)
-	public List<TradeTypeSummaryResponse> getTradeTypeSummary(String period) {
+	public TradeTypeSummaryResponse getTradeTypeSummary(String period) {
 		LocalDate from = articleDataProvider.calculateStartDate(period);
 
 		List<ArticleTypeRatioProjection> tradeTypeRatioProjections = articleDataProvider.getTradeTypeRatio(from);
 
 		long tradeTotalCount = articleDataProvider.sumArticleCount(tradeTypeRatioProjections);
 
-		return articleMapper.toTradeTypeSummaryResponse(tradeTypeRatioProjections, tradeTotalCount);
+		return new TradeTypeSummaryResponse(tradeTypeRatioProjections, tradeTotalCount);
 	}
 }

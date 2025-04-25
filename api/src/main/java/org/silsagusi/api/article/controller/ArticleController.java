@@ -37,7 +37,7 @@ public class ArticleController {
 	}
 
 	@GetMapping("/api/dashboard/real-estate-type-summary")
-	public ResponseEntity<ApiResponse<List<RealEstateTypeSummaryResponse>>> getRealEstateTypeSummary(
+	public ResponseEntity<ApiResponse<RealEstateTypeSummaryResponse>> getRealEstateTypeSummary(
 		@RequestParam String period                            // period = [daily, weekly, monthly]
 	) {
 		return ResponseEntity.ok(ApiResponse.ok(
@@ -46,7 +46,7 @@ public class ArticleController {
 	}
 
 	@GetMapping("/api/dashboard/trade-type-summary")
-	public ResponseEntity<ApiResponse<List<TradeTypeSummaryResponse>>> getTradeTypeSummary(
+	public ResponseEntity<ApiResponse<TradeTypeSummaryResponse>> getTradeTypeSummary(
 		@RequestParam String period
 	) {
 		return ResponseEntity.ok(ApiResponse.ok(

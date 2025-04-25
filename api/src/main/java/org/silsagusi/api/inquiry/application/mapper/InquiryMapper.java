@@ -1,7 +1,6 @@
 package org.silsagusi.api.inquiry.application.mapper;
 
 import org.silsagusi.api.inquiry.application.dto.InquiryDto;
-import org.silsagusi.core.domain.inquiry.command.UpdateInquiryCommand;
 import org.silsagusi.core.domain.inquiry.entity.Inquiry;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -20,12 +19,4 @@ public class InquiryMapper {
 			inquiryCreateRequest.getTitle(), inquiryCreateRequest.getContent());
 
 	}
-
-	public UpdateInquiryCommand toUpdateCommand(InquiryDto.UpdateRequest inquiryUpdateRequest) {
-		return UpdateInquiryCommand.builder()
-			.title(inquiryUpdateRequest.getTitle())
-			.content(inquiryUpdateRequest.getContent())
-			.build();
-	}
-
 }
