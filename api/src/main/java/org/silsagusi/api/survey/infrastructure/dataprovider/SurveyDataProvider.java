@@ -64,7 +64,7 @@ public class SurveyDataProvider {
 		Survey survey,
 		List<QuestionAnswerPair> questionAnswerPairList
 	) {
-		Answer answer = new Answer(
+		Answer answer = Answer.create(
 			applyConsultation,
 			consultAt,
 			customer,
