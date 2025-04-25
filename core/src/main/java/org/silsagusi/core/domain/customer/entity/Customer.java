@@ -15,6 +15,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,6 +24,10 @@ import lombok.NoArgsConstructor;
 @DynamicUpdate
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity(name = "customers")
+@Table(uniqueConstraints = {
+	@UniqueConstraint(name = "UK_customer_phone", columnNames = {"agent_id", "phone"}),
+	@UniqueConstraint(name = "UK_customer_email", columnNames = {"agent_id", "email"})
+})
 @Getter
 public class Customer extends BaseEntity {
 

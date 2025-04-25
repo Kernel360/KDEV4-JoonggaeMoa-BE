@@ -32,7 +32,6 @@ public class GlobalExceptionHandler {
 	// 커스텀 예외
 	@ExceptionHandler(value = {CustomException.class})
 	public ApiResponse<?> handleCustomException(CustomException e) {
-		//log.error("GlobalExceptionHandler catch CustomException : {}", e.getMessage(), e);
 		log.error("GlobalExceptionHandler catch CustomException : {}", e.getMessage());
 		return fail(e.getErrorCode());
 	}
@@ -40,7 +39,6 @@ public class GlobalExceptionHandler {
 	// 기본 예외
 	@ExceptionHandler(value = {Exception.class})
 	public ApiResponse<?> handleException(Exception e) {
-		//log.error("\u001B[31mGlobalExceptionHandler catch Exception : {}\u001B[0m", e.getMessage(), e);
 		log.error("GlobalExceptionHandler catch CustomException : {}", e.getMessage());
 		return fail(ErrorCode.INTERNAL_SERVER_ERROR);
 	}
@@ -55,6 +53,10 @@ public class GlobalExceptionHandler {
 		} else if (message.contains("UK_agent_phone")) {
 			return ApiResponse.fail(new CustomException(ErrorCode.CONFLICT_PHONE));
 		} else if (message.contains("UK_agent_email")) {
+			return ApiResponse.fail(new CustomException(ErrorCode.CONFLICT_EMAIL));
+		} else if (message.contains("UK_customer_phone")) {
+			return ApiResponse.fail(new CustomException(ErrorCode.CONFLICT_PHONE));
+		} else if (message.contains("UK_customer_email")) {
 			return ApiResponse.fail(new CustomException(ErrorCode.CONFLICT_EMAIL));
 		}
 
