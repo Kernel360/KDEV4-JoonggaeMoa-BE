@@ -8,8 +8,6 @@ import lombok.Getter;
 public class UpdateInquiryCommand {
 	private String name;
 	
-	private String password;
-
 	private String title;
 
 	private String content;
