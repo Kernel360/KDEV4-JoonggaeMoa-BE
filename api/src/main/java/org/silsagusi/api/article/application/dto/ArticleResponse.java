@@ -2,6 +2,7 @@ package org.silsagusi.api.article.application.dto;
 
 import lombok.Builder;
 import lombok.Getter;
+import org.silsagusi.core.domain.article.Article;
 
 import java.time.LocalDate;
 
@@ -40,4 +41,40 @@ public class ArticleResponse {
 	private String address1SiDo;
 	private String address2SiGunGu;
 	private String address3DongEupMyeon;
+
+	public static ArticleResponse toResponse(Article article) {
+		return ArticleResponse.builder()
+			.id(article.getId())
+			.bjdCode(article.getBjdCode())
+			.articleName(article.getArticleName())
+			.buildingTypeCode(article.getBuildingTypeCode())
+			.buildingType(article.getBuildingType())
+			.tradeType(article.getTradeType())
+			.floors(article.getFloors())
+			.priceSale(article.getPriceSale())
+			.priceRent(article.getPriceRent())
+			.areaSupply(article.getAreaSupply())
+			.areaExclusive(article.getAreaExclusive())
+			.direction(article.getDirection())
+			.confirmedAt(article.getConfirmedAt())
+			.imageUrl(article.getImageUrl())
+			.latitude(article.getLatitude())
+			.longitude(article.getLongitude())
+			.articleDesc(article.getArticleDesc())
+			.companyName(article.getCompanyName())
+			.agency(article.getAgency())
+//			.priceRoomMin(article.getPriceRoomMin())
+//			.priceRoomMax(article.getPriceRoomMax())
+			.subway(article.getSubway())
+//			.articleDescRoom(article.getArticleDescRoom())
+//			.articleDescMw(article.getArticleDescMw())
+//			.emptyRoomCount(article.getEmptyRoomCount())
+			.isChecked(article.getIsChecked())
+			.addressFullLot(article.getAddressFullLot())
+			.addressFullRoad(article.getAddressFullRoad())
+			.address1SiDo(article.getAddress1SiDo())
+			.address2SiGunGu(article.getAddress2SiGunGu())
+			.address3DongEupMyeon(article.getAddress3DongEupMyeon())
+			.build();
+	}
 }
