@@ -85,7 +85,7 @@ public class SurveyMapper {
 			.content(question.getContent())
 			.type(question.getType())
 			.isRequired(question.getIsRequired())
-			.options(question.getOptions())
+			.options(new ArrayList<>(question.getOptions()))
 			.build();
 	}
 
