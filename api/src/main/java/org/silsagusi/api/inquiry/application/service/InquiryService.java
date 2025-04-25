@@ -1,11 +1,12 @@
 package org.silsagusi.api.inquiry.application.service;
 
+import java.time.format.DateTimeFormatter;
+
 import org.silsagusi.api.agent.infrastructure.dataprovider.AgentDataProvider;
 import org.silsagusi.api.consultation.application.mapper.ConsultationMapper;
 import org.silsagusi.api.consultation.infrastructure.dataprovider.ConsultationDataProvider;
 import org.silsagusi.api.customer.application.dto.CustomerDto;
 import org.silsagusi.api.customer.application.mapper.CustomerMapper;
-import org.silsagusi.api.customer.application.validator.CustomerValidator;
 import org.silsagusi.api.customer.infrastructure.dataprovider.CustomerDataProvider;
 import org.silsagusi.api.inquiry.application.dto.InquiryAnswerDto;
 import org.silsagusi.api.inquiry.application.dto.InquiryDto;
@@ -13,12 +14,14 @@ import org.silsagusi.api.inquiry.application.mapper.InquiryAnswerMapper;
 import org.silsagusi.api.inquiry.application.mapper.InquiryMapper;
 import org.silsagusi.api.inquiry.application.validator.InquiryValidator;
 import org.silsagusi.api.inquiry.infrastructure.dataprovider.InquiryDataProvider;
+import org.silsagusi.api.notification.infrastructure.dataprovider.NotificationDataProvider;
 import org.silsagusi.core.domain.agent.Agent;
 import org.silsagusi.core.domain.consultation.entity.Consultation;
 import org.silsagusi.core.domain.customer.entity.Customer;
 import org.silsagusi.core.domain.inquiry.command.UpdateInquiryCommand;
 import org.silsagusi.core.domain.inquiry.entity.Inquiry;
 import org.silsagusi.core.domain.inquiry.entity.InquiryAnswer;
+import org.silsagusi.core.domain.notification.entity.NotificationType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -39,7 +42,7 @@ public class InquiryService {
 	private final CustomerMapper customerMapper;
 	private final ConsultationMapper consultationMapper;
 	private final ConsultationDataProvider consultationDataProvider;
-	private final CustomerValidator customerValidator;
+	private final NotificationDataProvider notificationDataProvider;
 
 	@Transactional
 	public void createInquiry(InquiryDto.CreateRequest inquiryCreateRequest) {
@@ -101,6 +104,14 @@ public class InquiryService {
 		Consultation consultation = consultationMapper.answerRequestToEntity(customer,
 			inquiryConsultationRequest.getConsultAt());
 		consultationDataProvider.createConsultation(consultation);
+
+		// 상담 신청 시 알림
+		notificationDataProvider.notify(
+			agent.getId(),
+			NotificationType.CONSULTATION,
+			customer.getName() + "님이 [" + consultation.getDate().format(DateTimeFormatter.ofPattern("YYYY-MM-dd HH:mm"))
+				+ "] 시에 상담을 신청했습니다."
+		);
 
 	}
 }
