@@ -1,7 +1,6 @@
 package org.silsagusi.api.article.infrastructure.dataProvider;
 
 import lombok.RequiredArgsConstructor;
-
 import org.silsagusi.api.article.infrastructure.repository.ArticleRepository;
 import org.silsagusi.api.exception.CustomException;
 import org.silsagusi.api.exception.ErrorCode;

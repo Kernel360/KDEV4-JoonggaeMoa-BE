@@ -12,10 +12,10 @@ import java.util.List;
 public interface ArticleRepository extends JpaRepository<Article, Long>, JpaSpecificationExecutor<Article> {
 
 	@Query("""
-		    SELECT a.articleType AS type, COUNT(a) AS count
+		    SELECT a.buildingType AS type, COUNT(a) AS count
 		    FROM articles a
 		    WHERE a.confirmedAt >= :startDate
-		    GROUP BY a.articleType
+		    GROUP BY a.buildingType
 		""")
 	List<ArticleTypeRatioProjection> countByArticleTypeSince(LocalDate startDate);
 

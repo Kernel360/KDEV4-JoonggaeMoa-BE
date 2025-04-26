@@ -1,7 +1,9 @@
 package org.silsagusi.batch.scrape.zigbang.service.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Data
@@ -16,7 +18,8 @@ public class ZigBangDanjiResponse {
 		private Double lat;
 		private Double lng;
 		private Integer 총세대수;
-		private String 사용승인일;
+		@JsonFormat(pattern = "yyyyMMdd")
+		private LocalDate 사용승인일;
 		private String 서비스구분;
 		private String real_type;
 		private String sido;
@@ -24,15 +27,15 @@ public class ZigBangDanjiResponse {
 		private String dong;
 		private Boolean isNewStay;
 		private String image;
-		private List<String> view_sources;
-		private Boolean is후분양;
-		private List<Price> price;
+//		private List<String> view_sources;
+//		private Boolean is후분양;
+		private Price price;
 	}
 
 	@Data
 	public static class Price {
-		private List<Sales> sales;
-		private List<Offer> offer;
+		private Sales sales;
+		private Offer offer;
 	}
 
 	@Data

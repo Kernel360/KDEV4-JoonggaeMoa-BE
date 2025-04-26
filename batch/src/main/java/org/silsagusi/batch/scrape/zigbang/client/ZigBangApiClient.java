@@ -3,12 +3,9 @@ package org.silsagusi.batch.scrape.zigbang.client;
 import lombok.RequiredArgsConstructor;
 import org.silsagusi.batch.scrape.zigbang.service.dto.ZigBangDanjiResponse;
 import org.silsagusi.batch.scrape.zigbang.service.dto.ZigBangItemCatalogResponse;
-import org.silsagusi.batch.scrape.zigbang.service.dto.ZigBangLocalCodeResponse;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
-
-import java.util.Objects;
 
 @Component
 @RequiredArgsConstructor
@@ -16,11 +13,10 @@ public class ZigBangApiClient {
 
 	private final WebClient zigBangWebClient;
 
-	public ZigBangItemCatalogResponse fetchItemCatalog(String geohash) {
-		final String local_code = fetchLocalCode(geohash);
+	public ZigBangItemCatalogResponse fetchItemCatalog(String localCode) {
 		return zigBangWebClient.get()
 			.uri(uriBuilder -> uriBuilder.path(
-						String.format("/apt/locals/%s/item-catalogs", local_code)
+						String.format("/apt/locals/%s/item-catalogs", localCode)
 					)
 //					.queryParam("tranTypeIn[0]", "trade") // 매매
 //					.queryParam("tranTypeIn[1]", "charter") // 전세
@@ -36,22 +32,7 @@ public class ZigBangApiClient {
 			.block();
 	}
 
-	public String fetchLocalCode(String geohash) {
-		return Objects.requireNonNull(zigBangWebClient.get()
-				.uri(uriBuilder -> uriBuilder.path("/apt/locals/polygon")
-					.queryParam("geohash", geohash)
-					.queryParam("level", "local3") // 동단위
-					.queryParam("polygon", "false")
-					.build())
-				.accept(MediaType.APPLICATION_JSON)
-				.retrieve()
-				.bodyToMono(ZigBangLocalCodeResponse.class)
-				.block())
-			.getCode();
-	}
-	// TODO: 로컬코드는 region initializer 로 넣기
-
-	public ZigBangDanjiResponse fetchDanjis(String geohash) {
+	public ZigBangDanjiResponse fetchDanji(String geohash) {
 		return zigBangWebClient.get()
 			.uri(uriBuilder -> uriBuilder.path("/apt/locals/prices/on-danjis")
 //				.queryParam("minPynArea", "10평이하") // 최소 평수

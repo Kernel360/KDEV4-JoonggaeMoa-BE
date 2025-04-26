@@ -1,6 +1,11 @@
 package org.silsagusi.batch.scrape.naverland.batch;
 
+import lombok.extern.slf4j.Slf4j;
+import org.silsagusi.batch.infrastructure.repository.RegionRepository;
 import org.silsagusi.batch.infrastructure.repository.ScrapeStatusRepository;
+import org.silsagusi.batch.scrape.naverland.service.NaverLandRequestService;
+import org.silsagusi.core.domain.article.Region;
+import org.silsagusi.core.domain.article.ScrapeStatus;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.JobRegistry;
@@ -14,34 +19,44 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import java.time.LocalDateTime;
+import java.util.List;
 
+@Slf4j
 @Configuration
-public class NaverLandScrapeResetJobConfig {
+public class NaverLandBatchJobConfig {
 
-	private static final String JOB_NAME = "naverLandScrapeStatusResetJob";
+	private static final String JOB_NAME = "naverLandArticleJob";
 
 	private final JobRegistry jobRegistry;
 	private final JobRepository jobRepository;
 	private final PlatformTransactionManager transactionManager;
 	private final ScrapeStatusRepository scrapeStatusRepository;
+	private final NaverLandRequestService naverLandRequestService;
+	private final RegionRepository regionRepository;
 
-	public NaverLandScrapeResetJobConfig(
+	public NaverLandBatchJobConfig(
 		JobRegistry jobRegistry,
 		JobRepository jobRepository,
 		@Qualifier("metaTransactionManager")
 		PlatformTransactionManager transactionManager,
-		ScrapeStatusRepository scrapeStatusRepository) {
+		ScrapeStatusRepository scrapeStatusRepository,
+		NaverLandRequestService naverLandRequestService,
+		RegionRepository regionRepository) {
 		this.jobRegistry = jobRegistry;
 		this.jobRepository = jobRepository;
 		this.transactionManager = transactionManager;
 		this.scrapeStatusRepository = scrapeStatusRepository;
+		this.naverLandRequestService = naverLandRequestService;
+		this.regionRepository = regionRepository;
 	}
 
 	@Bean
-	public Job naverLandScrapeStatusResetJob(Step naverLandScrapeStatusResetStep) {
+	public Job naverLandArticleJob(
+		Step initNaverLandScrapeStatusStep,
+		Step naverLandArticleStep) {
 		Job job = new JobBuilder(JOB_NAME, jobRepository)
-			.start(naverLandScrapeStatusResetStep)
+			.start(initNaverLandScrapeStatusStep)
+			.next(naverLandArticleStep)
 			.build();
 
 		try {
@@ -54,13 +69,34 @@ public class NaverLandScrapeResetJobConfig {
 	}
 
 	@Bean
-	public Step naverLandScrapeStatusResetStep() {
-		return new StepBuilder(JOB_NAME + "Step", jobRepository)
-			.tasklet(((contribution, chunkContext) -> {
-				LocalDateTime cutoff = LocalDateTime.now().minusDays(1);
-				scrapeStatusRepository.resetAllScrapeStatus(cutoff);
+	public Step initNaverLandScrapeStatusStep() {
+		return new StepBuilder("initNaverLandScrapeStatus", jobRepository)
+			.tasklet((contribution, chunkContext) -> {
+				List<Region> regions = regionRepository.findAllByCortarType("sec");
+				for (Region region : regions) {
+					scrapeStatusRepository.upsertNative(
+						region.getId(),
+						1,
+						false,
+						null,
+						"네이버부동산"
+					);
+				}
 				return RepeatStatus.FINISHED;
-			}), transactionManager)
+			}, transactionManager)
+			.build();
+	}
+
+	@Bean
+	public Step naverLandArticleStep() {
+		return new StepBuilder(JOB_NAME + "Step", jobRepository)
+			.tasklet((contribution, chunkContext) -> {
+				List<ScrapeStatus> regions = scrapeStatusRepository.findAll();
+				for (ScrapeStatus status : regions) {
+					naverLandRequestService.scrapNaverLand(status);
+				}
+				return RepeatStatus.FINISHED;
+			}, transactionManager)
 			.build();
 	}
 }

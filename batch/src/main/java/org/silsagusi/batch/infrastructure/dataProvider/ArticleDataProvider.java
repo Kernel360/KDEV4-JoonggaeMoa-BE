@@ -1,17 +1,18 @@
-package org.silsagusi.batch.infrastructure;
+package org.silsagusi.batch.infrastructure.dataProvider;
 
 import lombok.RequiredArgsConstructor;
+import org.silsagusi.batch.infrastructure.repository.ArticleRepository;
 import org.silsagusi.batch.scrape.naverland.service.dto.KakaoMapAddressResponse;
 import org.silsagusi.batch.scrape.naverland.service.dto.NaverLandArticleResponse;
+import org.silsagusi.batch.scrape.zigbang.service.dto.ZigBangDanjiResponse;
 import org.silsagusi.batch.scrape.zigbang.service.dto.ZigBangItemCatalogResponse;
 import org.silsagusi.core.domain.article.Article;
+import org.silsagusi.core.domain.article.Complex;
 import org.silsagusi.core.domain.article.Region;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
 
@@ -28,13 +29,15 @@ public class ArticleDataProvider {
 
 	public static Article createNaverLandArticle(
 		NaverLandArticleResponse.NaverLandArticle naverLandArticle,
+		KakaoMapAddressResponse kakaoMapAddressResponse,
 		Region region,
-		KakaoMapAddressResponse kakaoMapAddressResponse
+		Complex complex
 	) {
-		Article article = new Article(
+		return new Article(
 			naverLandArticle.getAtclNo(),
 			naverLandArticle.getCortarNo(),
 			naverLandArticle.getAtclNm(),
+			naverLandArticle.getRletTpCd(),
 			naverLandArticle.getRletTpNm(),
 			naverLandArticle.getTradTpNm(),
 			naverLandArticle.getFlrInfo(),
@@ -43,46 +46,37 @@ public class ArticleDataProvider {
 			naverLandArticle.getSpc1(),
 			naverLandArticle.getSpc2(),
 			naverLandArticle.getDirection(),
-			parseConfirmedAt(naverLandArticle.getAtclCfmYmd()),
-			naverLandArticle.getRepImgUrl(),
+			naverLandArticle.getAtclCfmYmd(),
+			naverLandArticle.getRepImgUrl() == null ? null : "https://landthumb-phinf.pstatic.net" + naverLandArticle.getRepImgUrl(),
 			naverLandArticle.getLat(),
 			naverLandArticle.getLng(),
 			naverLandArticle.getAtclFetrDesc(),
 			naverLandArticle.getCpNm(),
 			naverLandArticle.getRltrNm(),
-			naverLandArticle.getMinMviFee(),
-			naverLandArticle.getMaxMviFee(),
 			naverLandArticle.getSbwyInfo(),
-			naverLandArticle.getSvcCont(),
-			naverLandArticle.getGdrNm(),
-			naverLandArticle.getEtRoomCnt(),
 			naverLandArticle.getTradeCheckedByOwner(),
 			region,
+			complex,
 			kakaoMapAddressResponse.getLotAddress(),
 			kakaoMapAddressResponse.getRoadAddress(),
 			kakaoMapAddressResponse.getCity(),
 			kakaoMapAddressResponse.getDistrict(),
-			kakaoMapAddressResponse.getRegion(),
-			kakaoMapAddressResponse.getMainAddressNo(),
-			kakaoMapAddressResponse.getSubAddressNo(),
-			kakaoMapAddressResponse.getRoadName(),
-			kakaoMapAddressResponse.getMainBuildingNo(),
-			kakaoMapAddressResponse.getSubBuildingNo(),
-			kakaoMapAddressResponse.getBuildingName(),
-			kakaoMapAddressResponse.getZoneNo()
+			kakaoMapAddressResponse.getRegion()
 		);
-
-		return article;
 	}
 
-	public static Article createZigBangArticle(
+	public static Article createZigBangItemCatalog(
 		ZigBangItemCatalogResponse.ZigBangItemCatalog item,
-		Region region
+		ZigBangDanjiResponse danji,
+		KakaoMapAddressResponse kakaoMapAddressResponse,
+		Region region, Complex complex
+
 	) {
-		Article article = new Article(
-			String.valueOf(item.getAreaHoId()),
+		return new Article(
+			String.valueOf(item.getAreaDanjiId()),
 			null,
 			item.getAreaDanjiName() + " " + item.getDong(),
+			"A01",
 			"아파트",
 			mapTranType(item.getTranType()),
 			item.getFloor(),
@@ -91,35 +85,23 @@ public class ArticleDataProvider {
 			item.getRoomTypeTitle().getM2(),
 			String.valueOf(item.getSizeM2()),
 			null,
-			null,
-			item.getThumbnailUrl(),
-			null,
-			null,
+			danji.getFiltered().get(0).get사용승인일(),
+			item.getThumbnailUrl() +"?w=1000",
+			danji.getFiltered().get(0).getLat(),
+			danji.getFiltered().get(0).getLng(),
 			item.getItemTitle(),
 			mapItemType(item.getItemType()),
+			"직방",
 			null,
-			null,
-			null,
-			null,
-			null,
-			null,
-			null,
-			null,
+			mapIsChecked(item.getItemType()),
 			region,
-			null,
-			null,
-			null,
-			null,
-			null,
-			null,
-			null,
-			null,
-			null,
-			null,
-			null,
-			null
+			complex,
+			kakaoMapAddressResponse.getLotAddress(),
+			kakaoMapAddressResponse.getRoadAddress(),
+			kakaoMapAddressResponse.getCity(),
+			kakaoMapAddressResponse.getDistrict(),
+			kakaoMapAddressResponse.getRegion()
 		);
-		return article;
 	}
 
 	// 거래 유형
@@ -138,25 +120,18 @@ public class ArticleDataProvider {
 	// 매물 출처
 	private static String mapItemType(String itemType) {
 		if (Objects.equals(itemType, "partner")) {
-			return "직방(제휴 매물)"; // 직방 제휴 매물
+			return "직방 파트너 계약 매물"; // 직방 제휴 매물
 		} else if (Objects.equals(itemType, "self_ad")) {
-			return "직방(개인 매물)"; // 개인 매물, 유료 광고 적용됨
+			return "직방 개인 광고 매물"; // 개인 매물, 유료 광고 적용됨
 		} else {
-			return "직방";
+			return "직방 검증 완료 매물";
 		}
 	}
 
-	private static LocalDate parseConfirmedAt(String dateStr) {
-		if (dateStr == null || dateStr.isEmpty())
-			return null;
-		try {
-			return LocalDate.parse(dateStr, DateTimeFormatter.ofPattern("yy.MM.dd."));
-		} catch (Exception e) {
-			try {
-				return LocalDate.parse(dateStr, DateTimeFormatter.ofPattern("yyyyMMdd"));
-			} catch (Exception ignored) {
-				return null;
-			}
-		}
+	// 확인매물여부
+	private static Boolean mapIsChecked(String itemType) {
+		if (Objects.equals(itemType, "partner")) {
+			return true; // 직방 제휴 매물
+		} else return Objects.equals(itemType, "self_ad"); // 개인 매물, 유료 광고 적용됨
 	}
 }

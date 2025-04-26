@@ -1,13 +1,11 @@
 package org.silsagusi.batch.scrape.zigbang.batch;
 
-import java.util.List;
-
-import org.silsagusi.batch.infrastructure.ScrapeStatusRepository;
-import org.silsagusi.batch.scrape.zigbang.service.ZigBangItemCatalogRequestService;
-import org.silsagusi.core.domain.article.ScrapeStatus;
+import lombok.RequiredArgsConstructor;
+import org.silsagusi.batch.infrastructure.repository.ScrapeStatusRepository;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.JobRegistry;
+import org.springframework.batch.core.configuration.annotation.JobScope;
 import org.springframework.batch.core.configuration.support.ReferenceJobFactory;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
@@ -17,25 +15,23 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.time.LocalDateTime;
 
-@Slf4j
 @Configuration
 @RequiredArgsConstructor
-public class ZigBangArticleBatchJobConfig {
-	private static final String JOB_NAME = "zigBangArticleJob";
+public class ZigBangScrapeResetJobConfig {
 
-	private final JobRepository jobRepository;
+	private static final String JOB_NAME = "zigBangScrapeStatusResetJob";
+
 	private final JobRegistry jobRegistry;
+	private final JobRepository jobRepository;
 	private final PlatformTransactionManager transactionManager;
 	private final ScrapeStatusRepository scrapeStatusRepository;
-	private final ZigBangItemCatalogRequestService zigBangItemCatalogRequestService;
 
 	@Bean
-	public Job zigBangArticleJob(Step zigBangArticleStep) {
+	public Job zigBangScrapeStatusResetJob(Step zigBangScrapeStatusResetStep) {
 		Job job = new JobBuilder(JOB_NAME, jobRepository)
-			.start(zigBangArticleStep)
+			.start(zigBangScrapeStatusResetStep)
 			.build();
 
 		try {
@@ -48,16 +44,13 @@ public class ZigBangArticleBatchJobConfig {
 	}
 
 	@Bean
-	public Step zigBangArticleStep() {
+	public Step zigBangScrapeStatusResetStep() {
 		return new StepBuilder(JOB_NAME + "Step", jobRepository)
-			.tasklet((contribution, chunkContext) -> {
-				List<ScrapeStatus> regions = scrapeStatusRepository.findTop50ByCompletedFalseOrderByIdAsc();
-				for (ScrapeStatus status : regions) {
-					zigBangItemCatalogRequestService.scrapZigBangItemCatalogs(status);
-				}
+			.tasklet(((contribution, chunkContext) -> {
+				LocalDateTime cutoff = LocalDateTime.now().minusDays(1);
+				scrapeStatusRepository.resetAllScrapeStatus(cutoff);
 				return RepeatStatus.FINISHED;
-			}, transactionManager)
+			}), transactionManager)
 			.build();
 	}
-
 }

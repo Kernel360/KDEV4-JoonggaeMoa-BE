@@ -1,11 +1,10 @@
 package org.silsagusi.api.article.application.dto;
 
-import java.time.LocalDate;
-
-import org.silsagusi.core.domain.article.Article;
-
 import lombok.Builder;
 import lombok.Getter;
+import org.silsagusi.core.domain.article.Article;
+
+import java.time.LocalDate;
 
 @Getter
 @Builder
@@ -14,7 +13,8 @@ public class ArticleResponse {
 	private String articleCode;
 	private String bjdCode;
 	private String articleName;
-	private String articleType;
+	private String buildingTypeCode;
+	private String buildingType;
 	private String tradeType;
 	private String floors;
 	private Integer priceSale;
@@ -29,33 +29,26 @@ public class ArticleResponse {
 	private String articleDesc;
 	private String companyName;
 	private String agency;
-	private Integer priceRoomMin;
-	private Integer priceRoomMax;
+//	private Integer priceRoomMin;
+//	private Integer priceRoomMax;
 	private String subway;
-	private String articleDescRoom;
-	private String articleDescMw;
-	private Integer emptyRoomCount;
+//	private String articleDescRoom;
+//	private String articleDescMw;
+//	private Integer emptyRoomCount;
 	private Boolean isChecked;
-
-	private String lotAddress;
-	private String roadAddress;
-	private String city;
-	private String district;
-	private String town;
-	private String mainAddressNo;
-	private String subAddressNo;
-	private String roadName;
-	private String mainBuildingNo;
-	private String subBuildingNo;
-	private String buildingName;
-	private String zipCode;
+	private String addressFullLot;
+	private String addressFullRoad;
+	private String address1SiDo;
+	private String address2SiGunGu;
+	private String address3DongEupMyeon;
 
 	public static ArticleResponse toResponse(Article article) {
 		return ArticleResponse.builder()
 			.id(article.getId())
 			.bjdCode(article.getBjdCode())
 			.articleName(article.getArticleName())
-			.articleType(article.getArticleType())
+			.buildingTypeCode(article.getBuildingTypeCode())
+			.buildingType(article.getBuildingType())
 			.tradeType(article.getTradeType())
 			.floors(article.getFloors())
 			.priceSale(article.getPriceSale())
@@ -70,13 +63,18 @@ public class ArticleResponse {
 			.articleDesc(article.getArticleDesc())
 			.companyName(article.getCompanyName())
 			.agency(article.getAgency())
-			.priceRoomMin(article.getPriceRoomMin())
-			.priceRoomMax(article.getPriceRoomMax())
+//			.priceRoomMin(article.getPriceRoomMin())
+//			.priceRoomMax(article.getPriceRoomMax())
 			.subway(article.getSubway())
-			.articleDescRoom(article.getArticleDescRoom())
-			.articleDescMw(article.getArticleDescMw())
-			.emptyRoomCount(article.getEmptyRoomCount())
+//			.articleDescRoom(article.getArticleDescRoom())
+//			.articleDescMw(article.getArticleDescMw())
+//			.emptyRoomCount(article.getEmptyRoomCount())
 			.isChecked(article.getIsChecked())
+			.addressFullLot(article.getAddressFullLot())
+			.addressFullRoad(article.getAddressFullRoad())
+			.address1SiDo(article.getAddress1SiDo())
+			.address2SiGunGu(article.getAddress2SiGunGu())
+			.address3DongEupMyeon(article.getAddress3DongEupMyeon())
 			.build();
 	}
 }
