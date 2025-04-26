@@ -33,7 +33,7 @@ public class NotificationDataProvider {
 		emitter.onCompletion(() -> emitterRepository.remove(agentId));
 		emitter.onTimeout(() -> emitterRepository.remove(agentId));
 
-		notify(agentId, NotificationType.CONNECTION, "Connection Success! agentId: " + agentId);
+		notify(agentId, NotificationType.CONNECTION, "로그인에 성공했습니다!");
 
 		return emitter;
 	}
@@ -41,12 +41,12 @@ public class NotificationDataProvider {
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public void notify(Long agentId, NotificationType type, String content) {
 
-		boolean alreadyNotified = notificationRepository.existsByAgentIdAndTypeAndContent(agentId, type, content);
-
-		if (alreadyNotified) {
-			log.info("이미 같은 알림이 전송됨: agentId={}, content={}", agentId, content);
-			return;
-		}
+		// boolean alreadyNotified = notificationRepository.existsByAgentIdAndTypeAndContent(agentId, type, content);
+		//
+		// if (alreadyNotified) {
+		// 	log.info("이미 같은 알림이 전송됨: agentId={}, content={}", agentId, content);
+		// 	return;
+		// }
 
 		Notification notification = Notification.create(
 			agentId, type, content
