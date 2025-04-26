@@ -14,6 +14,18 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class InquiryAnswerDto {
 
+	public static Response toResponse(InquiryAnswer inquiryAnswer) {
+		return Response.builder()
+			.agentId(inquiryAnswer.getAgent().getId())
+			.agentName(inquiryAnswer.getAgent().getName())
+			.agentOffice(inquiryAnswer.getAgent().getOffice())
+			.agentRegion(inquiryAnswer.getAgent().getRegion())
+			.content(inquiryAnswer.getContent())
+			.createdAt(inquiryAnswer.getCreatedAt())
+			.updatedAt(inquiryAnswer.getUpdatedAt())
+			.build();
+	}
+
 	@Getter
 	@Builder
 	@NoArgsConstructor
@@ -26,22 +38,12 @@ public class InquiryAnswerDto {
 	@Getter
 	@Builder
 	public static class Response {
+		private Long agentId;
 		private String agentName;
 		private String agentOffice;
 		private String agentRegion;
 		private String content;
 		private LocalDateTime createdAt;
 		private LocalDateTime updatedAt;
-	}
-
-	public static Response toResponse(InquiryAnswer inquiryAnswer) {
-		return Response.builder()
-			.agentName(inquiryAnswer.getAgent().getName())
-			.agentOffice(inquiryAnswer.getAgent().getOffice())
-			.agentRegion(inquiryAnswer.getAgent().getRegion())
-			.content(inquiryAnswer.getContent())
-			.createdAt(inquiryAnswer.getCreatedAt())
-			.updatedAt(inquiryAnswer.getUpdatedAt())
-			.build();
 	}
 }
