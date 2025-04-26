@@ -33,7 +33,7 @@ public class NotificationDataProvider {
 		emitter.onCompletion(() -> emitterRepository.remove(agentId));
 		emitter.onTimeout(() -> emitterRepository.remove(agentId));
 
-		notify(agentId, NotificationType.CONNECTION, "Connection Success! agentId: " + agentId);
+		notify(agentId, NotificationType.CONNECTION, "로그인에 성공했습니다!");
 
 		return emitter;
 	}
