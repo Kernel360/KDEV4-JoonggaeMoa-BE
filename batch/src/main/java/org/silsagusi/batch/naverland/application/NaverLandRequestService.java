@@ -54,6 +54,7 @@ public class NaverLandRequestService {
 				region.getCortarNo());
 			List<Article> pageArticles = mapNaverLandToArticles(artResp.getBody(), region, codeToComplex);
 			allArticles.addAll(pageArticles);
+			Thread.sleep((long)(3000 + Math.random() * 4000));
 
 			// 단지 스크래핑
 			NaverLandComplexResponse compResp = naverLandApiClient.fetchComplexList(
@@ -63,7 +64,7 @@ public class NaverLandRequestService {
 			// 중복 없는 단지만 변환 후 저장 리스트에 추가
 			for (NaverLandComplexResponse.NaverLandComplex dto : compResp.getResult()) {
 				if (seenComplexNos.add(dto.getHscpNo())) {
-					Complex domain = ComplexDataProvider.createNaverLandComplex(dto, region);
+					Complex domain = complexDataProvider.createNaverLandComplex(dto, region);
 					allComplexes.add(domain);
 					codeToComplex.put(dto.getHscpNo(), domain);
 				}

@@ -49,7 +49,7 @@ public class ZigBangRequestService {
 		ZigBangDanjiResponse danjiResp = zigbangApiClient.fetchDanji(geohash);
 		for (ZigBangDanjiResponse.ZigBangDanji dto : danjiResp.getFiltered()) {
 			if (seenDanjiIds.add(dto.getId())) {
-				Complex danji = ComplexDataProvider.createZigBangDanji(dto, region);
+				Complex danji = complexDataProvider.createZigBangDanji(dto, region);
 				allComplexes.add(danji);
 				idToComplex.put(dto.getId(), danji);
 			}

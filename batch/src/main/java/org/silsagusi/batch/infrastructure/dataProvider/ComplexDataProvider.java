@@ -24,7 +24,7 @@ public class ComplexDataProvider {
 		complexRepository.saveAll(complexes);
 	}
 
-	public static Complex createNaverLandComplex(
+	public Complex createNaverLandComplex(
 		NaverLandComplexResponse.NaverLandComplex dto, Region region) {
 		return Complex.create(
 			dto.getHscpNo(),                   // complexCode
@@ -51,7 +51,7 @@ public class ComplexDataProvider {
 		);
 	}
 
-	public static Complex createZigBangDanji(
+	public Complex createZigBangDanji(
 		ZigBangDanjiResponse.ZigBangDanji dto, Region region) {
 		return Complex.create(
 			null,       // complexCode
