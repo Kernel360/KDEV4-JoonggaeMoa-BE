@@ -3,8 +3,8 @@ package org.silsagusi.batch.infrastructure.dataProvider;
 import java.util.List;
 
 import org.silsagusi.batch.infrastructure.repository.ComplexRepository;
-import org.silsagusi.batch.scrape.naverland.service.dto.NaverLandComplexResponse;
-import org.silsagusi.batch.scrape.zigbang.service.dto.ZigBangDanjiResponse;
+import org.silsagusi.batch.naverland.infrastructure.dto.NaverLandComplexResponse;
+import org.silsagusi.batch.zigbang.infrastructure.dto.ZigBangDanjiResponse;
 import org.silsagusi.core.domain.article.Complex;
 import org.silsagusi.core.domain.article.Region;
 import org.springframework.stereotype.Service;

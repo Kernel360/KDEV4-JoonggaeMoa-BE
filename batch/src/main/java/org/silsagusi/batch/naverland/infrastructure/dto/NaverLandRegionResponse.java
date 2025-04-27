@@ -1,8 +1,8 @@
-package org.silsagusi.batch.scrape.naverland.service.dto;
-
-import lombok.Data;
+package org.silsagusi.batch.naverland.infrastructure.dto;
 
 import java.util.List;
+
+import lombok.Data;
 
 @Data
 public class NaverLandRegionResponse {

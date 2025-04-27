@@ -1,4 +1,4 @@
-package org.silsagusi.batch.scrape.naverland.service;
+package org.silsagusi.batch.naverland.application;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -10,10 +10,11 @@ import java.util.Set;
 
 import org.silsagusi.batch.infrastructure.dataProvider.ArticleDataProvider;
 import org.silsagusi.batch.infrastructure.dataProvider.ComplexDataProvider;
-import org.silsagusi.batch.scrape.naverland.client.NaverLandApiClient;
-import org.silsagusi.batch.scrape.naverland.service.dto.KakaoMapAddressResponse;
-import org.silsagusi.batch.scrape.naverland.service.dto.NaverLandArticleResponse;
-import org.silsagusi.batch.scrape.naverland.service.dto.NaverLandComplexResponse;
+import org.silsagusi.batch.infrastructure.external.AddressResponse;
+import org.silsagusi.batch.infrastructure.external.KakaoMapApiClient;
+import org.silsagusi.batch.naverland.infrastructure.NaverLandApiClient;
+import org.silsagusi.batch.naverland.infrastructure.dto.NaverLandArticleResponse;
+import org.silsagusi.batch.naverland.infrastructure.dto.NaverLandComplexResponse;
 import org.silsagusi.core.domain.article.Article;
 import org.silsagusi.core.domain.article.Complex;
 import org.silsagusi.core.domain.article.Region;
@@ -30,7 +31,7 @@ import lombok.extern.slf4j.Slf4j;
 public class NaverLandRequestService {
 
 	private final NaverLandApiClient naverLandApiClient;
-	private final KakaoMapAddressLookupService addressLookupService;
+	private final KakaoMapApiClient kakaoMapApiClient;
 	private final ArticleDataProvider articleDataProvider;
 	private final ComplexDataProvider complexDataProvider;
 
@@ -83,10 +84,9 @@ public class NaverLandRequestService {
 		Region region, Map<String, Complex> codeToComplex) {
 		return articleList.stream()
 			.map(article -> {
-				KakaoMapAddressResponse kakaoResp = addressLookupService.lookupAddress(article.getLat(),
-					article.getLng());
+				AddressResponse kakaoResp = kakaoMapApiClient.lookupAddress(article.getLat(), article.getLng());
 				Complex complex = codeToComplex.get(article.getCortarNo());
-				return ArticleDataProvider.createNaverLandArticle(article, kakaoResp, region, complex);
+				return articleDataProvider.createNaverLandArticle(article, kakaoResp, region, complex);
 			})
 			.toList();
 	}

@@ -1,4 +1,4 @@
-package org.silsagusi.batch.scrape.zigbang.service;
+package org.silsagusi.batch.zigbang.application;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,11 +9,11 @@ import java.util.Set;
 
 import org.silsagusi.batch.infrastructure.dataProvider.ArticleDataProvider;
 import org.silsagusi.batch.infrastructure.dataProvider.ComplexDataProvider;
-import org.silsagusi.batch.scrape.naverland.service.KakaoMapAddressLookupService;
-import org.silsagusi.batch.scrape.naverland.service.dto.KakaoMapAddressResponse;
-import org.silsagusi.batch.scrape.zigbang.client.ZigBangApiClient;
-import org.silsagusi.batch.scrape.zigbang.service.dto.ZigBangDanjiResponse;
-import org.silsagusi.batch.scrape.zigbang.service.dto.ZigBangItemCatalogResponse;
+import org.silsagusi.batch.infrastructure.external.AddressResponse;
+import org.silsagusi.batch.infrastructure.external.KakaoMapApiClient;
+import org.silsagusi.batch.zigbang.infrastructure.ZigBangApiClient;
+import org.silsagusi.batch.zigbang.infrastructure.dto.ZigBangDanjiResponse;
+import org.silsagusi.batch.zigbang.infrastructure.dto.ZigBangItemCatalogResponse;
 import org.silsagusi.core.domain.article.Article;
 import org.silsagusi.core.domain.article.Complex;
 import org.silsagusi.core.domain.article.Region;
@@ -24,13 +24,13 @@ import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class ZigBangRequestService {
 
 	private final ZigBangApiClient zigbangApiClient;
-	private final KakaoMapAddressLookupService addressLookupService;
+	private final KakaoMapApiClient kakaoMapApiClient;
 	private final ArticleDataProvider articleDataProvider;
 	private final ComplexDataProvider complexDataProvider;
 
@@ -59,11 +59,11 @@ public class ZigBangRequestService {
 		ZigBangItemCatalogResponse itemResp = zigbangApiClient.fetchItemCatalog(localCode);
 		for (ZigBangItemCatalogResponse.ZigBangItemCatalog item : itemResp.getList()) {
 			Complex complex = idToComplex.get(item.getAreaDanjiId());
-			KakaoMapAddressResponse kakaoResp = addressLookupService.lookupAddress(
+			AddressResponse kakaoResp = kakaoMapApiClient.lookupAddress(
 				danjiResp.getFiltered().get(0).getLat(), danjiResp.getFiltered().get(0).getLng()
 			);
 
-			Article article = ArticleDataProvider.createZigBangItemCatalog(item, danjiResp, kakaoResp, region, complex);
+			Article article = articleDataProvider.createZigBangItemCatalog(item, danjiResp, kakaoResp, region, complex);
 			articles.add(article);
 		}
 

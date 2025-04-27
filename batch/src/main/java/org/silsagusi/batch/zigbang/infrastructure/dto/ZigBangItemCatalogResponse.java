@@ -1,8 +1,8 @@
-package org.silsagusi.batch.scrape.zigbang.service.dto;
-
-import lombok.Data;
+package org.silsagusi.batch.zigbang.infrastructure.dto;
 
 import java.util.List;
+
+import lombok.Data;
 
 @Data
 public class ZigBangItemCatalogResponse {

@@ -1,28 +1,57 @@
-package org.silsagusi.batch.scrape.naverland.service;
+package org.silsagusi.batch.infrastructure.external;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.silsagusi.batch.scrape.naverland.client.KakaoMapApiClient;
-import org.silsagusi.batch.scrape.naverland.service.dto.KakaoMapAddressResponse;
-import org.silsagusi.batch.scrape.naverland.service.dto.KakaoMapCoord2AddressResponse;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.stereotype.Service;
+import lombok.Getter;
 
-@Service
-@RequiredArgsConstructor
-@Slf4j
-public class KakaoMapAddressLookupService implements KakaoMapAddressLookupInterface {
+@Getter
+public class AddressResponse {
+	private String lotAddress;
+	private String roadAddress;
+	private String city;
+	private String district;
+	private String region;
+	private String mainAddressNo;
+	private String subAddressNo;
+	private String roadName;
+	private String mainBuildingNo;
+	private String subBuildingNo;
+	private String buildingName;
+	private String zoneNo;
 
-	private final KakaoMapApiClient kakaoMapApiClient;
+	public AddressResponse(
+		String lotAddress,
+		String roadAddress,
+		String city,
+		String district,
+		String region,
+		String mainAddressNo,
+		String subAddressNo,
+		String roadName,
+		String mainBuildingNo,
+		String subBuildingNo,
+		String buildingName,
+		String zoneNo
+	) {
+		this.lotAddress = lotAddress;
+		this.roadAddress = roadAddress;
+		this.city = city;
+		this.district = district;
+		this.region = region;
+		this.mainAddressNo = mainAddressNo;
+		this.subAddressNo = subAddressNo;
+		this.roadName = roadName;
+		this.mainBuildingNo = mainBuildingNo;
+		this.subBuildingNo = subBuildingNo;
+		this.buildingName = buildingName;
+		this.zoneNo = zoneNo;
+	}
 
-	@Override
-	@Cacheable(value = "addressCache", key = "#latitude + ':' + #longitude")
-	public KakaoMapAddressResponse lookupAddress(double latitude, double longitude) throws NullPointerException {
-		KakaoMapCoord2AddressResponse response = kakaoMapApiClient.getAddr(longitude, latitude);
-
+	public static AddressResponse toResponse(
+		KakaoMapCoord2AddressResponse response
+	) {
 		if (response == null || response.getDocuments() == null || response.getDocuments().isEmpty()) {
 			return null;
 		}
+
 		KakaoMapCoord2AddressResponse.Document doc = response.getDocuments().get(0);
 
 		if (doc.getAddress() == null) {
@@ -36,7 +65,7 @@ public class KakaoMapAddressLookupService implements KakaoMapAddressLookupInterf
 			String subAddressNo = doc.getAddress().getSubAddressNo();
 
 			if (doc.getRoadAddress() == null) {
-				return new KakaoMapAddressResponse(
+				return new AddressResponse(
 					lotAddress, null,
 					city, district, town, mainAddressNo, subAddressNo,
 					null, null, null, null, null);
@@ -48,12 +77,11 @@ public class KakaoMapAddressLookupService implements KakaoMapAddressLookupInterf
 				String buildingName = doc.getRoadAddress().getBuildingName();
 				String zoneNo = doc.getRoadAddress().getZoneNo();
 
-				return new KakaoMapAddressResponse(
+				return new AddressResponse(
 					lotAddress, roadAddress,
 					city, district, town, mainAddressNo, subAddressNo,
 					roadName, mainBuildingNo, subBuildingNo, buildingName, zoneNo);
 			}
 		}
 	}
-
 }

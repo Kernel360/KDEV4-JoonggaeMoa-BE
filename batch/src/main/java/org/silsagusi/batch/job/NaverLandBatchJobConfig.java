@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.silsagusi.batch.infrastructure.repository.RegionRepository;
 import org.silsagusi.batch.infrastructure.repository.ScrapeStatusRepository;
-import org.silsagusi.batch.scrape.naverland.service.NaverLandRequestService;
+import org.silsagusi.batch.naverland.application.NaverLandRequestService;
 import org.silsagusi.core.domain.article.Region;
 import org.silsagusi.core.domain.article.ScrapeStatus;
 import org.springframework.batch.core.Job;

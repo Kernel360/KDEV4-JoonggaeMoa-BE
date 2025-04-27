@@ -1,11 +1,12 @@
-package org.silsagusi.batch.scrape.naverland.service.dto;
+package org.silsagusi.batch.infrastructure.external;
+
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import lombok.Data;
 
-import java.util.List;
+import lombok.Data;
 
 // 카카오 API 응답 DTO
 @Data
