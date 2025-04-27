@@ -1,7 +1,12 @@
 package org.silsagusi.batch.scrape.zigbang.service;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.silsagusi.batch.infrastructure.dataProvider.ArticleDataProvider;
 import org.silsagusi.batch.infrastructure.dataProvider.ComplexDataProvider;
 import org.silsagusi.batch.scrape.naverland.service.KakaoMapAddressLookupService;
@@ -16,7 +21,8 @@ import org.silsagusi.core.domain.article.ScrapeStatus;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
@@ -33,7 +39,7 @@ public class ZigBangRequestService {
 		List<Article> articles = new ArrayList<>();
 		Region region = scrapeStatus.getRegion();
 		String localCode = region.getCortarNo().substring(0, 8);
-		String geohash = region.getGeohash().substring(0,5);
+		String geohash = region.getGeohash().substring(0, 5);
 
 		List<Complex> allComplexes = new ArrayList<>();
 		Set<Integer> seenDanjiIds = new HashSet<>();
@@ -54,8 +60,8 @@ public class ZigBangRequestService {
 		for (ZigBangItemCatalogResponse.ZigBangItemCatalog item : itemResp.getList()) {
 			Complex complex = idToComplex.get(item.getAreaDanjiId());
 			KakaoMapAddressResponse kakaoResp = addressLookupService.lookupAddress(
-					danjiResp.getFiltered().get(0).getLat(), danjiResp.getFiltered().get(0).getLng()
-				);
+				danjiResp.getFiltered().get(0).getLat(), danjiResp.getFiltered().get(0).getLng()
+			);
 
 			Article article = ArticleDataProvider.createZigBangItemCatalog(item, danjiResp, kakaoResp, region, complex);
 			articles.add(article);
@@ -63,8 +69,8 @@ public class ZigBangRequestService {
 
 		complexDataProvider.saveComplexes(allComplexes);
 		articleDataProvider.saveArticles(articles);
-		scrapeStatus.updateCompleted(true);
+		scrapeStatus.completed();
 
-		Thread.sleep((long) (Math.random() * 1000));
+		Thread.sleep((long)(Math.random() * 1000));
 	}
 }

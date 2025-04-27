@@ -1,7 +1,13 @@
 package org.silsagusi.batch.scrape.naverland.service;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.silsagusi.batch.infrastructure.dataProvider.ArticleDataProvider;
 import org.silsagusi.batch.infrastructure.dataProvider.ComplexDataProvider;
 import org.silsagusi.batch.scrape.naverland.client.NaverLandApiClient;
@@ -15,8 +21,8 @@ import org.silsagusi.core.domain.article.ScrapeStatus;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.util.*;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
@@ -65,11 +71,11 @@ public class NaverLandRequestService {
 			scrapeStatus.updatePage(page, LocalDateTime.now(), "네이버부동산");
 			hasMore = artResp.isMore();
 			page++;
-			Thread.sleep((long) (3000 + Math.random() * 4000));
+			Thread.sleep((long)(3000 + Math.random() * 4000));
 		} while (hasMore);
 		articleDataProvider.saveArticles(allArticles);
 		complexDataProvider.saveComplexes(allComplexes);
-		scrapeStatus.updateCompleted(true);
+		scrapeStatus.completed();
 	}
 
 	private List<Article> mapNaverLandToArticles(
@@ -77,7 +83,8 @@ public class NaverLandRequestService {
 		Region region, Map<String, Complex> codeToComplex) {
 		return articleList.stream()
 			.map(article -> {
-				KakaoMapAddressResponse kakaoResp = addressLookupService.lookupAddress(article.getLat(), article.getLng());
+				KakaoMapAddressResponse kakaoResp = addressLookupService.lookupAddress(article.getLat(),
+					article.getLng());
 				Complex complex = codeToComplex.get(article.getCortarNo());
 				return ArticleDataProvider.createNaverLandArticle(article, kakaoResp, region, complex);
 			})

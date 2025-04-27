@@ -1,6 +1,7 @@
 package org.silsagusi.batch.infrastructure.dataProvider;
 
-import lombok.RequiredArgsConstructor;
+import java.util.List;
+
 import org.silsagusi.batch.infrastructure.repository.ComplexRepository;
 import org.silsagusi.batch.scrape.naverland.service.dto.NaverLandComplexResponse;
 import org.silsagusi.batch.scrape.zigbang.service.dto.ZigBangDanjiResponse;
@@ -10,7 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -25,7 +26,7 @@ public class ComplexDataProvider {
 
 	public static Complex createNaverLandComplex(
 		NaverLandComplexResponse.NaverLandComplex dto, Region region) {
-		return new Complex(
+		return Complex.create(
 			dto.getHscpNo(),                   // complexCode
 			dto.getHscpNm(),                   // complexName
 			dto.getHscpTypeCd(),               // buildingTypeCode
@@ -52,7 +53,7 @@ public class ComplexDataProvider {
 
 	public static Complex createZigBangDanji(
 		ZigBangDanjiResponse.ZigBangDanji dto, Region region) {
-		return new Complex(
+		return Complex.create(
 			null,       // complexCode
 			dto.getName(),          // complexName
 			null,                   // buildingTypeCode
@@ -69,9 +70,9 @@ public class ComplexDataProvider {
 			null,                   // sizeMin
 			null,                   // sizeMax
 			(dto.getPrice() != null && dto.getPrice().getSales() != null && dto.getPrice().getSales().getMin() != null
-			    ? dto.getPrice().getSales().getMin() : 0), // priceSaleInitialMin
+				? dto.getPrice().getSales().getMin() : 0), // priceSaleInitialMin
 			(dto.getPrice() != null && dto.getPrice().getSales() != null && dto.getPrice().getSales().getMax() != null
-			    ? dto.getPrice().getSales().getMax() : 0), // priceSaleInitialMax
+				? dto.getPrice().getSales().getMax() : 0), // priceSaleInitialMax
 			Boolean.FALSE,          // tourExists
 			Boolean.FALSE,          // isSeismic
 			null,                   // countElevator

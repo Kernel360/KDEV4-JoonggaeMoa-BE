@@ -1,6 +1,7 @@
-package org.silsagusi.batch.scrape.naverland.batch;
+package org.silsagusi.batch.job;
 
-import lombok.extern.slf4j.Slf4j;
+import java.util.List;
+
 import org.silsagusi.batch.infrastructure.repository.RegionRepository;
 import org.silsagusi.batch.infrastructure.repository.ScrapeStatusRepository;
 import org.silsagusi.batch.scrape.naverland.service.NaverLandRequestService;
@@ -14,15 +15,16 @@ import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.repeat.RepeatStatus;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import java.util.List;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Configuration
+@RequiredArgsConstructor
 public class NaverLandBatchJobConfig {
 
 	private static final String JOB_NAME = "naverLandArticleJob";
@@ -33,22 +35,6 @@ public class NaverLandBatchJobConfig {
 	private final ScrapeStatusRepository scrapeStatusRepository;
 	private final NaverLandRequestService naverLandRequestService;
 	private final RegionRepository regionRepository;
-
-	public NaverLandBatchJobConfig(
-		JobRegistry jobRegistry,
-		JobRepository jobRepository,
-		@Qualifier("metaTransactionManager")
-		PlatformTransactionManager transactionManager,
-		ScrapeStatusRepository scrapeStatusRepository,
-		NaverLandRequestService naverLandRequestService,
-		RegionRepository regionRepository) {
-		this.jobRegistry = jobRegistry;
-		this.jobRepository = jobRepository;
-		this.transactionManager = transactionManager;
-		this.scrapeStatusRepository = scrapeStatusRepository;
-		this.naverLandRequestService = naverLandRequestService;
-		this.regionRepository = regionRepository;
-	}
 
 	@Bean
 	public Job naverLandArticleJob(

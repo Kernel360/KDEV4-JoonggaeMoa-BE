@@ -1,6 +1,7 @@
-package org.silsagusi.batch.scrape.zigbang.batch;
+package org.silsagusi.batch.job;
 
-import lombok.extern.slf4j.Slf4j;
+import java.util.List;
+
 import org.silsagusi.batch.infrastructure.repository.RegionRepository;
 import org.silsagusi.batch.infrastructure.repository.ScrapeStatusRepository;
 import org.silsagusi.batch.scrape.zigbang.service.ZigBangRequestService;
@@ -14,15 +15,16 @@ import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.repeat.RepeatStatus;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import java.util.List;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Configuration
+@RequiredArgsConstructor
 public class ZigBangBatchJobConfig {
 
 	private static final String JOB_NAME = "zigBangItemCatalogJob";
@@ -33,22 +35,6 @@ public class ZigBangBatchJobConfig {
 	private final ScrapeStatusRepository scrapeStatusRepository;
 	private final ZigBangRequestService zigBangRequestService;
 	private final RegionRepository regionRepository;
-
-	public ZigBangBatchJobConfig(
-		JobRegistry jobRegistry,
-		JobRepository jobRepository,
-		@Qualifier("metaTransactionManager")
-		PlatformTransactionManager transactionManager,
-		ScrapeStatusRepository scrapeStatusRepository,
-		ZigBangRequestService zigBangRequestService,
-		RegionRepository regionRepository) {
-		this.jobRegistry = jobRegistry;
-		this.jobRepository = jobRepository;
-		this.transactionManager = transactionManager;
-		this.scrapeStatusRepository = scrapeStatusRepository;
-		this.zigBangRequestService = zigBangRequestService;
-		this.regionRepository = regionRepository;
-	}
 
 	@Bean
 	public Job zigBangItemCatalogJob(

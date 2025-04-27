@@ -1,6 +1,8 @@
 package org.silsagusi.batch.infrastructure.dataProvider;
 
-import lombok.RequiredArgsConstructor;
+import java.util.List;
+import java.util.Objects;
+
 import org.silsagusi.batch.infrastructure.repository.ArticleRepository;
 import org.silsagusi.batch.scrape.naverland.service.dto.KakaoMapAddressResponse;
 import org.silsagusi.batch.scrape.naverland.service.dto.NaverLandArticleResponse;
@@ -13,8 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Objects;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -33,7 +34,7 @@ public class ArticleDataProvider {
 		Region region,
 		Complex complex
 	) {
-		return new Article(
+		return Article.create(
 			naverLandArticle.getAtclNo(),
 			naverLandArticle.getCortarNo(),
 			naverLandArticle.getAtclNm(),
@@ -47,7 +48,8 @@ public class ArticleDataProvider {
 			naverLandArticle.getSpc2(),
 			naverLandArticle.getDirection(),
 			naverLandArticle.getAtclCfmYmd(),
-			naverLandArticle.getRepImgUrl() == null ? null : "https://landthumb-phinf.pstatic.net" + naverLandArticle.getRepImgUrl(),
+			naverLandArticle.getRepImgUrl() == null ? null :
+				"https://landthumb-phinf.pstatic.net" + naverLandArticle.getRepImgUrl(),
 			naverLandArticle.getLat(),
 			naverLandArticle.getLng(),
 			naverLandArticle.getAtclFetrDesc(),
@@ -72,7 +74,7 @@ public class ArticleDataProvider {
 		Region region, Complex complex
 
 	) {
-		return new Article(
+		return Article.create(
 			String.valueOf(item.getAreaDanjiId()),
 			null,
 			item.getAreaDanjiName() + " " + item.getDong(),
@@ -86,7 +88,7 @@ public class ArticleDataProvider {
 			String.valueOf(item.getSizeM2()),
 			null,
 			danji.getFiltered().get(0).get사용승인일(),
-			item.getThumbnailUrl() +"?w=1000",
+			item.getThumbnailUrl() + "?w=1000",
 			danji.getFiltered().get(0).getLat(),
 			danji.getFiltered().get(0).getLng(),
 			item.getItemTitle(),
@@ -132,6 +134,7 @@ public class ArticleDataProvider {
 	private static Boolean mapIsChecked(String itemType) {
 		if (Objects.equals(itemType, "partner")) {
 			return true; // 직방 제휴 매물
-		} else return Objects.equals(itemType, "self_ad"); // 개인 매물, 유료 광고 적용됨
+		} else
+			return Objects.equals(itemType, "self_ad"); // 개인 매물, 유료 광고 적용됨
 	}
 }

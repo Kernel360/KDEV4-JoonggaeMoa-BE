@@ -1,4 +1,6 @@
-package org.silsagusi.batch.scrape.naverland.batch;
+package org.silsagusi.batch.job;
+
+import java.time.LocalDateTime;
 
 import org.silsagusi.batch.infrastructure.repository.ScrapeStatusRepository;
 import org.springframework.batch.core.Job;
@@ -9,39 +11,27 @@ import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.repeat.RepeatStatus;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import java.time.LocalDateTime;
+import lombok.RequiredArgsConstructor;
 
 @Configuration
-public class NaverLandScrapeResetJobConfig {
+@RequiredArgsConstructor
+public class ZigBangScrapeResetJobConfig {
 
-	private static final String JOB_NAME = "naverLandScrapeStatusResetJob";
+	private static final String JOB_NAME = "zigBangScrapeStatusResetJob";
 
 	private final JobRegistry jobRegistry;
 	private final JobRepository jobRepository;
 	private final PlatformTransactionManager transactionManager;
 	private final ScrapeStatusRepository scrapeStatusRepository;
 
-	public NaverLandScrapeResetJobConfig(
-		JobRegistry jobRegistry,
-		JobRepository jobRepository,
-		@Qualifier("metaTransactionManager")
-		PlatformTransactionManager transactionManager,
-		ScrapeStatusRepository scrapeStatusRepository) {
-		this.jobRegistry = jobRegistry;
-		this.jobRepository = jobRepository;
-		this.transactionManager = transactionManager;
-		this.scrapeStatusRepository = scrapeStatusRepository;
-	}
-
 	@Bean
-	public Job naverLandScrapeStatusResetJob(Step naverLandScrapeStatusResetStep) {
+	public Job zigBangScrapeStatusResetJob(Step zigBangScrapeStatusResetStep) {
 		Job job = new JobBuilder(JOB_NAME, jobRepository)
-			.start(naverLandScrapeStatusResetStep)
+			.start(zigBangScrapeStatusResetStep)
 			.build();
 
 		try {
@@ -54,7 +44,7 @@ public class NaverLandScrapeResetJobConfig {
 	}
 
 	@Bean
-	public Step naverLandScrapeStatusResetStep() {
+	public Step zigBangScrapeStatusResetStep() {
 		return new StepBuilder(JOB_NAME + "Step", jobRepository)
 			.tasklet(((contribution, chunkContext) -> {
 				LocalDateTime cutoff = LocalDateTime.now().minusDays(1);

@@ -1,11 +1,11 @@
-package org.silsagusi.batch.scrape.zigbang.batch;
+package org.silsagusi.batch.job;
 
-import lombok.RequiredArgsConstructor;
+import java.time.LocalDateTime;
+
 import org.silsagusi.batch.infrastructure.repository.ScrapeStatusRepository;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.JobRegistry;
-import org.springframework.batch.core.configuration.annotation.JobScope;
 import org.springframework.batch.core.configuration.support.ReferenceJobFactory;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
@@ -15,13 +15,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import java.time.LocalDateTime;
+import lombok.RequiredArgsConstructor;
 
 @Configuration
 @RequiredArgsConstructor
-public class ZigBangScrapeResetJobConfig {
+public class NaverLandScrapeResetJobConfig {
 
-	private static final String JOB_NAME = "zigBangScrapeStatusResetJob";
+	private static final String JOB_NAME = "naverLandScrapeStatusResetJob";
 
 	private final JobRegistry jobRegistry;
 	private final JobRepository jobRepository;
@@ -29,9 +29,9 @@ public class ZigBangScrapeResetJobConfig {
 	private final ScrapeStatusRepository scrapeStatusRepository;
 
 	@Bean
-	public Job zigBangScrapeStatusResetJob(Step zigBangScrapeStatusResetStep) {
+	public Job naverLandScrapeStatusResetJob(Step naverLandScrapeStatusResetStep) {
 		Job job = new JobBuilder(JOB_NAME, jobRepository)
-			.start(zigBangScrapeStatusResetStep)
+			.start(naverLandScrapeStatusResetStep)
 			.build();
 
 		try {
@@ -44,7 +44,7 @@ public class ZigBangScrapeResetJobConfig {
 	}
 
 	@Bean
-	public Step zigBangScrapeStatusResetStep() {
+	public Step naverLandScrapeStatusResetStep() {
 		return new StepBuilder(JOB_NAME + "Step", jobRepository)
 			.tasklet(((contribution, chunkContext) -> {
 				LocalDateTime cutoff = LocalDateTime.now().minusDays(1);
