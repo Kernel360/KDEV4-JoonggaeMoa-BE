@@ -72,13 +72,13 @@ public class ConsultationController {
 		return ResponseEntity.ok(ApiResponse.ok(consultationResponseList));
 	}
 
-	@GetMapping("/api/consultations/customers/{customerId}")
+	@GetMapping("/api/consultations/{consultationId}/customers")
 	public ResponseEntity<ApiResponse<ConsultationHistoryDto>> getConsultationsByCustomer(
-		@PathVariable("customerId") Long customerId,
+		@PathVariable("consultationId") Long consultationId,
 		Pageable pageable
 	) {
 		ConsultationHistoryDto consultationHistoryResponse = consultationService.getConsultationsByCustomer(
-			customerId,
+			consultationId,
 			pageable);
 		return ResponseEntity.ok(ApiResponse.ok(consultationHistoryResponse));
 	}
