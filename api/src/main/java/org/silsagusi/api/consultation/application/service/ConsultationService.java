@@ -91,7 +91,8 @@ public class ConsultationService {
 
 	@Transactional(readOnly = true)
 	public ConsultationHistoryDto getConsultationsByCustomer(Long consultationId, Pageable pageable) {
-		Customer customer = customerDataProvider.getCustomer(consultationId);
+		Consultation consultation = consultationDataProvider.getConsultation(consultationId);
+		Customer customer = consultation.getCustomer();
 		Page<Consultation> consultations = consultationDataProvider.getConsultationsByCustomer(customer,
 			pageable);
 
