@@ -19,9 +19,9 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.*;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class NaverLandRequestService {
 
 	private final NaverLandApiClient naverLandApiClient;
@@ -35,22 +35,12 @@ public class NaverLandRequestService {
 		int page = scrapeStatus.getLastScrapedPage();
 		boolean hasMore;
 
-		List<Article> allArticles = new ArrayList<>();
-		List<Complex> allComplexes = new ArrayList<>();
 		Set<String> seenComplexNos = new HashSet<>();
 
 		Map<String, Complex> codeToComplex = new HashMap<>();
 
 		try {
 			do {
-				// 매물 스크래핑
-				NaverLandArticleResponse artResp = naverLandApiClient.fetchArticleList(
-					String.valueOf(page), region.getCenterLat().toString(),
-					region.getCenterLon().toString(), region.getCortarNo());
-				List<Article> pageArticles = mapNaverLandToArticles(artResp.getBody(), region, codeToComplex);
-				allArticles.addAll(pageArticles);
-				Thread.sleep((long) (2000 + Math.random() * 3000)); // 2~5초 랜덤 대기
-
 				// 단지 스크래핑
 				NaverLandComplexResponse compResp = naverLandApiClient.fetchComplexList(
 					String.valueOf(page), region.getCenterLat().toString(),
@@ -59,6 +49,7 @@ public class NaverLandRequestService {
 				Thread.sleep((long) (2000 + Math.random() * 3000)); // 2~5초 랜덤 대기
 
 				// 중복 없는 단지만 변환 후 저장 리스트에 추가
+				List<Complex> allComplexes = new ArrayList<>();
 				for (NaverLandComplexResponse.NaverLandComplex dto : compResp.getResult()) {
 					if (seenComplexNos.add(dto.getHscpNo())) {
 						Complex domain = complexDataProvider.createNaverLandComplex(dto, region);
@@ -66,15 +57,22 @@ public class NaverLandRequestService {
 						codeToComplex.put(dto.getHscpNo(), domain);
 					}
 				}
+				complexDataProvider.saveComplexes(allComplexes);
 
-				scrapeStatus.updatePage(page, LocalDateTime.now(), "네이버부동산");
-				hasMore = artResp.isMore();
+				// 매물 스크래핑
+				NaverLandArticleResponse artResp = naverLandApiClient.fetchArticleList(
+					String.valueOf(page), region.getCenterLat().toString(),
+					region.getCenterLon().toString(), region.getCortarNo());
+				List<Article> pageArticles = mapNaverLandToArticles(artResp.getBody(), region, codeToComplex);
+				articleDataProvider.saveArticles(pageArticles);
+				Thread.sleep((long) (2000 + Math.random() * 3000)); // 2~5초 랜덤 대기
+
+				scrapeStatus.updatePage(page, LocalDateTime.now(), "네이버 부동산");
+				hasMore = artResp.isMore() && page < 20;
 				page++;
 				Thread.sleep((long) (10000 + Math.random() * 5000)); // 10~15초 랜덤 대기
 			} while (hasMore);
 
-			articleDataProvider.saveArticles(allArticles);
-			complexDataProvider.saveComplexes(allComplexes);
 			scrapeStatus.completed();
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
@@ -94,7 +92,7 @@ public class NaverLandRequestService {
 		Region region, Map<String, Complex> codeToComplex) {
 		return articleList.stream()
 			.map(article -> {
-				AddressResponse kakaoResp = kakaoMapApiClient.lookupAddress(article.getLat(), article.getLng());
+				AddressResponse kakaoResp = kakaoMapApiClient.lookupAddress(article.getLng(), article.getLat());
 				Complex complex = codeToComplex.get(article.getCortarNo());
 				return articleDataProvider.createNaverLandArticle(article, kakaoResp, region, complex);
 			})

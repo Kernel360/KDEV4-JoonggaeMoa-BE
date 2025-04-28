@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.time.LocalDateTime;
 
 import org.silsagusi.batch.infrastructure.dataProvider.ArticleDataProvider;
 import org.silsagusi.batch.infrastructure.dataProvider.ComplexDataProvider;
@@ -36,10 +37,9 @@ public class ZigBangRequestService {
 
 	@Async("scrapeExecutor")
 	public void scrapZigBang(ScrapeStatus scrapeStatus) throws InterruptedException {
-		List<Article> articles = new ArrayList<>();
 		Region region = scrapeStatus.getRegion();
-		String localCode = region.getCortarNo().substring(0, 8);
 		String geohash = region.getGeohash().substring(0, 5);
+		String localCode = region.getCortarNo().substring(0, 8);
 
 		List<Complex> allComplexes = new ArrayList<>();
 		Set<Integer> seenDanjiIds = new HashSet<>();
@@ -54,36 +54,24 @@ public class ZigBangRequestService {
 				idToComplex.put(dto.getId(), danji);
 			}
 		}
+		complexDataProvider.saveComplexes(allComplexes);
 
 		// 매물 스크래핑
 		ZigBangItemCatalogResponse itemResp = zigbangApiClient.fetchItemCatalog(localCode);
+		AddressResponse kakaoResp = kakaoMapApiClient.lookupAddress(
+			danjiResp.getFiltered().get(0).getLng(),
+			danjiResp.getFiltered().get(0).getLat()
+		);
+
 		for (ZigBangItemCatalogResponse.ZigBangItemCatalog item : itemResp.getList()) {
 			Complex complex = idToComplex.get(item.getAreaDanjiId());
-			AddressResponse kakaoResp = null;
-			int retryCount = 0;
-			// 최대 3회 주소 조회 재시도
-			while (retryCount < 3) {
-				kakaoResp = kakaoMapApiClient.lookupAddress(
-					danjiResp.getFiltered().get(0).getLat(), danjiResp.getFiltered().get(0).getLng()
-				);
-				if (kakaoResp != null) {
-					break;
-				}
-				retryCount++;
-				Thread.sleep(500);
-			}
-			if (kakaoResp == null) {
-				continue;
-			}
-			Article article = articleDataProvider.createZigBangItemCatalog(item, danjiResp, kakaoResp, region, complex);
-			articles.add(article);
-			Thread.sleep((long)(Math.random() * 1000)); // 0~1초 랜덤 대기
+			Article article = articleDataProvider.createZigBangItemCatalog(
+				item, danjiResp, kakaoResp, region, complex);
+			articleDataProvider.saveArticles(List.of(article));
 		}
-
-		complexDataProvider.saveComplexes(allComplexes);
-		articleDataProvider.saveArticles(articles);
+		scrapeStatus.updatePage(itemResp.getCount(), LocalDateTime.now(), "직방");
 		scrapeStatus.completed();
 
-		Thread.sleep((long)(Math.random() * 1000));
+		Thread.sleep((long)(Math.random() * 10000));
 	}
 }

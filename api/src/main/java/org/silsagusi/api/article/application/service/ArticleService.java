@@ -30,12 +30,13 @@ public class ArticleService {
 		List<String> realEstateType,
 		List<String> tradeType,
 		String minPrice,
-		String maxPrice
+		String maxPrice,
+		String sortBy,
+		String direction
 	) {
-		Specification<Article> spec = articleDataProvider.getArticleSpec(realEstateType, tradeType, minPrice, maxPrice);
-
+		Specification<Article> spec = articleDataProvider.getArticleSpec(
+			realEstateType, tradeType, minPrice, maxPrice);
 		Page<Article> articlePage = articleDataProvider.getArticlePage(spec, pageable);
-
 		return articlePage.map(ArticleResponse::toResponse);
 	}
 
