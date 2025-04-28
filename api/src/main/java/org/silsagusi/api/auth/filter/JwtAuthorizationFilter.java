@@ -64,7 +64,12 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 		return StringUtils.startsWithAny(path,
 			"/api/agent/login",
 			"/api/agent/signup",
-			"/api/refresh-token"
+			"/api/refresh-token",
+			"/api/customers/**",
+			"/swagger-ui/**",
+			"/v3/api-docs/**",
+			"/api/notification/subscribe",
+			"/api/inquiries/**"
 		);
 	}
 }
