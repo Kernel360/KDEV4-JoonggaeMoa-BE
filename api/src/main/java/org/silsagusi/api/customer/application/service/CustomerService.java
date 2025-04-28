@@ -69,8 +69,7 @@ public class CustomerService {
 		Customer customer = customerDataProvider.getCustomer(customerId);
 		customerValidator.validateAgentAccess(agentId, customer);
 
-		UpdateCustomerCommand updateCustomerCommand = customerMapper.toUpdateCustomerCommand(customer,
-			customerRequestDto);
+		UpdateCustomerCommand updateCustomerCommand = CustomerDto.toCommand(customer, customerRequestDto);
 
 		customerDataProvider.updateCustomer(updateCustomerCommand);
 	}
@@ -80,7 +79,7 @@ public class CustomerService {
 		Customer customer = customerDataProvider.getCustomer(customerId);
 		customerValidator.validateAgentAccess(agentId, customer);
 		List<CustomerHistoryInfo> customerHistoryInfos = customerDataProvider.getCustomerHistoryInfo(customer);
-		return CustomerHistoryResponse.of(customer, customerHistoryInfos);
+		return CustomerHistoryResponse.toResponse(customer, customerHistoryInfos);
 	}
 
 	@Transactional(readOnly = true)
@@ -88,7 +87,7 @@ public class CustomerService {
 		Agent agent = agentDataProvider.getAgentById(agentId);
 
 		Page<Customer> customerPage = customerDataProvider.getAllByAgent(agent, pageable);
-		return customerPage.map(customerMapper::toCustomerResponse);
+		return customerPage.map(CustomerDto::toResponse);
 	}
 
 	@Transactional
@@ -101,6 +100,6 @@ public class CustomerService {
 
 		CustomerSummaryInfo customerSummaryInfo = customerDataProvider.getCustomerSummary(agentId);
 
-		return customerMapper.toCustomerSummaryResponse(customerSummaryInfo);
+		return CustomerSummaryResponse.toResponse(customerSummaryInfo);
 	}
 }

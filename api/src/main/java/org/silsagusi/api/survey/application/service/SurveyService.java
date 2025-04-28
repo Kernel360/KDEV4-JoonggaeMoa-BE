@@ -1,5 +1,6 @@
 package org.silsagusi.api.survey.application.service;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.silsagusi.api.agent.infrastructure.dataprovider.AgentDataProvider;
@@ -81,13 +82,13 @@ public class SurveyService {
 	public Page<SurveyDto.Response> getAllSurveys(Long agentId, Pageable pageable) {
 		Agent agent = agentDataProvider.getAgentById(agentId);
 		Page<Survey> surveyPage = surveyDataProvider.getSurveyPageByAgent(agent, pageable);
-		return surveyPage.map(surveyMapper::toSurveyResponse);
+		return surveyPage.map(SurveyDto::toResponse);
 	}
 
 	@Transactional(readOnly = true)
 	public SurveyDto.Response findById(String surveyId) {
 		Survey survey = surveyDataProvider.getSurvey(surveyId);
-		return surveyMapper.toSurveyResponse(survey);
+		return SurveyDto.toResponse(survey);
 	}
 
 	@Transactional
@@ -100,14 +101,22 @@ public class SurveyService {
 
 		Customer customer = customerDataProvider.getCustomerByPhone(answerRequest.getPhone());
 		if (customer == null) {
-			Customer newCustomer = customerMapper.answerDtoToCustomer(answerRequest, agent);
-			customerDataProvider.createCustomer(newCustomer);
+			customer = customerMapper.toEntity(answerRequest, agent);
+			customerDataProvider.createCustomer(customer);
 		}
 
 		if (Boolean.TRUE.equals(answerRequest.getApplyConsultation())) {
 			Consultation consultation = consultationMapper.answerRequestToEntity(customer,
 				answerRequest.getConsultAt());
 			consultationDataProvider.createConsultation(consultation);
+
+			//상담 신청 시 알림
+			notificationDataProvider.notify(
+				agent.getId(),
+				NotificationType.CONSULTATION,
+				customer.getName() + "님이 [" + consultation.getDate()
+					.format(DateTimeFormatter.ofPattern("YYYY-MM-dd HH:mm")) + "] 시에 상담을 신청했습니다."
+			);
 		}
 
 		// 응답 추가
@@ -135,6 +144,6 @@ public class SurveyService {
 	public Page<AnswerDto.Response> getAllAnswers(Long agentId, Pageable pageable) {
 		Page<Answer> answerPage = surveyDataProvider.getAnswerPage(agentId, pageable);
 
-		return answerPage.map(surveyMapper::toAnswerResponse);
+		return answerPage.map(AnswerDto::toResponse);
 	}
 }

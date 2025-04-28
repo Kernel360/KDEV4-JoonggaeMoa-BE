@@ -1,7 +1,6 @@
 package org.silsagusi.api.article.controller;
 
-import java.util.List;
-
+import lombok.RequiredArgsConstructor;
 import org.silsagusi.api.article.application.dto.ArticleResponse;
 import org.silsagusi.api.article.application.dto.RealEstateTypeSummaryResponse;
 import org.silsagusi.api.article.application.dto.TradeTypeSummaryResponse;
@@ -14,7 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import lombok.RequiredArgsConstructor;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -38,7 +37,7 @@ public class ArticleController {
 	}
 
 	@GetMapping("/api/dashboard/real-estate-type-summary")
-	public ResponseEntity<ApiResponse<List<RealEstateTypeSummaryResponse>>> getRealEstateTypeSummary(
+	public ResponseEntity<ApiResponse<RealEstateTypeSummaryResponse>> getRealEstateTypeSummary(
 		@RequestParam String period                            // period = [daily, weekly, monthly]
 	) {
 		return ResponseEntity.ok(ApiResponse.ok(
@@ -47,7 +46,7 @@ public class ArticleController {
 	}
 
 	@GetMapping("/api/dashboard/trade-type-summary")
-	public ResponseEntity<ApiResponse<List<TradeTypeSummaryResponse>>> getTradeTypeSummary(
+	public ResponseEntity<ApiResponse<TradeTypeSummaryResponse>> getTradeTypeSummary(
 		@RequestParam String period
 	) {
 		return ResponseEntity.ok(ApiResponse.ok(

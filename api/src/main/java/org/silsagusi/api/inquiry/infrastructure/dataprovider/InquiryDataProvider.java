@@ -25,8 +25,7 @@ public class InquiryDataProvider {
 	}
 
 	public void updateInquiry(Inquiry inquiry, UpdateInquiryCommand updateInquiryCommand) {
-		inquiry.updateInquiry(updateInquiryCommand.getName(), updateInquiryCommand.getTitle(),
-			updateInquiryCommand.getContent());
+		inquiry.updateInquiry(updateInquiryCommand.getTitle(), updateInquiryCommand.getContent());
 	}
 
 	public void deleteInquiry(Inquiry inquiry) {

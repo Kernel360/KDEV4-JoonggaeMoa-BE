@@ -3,7 +3,6 @@ package org.silsagusi.api.notification.application.service;
 import java.util.List;
 
 import org.silsagusi.api.notification.application.dto.NotificationDto;
-import org.silsagusi.api.notification.application.mapper.NotificationMapper;
 import org.silsagusi.api.notification.infrastructure.dataprovider.NotificationDataProvider;
 import org.silsagusi.core.domain.notification.entity.Notification;
 import org.silsagusi.core.domain.notification.entity.NotificationType;
@@ -18,7 +17,6 @@ import lombok.RequiredArgsConstructor;
 public class NotificationService {
 
 	private final NotificationDataProvider notificationDataProvider;
-	private final NotificationMapper notificationMapper;
 
 	@Transactional
 	public SseEmitter subscribe(Long agentId) {
@@ -34,7 +32,7 @@ public class NotificationService {
 	@Transactional(readOnly = true)
 	public List<NotificationDto.Response> getNotification(Long agentId) {
 		List<Notification> notificationList = notificationDataProvider.getAllByAgent(agentId);
-		return notificationList.stream().map(notificationMapper::toNotificationResponse).toList();
+		return notificationList.stream().map(NotificationDto::toResponse).toList();
 	}
 
 	@Transactional

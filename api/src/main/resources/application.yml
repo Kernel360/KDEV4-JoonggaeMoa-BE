@@ -67,6 +67,10 @@ springdoc:
   swagger-ui:
     path: /swagger-ui
 
+gemini:
+  api:
+    key: ${GEMINI_API_KEY}
+
 
 ---
 spring:
