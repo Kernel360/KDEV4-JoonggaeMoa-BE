@@ -1,5 +1,6 @@
 package org.silsagusi.api.inquiry.controller;
 
+import org.silsagusi.api.inquiry.application.dto.ChatDto;
 import org.silsagusi.api.inquiry.application.dto.InquiryAnswerDto;
 import org.silsagusi.api.inquiry.application.dto.InquiryDto;
 import org.silsagusi.api.inquiry.application.service.InquiryService;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import reactor.core.publisher.Mono;
 
 @RequiredArgsConstructor
 @RestController
@@ -83,6 +85,13 @@ public class InquiryController {
 	) {
 		inquiryService.createConsultation(inquiryConsultationRequest);
 		return ResponseEntity.ok(ApiResponse.ok());
+	}
+
+	@PostMapping("/api/inquiries/chat")
+	public Mono<ApiResponse<ChatDto.Response>> chat(
+		@RequestBody ChatDto.Request chatRequest
+	) {
+		return inquiryService.chat(chatRequest).map(ApiResponse::ok);
 	}
 
 }

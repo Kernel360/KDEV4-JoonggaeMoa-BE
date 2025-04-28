@@ -8,12 +8,14 @@ import org.silsagusi.api.consultation.infrastructure.dataprovider.ConsultationDa
 import org.silsagusi.api.customer.application.dto.CustomerDto;
 import org.silsagusi.api.customer.application.mapper.CustomerMapper;
 import org.silsagusi.api.customer.infrastructure.dataprovider.CustomerDataProvider;
+import org.silsagusi.api.inquiry.application.dto.ChatDto;
 import org.silsagusi.api.inquiry.application.dto.InquiryAnswerDto;
 import org.silsagusi.api.inquiry.application.dto.InquiryDto;
 import org.silsagusi.api.inquiry.application.mapper.InquiryAnswerMapper;
 import org.silsagusi.api.inquiry.application.mapper.InquiryMapper;
 import org.silsagusi.api.inquiry.application.validator.InquiryValidator;
 import org.silsagusi.api.inquiry.infrastructure.dataprovider.InquiryDataProvider;
+import org.silsagusi.api.inquiry.infrastructure.external.GeminiApiClient;
 import org.silsagusi.api.notification.infrastructure.dataprovider.NotificationDataProvider;
 import org.silsagusi.core.domain.agent.Agent;
 import org.silsagusi.core.domain.consultation.entity.Consultation;
@@ -28,6 +30,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
+import reactor.core.publisher.Mono;
 
 @RequiredArgsConstructor
 @Service
@@ -43,6 +46,7 @@ public class InquiryService {
 	private final ConsultationMapper consultationMapper;
 	private final ConsultationDataProvider consultationDataProvider;
 	private final NotificationDataProvider notificationDataProvider;
+	private final GeminiApiClient geminiApiClient;
 
 	@Transactional
 	public void createInquiry(InquiryDto.CreateRequest inquiryCreateRequest) {
@@ -113,5 +117,9 @@ public class InquiryService {
 				+ "] 시에 상담을 신청했습니다."
 		);
 
+	}
+
+	public Mono<ChatDto.Response> chat(ChatDto.Request chatRequest) {
+		return geminiApiClient.askGemini(chatRequest);
 	}
 }
