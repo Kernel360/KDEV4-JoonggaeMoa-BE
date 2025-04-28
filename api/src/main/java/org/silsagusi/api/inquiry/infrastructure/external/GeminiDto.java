@@ -1,4 +1,4 @@
-package org.silsagusi.api.inquiry.application.dto;
+package org.silsagusi.api.inquiry.infrastructure.external;
 
 import java.util.List;
 

@@ -1,10 +1,9 @@
-package org.silsagusi.api.inquiry.application.service;
+package org.silsagusi.api.inquiry.infrastructure.external;
 
 import java.util.List;
 
 import org.apache.http.HttpHeaders;
 import org.silsagusi.api.inquiry.application.dto.ChatDto;
-import org.silsagusi.api.inquiry.application.dto.GeminiDto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -17,13 +16,10 @@ import reactor.core.publisher.Mono;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class GeminiService {
+public class GeminiApiClient {
 
-	private final WebClient webClient = WebClient.builder()
-		.baseUrl("https://generativelanguage.googleapis.com")
-		.build();
-
-	private final String prefix = "대한민국의 공인중개사 역할로 다음 질문에 대해 답변을 한국어 2문장 이내(100자 이내)로 요약해서 설명해줘.\n질문: ";
+	private final WebClient geminiWebClient;
+	private final String prefix = "대한민국의공인중개사 역할로 다음 질문에 대해 답변을 한국어 2문장 이내(100자 이내)로 요약해서 설명해줘.\n질문: ";
 
 	@Value("${gemini.api.key}")
 	private String apiKey;
@@ -42,7 +38,7 @@ public class GeminiService {
 			))
 			.build();
 
-		return webClient.post()
+		return geminiWebClient.post()
 			.uri("/v1beta/models/gemini-2.0-flash:generateContent?key=" + apiKey)
 			.header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
 			.bodyValue(request)

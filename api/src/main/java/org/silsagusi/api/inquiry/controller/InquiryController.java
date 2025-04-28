@@ -3,7 +3,6 @@ package org.silsagusi.api.inquiry.controller;
 import org.silsagusi.api.inquiry.application.dto.ChatDto;
 import org.silsagusi.api.inquiry.application.dto.InquiryAnswerDto;
 import org.silsagusi.api.inquiry.application.dto.InquiryDto;
-import org.silsagusi.api.inquiry.application.service.GeminiService;
 import org.silsagusi.api.inquiry.application.service.InquiryService;
 import org.silsagusi.api.response.ApiResponse;
 import org.springframework.data.domain.Page;
@@ -27,7 +26,6 @@ import reactor.core.publisher.Mono;
 public class InquiryController {
 
 	private final InquiryService inquiryService;
-	private final GeminiService geminiService;
 
 	@PostMapping("/api/inquiries")
 	public ResponseEntity<ApiResponse<Void>> createInquiry(
@@ -93,7 +91,7 @@ public class InquiryController {
 	public Mono<ApiResponse<ChatDto.Response>> chat(
 		@RequestBody ChatDto.Request chatRequest
 	) {
-		return geminiService.askGemini(chatRequest).map(ApiResponse::ok);
+		return inquiryService.chat(chatRequest).map(ApiResponse::ok);
 	}
 
 }

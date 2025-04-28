@@ -1,11 +1,17 @@
 package org.silsagusi.api.inquiry.application.dto;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ChatDto {
+
+	public static Response of(String answer) {
+		return Response.builder().answer(answer).build();
+	}
 
 	@Getter
 	@Builder
@@ -20,9 +26,6 @@ public class ChatDto {
 	public static class Response {
 		private String answer;
 
-		public static Response of(String answer) {
-			return Response.builder().answer(answer).build();
-		}
 	}
 
 }
