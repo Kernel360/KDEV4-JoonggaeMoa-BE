@@ -37,13 +37,10 @@ public class ContractDataProvider {
 	public Page<ContractInfo> getAllContracts(Long agentId, Pageable pageable) {
 		Page<Contract> contractPage = contractRepository.findAllByCustomerLandlord_AgentIdAndDeletedAtIsNull(agentId,
 			pageable);
-		Page<ContractInfo> contractInfoPage = contractPage.map(ContractInfo::of);
-		contractInfoPage.map(it -> {
-			try {
-				return it.builder().url(getUrl(it.getUrl()));
-			} catch (IOException e) {
-				throw new RuntimeException(e);
-			}
+		Page<ContractInfo> contractInfoPage = contractPage.map(it -> {
+			ContractInfo info = ContractInfo.of(it);
+			info.setUrl(getUrl(it.getUrl()));
+			return info;
 		});
 		return contractInfoPage;
 	}
@@ -77,9 +74,9 @@ public class ContractDataProvider {
 
 	}
 
-	public ContractDetailInfo getContractInfo(Contract contract) throws IOException {
+	public ContractDetailInfo getContractInfo(Contract contract) {
 		ContractDetailInfo contractDetailInfo = ContractDetailInfo.of(contract);
-		contractDetailInfo.builder().url(getUrl(contractDetailInfo.getUrl()));
+		contractDetailInfo.setUrl(getUrl(contract.getUrl()));
 		return contractDetailInfo;
 	}
 
@@ -99,7 +96,7 @@ public class ContractDataProvider {
 		return filename;
 	}
 
-	public String getUrl(String fileName) throws IOException {
+	public String getUrl(String fileName) {
 		return amazonS3.getUrl(S3_BUCKET_NAME, fileName).toString();
 	}
 

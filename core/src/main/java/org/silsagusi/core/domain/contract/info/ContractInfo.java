@@ -6,6 +6,7 @@ import org.silsagusi.core.domain.contract.entity.Contract;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 
 @Builder
 @Getter
@@ -16,6 +17,7 @@ public class ContractInfo {
 	private String tenantName;
 	private LocalDate startedAt;
 	private LocalDate expiredAt;
+	@Setter
 	private String url;
 
 	public static ContractInfo of(Contract contract) {
@@ -25,8 +27,6 @@ public class ContractInfo {
 			.tenantName(contract.getCustomerTenant().getName())
 			.startedAt(contract.getStartedAt())
 			.expiredAt(contract.getExpiredAt())
-			.url(contract.getUrl())
 			.build();
 	}
-
 }
