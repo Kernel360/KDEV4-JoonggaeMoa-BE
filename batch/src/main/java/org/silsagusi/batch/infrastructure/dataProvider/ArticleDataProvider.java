@@ -1,11 +1,13 @@
 package org.silsagusi.batch.infrastructure.dataProvider;
 
-import lombok.RequiredArgsConstructor;
+import java.util.List;
+import java.util.Objects;
+
+import org.silsagusi.batch.infrastructure.external.AddressResponse;
 import org.silsagusi.batch.infrastructure.repository.ArticleRepository;
-import org.silsagusi.batch.scrape.naverland.service.dto.KakaoMapAddressResponse;
-import org.silsagusi.batch.scrape.naverland.service.dto.NaverLandArticleResponse;
-import org.silsagusi.batch.scrape.zigbang.service.dto.ZigBangDanjiResponse;
-import org.silsagusi.batch.scrape.zigbang.service.dto.ZigBangItemCatalogResponse;
+import org.silsagusi.batch.naverland.infrastructure.dto.NaverLandArticleResponse;
+import org.silsagusi.batch.zigbang.infrastructure.dto.ZigBangDanjiResponse;
+import org.silsagusi.batch.zigbang.infrastructure.dto.ZigBangItemCatalogResponse;
 import org.silsagusi.core.domain.article.Article;
 import org.silsagusi.core.domain.article.Complex;
 import org.silsagusi.core.domain.article.Region;
@@ -13,8 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Objects;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -27,13 +28,13 @@ public class ArticleDataProvider {
 		articleRepository.saveAll(articles);
 	}
 
-	public static Article createNaverLandArticle(
+	public Article createNaverLandArticle(
 		NaverLandArticleResponse.NaverLandArticle naverLandArticle,
-		KakaoMapAddressResponse kakaoMapAddressResponse,
+		AddressResponse addressResponse,
 		Region region,
 		Complex complex
 	) {
-		return new Article(
+		return Article.create(
 			naverLandArticle.getAtclNo(),
 			naverLandArticle.getCortarNo(),
 			naverLandArticle.getAtclNm(),
@@ -47,7 +48,8 @@ public class ArticleDataProvider {
 			naverLandArticle.getSpc2(),
 			naverLandArticle.getDirection(),
 			naverLandArticle.getAtclCfmYmd(),
-			naverLandArticle.getRepImgUrl() == null ? null : "https://landthumb-phinf.pstatic.net" + naverLandArticle.getRepImgUrl(),
+			naverLandArticle.getRepImgUrl() == null ? null :
+				"https://landthumb-phinf.pstatic.net" + naverLandArticle.getRepImgUrl(),
 			naverLandArticle.getLat(),
 			naverLandArticle.getLng(),
 			naverLandArticle.getAtclFetrDesc(),
@@ -57,22 +59,22 @@ public class ArticleDataProvider {
 			naverLandArticle.getTradeCheckedByOwner(),
 			region,
 			complex,
-			kakaoMapAddressResponse.getLotAddress(),
-			kakaoMapAddressResponse.getRoadAddress(),
-			kakaoMapAddressResponse.getCity(),
-			kakaoMapAddressResponse.getDistrict(),
-			kakaoMapAddressResponse.getRegion()
+			addressResponse.getLotAddress(),
+			addressResponse.getRoadAddress(),
+			addressResponse.getCity(),
+			addressResponse.getDistrict(),
+			addressResponse.getRegion()
 		);
 	}
 
-	public static Article createZigBangItemCatalog(
+	public Article createZigBangItemCatalog(
 		ZigBangItemCatalogResponse.ZigBangItemCatalog item,
 		ZigBangDanjiResponse danji,
-		KakaoMapAddressResponse kakaoMapAddressResponse,
+		AddressResponse addressResponse,
 		Region region, Complex complex
 
 	) {
-		return new Article(
+		return Article.create(
 			String.valueOf(item.getAreaDanjiId()),
 			null,
 			item.getAreaDanjiName() + " " + item.getDong(),
@@ -86,7 +88,7 @@ public class ArticleDataProvider {
 			String.valueOf(item.getSizeM2()),
 			null,
 			danji.getFiltered().get(0).get사용승인일(),
-			item.getThumbnailUrl() +"?w=1000",
+			item.getThumbnailUrl() + "?w=1000",
 			danji.getFiltered().get(0).getLat(),
 			danji.getFiltered().get(0).getLng(),
 			item.getItemTitle(),
@@ -96,16 +98,16 @@ public class ArticleDataProvider {
 			mapIsChecked(item.getItemType()),
 			region,
 			complex,
-			kakaoMapAddressResponse.getLotAddress(),
-			kakaoMapAddressResponse.getRoadAddress(),
-			kakaoMapAddressResponse.getCity(),
-			kakaoMapAddressResponse.getDistrict(),
-			kakaoMapAddressResponse.getRegion()
+			addressResponse.getLotAddress(),
+			addressResponse.getRoadAddress(),
+			addressResponse.getCity(),
+			addressResponse.getDistrict(),
+			addressResponse.getRegion()
 		);
 	}
 
 	// 거래 유형
-	private static String mapTranType(String tranType) {
+	private String mapTranType(String tranType) {
 		if (Objects.equals(tranType, "trade")) {
 			return "매매";
 		} else if (Objects.equals(tranType, "charter")) {
@@ -118,7 +120,7 @@ public class ArticleDataProvider {
 	}
 
 	// 매물 출처
-	private static String mapItemType(String itemType) {
+	private String mapItemType(String itemType) {
 		if (Objects.equals(itemType, "partner")) {
 			return "직방 파트너 계약 매물"; // 직방 제휴 매물
 		} else if (Objects.equals(itemType, "self_ad")) {
@@ -129,9 +131,10 @@ public class ArticleDataProvider {
 	}
 
 	// 확인매물여부
-	private static Boolean mapIsChecked(String itemType) {
+	private Boolean mapIsChecked(String itemType) {
 		if (Objects.equals(itemType, "partner")) {
 			return true; // 직방 제휴 매물
-		} else return Objects.equals(itemType, "self_ad"); // 개인 매물, 유료 광고 적용됨
+		} else
+			return Objects.equals(itemType, "self_ad"); // 개인 매물, 유료 광고 적용됨
 	}
 }

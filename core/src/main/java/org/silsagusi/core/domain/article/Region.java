@@ -1,12 +1,15 @@
 package org.silsagusi.core.domain.article;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
-@NoArgsConstructor
-@ToString
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity(name = "regions")
 @Getter
 public class Region {
@@ -27,16 +30,4 @@ public class Region {
 	@Column(name = "category")
 	private String cortarType; // 법정동 유형
 	private String geohash; // 지오 해쉬
-
-	public Region(
-		String cortarNo, Double centerLat, Double centerLon,
-		String cortarName, String cortarType, String geohash
-	) {
-		this.cortarNo = cortarNo;
-		this.centerLat = centerLat;
-		this.centerLon = centerLon;
-		this.cortarName = cortarName;
-		this.cortarType = cortarType;
-		this.geohash = geohash;
-	}
 }

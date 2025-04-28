@@ -1,15 +1,20 @@
 package org.silsagusi.core.domain.article;
 
-import jakarta.persistence.*;
+import java.time.LocalDate;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
-
-import java.time.LocalDate;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString
 @Entity(name = "articles")
 @Getter
 public class Article {
@@ -61,11 +66,11 @@ public class Article {
 	private String companyName;       // cpNm 정보 제공 출처
 	private String agency;            // rltrNm 매물을 올린 공인중개사무소
 	//	private Integer price_room_min;   // minMviFee 최소 단기임대 비용
-//	private Integer price_room_max;   // maxMviFee 최대 단기임대 비용
+	//	private Integer price_room_max;   // maxMviFee 최대 단기임대 비용
 	private String subway;            // sbwyInfo 주변 지하철역
 	//	private String description_gosiwon;  // svcCont 고시원 기본 정보
-//	private String description_gosiwon2; // gdrNm 고시원 특징
-//	private Integer count_room_empty; // etRoomCnt 빈방 수
+	//	private String description_gosiwon2; // gdrNm 고시원 특징
+	//	private Integer count_room_empty; // etRoomCnt 빈방 수
 	@Column(name = "is_checked")
 	private Boolean isChecked;        // tradeCheckedByOwner 실매물 확인 여부
 
@@ -80,15 +85,15 @@ public class Article {
 	@Column(name = "address3_dong_eup_myeon")
 	private String address3DongEupMyeon;
 
-	public Article(
+	private Article(
 		String articleCode, String bjdCode, String articleName,
 		String buildingTypeCode, String buildingType, String tradeType,
 		String floors, Integer priceSale, Integer priceRent,
 		String areaSupply, String areaExclusive, String direction,
-		LocalDate confirmed_at, String image_url, Double latitude,
+		LocalDate confirmedAt, String imageUrl, Double latitude,
 		Double longitude, String articleDesc, String companyName,
-		String agency, String subway, Boolean is_checked, Region region_id, Complex complex_id,
-		String addressFullLot, String addressFullRoad, String address2_city,
+		String agency, String subway, Boolean isChecked, Region regionId, Complex complexId,
+		String addressFullLot, String addressFullRoad, String address2City,
 		String address2Sigungu, String address3Dongeupmyeon
 	) {
 		this.articleCode = articleCode;
@@ -103,21 +108,40 @@ public class Article {
 		this.areaSupply = areaSupply;
 		this.areaExclusive = areaExclusive;
 		this.direction = direction;
-		this.confirmedAt = confirmed_at;
-		this.imageUrl = image_url;
+		this.confirmedAt = confirmedAt;
+		this.imageUrl = imageUrl;
 		this.latitude = latitude;
 		this.longitude = longitude;
 		this.articleDesc = articleDesc;
 		this.companyName = companyName;
 		this.agency = agency;
 		this.subway = subway;
-		this.isChecked = is_checked;
-		this.region_id = region_id;
-		this.complex_id = complex_id;
+		this.isChecked = isChecked;
+		this.region_id = regionId;
+		this.complex_id = complexId;
 		this.addressFullLot = addressFullLot;
 		this.addressFullRoad = addressFullRoad;
-		this.address1SiDo = address2_city;
+		this.address1SiDo = address2City;
 		this.address2SiGunGu = address2Sigungu;
 		this.address3DongEupMyeon = address3Dongeupmyeon;
+	}
+
+	public static Article create(
+		String articleCode, String bjdCode, String articleName,
+		String buildingTypeCode, String buildingType, String tradeType,
+		String floors, Integer priceSale, Integer priceRent,
+		String areaSupply, String areaExclusive, String direction,
+		LocalDate confirmedAt, String imageUrl, Double latitude,
+		Double longitude, String articleDesc, String companyName,
+		String agency, String subway, Boolean isChecked, Region regionId, Complex complexId,
+		String addressFullLot, String addressFullRoad, String address2City,
+		String address2Sigungu, String address3Dongeupmyeon
+	) {
+		return new Article(
+			articleCode, bjdCode, articleName, buildingTypeCode, buildingType, tradeType, floors, priceSale, priceRent,
+			areaSupply, areaExclusive, direction, confirmedAt, imageUrl, latitude, longitude, articleDesc,
+			companyName, agency, subway, isChecked, regionId, complexId, addressFullLot, addressFullRoad,
+			address2City, address2Sigungu, address3Dongeupmyeon
+		);
 	}
 }

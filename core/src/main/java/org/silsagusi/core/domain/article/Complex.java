@@ -1,15 +1,20 @@
 package org.silsagusi.core.domain.article;
 
-import jakarta.persistence.*;
+import java.time.LocalDate;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
-
-import java.time.LocalDate;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString
 @Entity(name = "complexes")
 @Getter
 public class Complex {
@@ -64,7 +69,7 @@ public class Complex {
 	@Column(name = "count_elevator")
 	private Integer countElevator; // 총 엘리베이터 수
 
-	public Complex(
+	private Complex(
 		String complexCode, String complexName, String buildingTypeCode,
 		String buildingType, Integer countDong, Integer countHousehold,
 		Integer countHouseholdGeneral, LocalDate confirmedAt,
@@ -95,5 +100,19 @@ public class Complex {
 		this.isSeismic = isSeismic;
 		this.countElevator = countElevator;
 		this.region_id = region_id;
+	}
+
+	public static Complex create(
+		String complexCode, String complexName, String buildingTypeCode, String buildingType, Integer countDong,
+		Integer countHousehold, Integer countHouseholdGeneral, LocalDate confirmedAt, Integer countDeal,
+		Integer countLease, Integer countRent, Integer countRentShortTerm, Integer countArticles, String sizeMin,
+		String sizeMax, Integer priceSaleInitialMin, Integer priceSaleInitialMax, Boolean tourExists, Boolean isSeismic,
+		Integer countElevator, Region region_id
+	) {
+		return new Complex(
+			complexCode, complexName, buildingTypeCode, buildingType, countDong, countHousehold, countHouseholdGeneral,
+			confirmedAt, countDeal, countLease, countRent, countRentShortTerm, countArticles, sizeMin, sizeMax,
+			priceSaleInitialMin, priceSaleInitialMax, tourExists, isSeismic, countElevator, region_id
+		);
 	}
 }
