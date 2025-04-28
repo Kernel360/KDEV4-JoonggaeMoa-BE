@@ -37,8 +37,11 @@ public class ContractDataProvider {
 	public Page<ContractInfo> getAllContracts(Long agentId, Pageable pageable) {
 		Page<Contract> contractPage = contractRepository.findAllByCustomerLandlord_AgentIdAndDeletedAtIsNull(agentId,
 			pageable);
-		Page<ContractInfo> contractInfoPage = contractPage.map(ContractInfo::of);
-		contractInfoPage.forEach(it -> it.setUrl(getUrl(it.getUrl())));
+		Page<ContractInfo> contractInfoPage = contractPage.map(it -> {
+			ContractInfo info = ContractInfo.of(it);
+			info.setUrl(getUrl(it.getUrl()));
+			return info;
+		});
 		return contractInfoPage;
 	}
 
@@ -73,7 +76,7 @@ public class ContractDataProvider {
 
 	public ContractDetailInfo getContractInfo(Contract contract) {
 		ContractDetailInfo contractDetailInfo = ContractDetailInfo.of(contract);
-		contractDetailInfo.setUrl(getUrl(contractDetailInfo.getUrl()));
+		contractDetailInfo.setUrl(getUrl(contract.getUrl()));
 		return contractDetailInfo;
 	}
 
