@@ -7,7 +7,6 @@ import org.silsagusi.api.article.application.dto.TradeTypeSummaryResponse;
 import org.silsagusi.api.article.application.service.ArticleService;
 import org.silsagusi.api.response.ApiResponse;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -23,7 +22,10 @@ public class ArticleController {
 
 	@GetMapping("/api/articles")
 	public ResponseEntity<ApiResponse<Page<ArticleResponse>>> getArticles(
-		Pageable pageable,
+		@RequestParam(defaultValue = "0") int page,
+		@RequestParam(defaultValue = "100") int size,
+		@RequestParam(defaultValue = "id") String sortBy,
+		@RequestParam(defaultValue = "desc") String direction,
 		@RequestParam(required = false) List<String> realEstateType,
 		@RequestParam(required = false) List<String> tradeType,
 		@RequestParam(required = false) String minPrice,
@@ -31,7 +33,7 @@ public class ArticleController {
 	) {
 		return ResponseEntity.ok(ApiResponse.ok(
 			articleService.getAllArticles(
-				pageable, realEstateType, tradeType, minPrice, maxPrice
+				page, size, realEstateType, tradeType, minPrice, maxPrice, sortBy, direction
 			)
 		));
 	}

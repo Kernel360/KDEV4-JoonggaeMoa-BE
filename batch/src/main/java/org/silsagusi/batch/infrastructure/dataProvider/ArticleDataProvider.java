@@ -88,7 +88,8 @@ public class ArticleDataProvider {
 			String.valueOf(item.getSizeM2()),
 			null,
 			danji.getFiltered().get(0).get사용승인일(),
-			item.getThumbnailUrl() + "?w=1000",
+			item.getThumbnailUrl() == "" ? null :
+				item.getThumbnailUrl() + "?w=1000",
 			danji.getFiltered().get(0).getLat(),
 			danji.getFiltered().get(0).getLng(),
 			item.getItemTitle(),

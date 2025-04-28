@@ -33,17 +33,20 @@ public class ArticleDataProvider {
 		Specification<Article> spec = Specification.where(null);
 
 		if (realEstateType != null && !realEstateType.isEmpty()) {
-			spec = spec.and((root, query, criteriaBuilder) -> root.get(REAL_ESTATE_TYPE).in(realEstateType));
+			spec = spec.and((root, query, criteriaBuilder)
+				-> root.get(REAL_ESTATE_TYPE).in(realEstateType));
 		}
 
 		if (tradeType != null && !tradeType.isEmpty()) {
-			spec = spec.and((root, query, criteriaBuilder) -> root.get(TRADE_TYPE).in(tradeType));
+			spec = spec.and((root, query, criteriaBuilder)
+				-> root.get(TRADE_TYPE).in(tradeType));
 		}
 
 		if (minPrice != null) {
 			int pri = Integer.parseInt(minPrice);
 			spec = spec.and(
-				((root, query, criteriaBuilder) -> criteriaBuilder.greaterThan(root.get(PRICE), pri)));
+				((root, query, criteriaBuilder)
+					-> criteriaBuilder.greaterThan(root.get(PRICE), pri)));
 		}
 
 		if (maxPrice != null) {
@@ -58,8 +61,9 @@ public class ArticleDataProvider {
 		return spec;
 	}
 
-	public Page<Article> getArticlePage(Specification<Article> spec, Pageable pageable) {
-		return articleRepository.findAll(spec, pageable);
+	public Page<Article> getArticlePage(
+		Specification<Article> spec, int page, int size, String sortBy, String direction) {
+		return articleRepository.findAll(spec, page, size, sortBy, direction);
 	}
 
 	public List<ArticleTypeRatioProjection> getRealEstateTypeRatio(LocalDate from) {

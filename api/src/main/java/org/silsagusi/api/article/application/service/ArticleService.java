@@ -26,7 +26,8 @@ public class ArticleService {
 
 	@Transactional(readOnly = true)
 	public Page<ArticleResponse> getAllArticles(
-		Pageable pageable,
+		int page,
+		int size,
 		List<String> realEstateType,
 		List<String> tradeType,
 		String minPrice,
@@ -36,7 +37,9 @@ public class ArticleService {
 	) {
 		Specification<Article> spec = articleDataProvider.getArticleSpec(
 			realEstateType, tradeType, minPrice, maxPrice);
-		Page<Article> articlePage = articleDataProvider.getArticlePage(spec, pageable);
+		Page<Article> articlePage = articleDataProvider.getArticlePage(
+			spec, page, size, sortBy, direction
+		);
 		return articlePage.map(ArticleResponse::toResponse);
 	}
 
