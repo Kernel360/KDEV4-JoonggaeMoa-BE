@@ -59,12 +59,25 @@ public class ZigBangRequestService {
 		ZigBangItemCatalogResponse itemResp = zigbangApiClient.fetchItemCatalog(localCode);
 		for (ZigBangItemCatalogResponse.ZigBangItemCatalog item : itemResp.getList()) {
 			Complex complex = idToComplex.get(item.getAreaDanjiId());
-			AddressResponse kakaoResp = kakaoMapApiClient.lookupAddress(
-				danjiResp.getFiltered().get(0).getLat(), danjiResp.getFiltered().get(0).getLng()
-			);
-
+			AddressResponse kakaoResp = null;
+			int retryCount = 0;
+			// 최대 3회 주소 조회 재시도
+			while (retryCount < 3) {
+				kakaoResp = kakaoMapApiClient.lookupAddress(
+					danjiResp.getFiltered().get(0).getLat(), danjiResp.getFiltered().get(0).getLng()
+				);
+				if (kakaoResp != null) {
+					break;
+				}
+				retryCount++;
+				Thread.sleep(500);
+			}
+			if (kakaoResp == null) {
+				continue;
+			}
 			Article article = articleDataProvider.createZigBangItemCatalog(item, danjiResp, kakaoResp, region, complex);
 			articles.add(article);
+			Thread.sleep((long)(Math.random() * 1000)); // 0~1초 랜덤 대기
 		}
 
 		complexDataProvider.saveComplexes(allComplexes);

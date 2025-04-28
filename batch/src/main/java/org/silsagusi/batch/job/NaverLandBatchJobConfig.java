@@ -1,11 +1,9 @@
 package org.silsagusi.batch.job;
 
-import java.util.List;
-
-import org.silsagusi.batch.infrastructure.repository.RegionRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.silsagusi.batch.infrastructure.repository.ScrapeStatusRepository;
 import org.silsagusi.batch.naverland.application.NaverLandRequestService;
-import org.silsagusi.core.domain.article.Region;
 import org.silsagusi.core.domain.article.ScrapeStatus;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -19,8 +17,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.util.List;
 
 @Slf4j
 @Configuration
@@ -34,15 +31,11 @@ public class NaverLandBatchJobConfig {
 	private final PlatformTransactionManager transactionManager;
 	private final ScrapeStatusRepository scrapeStatusRepository;
 	private final NaverLandRequestService naverLandRequestService;
-	private final RegionRepository regionRepository;
 
 	@Bean
-	public Job naverLandArticleJob(
-		Step initNaverLandScrapeStatusStep,
-		Step naverLandArticleStep) {
+	public Job naverLandArticleJob(Step naverLandArticleStep) {
 		Job job = new JobBuilder(JOB_NAME, jobRepository)
-			.start(initNaverLandScrapeStatusStep)
-			.next(naverLandArticleStep)
+			.start(naverLandArticleStep)
 			.build();
 
 		try {
@@ -52,25 +45,6 @@ public class NaverLandBatchJobConfig {
 		}
 
 		return job;
-	}
-
-	@Bean
-	public Step initNaverLandScrapeStatusStep() {
-		return new StepBuilder("initNaverLandScrapeStatus", jobRepository)
-			.tasklet((contribution, chunkContext) -> {
-				List<Region> regions = regionRepository.findAllByCortarType("sec");
-				for (Region region : regions) {
-					scrapeStatusRepository.upsertNative(
-						region.getId(),
-						1,
-						false,
-						null,
-						"네이버부동산"
-					);
-				}
-				return RepeatStatus.FINISHED;
-			}, transactionManager)
-			.build();
 	}
 
 	@Bean
