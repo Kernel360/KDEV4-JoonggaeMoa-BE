@@ -6,7 +6,7 @@ import org.apache.http.HttpHeaders;
 import org.silsagusi.api.inquiry.application.dto.ChatDto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import lombok.RequiredArgsConstructor;
@@ -14,7 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
 @Slf4j
-@Service
+@Component
 @RequiredArgsConstructor
 public class GeminiApiClient {
 
