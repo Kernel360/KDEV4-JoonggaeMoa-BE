@@ -25,8 +25,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity(name = "customers")
 @Table(uniqueConstraints = {
-	@UniqueConstraint(name = "UK_customer_phone", columnNames = {"agent_id", "phone"}),
-	@UniqueConstraint(name = "UK_customer_email", columnNames = {"agent_id", "email"})
+	@UniqueConstraint(name = "UK_customer_phone", columnNames = {"agent_id", "phone", "deleted_at"}),
+	@UniqueConstraint(name = "UK_customer_email", columnNames = {"agent_id", "email", "deleted_at"})
 })
 @Getter
 public class Customer extends BaseEntity {
@@ -103,5 +103,11 @@ public class Customer extends BaseEntity {
 		this.interestProperty = interestProperty;
 		this.interestLocation = interestLocation;
 		this.assetStatus = assetStatus;
+	}
+
+	@Override
+	public void markAsDeleted() {
+		super.markAsDeleted();
+		this.name = this.name + "(삭제)";
 	}
 }

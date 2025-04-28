@@ -25,9 +25,9 @@ import lombok.NoArgsConstructor;
 @DynamicUpdate
 @Entity(name = "agents")
 @Table(uniqueConstraints = {
-	@UniqueConstraint(name = "UK_agent_username", columnNames = {"username"}),
-	@UniqueConstraint(name = "UK_agent_phone", columnNames = {"phone"}),
-	@UniqueConstraint(name = "UK_agent_email", columnNames = {"email"})
+	@UniqueConstraint(name = "UK_agent_username", columnNames = {"username", "deleted_at"}),
+	@UniqueConstraint(name = "UK_agent_phone", columnNames = {"phone", "deleted_at"}),
+	@UniqueConstraint(name = "UK_agent_email", columnNames = {"email", "deleted_at"})
 })
 @Getter
 public class Agent extends BaseEntity {
