@@ -2,6 +2,8 @@ package org.silsagusi.api.customer.application.dto;
 
 import java.time.LocalDate;
 
+import org.silsagusi.core.domain.customer.command.UpdateCustomerCommand;
+import org.silsagusi.core.domain.customer.entity.Customer;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -11,14 +13,17 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CustomerDto {
 
 	@Getter
+	@Builder
 	@NoArgsConstructor
 	@AllArgsConstructor
 	@Schema(name = "CustomerRequestDto")
@@ -49,6 +54,12 @@ public class CustomerDto {
 
 		@NotNull
 		private Boolean consent;
+
+		private String interestProperty;
+
+		private String interestLocation;
+
+		private String assetStatus;
 	}
 
 	@Getter
@@ -63,6 +74,9 @@ public class CustomerDto {
 		private Boolean isVip;
 		private String memo;
 		private Boolean consent;
+		private String interestProperty;
+		private String interestLocation;
+		private String assetStatus;
 	}
 
 	@Getter
@@ -77,5 +91,42 @@ public class CustomerDto {
 		private Boolean isVip;
 		private String memo;
 		private Boolean consent;
+		private String interestProperty;
+		private String interestLocation;
+		private String assetStatus;
+	}
+
+	public static Response toResponse(Customer customer) {
+		return Response.builder()
+			.id(customer.getId())
+			.name(customer.getName())
+			.birthday(customer.getBirthday())
+			.phone(customer.getPhone())
+			.email(customer.getEmail())
+			.job(customer.getJob())
+			.isVip(customer.getIsVip())
+			.memo(customer.getMemo())
+			.consent(customer.getConsent())
+			.interestProperty(customer.getInterestProperty())
+			.interestLocation(customer.getInterestLocation())
+			.assetStatus(customer.getAssetStatus())
+			.build();
+	}
+
+	public static UpdateCustomerCommand toCommand(Customer customer, Request customerRequest) {
+		return UpdateCustomerCommand.builder()
+			.customer(customer)
+			.name(customerRequest.getName())
+			.birthday(customerRequest.getBirthday())
+			.phone(customerRequest.getPhone())
+			.email(customerRequest.getEmail())
+			.job(customerRequest.getJob())
+			.isVip(customerRequest.getIsVip())
+			.memo(customerRequest.getMemo())
+			.consent(customerRequest.getConsent())
+			.interestProperty(customerRequest.getInterestProperty())
+			.interestLocation(customerRequest.getInterestLocation())
+			.assetStatus(customerRequest.getAssetStatus())
+			.build();
 	}
 }

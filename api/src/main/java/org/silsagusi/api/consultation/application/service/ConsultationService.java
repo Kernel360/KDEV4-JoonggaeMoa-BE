@@ -1,0 +1,118 @@
+package org.silsagusi.api.consultation.application.service;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+import org.silsagusi.api.consultation.application.dto.ConsultationDto;
+import org.silsagusi.api.consultation.application.dto.ConsultationHistoryDto;
+import org.silsagusi.api.consultation.application.dto.ConsultationMonthResponse;
+import org.silsagusi.api.consultation.application.dto.ConsultationSummaryResponse;
+import org.silsagusi.api.consultation.application.dto.UpdateConsultationRequest;
+import org.silsagusi.api.consultation.application.mapper.ConsultationMapper;
+import org.silsagusi.api.consultation.application.validator.ConsultationValidator;
+import org.silsagusi.api.consultation.infrastructure.dataprovider.ConsultationDataProvider;
+import org.silsagusi.api.customer.application.dto.CustomerDto;
+import org.silsagusi.api.customer.application.mapper.CustomerMapper;
+import org.silsagusi.api.customer.infrastructure.dataprovider.CustomerDataProvider;
+import org.silsagusi.core.domain.consultation.command.UpdateConsultationCommand;
+import org.silsagusi.core.domain.consultation.entity.Consultation;
+import org.silsagusi.core.domain.consultation.info.ConsultationMonthInfo;
+import org.silsagusi.core.domain.consultation.info.ConsultationSummaryInfo;
+import org.silsagusi.core.domain.customer.entity.Customer;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import lombok.RequiredArgsConstructor;
+
+@Service
+@RequiredArgsConstructor
+public class ConsultationService {
+
+	private final ConsultationDataProvider consultationDataProvider;
+	private final CustomerDataProvider customerDataProvider;
+	private final ConsultationMapper consultationMapper;
+	private final ConsultationValidator consultationValidator;
+	private final CustomerMapper customerMapper;
+
+	@Transactional
+	public void createConsultation(ConsultationDto.Request consultationRequestDto) {
+		Customer customer = customerDataProvider.getCustomer(consultationRequestDto.getCustomerId());
+
+		Consultation consultation = consultationMapper.consultationRequestToEntity(customer, consultationRequestDto);
+
+		consultationDataProvider.createConsultation(consultation);
+	}
+
+	@Transactional
+	public void updateConsultationStatus(Long agentId, Long consultationId, String consultationStatus) {
+		Consultation consultation = consultationDataProvider.getConsultation(consultationId);
+
+		consultationValidator.validateAgentAccess(agentId, consultation);
+
+		consultationDataProvider.updateStatus(consultation, consultationStatus);
+	}
+
+	@Transactional
+	public void updateConsultation(
+		Long agentId, Long consultationId,
+		UpdateConsultationRequest updateConsultationRequest
+	) {
+		Consultation consultation = consultationDataProvider.getConsultation(consultationId);
+
+		consultationValidator.validateAgentAccess(agentId, consultation);
+
+		UpdateConsultationCommand updateConsultationCommand = UpdateConsultationRequest.toCommand(
+			updateConsultationRequest);
+
+		consultationDataProvider.updateConsultation(consultation, updateConsultationCommand);
+	}
+
+	@Transactional(readOnly = true)
+	public ConsultationDto.Response getConsultation(Long consultationId) {
+		Consultation consultation = consultationDataProvider.getConsultation(consultationId);
+		return ConsultationDto.toResponse(consultation);
+	}
+
+	@Transactional(readOnly = true)
+	public List<ConsultationDto.Response> getConsultationsByStatus(Long agentId, String month, String status) {
+		List<Consultation> consultations = consultationDataProvider.getConsultationsByStatus(agentId, month, status);
+
+		return consultations.stream().map(ConsultationDto::toResponse).toList();
+	}
+
+	@Transactional(readOnly = true)
+	public List<ConsultationDto.Response> getAllConsultationsByDate(Long agentId, LocalDateTime date) {
+		List<Consultation> consultationList = consultationDataProvider.getConsultationByDate(agentId, date);
+
+		return consultationList.stream().map(ConsultationDto::toResponse).toList();
+	}
+
+	@Transactional(readOnly = true)
+	public ConsultationHistoryDto getConsultationsByCustomer(Long consultationId, Pageable pageable) {
+		Customer customer = customerDataProvider.getCustomer(consultationId);
+		Page<Consultation> consultations = consultationDataProvider.getConsultationsByCustomer(customer,
+			pageable);
+
+		Page<ConsultationDto.Response> consultationResponses = consultations.map(
+			ConsultationDto::toResponse);
+		CustomerDto.Response customerResponse = CustomerDto.toResponse(customer);
+
+		return new ConsultationHistoryDto(customerResponse, consultationResponses);
+	}
+
+	@Transactional(readOnly = true)
+	public ConsultationMonthResponse getMonthInformation(Long agentId, String date) {
+		ConsultationMonthInfo monthInformationCommand = consultationDataProvider.getMonthInformation(agentId, date);
+
+		return ConsultationMonthResponse.toResponse(monthInformationCommand);
+	}
+
+	@Transactional(readOnly = true)
+	public ConsultationSummaryResponse getConsultationSummary(Long agentId) {
+		ConsultationSummaryInfo consultationSummaryInfo = consultationDataProvider.getSummary(agentId);
+
+		return ConsultationSummaryResponse.toResponse(consultationSummaryInfo);
+	}
+}

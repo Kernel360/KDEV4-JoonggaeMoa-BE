@@ -46,7 +46,7 @@ public class Answer extends BaseEntity {
 	@CollectionTable(name = "question_answer_pairs", joinColumns = @JoinColumn(name = "question_answer_pair_id"))
 	private List<QuestionAnswerPair> questionAnswerPairs;
 
-	public Answer(
+	private Answer(
 		Boolean applyConsultation,
 		LocalDateTime consultAt,
 		Customer customer,
@@ -58,5 +58,15 @@ public class Answer extends BaseEntity {
 		this.customer = customer;
 		this.survey = survey;
 		this.questionAnswerPairs = questionAnswerPairs;
+	}
+
+	public static Answer create(
+		Boolean applyConsultation,
+		LocalDateTime consultAt,
+		Customer customer,
+		Survey survey,
+		List<QuestionAnswerPair> questionAnswerPairs
+	) {
+		return new Answer(applyConsultation, consultAt, customer, survey, questionAnswerPairs);
 	}
 }

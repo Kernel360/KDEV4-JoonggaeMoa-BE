@@ -5,11 +5,11 @@ import java.util.List;
 
 import org.silsagusi.api.auth.filter.JwtAuthenticationFilter;
 import org.silsagusi.api.auth.filter.JwtAuthorizationFilter;
-import org.silsagusi.api.auth.handler.CustomAccessDeniedHandler;
-import org.silsagusi.api.auth.handler.CustomAuthenticationEntryPointHandler;
 import org.silsagusi.api.auth.jwt.JwtProvider;
 import org.silsagusi.api.auth.jwt.RefreshTokenStore;
 import org.silsagusi.api.auth.userDetails.CustomUserDetailsService;
+import org.silsagusi.api.exception.handler.CustomAccessDeniedHandler;
+import org.silsagusi.api.exception.handler.CustomAuthenticationEntryPointHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -38,21 +38,22 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-	private final CustomAuthenticationEntryPointHandler customAuthenticationEntryPointHandler;
-	private final CustomAccessDeniedHandler customAccessDeniedHandler;
-	private final JwtProvider jwtProvider;
-	private final ObjectMapper objectMapper;
-	private final CustomUserDetailsService customUserDetailsService;
-	private final RefreshTokenStore refreshTokenStore;
-
 	private static final String[] AUTH_WHITELIST = {
 		"/api/agents/login",
 		"/api/agents/signup",
 		"/api/refresh-token",
 		"/api/customers/**",
 		"/swagger-ui/**",
-		"/v3/api-docs/**"
+		"/v3/api-docs/**",
+		"/api/notification/subscribe",
+		"/api/inquiries/**"
 	};
+	private final CustomAuthenticationEntryPointHandler customAuthenticationEntryPointHandler;
+	private final CustomAccessDeniedHandler customAccessDeniedHandler;
+	private final JwtProvider jwtProvider;
+	private final ObjectMapper objectMapper;
+	private final CustomUserDetailsService customUserDetailsService;
+	private final RefreshTokenStore refreshTokenStore;
 
 	@Bean
 	public BCryptPasswordEncoder passwordEncoder() {

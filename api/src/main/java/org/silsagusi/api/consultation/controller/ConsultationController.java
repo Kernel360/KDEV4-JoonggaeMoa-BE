@@ -3,12 +3,14 @@ package org.silsagusi.api.consultation.controller;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.silsagusi.api.consultation.application.ConsultationService;
 import org.silsagusi.api.consultation.application.dto.ConsultationDto;
+import org.silsagusi.api.consultation.application.dto.ConsultationHistoryDto;
 import org.silsagusi.api.consultation.application.dto.ConsultationMonthResponse;
 import org.silsagusi.api.consultation.application.dto.ConsultationSummaryResponse;
 import org.silsagusi.api.consultation.application.dto.UpdateConsultationRequest;
-import org.silsagusi.api.customResponse.ApiResponse;
+import org.silsagusi.api.consultation.application.service.ConsultationService;
+import org.silsagusi.api.response.ApiResponse;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -34,7 +36,28 @@ public class ConsultationController {
 	) {
 		consultationService.createConsultation(consultationRequestDto);
 		return ResponseEntity.ok(ApiResponse.ok());
+	}
 
+	@GetMapping("/api/consultations/{consultationId}")
+	public ResponseEntity<ApiResponse<ConsultationDto.Response>> getConsultation(
+		@PathVariable Long consultationId
+	) {
+		ConsultationDto.Response consultationResponse = consultationService.getConsultation(consultationId);
+		return ResponseEntity.ok(ApiResponse.ok(consultationResponse));
+	}
+
+	@GetMapping("/api/consultations/status")
+	public ResponseEntity<ApiResponse<List<ConsultationDto.Response>>> getConsultationsByStatus(
+		HttpServletRequest request,
+		@RequestParam String month, // 형식 : yyyy-MM
+		@RequestParam String status
+	) {
+		List<ConsultationDto.Response> consultationResponses = consultationService.getConsultationsByStatus(
+			(Long)request.getAttribute("agentId"),
+			month,
+			status
+		);
+		return ResponseEntity.ok(ApiResponse.ok(consultationResponses));
 	}
 
 	@GetMapping("/api/consultations/date")
@@ -49,12 +72,15 @@ public class ConsultationController {
 		return ResponseEntity.ok(ApiResponse.ok(consultationResponseList));
 	}
 
-	@GetMapping("/api/consultations/{consultationId}")
-	public ResponseEntity<ApiResponse<ConsultationDto.Response>> getConsultation(
-		@PathVariable("consultationId") Long consultationId
+	@GetMapping("/api/consultations/customers/{customerId}")
+	public ResponseEntity<ApiResponse<ConsultationHistoryDto>> getConsultationsByCustomer(
+		@PathVariable("customerId") Long customerId,
+		Pageable pageable
 	) {
-		ConsultationDto.Response consultationResponse = consultationService.getConsultation(consultationId);
-		return ResponseEntity.ok(ApiResponse.ok(consultationResponse));
+		ConsultationHistoryDto consultationHistoryResponse = consultationService.getConsultationsByCustomer(
+			customerId,
+			pageable);
+		return ResponseEntity.ok(ApiResponse.ok(consultationHistoryResponse));
 	}
 
 	@GetMapping("/api/consultations/month-inform")

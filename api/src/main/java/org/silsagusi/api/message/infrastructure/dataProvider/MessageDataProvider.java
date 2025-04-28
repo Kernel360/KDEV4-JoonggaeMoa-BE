@@ -2,8 +2,8 @@ package org.silsagusi.api.message.infrastructure.dataProvider;
 
 import java.util.List;
 
-import org.silsagusi.api.customResponse.exception.CustomException;
-import org.silsagusi.api.customResponse.exception.ErrorCode;
+import org.silsagusi.api.exception.CustomException;
+import org.silsagusi.api.exception.ErrorCode;
 import org.silsagusi.api.message.infrastructure.repository.MessageRepository;
 import org.silsagusi.core.domain.message.command.UpdateMessageCommand;
 import org.silsagusi.core.domain.message.entity.Message;
@@ -40,12 +40,10 @@ public class MessageDataProvider {
 
 	public void updateMessage(Message message, UpdateMessageCommand updateMessageCommand) {
 		message.updateMessage(updateMessageCommand.getSendAt(), updateMessageCommand.getContent());
-		messageRepository.save(message);
 	}
 
 	public void deleteMessage(Message message) {
 		message.markAsDeleted();
-		messageRepository.save(message);
 	}
 
 }

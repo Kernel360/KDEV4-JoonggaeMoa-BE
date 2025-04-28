@@ -1,6 +1,6 @@
 package org.silsagusi.api.message.controller;
 
-import org.silsagusi.api.customResponse.ApiResponse;
+import org.silsagusi.api.response.ApiResponse;
 import org.silsagusi.api.message.application.dto.MessageDto;
 import org.silsagusi.api.message.application.dto.UpdateMessageRequest;
 import org.silsagusi.api.message.application.service.MessageService;

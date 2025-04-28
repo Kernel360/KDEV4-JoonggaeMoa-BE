@@ -375,4 +375,7 @@ batch/src/main/resources/application-prod.yml
 application-local.yml
 
 /api/src/main/resources/application-local.yml
+/api/src/main/resources/regions.sql
 /batch/src/main/resources/application-local.yml
+
+.env

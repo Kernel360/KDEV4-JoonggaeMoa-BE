@@ -1,9 +1,10 @@
 package org.silsagusi.api.customer.controller;
 
-import org.silsagusi.api.customResponse.ApiResponse;
-import org.silsagusi.api.customer.application.CustomerService;
+import org.silsagusi.api.response.ApiResponse;
 import org.silsagusi.api.customer.application.dto.CustomerDto;
+import org.silsagusi.api.customer.application.dto.CustomerHistoryResponse;
 import org.silsagusi.api.customer.application.dto.CustomerSummaryResponse;
+import org.silsagusi.api.customer.application.service.CustomerService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
@@ -100,11 +101,11 @@ public class CustomerController {
 	}
 
 	@GetMapping("/api/customers/{customerId}")
-	public ResponseEntity<ApiResponse<CustomerDto.Response>> getCustomer(
+	public ResponseEntity<ApiResponse<CustomerHistoryResponse>> getCustomer(
 		HttpServletRequest request,
 		@PathVariable("customerId") Long customerId
 	) {
-		CustomerDto.Response customerResponse = customerService.getCustomerById(
+		CustomerHistoryResponse customerResponse = customerService.getCustomerById(
 			(Long)request.getAttribute("agentId"),
 			customerId
 		);

@@ -2,17 +2,20 @@ package org.silsagusi.api.contract.application.dto;
 
 import java.time.LocalDate;
 
+import org.silsagusi.core.domain.contract.info.ContractInfo;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ContractDto {
 
 	@Getter
@@ -30,7 +33,7 @@ public class ContractDto {
 		@NotNull
 		@JsonFormat(pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
 		@DateTimeFormat(pattern = "yyyy-MM-dd")
-		private LocalDate createdAt;
+		private LocalDate startedAt;
 
 		@NotNull
 		@JsonFormat(pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
@@ -44,8 +47,19 @@ public class ContractDto {
 		private String id;
 		private String landlordName;
 		private String tenantName;
-		private LocalDate createdAt;
+		private LocalDate startedAt;
 		private LocalDate expiredAt;
 		private String url;
+	}
+
+	public static Response toResponse(ContractInfo info) {
+		return Response.builder()
+			.id(info.getId())
+			.landlordName(info.getLandlordName())
+			.tenantName(info.getTenantName())
+			.startedAt(info.getStartedAt())
+			.expiredAt(info.getExpiredAt())
+			.url(info.getUrl())
+			.build();
 	}
 }

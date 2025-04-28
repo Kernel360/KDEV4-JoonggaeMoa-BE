@@ -27,10 +27,14 @@ public class Notification extends BaseEntity {
 	private String content;
 	private Boolean isRead = false;
 
-	public Notification(Long agentId, NotificationType type, String content) {
+	private Notification(Long agentId, NotificationType type, String content) {
 		this.agentId = agentId;
 		this.type = type;
 		this.content = content;
+	}
+
+	public static Notification create(Long agentId, NotificationType type, String content) {
+		return new Notification(agentId, type, content);
 	}
 
 	public void markRead() {

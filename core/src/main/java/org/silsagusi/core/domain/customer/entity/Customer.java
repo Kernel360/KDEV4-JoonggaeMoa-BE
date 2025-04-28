@@ -15,6 +15,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,6 +24,10 @@ import lombok.NoArgsConstructor;
 @DynamicUpdate
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity(name = "customers")
+@Table(uniqueConstraints = {
+	@UniqueConstraint(name = "UK_customer_phone", columnNames = {"agent_id", "phone"}),
+	@UniqueConstraint(name = "UK_customer_email", columnNames = {"agent_id", "email"})
+})
 @Getter
 public class Customer extends BaseEntity {
 
@@ -47,12 +53,19 @@ public class Customer extends BaseEntity {
 
 	private Boolean consent;
 
+	private String interestProperty;
+
+	private String interestLocation;
+
+	private String assetStatus;
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "agent_id", nullable = false)
 	private Agent agent;
 
 	private Customer(String name, LocalDate birthday, String phone, String email, String job, Boolean isVip,
-		String memo, Boolean consent, Agent agent) {
+		String memo, Boolean consent, String interestProperty, String interestLocation, String assetStatus,
+		Agent agent) {
 		this.name = name;
 		this.birthday = birthday;
 		this.phone = phone;
@@ -61,25 +74,23 @@ public class Customer extends BaseEntity {
 		this.isVip = isVip;
 		this.memo = memo;
 		this.consent = consent;
+		this.interestProperty = interestProperty;
+		this.interestLocation = interestLocation;
+		this.assetStatus = assetStatus;
 		this.agent = agent;
 	}
 
 	public static Customer create(
 		String name, LocalDate birthday, String phone, String email, String job, Boolean isVip, String memo,
-		Boolean consent, Agent agent
+		Boolean consent, String interestProperty, String interestLocation, String assetStatus, Agent agent
 	) {
-		return new Customer(name, birthday, phone, email, job, isVip, memo, consent, agent);
+		return new Customer(name, birthday, phone, email, job, isVip, memo, consent, interestProperty, interestLocation,
+			assetStatus, agent);
 	}
 
 	public void updateCustomer(
-		String name,
-		LocalDate birthday,
-		String phone,
-		String email,
-		String job,
-		Boolean isVip,
-		String memo,
-		Boolean consent
+		String name, LocalDate birthday, String phone, String email, String job, Boolean isVip, String memo,
+		Boolean consent, String interestProperty, String interestLocation, String assetStatus
 	) {
 		this.name = name;
 		this.birthday = birthday;
@@ -89,6 +100,8 @@ public class Customer extends BaseEntity {
 		this.isVip = isVip;
 		this.memo = memo;
 		this.consent = consent;
+		this.interestProperty = interestProperty;
+		this.interestLocation = interestLocation;
+		this.assetStatus = assetStatus;
 	}
-
 }
