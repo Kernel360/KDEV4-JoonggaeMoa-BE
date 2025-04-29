@@ -8,10 +8,10 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+import org.silsagusi.api.common.exception.CustomerNotFoundException;
 import org.silsagusi.api.consultation.infrastructure.repository.ConsultationRepository;
 import org.silsagusi.api.contract.infrastructure.repository.ContractRepository;
 import org.silsagusi.api.customer.infrastructure.repository.CustomerRepository;
-import org.silsagusi.api.exception.CustomerNotFoundException;
 import org.silsagusi.api.message.infrastructure.repository.MessageRepository;
 import org.silsagusi.api.survey.infrastructure.repository.AnswerRepository;
 import org.silsagusi.core.domain.agent.Agent;

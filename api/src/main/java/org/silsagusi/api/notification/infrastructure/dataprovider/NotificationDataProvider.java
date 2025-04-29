@@ -3,8 +3,8 @@ package org.silsagusi.api.notification.infrastructure.dataprovider;
 import java.io.IOException;
 import java.util.List;
 
-import org.silsagusi.api.exception.CustomException;
-import org.silsagusi.api.exception.ErrorCode;
+import org.silsagusi.api.common.exception.CustomException;
+import org.silsagusi.api.common.exception.ErrorCode;
 import org.silsagusi.api.notification.infrastructure.repository.EmitterRepository;
 import org.silsagusi.api.notification.infrastructure.repository.NotificationRepository;
 import org.silsagusi.core.domain.notification.entity.Notification;
