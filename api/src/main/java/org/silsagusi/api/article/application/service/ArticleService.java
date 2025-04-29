@@ -20,28 +20,28 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class ArticleService {
-    private final ArticleDataProvider articleDataProvider;
+	private final ArticleDataProvider articleDataProvider;
 
-    @Transactional(readOnly = true)
-    public Page<ArticleResponse> getAllArticles(
-        int page,
-        int size,
-        List<String> realEstateType,
-        List<String> tradeType,
-        String minPrice,
-        String maxPrice,
-        String sortBy,
-        String direction,
-        String regionPrefix
-    ) {
-        Specification<Article> spec = articleDataProvider.getArticleSpec(
-            realEstateType, tradeType, minPrice, maxPrice, regionPrefix
-        );
-        Page<Article> articlePage = articleDataProvider.getArticlePage(
-            spec, page, size, sortBy, direction
-        );
-        return articlePage.map(ArticleResponse::toResponse);
-    }
+	@Transactional(readOnly = true)
+	public Page<ArticleResponse> getAllArticles(int page, int size,
+	                                            List<String> realEstateType, List<String> tradeType,
+	                                            String minPrice, String maxPrice,
+	                                            String sortBy, String direction,
+	                                            String regionPrefix) {
+		if (regionPrefix != null && !regionPrefix.isEmpty()) {
+			Page<Article> articlePage = articleDataProvider.getArticlesByRegionPrefix(
+				regionPrefix, page, size, sortBy, direction
+			);
+			return articlePage.map(ArticleResponse::toResponse);
+		}
+		Specification<Article> spec = articleDataProvider.getArticleSpec(
+			realEstateType, tradeType, minPrice, maxPrice
+		);
+		Page<Article> articlePage = articleDataProvider.getArticlePage(
+			spec, page, size, sortBy, direction
+		);
+		return articlePage.map(ArticleResponse::toResponse);
+	}
 
 	@Transactional(readOnly = true)
 	public RealEstateTypeSummaryResponse getRealEstateTypeSummary(String period) {

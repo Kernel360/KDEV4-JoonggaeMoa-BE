@@ -2,6 +2,8 @@ package org.silsagusi.api.article.infrastructure.repository;
 
 import org.silsagusi.core.domain.article.Article;
 import org.silsagusi.core.domain.article.projection.ArticleTypeRatioProjection;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -10,7 +12,9 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface ArticleRepository extends JpaRepository<Article, Long>, JpaSpecificationExecutor<Article> {
+	Page<Article> findByBjdCodeStartingWith(String regionPrefix, Pageable pageable);
 
+	// 매물 타입(BuildingType) 비율
 	@Query("""
 		    SELECT a.buildingType AS type, COUNT(a) AS count
 		    FROM articles a
