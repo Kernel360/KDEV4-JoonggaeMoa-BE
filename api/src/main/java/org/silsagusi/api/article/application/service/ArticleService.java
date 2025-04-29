@@ -32,16 +32,11 @@ public class ArticleService {
         String maxPrice,
         String sortBy,
         String direction,
-        Long regionId
+        String regionPrefix
     ) {
         Specification<Article> spec = articleDataProvider.getArticleSpec(
-            realEstateType, tradeType, minPrice, maxPrice
+            realEstateType, tradeType, minPrice, maxPrice, regionPrefix
         );
-        if (regionId != null) {
-            spec = spec.and((root, query, cb) ->
-                cb.equal(root.get("region").get("id"), regionId)
-            );
-        }
         Page<Article> articlePage = articleDataProvider.getArticlePage(
             spec, page, size, sortBy, direction
         );

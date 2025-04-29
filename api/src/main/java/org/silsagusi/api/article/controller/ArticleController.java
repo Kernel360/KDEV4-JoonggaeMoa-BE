@@ -30,11 +30,11 @@ public class ArticleController {
 		@RequestParam(required = false) List<String> tradeType,
 		@RequestParam(required = false) String minPrice,
 		@RequestParam(required = false) String maxPrice,
-		@RequestParam(required = false) Long regionId
+		@RequestParam(required = false) String regionPrefix
 	) {
 		return ResponseEntity.ok(ApiResponse.ok(
 			articleService.getAllArticles(
-				page, size, realEstateType, tradeType, minPrice, maxPrice, sortBy, direction, regionId
+				page, size, realEstateType, tradeType, minPrice, maxPrice, sortBy, direction, regionPrefix
 			)
 		));
 	}

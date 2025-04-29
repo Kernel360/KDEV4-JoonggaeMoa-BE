@@ -23,6 +23,8 @@ public class ArticleDataProvider {
 	private static final String REAL_ESTATE_TYPE = "articleType";
 	private static final String TRADE_TYPE = "tradeType";
 	private static final String PRICE = "price";
+	private static final String REGION = "region";
+	private static final String CORTAR_NO = "cortarNo";
 
 	private final ArticleRepository articleRepository;
 
@@ -30,7 +32,8 @@ public class ArticleDataProvider {
 		List<String> realEstateType,
 		List<String> tradeType,
 		String minPrice,
-		String maxPrice
+		String maxPrice,
+		String regionPrefix
 	) {
 		Specification<Article> spec = Specification.where(null);
 
@@ -58,6 +61,12 @@ public class ArticleDataProvider {
 					criteriaBuilder.lessThan(root.get(PRICE), pri),
 					criteriaBuilder.greaterThan(root.get(PRICE), 0)
 				)
+			);
+		}
+
+		if (regionPrefix != null && !regionPrefix.isEmpty()) {
+			spec = spec.and((root, query, criteriaBuilder) ->
+				criteriaBuilder.like(root.get(REGION).get(CORTAR_NO), regionPrefix + "%")
 			);
 		}
 		return spec;
