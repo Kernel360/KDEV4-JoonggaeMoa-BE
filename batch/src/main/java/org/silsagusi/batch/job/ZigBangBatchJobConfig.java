@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.silsagusi.batch.infrastructure.repository.ScrapeStatusRepository;
 import org.silsagusi.batch.zigbang.application.ZigBangRequestService;
+import org.silsagusi.batch.zigbang.infrastructure.dto.ZigBangScrapeRequest;
+import org.silsagusi.batch.zigbang.infrastructure.dto.ZigBangScrapeResult;
 import org.silsagusi.core.domain.article.ScrapeStatus;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -53,10 +55,28 @@ public class ZigBangBatchJobConfig {
 			.tasklet((contribution, chunkContext) -> {
 				List<ScrapeStatus> regions = scrapeStatusRepository.findAll();
 				for (ScrapeStatus status : regions) {
-					zigBangRequestService.scrapZigBang(status);
+					ZigBangScrapeRequest request = new ZigBangScrapeRequest(
+						status.getId(),
+						status.getRegion().getId(),
+						status.getRegion().getCortarNo(),
+						status.getLastScrapedPage(),
+						status.getRegion().getGeohash()
+					);
+					zigBangRequestService.scrapZigBang(request, this::updateScrapeStatusByResult);
 				}
 				return RepeatStatus.FINISHED;
 			}, transactionManager)
 			.build();
+	}
+
+	private void updateScrapeStatusByResult(ZigBangScrapeResult result) {
+		scrapeStatusRepository.findById(result.scrapeStatusId()).ifPresent(status -> {
+			if (result.errorMessage() != null) {
+				status.failed(result.errorMessage());
+			} else {
+				status.completed();
+			}
+			scrapeStatusRepository.save(status);
+		});
 	}
 }
