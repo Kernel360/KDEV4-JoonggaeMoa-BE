@@ -1,14 +1,16 @@
 package org.silsagusi.api.auth.filter;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
 
-import org.apache.commons.lang3.StringUtils;
+import org.silsagusi.api.auth.SecurityProperties;
 import org.silsagusi.api.auth.jwt.JwtProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import io.jsonwebtoken.Claims;
@@ -24,6 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
 	private final JwtProvider jwtProvider;
+	private final AntPathMatcher antPathMatcher = new AntPathMatcher();
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
@@ -59,17 +62,9 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 	}
 
 	@Override
-	protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+	protected boolean shouldNotFilter(HttpServletRequest request) {
 		String path = request.getRequestURI();
-		return StringUtils.startsWithAny(path,
-			"/api/agent/login",
-			"/api/agent/signup",
-			"/api/refresh-token",
-			"/api/customers/**",
-			"/swagger-ui/**",
-			"/v3/api-docs/**",
-			"/api/notification/subscribe",
-			"/api/inquiries/**"
-		);
+		return Arrays.stream(SecurityProperties.PATHS)
+			.anyMatch(pattern -> antPathMatcher.match(pattern, path));
 	}
 }

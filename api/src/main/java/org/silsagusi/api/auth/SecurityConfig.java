@@ -38,16 +38,6 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-	private static final String[] AUTH_WHITELIST = {
-		"/api/agents/login",
-		"/api/agents/signup",
-		"/api/refresh-token",
-		"/api/customers/**",
-		"/swagger-ui/**",
-		"/v3/api-docs/**",
-		"/api/notification/subscribe",
-		"/api/inquiries/**"
-	};
 	private final CustomAuthenticationEntryPointHandler customAuthenticationEntryPointHandler;
 	private final CustomAccessDeniedHandler customAccessDeniedHandler;
 	private final JwtProvider jwtProvider;
@@ -75,7 +65,7 @@ public class SecurityConfig {
 			.addFilterBefore(new JwtAuthorizationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class)
 
 			.authorizeHttpRequests(auth -> auth
-					.requestMatchers(AUTH_WHITELIST).permitAll()
+					.requestMatchers(SecurityProperties.PATHS).permitAll()
 					.anyRequest().authenticated()
 				//.anyRequest().permitAll()
 			)
