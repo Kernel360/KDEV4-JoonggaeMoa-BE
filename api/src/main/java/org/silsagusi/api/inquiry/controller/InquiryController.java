@@ -69,7 +69,7 @@ public class InquiryController {
 		return ResponseEntity.ok(ApiResponse.ok(inquiry));
 	}
 
-	@PostMapping("/api/inquiries/{inquiryId}")
+	@PostMapping("/api/inquiries-answers/{inquiryId}")
 	public ResponseEntity<ApiResponse<Void>> writeInquiryAnswer(
 		HttpServletRequest request,
 		@PathVariable("inquiryId") Long inquiryId,

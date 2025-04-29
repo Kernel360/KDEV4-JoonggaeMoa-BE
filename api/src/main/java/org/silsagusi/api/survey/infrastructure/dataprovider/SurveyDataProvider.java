@@ -3,8 +3,8 @@ package org.silsagusi.api.survey.infrastructure.dataprovider;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.silsagusi.api.exception.CustomException;
-import org.silsagusi.api.exception.ErrorCode;
+import org.silsagusi.api.common.exception.CustomException;
+import org.silsagusi.api.common.exception.ErrorCode;
 import org.silsagusi.api.survey.infrastructure.repository.AnswerRepository;
 import org.silsagusi.api.survey.infrastructure.repository.QuestionRepository;
 import org.silsagusi.api.survey.infrastructure.repository.SurveyRepository;

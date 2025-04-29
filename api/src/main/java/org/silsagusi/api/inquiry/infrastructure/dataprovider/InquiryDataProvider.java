@@ -1,7 +1,7 @@
 package org.silsagusi.api.inquiry.infrastructure.dataprovider;
 
-import org.silsagusi.api.exception.CustomException;
-import org.silsagusi.api.exception.ErrorCode;
+import org.silsagusi.api.common.exception.CustomException;
+import org.silsagusi.api.common.exception.ErrorCode;
 import org.silsagusi.api.inquiry.infrastructure.repository.InquiryAnswerRepository;
 import org.silsagusi.api.inquiry.infrastructure.repository.InquiryRepository;
 import org.silsagusi.core.domain.inquiry.command.UpdateInquiryCommand;
