@@ -53,7 +53,8 @@ public class NaverLandBatchJobConfig {
 		return new StepBuilder(JOB_NAME + "Step", jobRepository)
 			.tasklet((contribution, chunkContext) -> {
 				List<ScrapeStatus> regions = scrapeStatusRepository.findTop10BySourceAndCompletedFalseOrderByIdAsc(
-					"네이버부동산");
+					"네이버 부동산");
+				log.info("Found " + regions.size() + " regions");
 				for (ScrapeStatus status : regions) {
 					naverLandRequestService.scrapNaverLand(status);
 				}
