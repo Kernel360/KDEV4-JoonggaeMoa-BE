@@ -1,8 +1,8 @@
 package org.silsagusi.batch.naverland.infrastructure.dto;
 
-import java.util.List;
-
 import lombok.Data;
+
+import java.util.List;
 
 @Data
 public class NaverLandRegionResponse {

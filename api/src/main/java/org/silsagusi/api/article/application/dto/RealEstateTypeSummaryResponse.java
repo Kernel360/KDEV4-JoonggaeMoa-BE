@@ -1,11 +1,10 @@
 package org.silsagusi.api.article.application.dto;
 
-import java.util.List;
-
-import org.silsagusi.core.domain.article.projection.ArticleTypeRatioProjection;
-
 import lombok.Builder;
 import lombok.Getter;
+import org.silsagusi.core.domain.article.projection.ArticleTypeRatioProjection;
+
+import java.util.List;
 
 @Getter
 public class RealEstateTypeSummaryResponse {

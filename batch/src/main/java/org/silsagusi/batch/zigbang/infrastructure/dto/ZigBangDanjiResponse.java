@@ -1,11 +1,10 @@
 package org.silsagusi.batch.zigbang.infrastructure.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Data;
+
 import java.time.LocalDate;
 import java.util.List;
-
-import com.fasterxml.jackson.annotation.JsonFormat;
-
-import lombok.Data;
 
 @Data
 public class ZigBangDanjiResponse {
