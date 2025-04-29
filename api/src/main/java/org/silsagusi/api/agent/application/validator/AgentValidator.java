@@ -1,8 +1,8 @@
 package org.silsagusi.api.agent.application.validator;
 
 import org.silsagusi.api.agent.infrastructure.reposiroty.AgentRepository;
-import org.silsagusi.api.exception.CustomException;
-import org.silsagusi.api.exception.ErrorCode;
+import org.silsagusi.api.common.exception.CustomException;
+import org.silsagusi.api.common.exception.ErrorCode;
 import org.silsagusi.core.domain.agent.Agent;
 import org.springframework.stereotype.Component;
 

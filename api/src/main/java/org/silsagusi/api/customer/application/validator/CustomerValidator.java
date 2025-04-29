@@ -1,8 +1,8 @@
 package org.silsagusi.api.customer.application.validator;
 
+import org.silsagusi.api.common.exception.CustomException;
+import org.silsagusi.api.common.exception.ErrorCode;
 import org.silsagusi.api.customer.infrastructure.repository.CustomerRepository;
-import org.silsagusi.api.exception.CustomException;
-import org.silsagusi.api.exception.ErrorCode;
 import org.silsagusi.core.domain.agent.Agent;
 import org.silsagusi.core.domain.customer.entity.Customer;
 import org.springframework.stereotype.Component;

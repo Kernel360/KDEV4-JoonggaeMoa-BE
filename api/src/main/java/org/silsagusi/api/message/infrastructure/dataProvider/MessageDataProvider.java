@@ -2,8 +2,8 @@ package org.silsagusi.api.message.infrastructure.dataProvider;
 
 import java.util.List;
 
-import org.silsagusi.api.exception.CustomException;
-import org.silsagusi.api.exception.ErrorCode;
+import org.silsagusi.api.common.exception.CustomException;
+import org.silsagusi.api.common.exception.ErrorCode;
 import org.silsagusi.api.message.infrastructure.repository.MessageRepository;
 import org.silsagusi.core.domain.message.command.UpdateMessageCommand;
 import org.silsagusi.core.domain.message.entity.Message;

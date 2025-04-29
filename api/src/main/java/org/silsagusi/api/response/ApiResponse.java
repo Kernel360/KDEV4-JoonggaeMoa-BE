@@ -1,7 +1,7 @@
 package org.silsagusi.api.response;
 
-import org.silsagusi.api.exception.CustomException;
-import org.silsagusi.api.exception.ExceptionDto;
+import org.silsagusi.api.common.exception.CustomException;
+import org.silsagusi.api.common.exception.ExceptionDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
