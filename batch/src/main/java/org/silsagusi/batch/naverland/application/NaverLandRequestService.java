@@ -1,7 +1,13 @@
 package org.silsagusi.batch.naverland.application;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.silsagusi.batch.infrastructure.dataProvider.ArticleDataProvider;
 import org.silsagusi.batch.infrastructure.dataProvider.ComplexDataProvider;
 import org.silsagusi.batch.infrastructure.external.AddressResponse;
@@ -14,13 +20,13 @@ import org.silsagusi.core.domain.article.Complex;
 import org.silsagusi.core.domain.article.Region;
 import org.silsagusi.core.domain.article.ScrapeStatus;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
-import java.util.*;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@Service
+@Component
 @RequiredArgsConstructor
 public class NaverLandRequestService {
 
@@ -46,7 +52,7 @@ public class NaverLandRequestService {
 					String.valueOf(page), region.getCenterLat().toString(),
 					region.getCenterLon().toString(), region.getCortarNo()
 				);
-				Thread.sleep((long) (2000 + Math.random() * 3000)); // 2~5초 랜덤 대기
+				Thread.sleep((long)(2000 + Math.random() * 3000)); // 2~5초 랜덤 대기
 
 				// 중복 없는 단지만 변환 후 저장 리스트에 추가
 				List<Complex> allComplexes = new ArrayList<>();
@@ -65,12 +71,12 @@ public class NaverLandRequestService {
 					region.getCenterLon().toString(), region.getCortarNo());
 				List<Article> pageArticles = mapNaverLandToArticles(artResp.getBody(), region, codeToComplex);
 				articleDataProvider.saveArticles(pageArticles);
-				Thread.sleep((long) (2000 + Math.random() * 3000)); // 2~5초 랜덤 대기
+				Thread.sleep((long)(2000 + Math.random() * 3000)); // 2~5초 랜덤 대기
 
 				scrapeStatus.updatePage(page, LocalDateTime.now(), "네이버 부동산");
 				hasMore = artResp.isMore() && page < 20;
 				page++;
-				Thread.sleep((long) (10000 + Math.random() * 5000)); // 10~15초 랜덤 대기
+				Thread.sleep((long)(10000 + Math.random() * 5000)); // 10~15초 랜덤 대기
 			} while (hasMore);
 
 			scrapeStatus.completed();
