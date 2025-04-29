@@ -35,7 +35,7 @@ public class ContractDetailDto {
 			.landlordId(info.getLandlordId())
 			.tenantId(info.getTenantId())
 			.landlordName(info.getLandlordName())
-			.tenantName(info.getLandlordName())
+			.tenantName(info.getTenantName())
 			.landlordPhone(info.getLandlordPhone())
 			.tenantPhone(info.getTenantPhone())
 			.landlordEmail(info.getLandlordEmail())
