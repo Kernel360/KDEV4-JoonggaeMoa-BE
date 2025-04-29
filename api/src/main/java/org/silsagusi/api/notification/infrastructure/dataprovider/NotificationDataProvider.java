@@ -1,6 +1,5 @@
 package org.silsagusi.api.notification.infrastructure.dataprovider;
 
-import java.io.IOException;
 import java.util.List;
 
 import org.silsagusi.api.common.exception.CustomException;
@@ -28,10 +27,21 @@ public class NotificationDataProvider {
 
 	public SseEmitter subscribe(Long agentId) {
 		SseEmitter emitter = new SseEmitter(DEFAULT_TIMEOUT);
+
 		emitterRepository.save(agentId, emitter);
 
-		emitter.onCompletion(() -> emitterRepository.remove(agentId));
-		emitter.onTimeout(() -> emitterRepository.remove(agentId));
+		emitter.onCompletion(() -> {
+			log.info("SSE completed: agentId={}", agentId);
+			emitterRepository.remove(agentId);
+		});
+		emitter.onTimeout(() -> {
+			log.warn("SSE timeout: agentId={}", agentId);
+			emitterRepository.remove(agentId);
+		});
+		emitter.onError((e) -> {
+			log.error("SSE error: agentId={}, error={}", agentId, e.getMessage());
+			emitterRepository.remove(agentId);
+		});
 
 		notify(agentId, NotificationType.CONNECTION, "로그인에 성공했습니다!");
 
@@ -40,13 +50,6 @@ public class NotificationDataProvider {
 
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public void notify(Long agentId, NotificationType type, String content) {
-
-		// boolean alreadyNotified = notificationRepository.existsByAgentIdAndTypeAndContent(agentId, type, content);
-		//
-		// if (alreadyNotified) {
-		// 	log.info("이미 같은 알림이 전송됨: agentId={}, content={}", agentId, content);
-		// 	return;
-		// }
 
 		Notification notification = Notification.create(
 			agentId, type, content
@@ -62,7 +65,9 @@ public class NotificationDataProvider {
 				emitter.send(SseEmitter.event()
 					.name("notification")
 					.data(notification));
-			} catch (IOException e) {
+			} catch (Exception e) {
+				log.error("Failed to send notification to agentId {}: {}", agentId, e.getMessage());
+				emitter.completeWithError(e);
 				emitterRepository.remove(agentId);
 			}
 		}
