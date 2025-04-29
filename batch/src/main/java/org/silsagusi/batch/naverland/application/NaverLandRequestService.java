@@ -16,13 +16,14 @@ import org.silsagusi.core.domain.article.Article;
 import org.silsagusi.core.domain.article.Complex;
 import org.silsagusi.core.domain.article.Region;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.Consumer;
 
 @Slf4j
-@Service
+@Component
 @RequiredArgsConstructor
 public class NaverLandRequestService {
 
@@ -51,7 +52,7 @@ public class NaverLandRequestService {
 					String.valueOf(page), request.getCenterLat().toString(),
 					request.getCenterLon().toString(), request.getCortarNo()
 				);
-				Thread.sleep((long) (2000 + Math.random() * 3000)); // 2~5초 랜덤 대기
+				Thread.sleep((long)(2000 + Math.random() * 3000)); // 2~5초 랜덤 대기
 
 				// 중복 없는 단지만 변환 후 저장 리스트에 추가
 				List<Complex> allComplexes = new ArrayList<>();
@@ -70,11 +71,11 @@ public class NaverLandRequestService {
 					request.getCenterLon().toString(), request.getCortarNo());
 				List<Article> pageArticles = mapNaverLandToArticles(artResp.getBody(), region, codeToComplex);
 				articleDataProvider.saveArticles(pageArticles);
-				Thread.sleep((long) (2000 + Math.random() * 3000)); // 2~5초 랜덤 대기
+				Thread.sleep((long)(2000 + Math.random() * 3000)); // 2~5초 랜덤 대기
 
 				hasMore = artResp.isMore() && page < 20;
 				page++;
-				Thread.sleep((long) (10000 + Math.random() * 5000)); // 10~15초 랜덤 대기
+				Thread.sleep((long)(10000 + Math.random() * 5000)); // 10~15초 랜덤 대기
 			} while (hasMore);
 
 			callback.accept(new NaverLandScrapeResult(request.getScrapeStatusId(), page, null));

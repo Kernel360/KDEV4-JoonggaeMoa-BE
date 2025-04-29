@@ -1,7 +1,7 @@
 package org.silsagusi.batch.job;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.util.List;
+
 import org.silsagusi.batch.infrastructure.repository.ScrapeStatusRepository;
 import org.silsagusi.batch.zigbang.application.ZigBangRequestService;
 import org.silsagusi.batch.zigbang.infrastructure.dto.ZigBangScrapeRequest;
@@ -19,7 +19,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import java.util.List;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Configuration
@@ -53,7 +54,8 @@ public class ZigBangBatchJobConfig {
 	public Step zigBangItemCatalogStep() {
 		return new StepBuilder(JOB_NAME + "Step", jobRepository)
 			.tasklet((contribution, chunkContext) -> {
-				List<ScrapeStatus> regions = scrapeStatusRepository.findAll();
+				List<ScrapeStatus> regions = scrapeStatusRepository.findTop10BySourceAndCompletedFalseOrderByIdAsc(
+					"직방");
 				for (ScrapeStatus status : regions) {
 					ZigBangScrapeRequest request = new ZigBangScrapeRequest(
 						status.getId(),

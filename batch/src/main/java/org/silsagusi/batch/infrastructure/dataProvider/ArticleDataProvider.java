@@ -9,14 +9,14 @@ import org.silsagusi.batch.zigbang.infrastructure.dto.ZigBangItemCatalogResponse
 import org.silsagusi.core.domain.article.Article;
 import org.silsagusi.core.domain.article.Complex;
 import org.silsagusi.core.domain.article.Region;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
 
-@Service
+@Component
 @RequiredArgsConstructor
 public class ArticleDataProvider {
 
