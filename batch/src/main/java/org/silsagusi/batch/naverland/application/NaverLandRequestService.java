@@ -18,7 +18,6 @@ import org.silsagusi.core.domain.article.Region;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.Consumer;
 
