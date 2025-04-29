@@ -376,6 +376,7 @@ application-local.yml
 
 /api/src/main/resources/application-local.yml
 /api/src/main/resources/regions.sql
+/api/src/main/resources/scrape_statuses.sql
 /batch/src/main/resources/application-local.yml
 
 .env

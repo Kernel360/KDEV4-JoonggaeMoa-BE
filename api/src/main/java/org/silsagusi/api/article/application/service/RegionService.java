@@ -14,9 +14,13 @@ public class RegionService {
 
 	private final RegionDataProvider regionDataProvider;
 
+
 	@Transactional(readOnly = true)
-	public List<RegionResponse> getRegions() {
-		return regionDataProvider.getRegions().stream()
+	public List<RegionResponse> getChildRegionsByPrefix(String prefix) {
+		if (prefix == null) {
+			prefix = "";
+		}
+		return regionDataProvider.getChildRegionsByPrefix(prefix).stream()
 			.map(RegionResponse::toResponse)
 			.toList();
 	}
