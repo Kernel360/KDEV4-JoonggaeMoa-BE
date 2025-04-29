@@ -1,7 +1,7 @@
 package org.silsagusi.batch.job;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.util.List;
+
 import org.silsagusi.batch.infrastructure.repository.ScrapeStatusRepository;
 import org.silsagusi.batch.naverland.application.NaverLandRequestService;
 import org.silsagusi.core.domain.article.ScrapeStatus;
@@ -17,7 +17,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import java.util.List;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Configuration
@@ -51,7 +52,8 @@ public class NaverLandBatchJobConfig {
 	public Step naverLandArticleStep() {
 		return new StepBuilder(JOB_NAME + "Step", jobRepository)
 			.tasklet((contribution, chunkContext) -> {
-				List<ScrapeStatus> regions = scrapeStatusRepository.findAll();
+				List<ScrapeStatus> regions = scrapeStatusRepository.findTop10BySourceAndCompletedFalseOrderByIdAsc(
+					"네이버부동산");
 				for (ScrapeStatus status : regions) {
 					naverLandRequestService.scrapNaverLand(status);
 				}
