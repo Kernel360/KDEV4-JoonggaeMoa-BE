@@ -12,6 +12,7 @@ import org.silsagusi.batch.infrastructure.dataProvider.ArticleDataProvider;
 import org.silsagusi.batch.infrastructure.dataProvider.ComplexDataProvider;
 import org.silsagusi.batch.infrastructure.external.AddressResponse;
 import org.silsagusi.batch.infrastructure.external.KakaoMapApiClient;
+import org.silsagusi.batch.infrastructure.repository.RegionRepository;
 import org.silsagusi.batch.zigbang.infrastructure.ZigBangApiClient;
 import org.silsagusi.batch.zigbang.infrastructure.dto.ZigBangDanjiResponse;
 import org.silsagusi.batch.zigbang.infrastructure.dto.ZigBangItemCatalogResponse;
@@ -34,6 +35,7 @@ public class ZigBangRequestService {
 	private final KakaoMapApiClient kakaoMapApiClient;
 	private final ArticleDataProvider articleDataProvider;
 	private final ComplexDataProvider complexDataProvider;
+	private final RegionRepository regionRepository;
 
 	@Async("scrapeExecutor")
 	public void scrapZigBang(ScrapeStatus scrapeStatus) throws InterruptedException {
@@ -61,12 +63,19 @@ public class ZigBangRequestService {
 		AddressResponse kakaoResp = kakaoMapApiClient.lookupAddress(
 			danjiResp.getFiltered().get(0).getLng(),
 			danjiResp.getFiltered().get(0).getLat()
-		);
+		); // 주소 불러오기
 
 		for (ZigBangItemCatalogResponse.ZigBangItemCatalog item : itemResp.getList()) {
 			Complex complex = idToComplex.get(item.getAreaDanjiId());
+			String dongName = kakaoResp.getRegion(); // 법정동코드 불러오기
+			Region dongRegion = regionRepository.findByCortarName(dongName);
+			String cortarNo = (dongRegion != null) ? dongRegion.getCortarNo() : null;
+			if (cortarNo == null) {
+				log.debug("{} 카카오 API 응답없음", dongName);
+			}
+
 			Article article = articleDataProvider.createZigBangItemCatalog(
-				item, danjiResp, kakaoResp, region, complex);
+				item, danjiResp, kakaoResp, region, complex, cortarNo);
 			articleDataProvider.saveArticles(List.of(article));
 		}
 		scrapeStatus.updatePage(itemResp.getCount(), LocalDateTime.now(), "직방");

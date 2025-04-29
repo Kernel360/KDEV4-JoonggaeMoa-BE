@@ -71,12 +71,12 @@ public class ArticleDataProvider {
 		ZigBangItemCatalogResponse.ZigBangItemCatalog item,
 		ZigBangDanjiResponse danji,
 		AddressResponse addressResponse,
-		Region region, Complex complex
+		Region region, Complex complex, String cortarNo
 
 	) {
 		return Article.create(
 			String.valueOf(item.getAreaDanjiId()),
-			null,
+			cortarNo,
 			item.getAreaDanjiName() + " " + item.getDong(),
 			"A01",
 			"아파트",
@@ -88,7 +88,7 @@ public class ArticleDataProvider {
 			String.valueOf(item.getSizeM2()),
 			null,
 			danji.getFiltered().get(0).get사용승인일(),
-			item.getThumbnailUrl() == "" ? null :
+			Objects.equals(item.getThumbnailUrl(), "") ? null :
 				item.getThumbnailUrl() + "?w=1000",
 			danji.getFiltered().get(0).getLat(),
 			danji.getFiltered().get(0).getLng(),
