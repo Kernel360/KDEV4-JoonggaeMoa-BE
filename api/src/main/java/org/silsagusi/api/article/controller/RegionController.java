@@ -17,12 +17,12 @@ public class RegionController {
 
 	private final RegionService regionService;
 
-	@GetMapping("/api/regions/{regionId}")
+	@GetMapping({"/api/regions", "/api/regions/{cortarNoPrefix}"})
 	public ResponseEntity<ApiResponse<List<RegionResponse>>> getChildRegions(
-		@PathVariable Long regionId
+		@PathVariable(required = false) String cortarNoPrefix
 	) {
 		return ResponseEntity.ok(
-			ApiResponse.ok(regionService.getChildRegions(regionId))
+			ApiResponse.ok(regionService.getChildRegionsByPrefix(cortarNoPrefix))
 		);
 	}
 }

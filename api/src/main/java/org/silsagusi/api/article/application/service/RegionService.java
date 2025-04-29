@@ -14,13 +14,12 @@ public class RegionService {
 
 	private final RegionDataProvider regionDataProvider;
 
+
 	@Transactional(readOnly = true)
-	public List<RegionResponse> getChildRegions(Long regionId) {
-		var parent = regionDataProvider.getRegionById(regionId);
-		if (parent == null || parent.getCortarNo() == null) {
-			return List.of();
+	public List<RegionResponse> getChildRegionsByPrefix(String prefix) {
+		if (prefix == null) {
+			prefix = "";
 		}
-		String prefix = parent.getCortarNo();
 		return regionDataProvider.getChildRegionsByPrefix(prefix).stream()
 			.map(RegionResponse::toResponse)
 			.toList();

@@ -12,9 +12,6 @@ import java.util.List;
 public class RegionDataProvider {
 	private final RegionRepository regionRepository;
 
-	public Region getRegionById(Long id) {
-		return regionRepository.findById(id).orElse(null);
-	}
 
 	public List<Region> getChildRegionsByPrefix(String prefix) {
 		return regionRepository.findAllByCortarNoStartingWith(prefix);
