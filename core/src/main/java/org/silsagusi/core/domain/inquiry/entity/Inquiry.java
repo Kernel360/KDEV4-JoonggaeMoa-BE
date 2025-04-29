@@ -12,6 +12,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
 import jakarta.persistence.OneToMany;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -33,6 +34,7 @@ public class Inquiry extends BaseEntity {
 
 	private String title;
 
+	@Lob
 	private String content;
 
 	@Column(name = "is_answered")
