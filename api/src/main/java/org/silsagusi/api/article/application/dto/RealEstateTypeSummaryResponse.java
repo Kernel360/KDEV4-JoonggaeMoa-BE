@@ -12,6 +12,7 @@ public class RealEstateTypeSummaryResponse {
 
 	private final List<RealEstateTypeSummary> values;
 
+	@Getter
 	@Builder
 	public static class RealEstateTypeSummary {
 		private String type;

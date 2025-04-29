@@ -12,6 +12,7 @@ public class TradeTypeSummaryResponse {
 
 	private final List<TradeTypeSummary> values;
 
+	@Getter
 	@Builder
 	public static class TradeTypeSummary {
 		private String type;
