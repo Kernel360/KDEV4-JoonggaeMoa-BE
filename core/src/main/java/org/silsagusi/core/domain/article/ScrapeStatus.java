@@ -17,7 +17,7 @@ public class ScrapeStatus {
 	@Column(name = "scrape_status_id", nullable = false)
 	private Long id;
 
-	@OneToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "region_id", nullable = false)
 	private Region region;
 
