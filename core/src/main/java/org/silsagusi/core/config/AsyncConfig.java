@@ -14,9 +14,9 @@ public class AsyncConfig {
 	@Bean(name = "scrapeExecutor")
 	public Executor scrapeExecutor() {
 		ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-		executor.setCorePoolSize(10);
-		executor.setMaxPoolSize(20);
-		executor.setQueueCapacity(50);
+		executor.setCorePoolSize(2);
+		executor.setMaxPoolSize(5);
+		executor.setQueueCapacity(10);
 		executor.setThreadNamePrefix("ScrapeExecutor-");
 		executor.setWaitForTasksToCompleteOnShutdown(true);
 		executor.setAwaitTerminationSeconds(60);

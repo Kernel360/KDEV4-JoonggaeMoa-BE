@@ -7,7 +7,9 @@ import org.silsagusi.api.exception.ErrorCode;
 import org.silsagusi.core.domain.article.Article;
 import org.silsagusi.core.domain.article.projection.ArticleTypeRatioProjection;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
@@ -63,7 +65,11 @@ public class ArticleDataProvider {
 
 	public Page<Article> getArticlePage(
 		Specification<Article> spec, int page, int size, String sortBy, String direction) {
-		return articleRepository.findAll(spec, page, size, sortBy, direction);
+		Sort sortObj = direction.equalsIgnoreCase("asc")
+			? Sort.by(sortBy).ascending()
+			: Sort.by(sortBy).descending();
+		Pageable pageable = PageRequest.of(page, size, sortObj);
+		return articleRepository.findAll(spec, pageable);
 	}
 
 	public List<ArticleTypeRatioProjection> getRealEstateTypeRatio(LocalDate from) {
