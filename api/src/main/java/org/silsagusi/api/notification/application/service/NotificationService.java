@@ -30,9 +30,15 @@ public class NotificationService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<NotificationDto.Response> getNotification(Long agentId) {
+	public List<NotificationDto.Response> getNotifications(Long agentId) {
 		List<Notification> notificationList = notificationDataProvider.getAllByAgent(agentId);
 		return notificationList.stream().map(NotificationDto::toResponse).toList();
+	}
+
+	@Transactional(readOnly = true)
+	public NotificationDto.Response getNotification(Long notificationId) {
+		Notification notification = notificationDataProvider.getNotification(notificationId);
+		return NotificationDto.toResponse(notification);
 	}
 
 	@Transactional
