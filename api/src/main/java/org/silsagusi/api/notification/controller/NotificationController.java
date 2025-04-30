@@ -2,6 +2,7 @@ package org.silsagusi.api.notification.controller;
 
 import java.util.List;
 
+import org.silsagusi.api.common.annotation.CurrentAgentId;
 import org.silsagusi.api.common.auth.jwt.JwtProvider;
 import org.silsagusi.api.notification.application.dto.NotificationDto;
 import org.silsagusi.api.notification.application.service.NotificationService;
@@ -13,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -35,11 +35,9 @@ public class NotificationController {
 
 	@GetMapping("/api/notification")
 	public ResponseEntity<ApiResponse<List<NotificationDto.Response>>> getNotification(
-		HttpServletRequest request
+		@CurrentAgentId Long agentId
 	) {
-		List<NotificationDto.Response> notification = notificationService.getNotification(
-			(Long)request.getAttribute("agentId"));
-
+		List<NotificationDto.Response> notification = notificationService.getNotification(agentId);
 		return ResponseEntity.ok(ApiResponse.ok(notification));
 	}
 

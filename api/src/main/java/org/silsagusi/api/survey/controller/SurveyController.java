@@ -1,9 +1,10 @@
 package org.silsagusi.api.survey.controller;
 
+import org.silsagusi.api.common.annotation.CurrentAgentId;
 import org.silsagusi.api.response.ApiResponse;
-import org.silsagusi.api.survey.application.service.SurveyService;
 import org.silsagusi.api.survey.application.dto.AnswerDto;
 import org.silsagusi.api.survey.application.dto.SurveyDto;
+import org.silsagusi.api.survey.application.service.SurveyService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +16,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -27,52 +27,38 @@ public class SurveyController {
 
 	@PostMapping("/api/surveys")
 	public ResponseEntity<ApiResponse<Void>> createSurvey(
-		HttpServletRequest request,
+		@CurrentAgentId Long agentId,
 		@RequestBody @Valid SurveyDto.CreateRequest surveyCreateRequest
 	) {
-		surveyService.createSurvey(
-			(Long)request.getAttribute("agentId"),
-			surveyCreateRequest
-		);
+		surveyService.createSurvey(agentId, surveyCreateRequest);
 		return ResponseEntity.ok(ApiResponse.ok());
 	}
 
 	@DeleteMapping("/api/surveys/{surveyId}")
 	public ResponseEntity<ApiResponse<Void>> deleteSurvey(
-		HttpServletRequest request,
+		@CurrentAgentId Long agentId,
 		@PathVariable("surveyId") String surveyId
 	) {
-		surveyService.deleteSurvey(
-			(Long)request.getAttribute("agentId"),
-			surveyId
-		);
+		surveyService.deleteSurvey(agentId, surveyId);
 		return ResponseEntity.ok(ApiResponse.ok());
 	}
 
 	@PatchMapping("/api/surveys/{surveyId}")
 	public ResponseEntity<ApiResponse<Void>> updateSurvey(
-		HttpServletRequest request,
+		@CurrentAgentId Long agentId,
 		@PathVariable String surveyId,
 		@RequestBody @Valid SurveyDto.UpdateRequest surveyUpdateRequest
 	) {
-		surveyService.updateSurvey(
-			(Long)request.getAttribute("agentId"),
-			surveyId,
-			surveyUpdateRequest
-		);
-
+		surveyService.updateSurvey(agentId, surveyId, surveyUpdateRequest);
 		return ResponseEntity.ok(ApiResponse.ok());
 	}
 
 	@GetMapping("/api/surveys")
 	public ResponseEntity<ApiResponse<Page<SurveyDto.Response>>> getAllSurveys(
-		HttpServletRequest request,
+		@CurrentAgentId Long agentId,
 		Pageable pageable
 	) {
-		Page<SurveyDto.Response> surveyResponsePage = surveyService.getAllSurveys(
-			(Long)request.getAttribute("agentId"),
-			pageable
-		);
+		Page<SurveyDto.Response> surveyResponsePage = surveyService.getAllSurveys(agentId, pageable);
 		return ResponseEntity.ok(ApiResponse.ok(surveyResponsePage));
 	}
 
@@ -86,13 +72,10 @@ public class SurveyController {
 
 	@GetMapping("/api/surveys/answer")
 	public ResponseEntity<ApiResponse<Page<AnswerDto.Response>>> getSurveyAnswers(
-		HttpServletRequest request,
+		@CurrentAgentId Long agentId,
 		Pageable pageable
 	) {
-		Page<AnswerDto.Response> answerResponsePage = surveyService.getAllAnswers(
-			(Long)request.getAttribute("agentId"),
-			pageable
-		);
+		Page<AnswerDto.Response> answerResponsePage = surveyService.getAllAnswers(agentId, pageable);
 		return ResponseEntity.ok(ApiResponse.ok(answerResponsePage));
 	}
 
