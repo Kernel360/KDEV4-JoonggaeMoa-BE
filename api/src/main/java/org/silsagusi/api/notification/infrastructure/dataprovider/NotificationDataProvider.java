@@ -80,12 +80,14 @@ public class NotificationDataProvider {
 		}
 
 		List<Map.Entry<String, SseEmitter>> emitters = emitterRepository.getAllEmittersByAgentId(agentId);
-		
+
 		for (Map.Entry<String, SseEmitter> entry : emitters) {
 			String emitterId = entry.getKey();
 			SseEmitter emitter = entry.getValue();
 
 			Notification notification = Notification.create(agentId, type, content);
+
+			notificationRepository.save(notification);
 
 			if (emitter != null) {
 				try {
