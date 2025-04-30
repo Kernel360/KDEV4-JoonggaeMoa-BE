@@ -1,9 +1,6 @@
 package org.silsagusi.api.message.controller;
 
-<<<<<<< HEAD
 import org.silsagusi.api.common.annotation.CurrentAgentId;
-=======
->>>>>>> develop
 import org.silsagusi.api.message.application.dto.MessageDto;
 import org.silsagusi.api.message.application.dto.UpdateMessageRequest;
 import org.silsagusi.api.message.application.service.MessageService;
@@ -63,7 +60,6 @@ public class MessageController {
 		messageService.updateMessage(agentId, messageId, updateMessageRequest);
 		return ResponseEntity.ok(ApiResponse.ok());
 	}
-
 
 	@DeleteMapping("/api/messages/{messageId}")
 	public ResponseEntity<ApiResponse<Void>> deleteReservedMessage(
