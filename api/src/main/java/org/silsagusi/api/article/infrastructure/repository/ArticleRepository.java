@@ -14,6 +14,11 @@ import java.util.List;
 public interface ArticleRepository extends JpaRepository<Article, Long>, JpaSpecificationExecutor<Article> {
 	Page<Article> findByBjdCodeStartingWith(String regionPrefix, Pageable pageable);
 
+	// 화면에 보이는 영역 내 매물만 페이징 조회
+	Page<Article> findByLatitudeBetweenAndLongitudeBetweenAndBjdCodeStartingWith(
+	    Double swLat, Double neLat, Double swLng, Double neLng, String regionPrefix, Pageable pageable
+	);
+
 	// 매물 타입(BuildingType) 비율
 	@Query("""
 		    SELECT a.buildingType AS type, COUNT(a) AS count

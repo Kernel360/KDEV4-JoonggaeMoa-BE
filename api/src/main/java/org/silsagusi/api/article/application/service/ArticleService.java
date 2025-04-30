@@ -9,6 +9,7 @@ import org.silsagusi.api.article.infrastructure.dataProvider.ArticleDataProvider
 import org.silsagusi.core.domain.article.Article;
 import org.silsagusi.core.domain.article.projection.ArticleTypeRatioProjection;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,24 +24,34 @@ public class ArticleService {
 	private final ArticleDataProvider articleDataProvider;
 
 	@Transactional(readOnly = true)
-	public Page<ArticleResponse> getAllArticles(int page, int size,
-	                                            List<String> realEstateType, List<String> tradeType,
-	                                            String minPrice, String maxPrice,
-	                                            String sortBy, String direction,
-	                                            String regionPrefix) {
-		if (regionPrefix != null && !regionPrefix.isEmpty()) {
-			Page<Article> articlePage = articleDataProvider.getArticlesByRegionPrefix(
-				regionPrefix, page, size, sortBy, direction
-			);
-			return articlePage.map(ArticleResponse::toResponse);
-		}
-		Specification<Article> spec = articleDataProvider.getArticleSpec(
-			realEstateType, tradeType, minPrice, maxPrice
-		);
-		Page<Article> articlePage = articleDataProvider.getArticlePage(
-			spec, page, size, sortBy, direction
-		);
-		return articlePage.map(ArticleResponse::toResponse);
+	public Page<ArticleResponse> getAllArticles(
+	    Pageable pageable,
+	    List<String> realEstateType, List<String> tradeType,
+	    String minPrice, String maxPrice,
+	    String regionPrefix,
+	    Double neLat, Double neLng,
+	    Double swLat, Double swLng
+	) {
+	    // 화면에 보이는 영역(bounds) 내 매물 조회
+	    if (neLat != null && neLng != null && swLat != null && swLng != null) {
+	        Page<Article> articlePage = articleDataProvider.getArticlesByBounds(
+	            swLat, neLat, swLng, neLng, regionPrefix, pageable
+	        );
+	        return articlePage.map(ArticleResponse::toResponse);
+	    }
+	    if (regionPrefix != null && !regionPrefix.isEmpty()) {
+	        Page<Article> articlePage = articleDataProvider.getArticlesByRegionPrefix(
+	            regionPrefix, pageable
+	        );
+	        return articlePage.map(ArticleResponse::toResponse);
+	    }
+	    Specification<Article> spec = articleDataProvider.getArticleSpec(
+	        realEstateType, tradeType, minPrice, maxPrice
+	    );
+	    Page<Article> articlePage = articleDataProvider.getArticlePage(
+	        spec, pageable
+	    );
+	    return articlePage.map(ArticleResponse::toResponse);
 	}
 
 	@Transactional(readOnly = true)

@@ -7,6 +7,12 @@ import org.silsagusi.api.article.application.dto.TradeTypeSummaryResponse;
 import org.silsagusi.api.article.application.service.ArticleService;
 import org.silsagusi.api.response.ApiResponse;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -21,22 +27,24 @@ public class ArticleController {
 	private final ArticleService articleService;
 
 	@GetMapping("/api/articles")
-	public ResponseEntity<ApiResponse<Page<ArticleResponse>>> getArticles(
-		@RequestParam(defaultValue = "0") int page,
-		@RequestParam(defaultValue = "100") int size,
-		@RequestParam(defaultValue = "id") String sortBy,
-		@RequestParam(defaultValue = "desc") String direction,
+	public PagedModel<EntityModel<ArticleResponse>> getArticles(
+		@PageableDefault(sort = "id", direction = Direction.DESC, size = 50) Pageable pageable,
+		PagedResourcesAssembler<ArticleResponse> assembler,
 		@RequestParam(required = false) List<String> realEstateType,
 		@RequestParam(required = false) List<String> tradeType,
 		@RequestParam(required = false) String minPrice,
 		@RequestParam(required = false) String maxPrice,
-		@RequestParam(required = false) String regionPrefix
+		@RequestParam(required = false) String regionPrefix,
+		@RequestParam(required = false) Double neLat,
+		@RequestParam(required = false) Double neLng,
+		@RequestParam(required = false) Double swLat,
+		@RequestParam(required = false) Double swLng
 	) {
-		return ResponseEntity.ok(ApiResponse.ok(
-			articleService.getAllArticles(
-				page, size, realEstateType, tradeType, minPrice, maxPrice, sortBy, direction, regionPrefix
-			)
-		));
+		Page<ArticleResponse> page = articleService.getAllArticles(
+			pageable, realEstateType, tradeType, minPrice, maxPrice,
+			regionPrefix, neLat, neLng, swLat, swLng
+		);
+		return assembler.toModel(page);
 	}
 
 	@GetMapping("/api/dashboard/real-estate-type-summary")
