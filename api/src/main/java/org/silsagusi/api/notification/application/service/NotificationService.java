@@ -19,8 +19,8 @@ public class NotificationService {
 	private final NotificationDataProvider notificationDataProvider;
 
 	@Transactional
-	public SseEmitter subscribe(Long agentId) {
-		SseEmitter emitter = notificationDataProvider.subscribe(agentId);
+	public SseEmitter subscribe(Long agentId, String clientId) {
+		SseEmitter emitter = notificationDataProvider.subscribe(agentId, clientId);
 		return emitter;
 	}
 
