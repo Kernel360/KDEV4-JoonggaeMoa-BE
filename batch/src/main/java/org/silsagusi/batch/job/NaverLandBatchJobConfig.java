@@ -1,9 +1,11 @@
 package org.silsagusi.batch.job;
 
-import java.util.List;
-
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.silsagusi.batch.infrastructure.repository.ScrapeStatusRepository;
 import org.silsagusi.batch.naverland.application.NaverLandRequestService;
+import org.silsagusi.batch.naverland.infrastructure.dto.NaverLandScrapeRequest;
+import org.silsagusi.batch.naverland.infrastructure.dto.NaverLandScrapeResult;
 import org.silsagusi.core.domain.article.ScrapeStatus;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -17,8 +19,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Slf4j
 @Configuration
@@ -56,10 +58,30 @@ public class NaverLandBatchJobConfig {
 					"네이버 부동산");
 				log.info("Found " + regions.size() + " regions");
 				for (ScrapeStatus status : regions) {
-					naverLandRequestService.scrapNaverLand(status);
+					NaverLandScrapeRequest request = new NaverLandScrapeRequest(
+						status.getId(),
+						status.getRegion().getId(),
+						status.getRegion().getCortarNo(),
+						status.getRegion().getCenterLat(),
+						status.getRegion().getCenterLon(),
+						status.getLastScrapedPage()
+					);
+					naverLandRequestService.scrapNaverLand(request, this::updateScrapeStatusByResult);
 				}
 				return RepeatStatus.FINISHED;
 			}, transactionManager)
 			.build();
+	}
+
+	private void updateScrapeStatusByResult(NaverLandScrapeResult result) {
+		scrapeStatusRepository.findById(result.scrapeStatusId()).ifPresent(status -> {
+			if (result.errorMessage() != null) {
+				status.failed(result.errorMessage());
+			} else {
+				status.updatePage(result.lastPage(), LocalDateTime.now(), "네이버 부동산");
+				status.completed();
+			}
+			scrapeStatusRepository.save(status);
+		});
 	}
 }

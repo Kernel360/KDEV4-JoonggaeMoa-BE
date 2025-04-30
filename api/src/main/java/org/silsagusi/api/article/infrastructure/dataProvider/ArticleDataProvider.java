@@ -1,8 +1,6 @@
 package org.silsagusi.api.article.infrastructure.dataProvider;
 
-import java.time.LocalDate;
-import java.util.List;
-
+import lombok.RequiredArgsConstructor;
 import org.silsagusi.api.article.infrastructure.repository.ArticleRepository;
 import org.silsagusi.api.common.exception.CustomException;
 import org.silsagusi.api.common.exception.ErrorCode;
@@ -15,7 +13,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
-import lombok.RequiredArgsConstructor;
+import java.time.LocalDate;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -24,8 +23,6 @@ public class ArticleDataProvider {
 	private static final String REAL_ESTATE_TYPE = "articleType";
 	private static final String TRADE_TYPE = "tradeType";
 	private static final String PRICE = "price";
-	private static final String REGION = "region";
-	private static final String CORTAR_NO = "cortarNo";
 
 	private final ArticleRepository articleRepository;
 
@@ -33,8 +30,7 @@ public class ArticleDataProvider {
 		List<String> realEstateType,
 		List<String> tradeType,
 		String minPrice,
-		String maxPrice,
-		String regionPrefix
+		String maxPrice
 	) {
 		Specification<Article> spec = Specification.where(null);
 
@@ -64,20 +60,30 @@ public class ArticleDataProvider {
 				)
 			);
 		}
-
-		if (regionPrefix != null && !regionPrefix.isEmpty()) {
-			spec = spec.and((root, query, criteriaBuilder) ->
-				criteriaBuilder.like(root.get(REGION).get(CORTAR_NO), regionPrefix + "%")
-			);
-		}
 		return spec;
+	}
+	public Page<Article> getArticlesByRegionPrefix(
+		String regionPrefix,
+		int page,
+		int size,
+		String sortBy,
+		String direction
+	) {
+		Sort.Direction sortDirection = direction.equalsIgnoreCase("asc")
+			? Sort.Direction.ASC : Sort.Direction.DESC;
+		Sort sortObj = Sort.by(sortDirection, sortBy);
+		Pageable pageable = PageRequest.of(page, size, sortObj);
+		return articleRepository.findByBjdCodeStartingWith(regionPrefix, pageable);
 	}
 
 	public Page<Article> getArticlePage(
-		Specification<Article> spec, int page, int size, String sortBy, String direction) {
-		Sort sortObj = direction.equalsIgnoreCase("asc")
-			? Sort.by(sortBy).ascending()
-			: Sort.by(sortBy).descending();
+		Specification<Article> spec,
+		int page, int size,
+		String sortBy, String direction
+	) {
+		Sort.Direction sortDirection = direction.equalsIgnoreCase("asc")
+			? Sort.Direction.ASC : Sort.Direction.DESC;
+		Sort sortObj = Sort.by(sortDirection, sortBy);
 		Pageable pageable = PageRequest.of(page, size, sortObj);
 		return articleRepository.findAll(spec, pageable);
 	}

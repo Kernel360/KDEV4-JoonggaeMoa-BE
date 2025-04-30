@@ -1,9 +1,11 @@
 package org.silsagusi.batch.job;
 
-import java.util.List;
-
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.silsagusi.batch.infrastructure.repository.ScrapeStatusRepository;
 import org.silsagusi.batch.zigbang.application.ZigBangRequestService;
+import org.silsagusi.batch.zigbang.infrastructure.dto.ZigBangScrapeRequest;
+import org.silsagusi.batch.zigbang.infrastructure.dto.ZigBangScrapeResult;
 import org.silsagusi.core.domain.article.ScrapeStatus;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -17,8 +19,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.util.List;
 
 @Slf4j
 @Configuration
@@ -55,10 +56,28 @@ public class ZigBangBatchJobConfig {
 				List<ScrapeStatus> regions = scrapeStatusRepository.findTop10BySourceAndCompletedFalseOrderByIdAsc(
 					"직방");
 				for (ScrapeStatus status : regions) {
-					zigBangRequestService.scrapZigBang(status);
+					ZigBangScrapeRequest request = new ZigBangScrapeRequest(
+						status.getId(),
+						status.getRegion().getId(),
+						status.getRegion().getCortarNo(),
+						status.getLastScrapedPage(),
+						status.getRegion().getGeohash()
+					);
+					zigBangRequestService.scrapZigBang(request, this::updateScrapeStatusByResult);
 				}
 				return RepeatStatus.FINISHED;
 			}, transactionManager)
 			.build();
+	}
+
+	private void updateScrapeStatusByResult(ZigBangScrapeResult result) {
+		scrapeStatusRepository.findById(result.scrapeStatusId()).ifPresent(status -> {
+			if (result.errorMessage() != null) {
+				status.failed(result.errorMessage());
+			} else {
+				status.completed();
+			}
+			scrapeStatusRepository.save(status);
+		});
 	}
 }

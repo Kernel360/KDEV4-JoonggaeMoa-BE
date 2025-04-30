@@ -9,6 +9,9 @@ import java.time.LocalDateTime;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity(name = "scrape_statuses")
+@Table(uniqueConstraints = @UniqueConstraint(
+	name = "scrape_status_unique_constraint",
+	columnNames = {"region_id", "source"}))
 @Getter
 public class ScrapeStatus {
 
@@ -17,7 +20,7 @@ public class ScrapeStatus {
 	@Column(name = "scrape_status_id", nullable = false)
 	private Long id;
 
-	@OneToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "region_id", nullable = false)
 	private Region region;
 
@@ -36,21 +39,6 @@ public class ScrapeStatus {
 	private String errorMessage;
 
 	private String source;
-
-	private ScrapeStatus(
-		Region region, Integer lastScrapedPage, Boolean completed,
-		LocalDateTime lastScrapedAt, String source) {
-		this.region = region;
-		this.lastScrapedPage = lastScrapedPage;
-		this.completed = completed;
-		this.lastScrapedAt = lastScrapedAt;
-		this.source = source;
-	}
-
-	public static ScrapeStatus create(Region region, Integer lastScrapedPage, Boolean completed,
-		LocalDateTime lastScrapedAt, String source) {
-		return new ScrapeStatus(region, lastScrapedPage, completed, lastScrapedAt, source);
-	}
 
 	public void updatePage(Integer page, LocalDateTime lastScrapedAt, String source) {
 		this.lastScrapedPage = page;
