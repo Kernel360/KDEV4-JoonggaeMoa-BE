@@ -6,6 +6,7 @@ import org.silsagusi.api.common.auth.jwt.JwtProvider;
 import org.silsagusi.api.notification.application.dto.NotificationDto;
 import org.silsagusi.api.notification.application.service.NotificationService;
 import org.silsagusi.api.response.ApiResponse;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -25,12 +26,13 @@ public class NotificationController {
 	private final NotificationService notificationService;
 	private final JwtProvider jwtProvider;
 
-	@GetMapping("/api/notification/subscribe")
-	public SseEmitter subscribe(
-		@RequestParam("agentId") Long agentId
+	@GetMapping(value = "/api/notification/subscribe", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+	public ResponseEntity<SseEmitter> subscribe(
+		@RequestParam("agentId") Long agentId,
+		@RequestParam("clientId") String clientId
 	) {
-		SseEmitter sseEmitter = notificationService.subscribe(agentId);
-		return sseEmitter;
+		SseEmitter sseEmitter = notificationService.subscribe(agentId, clientId);
+		return ResponseEntity.ok(sseEmitter);
 	}
 
 	@GetMapping("/api/notification")
