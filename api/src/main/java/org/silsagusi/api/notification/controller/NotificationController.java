@@ -2,7 +2,6 @@ package org.silsagusi.api.notification.controller;
 
 import java.util.List;
 
-import org.silsagusi.api.common.auth.jwt.JwtProvider;
 import org.silsagusi.api.notification.application.dto.NotificationDto;
 import org.silsagusi.api.notification.application.service.NotificationService;
 import org.silsagusi.api.response.ApiResponse;
@@ -10,6 +9,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -24,7 +24,6 @@ import lombok.extern.slf4j.Slf4j;
 public class NotificationController {
 
 	private final NotificationService notificationService;
-	private final JwtProvider jwtProvider;
 
 	@GetMapping(value = "/api/notifications/subscribe", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
 	public ResponseEntity<SseEmitter> subscribe(
@@ -45,9 +44,9 @@ public class NotificationController {
 		return ResponseEntity.ok(ApiResponse.ok(notification));
 	}
 
-	@PatchMapping("/api/notifications/read")
-	public ResponseEntity<ApiResponse<List<Void>>> readNotification(
-		@RequestParam("notificationId") Long notificationId
+	@PatchMapping("/api/notifications/{notificationId}")
+	public ResponseEntity<ApiResponse<Void>> readNotification(
+		@PathVariable Long notificationId
 	) {
 		notificationService.markRead(notificationId);
 		return ResponseEntity.ok(ApiResponse.ok());
