@@ -80,12 +80,7 @@ public class NotificationDataProvider {
 		}
 
 		List<Map.Entry<String, SseEmitter>> emitters = emitterRepository.getAllEmittersByAgentId(agentId);
-
-		log.info("현재 agentId={}에 연결된 emitter 수: {}", agentId, emitters.size());
-		for (Map.Entry<String, SseEmitter> entry : emitters) {
-			log.info("EmitterId: {}", entry.getKey());
-		}
-
+		
 		for (Map.Entry<String, SseEmitter> entry : emitters) {
 			String emitterId = entry.getKey();
 			SseEmitter emitter = entry.getValue();

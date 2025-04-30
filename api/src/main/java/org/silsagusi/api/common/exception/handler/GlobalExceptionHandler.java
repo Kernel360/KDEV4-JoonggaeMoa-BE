@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 import io.swagger.v3.oas.annotations.Hidden;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 
 @Hidden
@@ -38,7 +39,13 @@ public class GlobalExceptionHandler {
 
 	// 기본 예외
 	@ExceptionHandler(value = {Exception.class})
-	public ApiResponse<?> handleException(Exception e) {
+	public ApiResponse<?> handleException(Exception e, HttpServletRequest request) {
+		String accept = request.getHeader("Accept");
+		if (accept != null && accept.contains("text/event-stream")) {
+			log.warn("SSE 요청에 대한 예외 발생: {}", e.getMessage());
+			return null;
+		}
+
 		log.error("GlobalExceptionHandler catch CustomException : {}", e.getMessage());
 		return fail(ErrorCode.INTERNAL_SERVER_ERROR);
 	}
