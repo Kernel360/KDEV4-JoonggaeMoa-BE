@@ -1,10 +1,11 @@
 package org.silsagusi.api.customer.controller;
 
-import org.silsagusi.api.response.ApiResponse;
+import org.silsagusi.api.common.annotation.CurrentAgentId;
 import org.silsagusi.api.customer.application.dto.CustomerDto;
 import org.silsagusi.api.customer.application.dto.CustomerHistoryResponse;
 import org.silsagusi.api.customer.application.dto.CustomerSummaryResponse;
 import org.silsagusi.api.customer.application.service.CustomerService;
+import org.silsagusi.api.response.ApiResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
@@ -19,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -31,27 +31,19 @@ public class CustomerController {
 
 	@PostMapping("/api/customers")
 	public ResponseEntity<ApiResponse<Void>> createCustomer(
-		HttpServletRequest request,
+		@CurrentAgentId Long agentId,
 		@RequestBody @Valid CustomerDto.Request customerRequestDto
 	) {
-		customerService.createCustomer(
-			(Long)request.getAttribute("agentId"),
-			customerRequestDto
-		);
-
+		customerService.createCustomer(agentId, customerRequestDto);
 		return ResponseEntity.ok(ApiResponse.ok());
 	}
 
 	@PostMapping(value = "/api/customers/bulk", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ApiResponse<Void>> bulkCreateCustomer(
-		HttpServletRequest request,
+		@CurrentAgentId Long agentId,
 		@RequestParam("file") MultipartFile file
 	) {
-		customerService.bulkCreateCustomer(
-			(Long)request.getAttribute("agentId"),
-			file
-		);
-
+		customerService.bulkCreateCustomer(agentId, file);
 		return ResponseEntity.ok(ApiResponse.ok());
 	}
 
@@ -63,63 +55,46 @@ public class CustomerController {
 
 	@DeleteMapping("/api/customers/{customerId}")
 	public ResponseEntity<ApiResponse<Void>> deleteCustomer(
-		HttpServletRequest request,
+		@CurrentAgentId Long agentId,
 		@PathVariable("customerId") Long customerId
 	) {
-		customerService.deleteCustomer(
-			(Long)request.getAttribute("agentId"),
-			customerId
-		);
+		customerService.deleteCustomer(agentId, customerId);
 		return ResponseEntity.ok(ApiResponse.ok());
 	}
 
 	@PatchMapping("/api/customers/{customerId}")
 	public ResponseEntity<ApiResponse<Void>> updateCustomer(
-		HttpServletRequest request,
+		@CurrentAgentId Long agentId,
 		@PathVariable("customerId") Long customerId,
 		@RequestBody @Valid CustomerDto.Request customerRequestDto
 	) {
-		customerService.updateCustomer(
-			(Long)request.getAttribute("agentId"),
-			customerId,
-			customerRequestDto
-		);
+		customerService.updateCustomer(agentId, customerId, customerRequestDto);
 		return ResponseEntity.ok(ApiResponse.ok());
 	}
 
 	@GetMapping("/api/customers")
 	public ResponseEntity<ApiResponse<Page<CustomerDto.Response>>> getAllCustomers(
-		HttpServletRequest request,
+		@CurrentAgentId Long agentId,
 		Pageable pageable
 	) {
-		Page<CustomerDto.Response> customerResponseList = customerService.getAllCustomers(
-			(Long)request.getAttribute("agentId"),
-			pageable
-		);
-
+		Page<CustomerDto.Response> customerResponseList = customerService.getAllCustomers(agentId, pageable);
 		return ResponseEntity.ok(ApiResponse.ok(customerResponseList));
 	}
 
 	@GetMapping("/api/customers/{customerId}")
 	public ResponseEntity<ApiResponse<CustomerHistoryResponse>> getCustomer(
-		HttpServletRequest request,
+		@CurrentAgentId Long agentId,
 		@PathVariable("customerId") Long customerId
 	) {
-		CustomerHistoryResponse customerResponse = customerService.getCustomerById(
-			(Long)request.getAttribute("agentId"),
-			customerId
-		);
+		CustomerHistoryResponse customerResponse = customerService.getCustomerById(agentId, customerId);
 		return ResponseEntity.ok(ApiResponse.ok(customerResponse));
 	}
 
 	@GetMapping("/api/dashboard/customer-summary")
 	public ResponseEntity<ApiResponse<CustomerSummaryResponse>> getCustomerSummary(
-		HttpServletRequest request
+		@CurrentAgentId Long agentId
 	) {
-		return ResponseEntity.ok(ApiResponse.ok(
-			customerService.getCustomerSummary(
-				(Long)request.getAttribute("agentId")
-			)
-		));
+		CustomerSummaryResponse customerSummaryResponse = customerService.getCustomerSummary(agentId);
+		return ResponseEntity.ok(ApiResponse.ok(customerSummaryResponse));
 	}
 }

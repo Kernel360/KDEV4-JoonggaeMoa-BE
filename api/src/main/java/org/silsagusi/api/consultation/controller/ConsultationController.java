@@ -3,6 +3,7 @@ package org.silsagusi.api.consultation.controller;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.silsagusi.api.common.annotation.CurrentAgentId;
 import org.silsagusi.api.consultation.application.dto.ConsultationDto;
 import org.silsagusi.api.consultation.application.dto.ConsultationHistoryDto;
 import org.silsagusi.api.consultation.application.dto.ConsultationMonthResponse;
@@ -20,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -48,27 +48,22 @@ public class ConsultationController {
 
 	@GetMapping("/api/consultations/status")
 	public ResponseEntity<ApiResponse<List<ConsultationDto.Response>>> getConsultationsByStatus(
-		HttpServletRequest request,
+		@CurrentAgentId Long agentId,
 		@RequestParam String month, // 형식 : yyyy-MM
 		@RequestParam String status
 	) {
 		List<ConsultationDto.Response> consultationResponses = consultationService.getConsultationsByStatus(
-			(Long)request.getAttribute("agentId"),
-			month,
-			status
-		);
+			agentId, month, status);
 		return ResponseEntity.ok(ApiResponse.ok(consultationResponses));
 	}
 
 	@GetMapping("/api/consultations/date")
 	public ResponseEntity<ApiResponse<List<ConsultationDto.Response>>> getAllConsultationsByDate(
-		HttpServletRequest request,
+		@CurrentAgentId Long agentId,
 		@RequestParam LocalDateTime date
 	) {
 		List<ConsultationDto.Response> consultationResponseList = consultationService.getAllConsultationsByDate(
-			(Long)request.getAttribute("agentId"),
-			date
-		);
+			agentId, date);
 		return ResponseEntity.ok(ApiResponse.ok(consultationResponseList));
 	}
 
@@ -85,51 +80,40 @@ public class ConsultationController {
 
 	@GetMapping("/api/consultations/month-inform")
 	public ResponseEntity<ApiResponse<ConsultationMonthResponse>> getMonthInform(
-		HttpServletRequest request,
+		@CurrentAgentId Long agentId,
 		@RequestParam String month //date형식: yyyy-MM
 	) {
 		ConsultationMonthResponse consultationMonthInformResponse = consultationService.getMonthInformation(
-			(Long)request.getAttribute("agentId"),
-			month
-		);
+			agentId, month);
 		return ResponseEntity.ok(ApiResponse.ok(consultationMonthInformResponse));
 	}
 
 	@PatchMapping("/api/consultations/{consultationId}")
 	public ResponseEntity<ApiResponse<Void>> updateConsultation(
-		HttpServletRequest request,
+		@CurrentAgentId Long agentId,
 		@PathVariable("consultationId") Long consultationId,
 		@RequestBody @Valid UpdateConsultationRequest updateConsultationRequest
 	) {
-		consultationService.updateConsultation(
-			(Long)request.getAttribute("agentId"),
-			consultationId,
-			updateConsultationRequest
-		);
+		consultationService.updateConsultation(agentId, consultationId, updateConsultationRequest);
 		return ResponseEntity.ok(ApiResponse.ok());
 	}
 
 	@PatchMapping("/api/consultations/{consultationId}/status")
 	public ResponseEntity<ApiResponse<Void>> updateConsultationStatus(
-		HttpServletRequest request,
+		@CurrentAgentId Long agentId,
 		@PathVariable("consultationId") Long consultationId,
 		@RequestParam String consultationStatus
 	) {
-		consultationService.updateConsultationStatus(
-			(Long)request.getAttribute("agentId"),
-			consultationId, consultationStatus);
+		consultationService.updateConsultationStatus(agentId, consultationId, consultationStatus);
 		return ResponseEntity.ok(ApiResponse.ok());
 	}
 
 	@GetMapping("/api/dashboard/consultation-summary")
 	public ResponseEntity<ApiResponse<ConsultationSummaryResponse>> getConsultationSummary(
-		HttpServletRequest request
+		@CurrentAgentId Long agentId
 	) {
-		return ResponseEntity.ok(ApiResponse.ok(
-			consultationService.getConsultationSummary(
-				(Long)request.getAttribute("agentId")
-			)
-		));
+		ConsultationSummaryResponse consultationSummaryResponse = consultationService.getConsultationSummary(agentId);
+		return ResponseEntity.ok(ApiResponse.ok(consultationSummaryResponse));
 	}
 
 }
