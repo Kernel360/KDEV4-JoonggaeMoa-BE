@@ -26,7 +26,7 @@ public class NotificationController {
 	private final NotificationService notificationService;
 	private final JwtProvider jwtProvider;
 
-	@GetMapping(value = "/api/notification/subscribe", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+	@GetMapping(value = "/api/notifications/subscribe", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
 	public ResponseEntity<SseEmitter> subscribe(
 		@RequestParam("agentId") Long agentId,
 		@RequestParam("clientId") String clientId
@@ -35,7 +35,7 @@ public class NotificationController {
 		return ResponseEntity.ok(sseEmitter);
 	}
 
-	@GetMapping("/api/notification")
+	@GetMapping("/api/notifications")
 	public ResponseEntity<ApiResponse<List<NotificationDto.Response>>> getNotification(
 		HttpServletRequest request
 	) {
@@ -45,7 +45,7 @@ public class NotificationController {
 		return ResponseEntity.ok(ApiResponse.ok(notification));
 	}
 
-	@PatchMapping("/api/notification/read")
+	@PatchMapping("/api/notifications/read")
 	public ResponseEntity<ApiResponse<List<Void>>> readNotification(
 		@RequestParam("notificationId") Long notificationId
 	) {
