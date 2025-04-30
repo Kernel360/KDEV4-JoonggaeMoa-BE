@@ -13,7 +13,7 @@ public class SecurityProperties {
 		"/api/customers/surveys/**",
 		"/swagger-ui/**",
 		"/v3/api-docs/**",
-		"/api/notification/subscribe",
+		"/api/notifications/subscribe",
 		"/api/inquiries/**",
 		"/health"
 	};

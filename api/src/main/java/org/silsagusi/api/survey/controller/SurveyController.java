@@ -70,7 +70,7 @@ public class SurveyController {
 		return ResponseEntity.ok(ApiResponse.ok(response));
 	}
 
-	@GetMapping("/api/surveys/answer")
+	@GetMapping("/api/surveys/answers")
 	public ResponseEntity<ApiResponse<Page<AnswerDto.Response>>> getSurveyAnswers(
 		@CurrentAgentId Long agentId,
 		Pageable pageable
@@ -88,7 +88,7 @@ public class SurveyController {
 		return ResponseEntity.ok(ApiResponse.ok(surveyCommand));
 	}
 
-	@PostMapping("/api/customers/surveys/{surveyId}/submit")
+	@PostMapping("/api/customers/surveys/{surveyId}")
 	public ResponseEntity<ApiResponse<Void>> submitSurveyAnswer(
 		@PathVariable("surveyId") String surveyId,
 		@RequestBody @Valid AnswerDto.Request answerRequest

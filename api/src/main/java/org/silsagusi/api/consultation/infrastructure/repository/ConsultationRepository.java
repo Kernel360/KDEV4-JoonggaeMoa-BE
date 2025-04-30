@@ -25,7 +25,7 @@ public interface ConsultationRepository extends JpaRepository<Consultation, Long
 		Consultation.ConsultationStatus status);
 
 	// 오늘 상담 전체 건수
-	@Query("SELECT COUNT(c) FROM consultations c " +
+	@Query("SELECT COUNT(c) FROM Consultation c " +
 		"WHERE DATE(c.date) = :today " +
 		"AND c.customer.agent.id = :agentId " +
 		"AND c.consultationStatus IN ('WAITING', 'CONFIRMED', 'COMPLETED')" +
@@ -34,7 +34,7 @@ public interface ConsultationRepository extends JpaRepository<Consultation, Long
 	int countTodayConsultations(@Param("agentId") Long agentId, @Param("today") LocalDate today);
 
 	// 오늘 남은 상담 (완료 안 된 것)
-	@Query("SELECT COUNT(c) FROM consultations c " +
+	@Query("SELECT COUNT(c) FROM Consultation c " +
 		"WHERE DATE(c.date) = :today " +
 		"AND c.customer.agent.id = :agentId " +
 		"AND c.consultationStatus IN ('WAITING', 'CONFIRMED')" +
