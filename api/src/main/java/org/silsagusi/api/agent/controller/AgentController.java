@@ -34,7 +34,7 @@ public class AgentController {
 		return ResponseEntity.ok(ApiResponse.ok());
 	}
 
-	@PostMapping("/api/agents/username")
+	@PostMapping("/api/agents/me/username")
 	public ResponseEntity<ApiResponse<UsernameDto.Response>> findUsername(
 		@RequestBody @Valid UsernameDto.Request usernameRequest) {
 		UsernameDto.Response response = agentService.getAgentByNameAndPhone(usernameRequest);
@@ -42,7 +42,7 @@ public class AgentController {
 		return ResponseEntity.ok(ApiResponse.ok(response));
 	}
 
-	@PostMapping("/api/agents/logout")
+	@PostMapping("/api/agents/me/logout")
 	public ResponseEntity<ApiResponse<Void>> logout(HttpServletRequest request, HttpServletResponse response) {
 		agentService.logout(request.getHeader("Authorization").substring(7));
 
@@ -56,7 +56,7 @@ public class AgentController {
 		return ResponseEntity.ok(ApiResponse.ok());
 	}
 
-	@GetMapping("/api/agents")
+	@GetMapping("/api/agents/me")
 	public ResponseEntity<ApiResponse<AgentDto.Response>> getAgent(
 		HttpServletRequest request
 	) {
@@ -65,7 +65,7 @@ public class AgentController {
 		return ResponseEntity.ok(ApiResponse.ok(response));
 	}
 
-	@PatchMapping("/api/agents")
+	@PatchMapping("/api/agents/me")
 	public ResponseEntity<ApiResponse<Void>> updateAgent(
 		HttpServletRequest request,
 		@RequestBody @Valid UpdateAgentRequest updateAgentRequest

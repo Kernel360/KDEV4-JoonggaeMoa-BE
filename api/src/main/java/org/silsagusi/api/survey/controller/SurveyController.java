@@ -1,9 +1,9 @@
 package org.silsagusi.api.survey.controller;
 
 import org.silsagusi.api.response.ApiResponse;
-import org.silsagusi.api.survey.application.service.SurveyService;
 import org.silsagusi.api.survey.application.dto.AnswerDto;
 import org.silsagusi.api.survey.application.dto.SurveyDto;
+import org.silsagusi.api.survey.application.service.SurveyService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -37,33 +37,6 @@ public class SurveyController {
 		return ResponseEntity.ok(ApiResponse.ok());
 	}
 
-	@DeleteMapping("/api/surveys/{surveyId}")
-	public ResponseEntity<ApiResponse<Void>> deleteSurvey(
-		HttpServletRequest request,
-		@PathVariable("surveyId") String surveyId
-	) {
-		surveyService.deleteSurvey(
-			(Long)request.getAttribute("agentId"),
-			surveyId
-		);
-		return ResponseEntity.ok(ApiResponse.ok());
-	}
-
-	@PatchMapping("/api/surveys/{surveyId}")
-	public ResponseEntity<ApiResponse<Void>> updateSurvey(
-		HttpServletRequest request,
-		@PathVariable String surveyId,
-		@RequestBody @Valid SurveyDto.UpdateRequest surveyUpdateRequest
-	) {
-		surveyService.updateSurvey(
-			(Long)request.getAttribute("agentId"),
-			surveyId,
-			surveyUpdateRequest
-		);
-
-		return ResponseEntity.ok(ApiResponse.ok());
-	}
-
 	@GetMapping("/api/surveys")
 	public ResponseEntity<ApiResponse<Page<SurveyDto.Response>>> getAllSurveys(
 		HttpServletRequest request,
@@ -84,7 +57,34 @@ public class SurveyController {
 		return ResponseEntity.ok(ApiResponse.ok(response));
 	}
 
-	@GetMapping("/api/surveys/answer")
+	@PatchMapping("/api/surveys/{surveyId}")
+	public ResponseEntity<ApiResponse<Void>> updateSurvey(
+		HttpServletRequest request,
+		@PathVariable String surveyId,
+		@RequestBody @Valid SurveyDto.UpdateRequest surveyUpdateRequest
+	) {
+		surveyService.updateSurvey(
+			(Long)request.getAttribute("agentId"),
+			surveyId,
+			surveyUpdateRequest
+		);
+
+		return ResponseEntity.ok(ApiResponse.ok());
+	}
+
+	@DeleteMapping("/api/surveys/{surveyId}")
+	public ResponseEntity<ApiResponse<Void>> deleteSurvey(
+		HttpServletRequest request,
+		@PathVariable("surveyId") String surveyId
+	) {
+		surveyService.deleteSurvey(
+			(Long)request.getAttribute("agentId"),
+			surveyId
+		);
+		return ResponseEntity.ok(ApiResponse.ok());
+	}
+
+	@GetMapping("/api/surveys/answers")
 	public ResponseEntity<ApiResponse<Page<AnswerDto.Response>>> getSurveyAnswers(
 		HttpServletRequest request,
 		Pageable pageable
@@ -105,7 +105,7 @@ public class SurveyController {
 		return ResponseEntity.ok(ApiResponse.ok(surveyCommand));
 	}
 
-	@PostMapping("/api/customers/surveys/{surveyId}/submit")
+	@PostMapping("/api/customers/surveys/{surveyId}")
 	public ResponseEntity<ApiResponse<Void>> submitSurveyAnswer(
 		@PathVariable("surveyId") String surveyId,
 		@RequestBody @Valid AnswerDto.Request answerRequest
