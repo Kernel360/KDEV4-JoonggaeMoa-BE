@@ -11,13 +11,15 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @DynamicUpdate
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Entity(name = "message_templates")
+@Entity
+@Table(name = "message_templates")
 @Getter
 public class MessageTemplate extends BaseEntity {
 
