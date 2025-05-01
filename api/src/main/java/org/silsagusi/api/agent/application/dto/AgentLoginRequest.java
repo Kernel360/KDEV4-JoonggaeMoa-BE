@@ -2,13 +2,13 @@ package org.silsagusi.api.agent.application.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Data
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class LoginRequest {
+public class AgentLoginRequest {
 
 	@NotBlank
 	private String username;

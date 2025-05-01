@@ -1,6 +1,6 @@
 package org.silsagusi.api.customer.application.mapper;
 
-import org.silsagusi.api.customer.application.dto.CustomerDto;
+import org.silsagusi.api.customer.application.dto.CreateCustomerRequest;
 import org.silsagusi.api.customer.application.dto.CustomerExcelDto;
 import org.silsagusi.api.survey.application.dto.AnswerDto;
 import org.silsagusi.core.domain.agent.Agent;
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class CustomerMapper {
 
-	public Customer toEntity(CustomerDto.Request customerRequestDto, Agent agent) {
+	public Customer toEntity(CreateCustomerRequest customerRequestDto, Agent agent) {
 		return Customer.create(
 			customerRequestDto.getName(),
 			customerRequestDto.getBirthday(),

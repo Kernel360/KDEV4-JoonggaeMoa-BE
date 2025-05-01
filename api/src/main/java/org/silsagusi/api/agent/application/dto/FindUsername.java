@@ -10,12 +10,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class UsernameDto {
+public class FindUsername {
 
 	@Getter
 	@NoArgsConstructor
 	@AllArgsConstructor
-	@Schema(name = "UsernameRequestDto")
+	@Schema(name = "FindUsernameRequest")
 	public static class Request {
 		@NotBlank
 		private String name;
@@ -31,6 +31,6 @@ public class UsernameDto {
 	}
 
 	public static Response toResponse(Agent agent) {
-		return new UsernameDto.Response(agent.getUsername());
+		return new FindUsername.Response(agent.getUsername());
 	}
 }

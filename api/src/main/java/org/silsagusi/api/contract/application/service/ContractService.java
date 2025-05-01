@@ -2,9 +2,10 @@ package org.silsagusi.api.contract.application.service;
 
 import java.io.IOException;
 
-import org.silsagusi.api.contract.application.dto.ContractDetailDto;
-import org.silsagusi.api.contract.application.dto.ContractDto;
+import org.silsagusi.api.contract.application.dto.ContractDetailResponse;
+import org.silsagusi.api.contract.application.dto.ContractResponse;
 import org.silsagusi.api.contract.application.dto.ContractSummaryResponse;
+import org.silsagusi.api.contract.application.dto.CreateContractRequest;
 import org.silsagusi.api.contract.application.mapper.ContractMapper;
 import org.silsagusi.api.contract.application.validator.ContractValidator;
 import org.silsagusi.api.contract.infrastructure.dataprovider.ContractDataProvider;
@@ -32,7 +33,7 @@ public class ContractService {
 	private final ContractValidator contractValidator;
 
 	@Transactional
-	public void createContract(ContractDto.Request contractRequest, MultipartFile file) throws IOException {
+	public void createContract(CreateContractRequest contractRequest, MultipartFile file) throws IOException {
 		Customer customerLandlord = customerDataProvider.getCustomer(contractRequest.getLandlordId());
 		Customer customerTenant = customerDataProvider.getCustomer(contractRequest.getTenantId());
 
@@ -44,18 +45,18 @@ public class ContractService {
 	}
 
 	@Transactional(readOnly = true)
-	public Page<ContractDto.Response> getAllContracts(Long agentId, Pageable pageable) {
+	public Page<ContractResponse> getAllContracts(Long agentId, Pageable pageable) {
 		Page<ContractInfo> contractInfoPage = contractDataProvider.getAllContracts(agentId, pageable);
-		return contractInfoPage.map(ContractDto::toResponse);
+		return contractInfoPage.map(ContractResponse::toResponse);
 	}
 
 	@Transactional(readOnly = true)
-	public ContractDetailDto.Response getContractById(Long agentId, String contractId) throws IOException {
+	public ContractDetailResponse getContractById(Long agentId, String contractId) {
 		Contract contract = contractDataProvider.getContract(contractId);
 		contractValidator.validateAgentAccess(agentId, contract);
 
 		ContractDetailInfo contractDetailInfo = contractDataProvider.getContractInfo(contract);
-		return ContractDetailDto.toResponse(contractDetailInfo);
+		return ContractDetailResponse.toResponse(contractDetailInfo);
 	}
 
 	@Transactional

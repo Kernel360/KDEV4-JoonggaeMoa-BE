@@ -13,7 +13,7 @@ import lombok.Getter;
 @Getter
 @Builder
 public class CustomerHistoryResponse {
-	private CustomerDto.Response customer;
+	private CustomerResponse customer;
 	private List<History> history;
 
 	@Getter
@@ -55,7 +55,7 @@ public class CustomerHistoryResponse {
 	public static CustomerHistoryResponse toResponse(Customer customer,
 		List<CustomerHistoryInfo> customerHistoryInfos) {
 		return CustomerHistoryResponse.builder()
-			.customer(CustomerDto.toResponse(customer))
+			.customer(CustomerResponse.toResponse(customer))
 			.history(
 				customerHistoryInfos.stream()
 					.map(History::create)

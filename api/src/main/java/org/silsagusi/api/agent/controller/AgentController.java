@@ -1,9 +1,10 @@
 package org.silsagusi.api.agent.controller;
 
-import org.silsagusi.api.agent.application.dto.AgentDto;
-import org.silsagusi.api.agent.application.dto.LoginRequest;
+import org.silsagusi.api.agent.application.dto.AgentLoginRequest;
+import org.silsagusi.api.agent.application.dto.AgentResponse;
+import org.silsagusi.api.agent.application.dto.AgentSignUpRequest;
+import org.silsagusi.api.agent.application.dto.FindUsername;
 import org.silsagusi.api.agent.application.dto.UpdateAgentRequest;
-import org.silsagusi.api.agent.application.dto.UsernameDto;
 import org.silsagusi.api.agent.application.service.AgentService;
 import org.silsagusi.api.common.annotation.CurrentAgentId;
 import org.silsagusi.api.response.ApiResponse;
@@ -28,18 +29,16 @@ public class AgentController {
 
 	@PostMapping("/api/agents/signup")
 	public ResponseEntity<ApiResponse<Void>> signup(
-		@RequestBody @Valid AgentDto.Request agentRequest
+		@RequestBody @Valid AgentSignUpRequest agentSignUpRequest
 	) {
-		agentService.signup(agentRequest);
-
+		agentService.signup(agentSignUpRequest);
 		return ResponseEntity.ok(ApiResponse.ok());
 	}
 
 	@PostMapping("/api/agents/me/username")
-	public ResponseEntity<ApiResponse<UsernameDto.Response>> findUsername(
-		@RequestBody @Valid UsernameDto.Request usernameRequest) {
-		UsernameDto.Response response = agentService.getAgentByNameAndPhone(usernameRequest);
-
+	public ResponseEntity<ApiResponse<FindUsername.Response>> findUsername(
+		@RequestBody @Valid FindUsername.Request usernameRequest) {
+		FindUsername.Response response = agentService.getAgentByNameAndPhone(usernameRequest);
 		return ResponseEntity.ok(ApiResponse.ok(response));
 	}
 
@@ -58,10 +57,10 @@ public class AgentController {
 	}
 
 	@GetMapping("/api/agents/me")
-	public ResponseEntity<ApiResponse<AgentDto.Response>> getAgent(
+	public ResponseEntity<ApiResponse<AgentResponse>> getAgent(
 		@CurrentAgentId Long agentId
 	) {
-		AgentDto.Response response = agentService.getAgent(agentId);
+		AgentResponse response = agentService.getAgent(agentId);
 		return ResponseEntity.ok(ApiResponse.ok(response));
 	}
 
@@ -77,7 +76,7 @@ public class AgentController {
 	// 스웨거용 더미 엔드포인트
 	@PostMapping("/api/agents/login")
 	public ResponseEntity<ApiResponse<Void>> login(
-		@RequestBody LoginRequest loginRequest
+		@RequestBody AgentLoginRequest loginRequest
 	) {
 		return ResponseEntity.ok(ApiResponse.ok());
 	}

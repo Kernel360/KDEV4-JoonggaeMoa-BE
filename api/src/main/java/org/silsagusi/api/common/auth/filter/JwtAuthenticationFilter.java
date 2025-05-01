@@ -3,7 +3,7 @@ package org.silsagusi.api.common.auth.filter;
 import java.io.IOException;
 import java.util.stream.Collectors;
 
-import org.silsagusi.api.agent.application.dto.LoginRequest;
+import org.silsagusi.api.agent.application.dto.AgentLoginRequest;
 import org.silsagusi.api.common.auth.jwt.JwtProvider;
 import org.silsagusi.api.common.auth.jwt.RefreshTokenStore;
 import org.silsagusi.api.common.auth.userDetails.CustomUserDetails;
@@ -46,9 +46,9 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 	@Override
 	public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws
 		AuthenticationException {
-		LoginRequest requestDto = null;
+		AgentLoginRequest requestDto = null;
 		try {
-			requestDto = objectMapper.readValue(request.getInputStream(), LoginRequest.class);
+			requestDto = objectMapper.readValue(request.getInputStream(), AgentLoginRequest.class);
 		} catch (IOException e) {
 			log.error(e.getMessage());
 			throw new CustomException(ErrorCode.INVALID_CREDENTIALS);

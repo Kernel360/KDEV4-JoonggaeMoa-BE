@@ -3,7 +3,7 @@ package org.silsagusi.api.survey.application.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.silsagusi.api.customer.application.dto.CustomerDto;
+import org.silsagusi.api.customer.application.dto.CustomerResponse;
 import org.silsagusi.core.domain.survey.entity.Answer;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -60,7 +60,7 @@ public class AnswerDto {
 	@Getter
 	@Builder
 	public static class Response {
-		private CustomerDto.Response customer;
+		private CustomerResponse customer;
 		private SurveyDto.Response survey;
 		private List<QuestionAnswerResponse> answer;
 		private LocalDateTime createdAt;
@@ -71,7 +71,7 @@ public class AnswerDto {
 			.map(QuestionAnswerResponse::toResponse).toList();
 
 		return Response.builder()
-			.customer(CustomerDto.toResponse(answer.getCustomer()))
+			.customer(CustomerResponse.toResponse(answer.getCustomer()))
 			.survey(SurveyDto.toResponse(answer.getSurvey()))
 			.answer(questionAnswerResponseList)
 			.createdAt(answer.getCreatedAt())

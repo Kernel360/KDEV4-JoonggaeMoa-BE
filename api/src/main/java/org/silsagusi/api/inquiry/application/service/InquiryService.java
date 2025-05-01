@@ -5,7 +5,7 @@ import java.time.format.DateTimeFormatter;
 import org.silsagusi.api.agent.infrastructure.dataprovider.AgentDataProvider;
 import org.silsagusi.api.consultation.application.mapper.ConsultationMapper;
 import org.silsagusi.api.consultation.infrastructure.dataprovider.ConsultationDataProvider;
-import org.silsagusi.api.customer.application.dto.CustomerDto;
+import org.silsagusi.api.customer.application.dto.CreateCustomerRequest;
 import org.silsagusi.api.customer.application.mapper.CustomerMapper;
 import org.silsagusi.api.customer.infrastructure.dataprovider.CustomerDataProvider;
 import org.silsagusi.api.inquiry.application.dto.ChatDto;
@@ -95,7 +95,7 @@ public class InquiryService {
 		Agent agent = agentDataProvider.getAgentById(inquiryConsultationRequest.getAgentId());
 		Customer customer = customerDataProvider.getCustomerByPhone(inquiryConsultationRequest.getPhone());
 		if (customer == null) {
-			CustomerDto.Request customerRequest = CustomerDto.Request.builder()
+			CreateCustomerRequest customerRequest = CreateCustomerRequest.builder()
 				.name(inquiryConsultationRequest.getName())
 				.email(inquiryConsultationRequest.getEmail())
 				.phone((inquiryConsultationRequest.getPhone()))
