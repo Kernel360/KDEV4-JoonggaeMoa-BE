@@ -92,6 +92,12 @@ dependencies {
 
     // AWS cloudwatch
     implementation 'ca.pjer:logback-awslogs-appender:1.6.0'
+
+    // JTS
+    implementation 'org.locationtech.jts:jts-core:1.18.2'
+
+    // Hibernate Spatial
+    implementation 'org.hibernate:hibernate-spatial:6.2.5.Final'
 }
 
 tasks.named('bootJar') { // bootJar 세팅을 켜기

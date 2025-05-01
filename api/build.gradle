@@ -91,6 +91,11 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-hateoas'
 
+    // JTS
+    implementation 'org.locationtech.jts:jts-core:1.18.2'
+
+    // Hibernate Spatial
+    implementation 'org.hibernate:hibernate-spatial:6.2.5.Final'
 }
 
 tasks.named('test') {

@@ -19,7 +19,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @Slf4j
 @Configuration
@@ -53,8 +55,11 @@ public class ZigBangBatchJobConfig {
 	public Step zigBangItemCatalogStep() {
 		return new StepBuilder(JOB_NAME + "Step", jobRepository)
 			.tasklet((contribution, chunkContext) -> {
-				List<ScrapeStatus> regions = scrapeStatusRepository.findTop10BySourceAndCompletedFalseOrderByIdAsc(
-					"직방");
+				List<ScrapeStatus> regions =
+					scrapeStatusRepository.findTop10BySourceAndCompletedFalseOrderByIdAsc("직방");
+				log.info("Found {} regions", regions.size());
+
+				List<CompletableFuture<?>> futures = new ArrayList<>();
 				for (ScrapeStatus status : regions) {
 					ZigBangScrapeRequest request = new ZigBangScrapeRequest(
 						status.getId(),
@@ -63,8 +68,22 @@ public class ZigBangBatchJobConfig {
 						status.getLastScrapedPage(),
 						status.getRegion().getGeohash()
 					);
-					zigBangRequestService.scrapZigBang(request, this::updateScrapeStatusByResult);
+					CompletableFuture<ZigBangScrapeResult> future = zigBangRequestService.scrapZigBang(request);
+					futures.add(future);
+					future.whenComplete((result, throwable) -> {
+						if (throwable != null) {
+							ZigBangScrapeResult errorResult = new ZigBangScrapeResult(
+								request.getScrapeStatusId(),
+								request.getLastScrapedPage(),
+								throwable.getMessage()
+							);
+							updateScrapeStatusByResult(errorResult);
+						} else {
+							updateScrapeStatusByResult(result);
+						}
+					});
 				}
+				CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
 				return RepeatStatus.FINISHED;
 			}, transactionManager)
 			.build();

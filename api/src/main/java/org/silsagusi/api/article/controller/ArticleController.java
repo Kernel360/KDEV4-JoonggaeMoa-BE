@@ -2,6 +2,7 @@ package org.silsagusi.api.article.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.silsagusi.api.article.application.dto.ArticleResponse;
+import org.silsagusi.api.article.application.dto.ClusterInfo;
 import org.silsagusi.api.article.application.dto.RealEstateTypeSummaryResponse;
 import org.silsagusi.api.article.application.dto.TradeTypeSummaryResponse;
 import org.silsagusi.api.article.application.service.ArticleService;
@@ -28,7 +29,7 @@ public class ArticleController {
 
 	@GetMapping("/api/articles")
 	public PagedModel<EntityModel<ArticleResponse>> getArticles(
-		@PageableDefault(sort = "id", direction = Direction.DESC, size = 50) Pageable pageable,
+		@PageableDefault(sort = "priceSale", direction = Direction.DESC, size = 500) Pageable pageable,
 		PagedResourcesAssembler<ArticleResponse> assembler,
 		@RequestParam(required = false) List<String> realEstateType,
 		@RequestParam(required = false) List<String> tradeType,
@@ -45,6 +46,17 @@ public class ArticleController {
 			regionPrefix, neLat, neLng, swLat, swLng
 		);
 		return assembler.toModel(page);
+	}
+
+	@GetMapping("/api/articles/clusters")
+	public List<ClusterInfo> getClusters(
+		@RequestParam double swLat,
+		@RequestParam double neLat,
+		@RequestParam double swLng,
+		@RequestParam double neLng,
+		@RequestParam(defaultValue = "6") int precision
+	) {
+		return articleService.getClusters(swLat, neLat, swLng, neLng, precision);
 	}
 
 	@GetMapping("/api/dashboard/real-estate-type-summary")

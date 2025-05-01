@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.locationtech.jts.geom.Point;
 
 import java.time.LocalDate;
 
@@ -77,6 +78,14 @@ public class Article {
 	private String address2SiGunGu;
 	@Column(name = "address3_dong_eup_myeon")
 	private String address3DongEupMyeon;
+	@Column(
+		name = "geom",
+		nullable = false,
+		insertable = false,
+		updatable = false,
+		columnDefinition = "POINT"
+	)
+	private Point geom;
 
 	private Article(
 		String articleCode, String bjdCode, String articleName,
@@ -87,7 +96,7 @@ public class Article {
 		Double longitude, String articleDesc, String companyName,
 		String agency, String subway, Boolean isChecked, Region regionId, Complex complexId,
 		String addressFullLot, String addressFullRoad, String address2City,
-		String address2Sigungu, String address3Dongeupmyeon
+		String address2Sigungu, String address3Dongeupmyeon, Point geom
 	) {
 		this.articleCode = articleCode;
 		this.bjdCode = bjdCode;
@@ -117,6 +126,7 @@ public class Article {
 		this.address1SiDo = address2City;
 		this.address2SiGunGu = address2Sigungu;
 		this.address3DongEupMyeon = address3Dongeupmyeon;
+		this.geom = geom;
 	}
 
 	public static Article create(
@@ -128,13 +138,13 @@ public class Article {
 		Double longitude, String articleDesc, String companyName,
 		String agency, String subway, Boolean isChecked, Region regionId, Complex complexId,
 		String addressFullLot, String addressFullRoad, String address2City,
-		String address2Sigungu, String address3Dongeupmyeon
+		String address2Sigungu, String address3Dongeupmyeon, Point geom
 	) {
 		return new Article(
 			articleCode, bjdCode, articleName, buildingTypeCode, buildingType, tradeType, floors, priceSale, priceRent,
 			areaSupply, areaExclusive, direction, confirmedAt, imageUrl, latitude, longitude, articleDesc,
 			companyName, agency, subway, isChecked, regionId, complexId, addressFullLot, addressFullRoad,
-			address2City, address2Sigungu, address3Dongeupmyeon
+			address2City, address2Sigungu, address3Dongeupmyeon, geom
 		);
 	}
 }

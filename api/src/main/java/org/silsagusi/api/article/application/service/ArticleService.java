@@ -3,6 +3,7 @@ package org.silsagusi.api.article.application.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.silsagusi.api.article.application.dto.ArticleResponse;
+import org.silsagusi.api.article.application.dto.ClusterInfo;
 import org.silsagusi.api.article.application.dto.RealEstateTypeSummaryResponse;
 import org.silsagusi.api.article.application.dto.TradeTypeSummaryResponse;
 import org.silsagusi.api.article.infrastructure.dataProvider.ArticleDataProvider;
@@ -75,5 +76,12 @@ public class ArticleService {
 		long tradeTotalCount = articleDataProvider.sumArticleCount(tradeTypeRatioProjections);
 
 		return new TradeTypeSummaryResponse(tradeTypeRatioProjections, tradeTotalCount);
+	}
+
+	@Transactional(readOnly = true)
+	public List<ClusterInfo> getClusters(
+		double swLat, double neLat, double swLng, double neLng, int precision
+	) {
+		return articleDataProvider.getClustersByBounds(swLat, neLat, swLng, neLng, precision);
 	}
 }
