@@ -2,6 +2,7 @@ package org.silsagusi.api.notification.controller;
 
 import java.util.List;
 
+import org.silsagusi.api.common.annotation.CurrentAgentId;
 import org.silsagusi.api.notification.application.dto.NotificationDto;
 import org.silsagusi.api.notification.application.service.NotificationService;
 import org.silsagusi.api.response.ApiResponse;
@@ -35,12 +36,10 @@ public class NotificationController {
 	}
 
 	@GetMapping("/api/notifications")
-	public ResponseEntity<ApiResponse<List<NotificationDto.Response>>> getNotifications(
-		HttpServletRequest request
+	public ResponseEntity<ApiResponse<List<NotificationDto.Response>>> getNotification(
+		@CurrentAgentId Long agentId
 	) {
-		List<NotificationDto.Response> notification = notificationService.getNotifications(
-			(Long)request.getAttribute("agentId"));
-
+		List<NotificationDto.Response> notification = notificationService.getNotification(agentId);
 		return ResponseEntity.ok(ApiResponse.ok(notification));
 	}
 

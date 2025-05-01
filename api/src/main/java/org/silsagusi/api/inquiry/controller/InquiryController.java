@@ -1,5 +1,6 @@
 package org.silsagusi.api.inquiry.controller;
 
+import org.silsagusi.api.common.annotation.CurrentAgentId;
 import org.silsagusi.api.inquiry.application.dto.ChatDto;
 import org.silsagusi.api.inquiry.application.dto.InquiryAnswerDto;
 import org.silsagusi.api.inquiry.application.dto.InquiryDto;
@@ -16,7 +17,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
@@ -71,11 +71,11 @@ public class InquiryController {
 
 	@PostMapping("/api/inquiries-answers/{inquiryId}")
 	public ResponseEntity<ApiResponse<Void>> writeInquiryAnswer(
-		HttpServletRequest request,
+		@CurrentAgentId Long agentId,
 		@PathVariable("inquiryId") Long inquiryId,
 		@RequestBody @Valid InquiryAnswerDto.Request inquiryAnswerRequest
 	) {
-		inquiryService.createInquiryAnswer((Long)request.getAttribute("agentId"), inquiryId, inquiryAnswerRequest);
+		inquiryService.createInquiryAnswer(agentId, inquiryId, inquiryAnswerRequest);
 		return ResponseEntity.ok(ApiResponse.ok());
 	}
 
