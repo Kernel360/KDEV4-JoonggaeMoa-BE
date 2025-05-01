@@ -35,10 +35,19 @@ public class NotificationController {
 	}
 
 	@GetMapping("/api/notifications")
-	public ResponseEntity<ApiResponse<List<NotificationDto.Response>>> getNotification(
+	public ResponseEntity<ApiResponse<List<NotificationDto.Response>>> getNotifications(
 		@CurrentAgentId Long agentId
 	) {
-		List<NotificationDto.Response> notification = notificationService.getNotification(agentId);
+		List<NotificationDto.Response> notification = notificationService.getNotifications(agentId);
+		return ResponseEntity.ok(ApiResponse.ok(notification));
+	}
+
+	@GetMapping("/api/notifiactions/{notificationId}")
+	public ResponseEntity<ApiResponse<NotificationDto.Response>> getNotification(
+		@PathVariable Long notificationId
+	) {
+		NotificationDto.Response notification = notificationService.getNotification(notificationId);
+
 		return ResponseEntity.ok(ApiResponse.ok(notification));
 	}
 

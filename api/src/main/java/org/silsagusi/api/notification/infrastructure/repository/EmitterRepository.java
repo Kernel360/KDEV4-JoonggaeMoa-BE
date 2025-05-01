@@ -2,6 +2,7 @@ package org.silsagusi.api.notification.infrastructure.repository;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -18,8 +19,8 @@ public class EmitterRepository {
 		return emitters.get(id);
 	}
 
-	public SseEmitter get(String id) {
-		return emitters.get(id);
+	public Optional<SseEmitter> get(String id) {
+		return Optional.ofNullable(emitters.get(id));
 	}
 
 	public void remove(String id) {
