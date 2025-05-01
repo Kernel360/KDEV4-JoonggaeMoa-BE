@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import reactor.core.publisher.Mono;
 
 @RequiredArgsConstructor
 @RestController
@@ -88,10 +87,11 @@ public class InquiryController {
 	}
 
 	@PostMapping("/api/inquiries/chat")
-	public Mono<ApiResponse<ChatDto.Response>> chat(
+	public ResponseEntity<ApiResponse<ChatDto.Response>> chat(
 		@RequestBody ChatDto.Request chatRequest
 	) {
-		return inquiryService.chat(chatRequest).map(ApiResponse::ok);
+		ChatDto.Response chatResponse = inquiryService.chat(chatRequest);
+		return ResponseEntity.ok(ApiResponse.ok(chatResponse));
 	}
 
 }
