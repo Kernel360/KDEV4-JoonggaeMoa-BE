@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -36,10 +35,10 @@ public class NotificationController {
 	}
 
 	@GetMapping("/api/notifications")
-	public ResponseEntity<ApiResponse<List<NotificationDto.Response>>> getNotification(
+	public ResponseEntity<ApiResponse<List<NotificationDto.Response>>> getNotifications(
 		@CurrentAgentId Long agentId
 	) {
-		List<NotificationDto.Response> notification = notificationService.getNotification(agentId);
+		List<NotificationDto.Response> notification = notificationService.getNotifications(agentId);
 		return ResponseEntity.ok(ApiResponse.ok(notification));
 	}
 
