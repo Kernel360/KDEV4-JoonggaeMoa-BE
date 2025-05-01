@@ -2,10 +2,11 @@ package org.silsagusi.api.message.controller;
 
 import java.util.List;
 
-import org.silsagusi.api.response.ApiResponse;
+import org.silsagusi.api.common.annotation.CurrentAgentId;
 import org.silsagusi.api.message.application.dto.MessageTemplateDto;
 import org.silsagusi.api.message.application.dto.UpdateMessageTemplateRequest;
 import org.silsagusi.api.message.application.service.MessageTemplateService;
+import org.silsagusi.api.response.ApiResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,7 +16,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -27,53 +27,37 @@ public class MessageTemplateController {
 
 	@GetMapping("/api/messages/templates")
 	public ResponseEntity<ApiResponse<List<MessageTemplateDto.Response>>> getMessageTemplateList(
-		HttpServletRequest request
+		@CurrentAgentId Long agentId
 	) {
-		List<MessageTemplateDto.Response> responseList = messageTemplateService.getMessageTemplates(
-			(Long)request.getAttribute("agentId")
-		);
-
+		List<MessageTemplateDto.Response> responseList = messageTemplateService.getMessageTemplates(agentId);
 		return ResponseEntity.ok(ApiResponse.ok(responseList));
 	}
 
 	@PostMapping("/api/messages/templates")
 	public ResponseEntity<ApiResponse<Void>> createMessageTemplate(
-		HttpServletRequest request,
+		@CurrentAgentId Long agentId,
 		@RequestBody @Valid MessageTemplateDto.Request messageTemplateRequest
 	) {
-		messageTemplateService.createMessageTemplate(
-			(Long)request.getAttribute("agentId"),
-			messageTemplateRequest
-		);
-
+		messageTemplateService.createMessageTemplate(agentId, messageTemplateRequest);
 		return ResponseEntity.ok(ApiResponse.ok());
 	}
 
 	@PatchMapping("/api/messages/templates/{templateId}")
 	public ResponseEntity<ApiResponse<Void>> updateMessageTemplate(
-		HttpServletRequest request,
+		@CurrentAgentId Long agentId,
 		@PathVariable(name = "templateId") Long templateId,
 		@RequestBody @Valid UpdateMessageTemplateRequest requestDto
 	) {
-		messageTemplateService.updateMessageTemplate(
-			(Long)request.getAttribute("agentId"),
-			templateId,
-			requestDto
-		);
-
+		messageTemplateService.updateMessageTemplate(agentId, templateId, requestDto);
 		return ResponseEntity.ok(ApiResponse.ok());
 	}
 
 	@DeleteMapping("/api/messages/templates/{templateId}")
 	public ResponseEntity<ApiResponse<Void>> deleteMessageTemplate(
-		HttpServletRequest request,
+		@CurrentAgentId Long agentId,
 		@PathVariable(name = "templateId") Long templateId
 	) {
-		messageTemplateService.deleteMessageTemplate(
-			(Long)request.getAttribute("agentId"),
-			templateId
-		);
-
+		messageTemplateService.deleteMessageTemplate(agentId, templateId);
 		return ResponseEntity.ok(ApiResponse.ok());
 	}
 }

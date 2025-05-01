@@ -9,7 +9,8 @@ import org.locationtech.jts.geom.Point;
 import java.time.LocalDate;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Entity(name = "articles")
+@Entity
+@Table(name = "articles")
 @Getter
 public class Article {
 

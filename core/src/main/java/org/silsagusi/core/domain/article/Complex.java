@@ -8,7 +8,8 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Entity(name = "complexes")
+@Entity
+@Table(name = "complexes")
 @Getter
 public class Complex {
 

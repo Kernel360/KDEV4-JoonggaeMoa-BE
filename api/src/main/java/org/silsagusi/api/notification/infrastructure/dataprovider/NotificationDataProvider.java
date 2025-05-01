@@ -1,6 +1,8 @@
 package org.silsagusi.api.notification.infrastructure.dataprovider;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import org.silsagusi.api.common.exception.CustomException;
 import org.silsagusi.api.common.exception.ErrorCode;
@@ -8,6 +10,7 @@ import org.silsagusi.api.notification.infrastructure.repository.EmitterRepositor
 import org.silsagusi.api.notification.infrastructure.repository.NotificationRepository;
 import org.silsagusi.core.domain.notification.entity.Notification;
 import org.silsagusi.core.domain.notification.entity.NotificationType;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,28 +25,41 @@ import lombok.extern.slf4j.Slf4j;
 public class NotificationDataProvider {
 
 	private static final Long DEFAULT_TIMEOUT = 60L * 1000 * 60;
+	private static final long RECONNECTION_TIMEOUT = 1000L;
 	private final EmitterRepository emitterRepository;
 	private final NotificationRepository notificationRepository;
 
-	public SseEmitter subscribe(Long agentId) {
-		SseEmitter emitter = new SseEmitter(DEFAULT_TIMEOUT);
+	public SseEmitter subscribe(Long agentId, String clientId) {
 
-		emitterRepository.save(agentId, emitter);
+		SseEmitter emitter = new SseEmitter(DEFAULT_TIMEOUT);
+		String emitterId = agentId + ":" + clientId;
+		emitterRepository.save(emitterId, emitter);
 
 		emitter.onCompletion(() -> {
 			log.info("SSE completed: agentId={}", agentId);
-			emitterRepository.remove(agentId);
+			emitterRepository.remove(emitterId);
 		});
 		emitter.onTimeout(() -> {
 			log.warn("SSE timeout: agentId={}", agentId);
-			emitterRepository.remove(agentId);
+			emitterRepository.remove(emitterId);
 		});
 		emitter.onError((e) -> {
 			log.error("SSE error: agentId={}, error={}", agentId, e.getMessage());
-			emitterRepository.remove(agentId);
+			emitterRepository.remove(emitterId);
 		});
 
-		notify(agentId, NotificationType.CONNECTION, "로그인에 성공했습니다!");
+		try {
+			emitter.send(
+				SseEmitter.event()
+					.name("notification")
+					.reconnectTime(RECONNECTION_TIMEOUT)
+					.data("connection", MediaType.APPLICATION_JSON)
+			);
+		} catch (IOException e) {
+			log.error("Failed to send notification to agentId {}: {}", emitterId, e.getMessage());
+			emitter.completeWithError(e);
+			emitterRepository.remove(emitterId);
+		}
 
 		return emitter;
 	}
@@ -51,26 +67,43 @@ public class NotificationDataProvider {
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public void notify(Long agentId, NotificationType type, String content) {
 
-		Notification notification = Notification.create(
-			agentId, type, content
-		);
-
-		if (type != NotificationType.CONNECTION) {
-			notificationRepository.save(notification);
-		}
-
-		SseEmitter emitter = emitterRepository.get(agentId);
-		if (emitter != null) {
-			try {
-				emitter.send(SseEmitter.event()
-					.name("notification")
-					.data(notification));
-			} catch (Exception e) {
-				log.error("Failed to send notification to agentId {}: {}", agentId, e.getMessage());
-				emitter.completeWithError(e);
-				emitterRepository.remove(agentId);
+		if (type != NotificationType.SURVEY) {
+			boolean alreadyNotified = notificationRepository.existsByAgentIdAndTypeAndContent(agentId, type, content);
+			if (alreadyNotified) {
+				log.info("이미 같은 알림이 전송됨: agentId={}, content={}", agentId, content);
+				return;
 			}
 		}
+
+		if (type == NotificationType.CONNECTION) {
+			return;
+		}
+
+		Notification notification = Notification.create(agentId, type, content);
+		notificationRepository.save(notification);
+
+		List<Map.Entry<String, SseEmitter>> emitters = emitterRepository.getAllEmittersByAgentId(agentId);
+
+		for (Map.Entry<String, SseEmitter> entry : emitters) {
+			String emitterId = entry.getKey();
+			SseEmitter emitter = entry.getValue();
+
+			if (emitter != null) {
+				try {
+					emitter.send(
+						SseEmitter.event()
+							.name("notification")
+							.reconnectTime(RECONNECTION_TIMEOUT)
+							.data(notification, MediaType.APPLICATION_JSON)
+					);
+				} catch (Exception e) {
+					log.error("Failed to send notification to agentId {}: {}", emitterId, e.getMessage());
+					emitter.completeWithError(e);
+					emitterRepository.remove(emitterId);
+				}
+			}
+		}
+
 	}
 
 	public List<Notification> getAllByAgent(Long agentId) {

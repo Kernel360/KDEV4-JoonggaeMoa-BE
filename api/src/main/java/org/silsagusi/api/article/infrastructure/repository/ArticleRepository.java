@@ -46,7 +46,7 @@ public interface ArticleRepository extends JpaRepository<Article, Long>, JpaSpec
 	// 매물 타입(BuildingType) 비율
 	@Query("""
 		    SELECT a.buildingType AS type, COUNT(a) AS count
-		    FROM articles a
+		    FROM Article a
 		    WHERE a.confirmedAt >= :startDate
 		    GROUP BY a.buildingType
 		""")
@@ -55,7 +55,7 @@ public interface ArticleRepository extends JpaRepository<Article, Long>, JpaSpec
 	// 거래 방식(TradeType) 비율
 	@Query("""
 		    SELECT a.tradeType AS type, COUNT(a) AS count
-		    FROM articles a
+		    FROM Article a
 		    WHERE a.confirmedAt >= :startDate
 		    GROUP BY a.tradeType
 		""")
