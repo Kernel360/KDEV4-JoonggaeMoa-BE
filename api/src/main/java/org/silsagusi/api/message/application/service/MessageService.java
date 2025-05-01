@@ -4,7 +4,8 @@ import java.util.List;
 
 import org.silsagusi.api.agent.infrastructure.dataprovider.AgentDataProvider;
 import org.silsagusi.api.customer.infrastructure.dataprovider.CustomerDataProvider;
-import org.silsagusi.api.message.application.dto.MessageDto;
+import org.silsagusi.api.message.application.dto.CreateMessageRequest;
+import org.silsagusi.api.message.application.dto.MessageResponse;
 import org.silsagusi.api.message.application.dto.UpdateMessageRequest;
 import org.silsagusi.api.message.application.mapper.MessageMapper;
 import org.silsagusi.api.message.application.validator.MessageValidator;
@@ -33,13 +34,13 @@ public class MessageService {
 	private final MessageValidator messageValidator;
 
 	@Transactional(readOnly = true)
-	public Page<MessageDto.Response> getMessagePage(Long agentId, Pageable pageable) {
+	public Page<MessageResponse> getMessagePage(Long agentId, Pageable pageable) {
 		Page<Message> messagePage = messageDataProvider.getMessagePageByAgent(agentId, pageable);
-		return messagePage.map(MessageDto::toResponse);
+		return messagePage.map(MessageResponse::toResponse);
 	}
 
 	@Transactional
-	public void createMessages(MessageDto.Request messageRequest) {
+	public void createMessages(CreateMessageRequest messageRequest) {
 		List<Customer> customerList = customerDataProvider.getCustomerListByIdList(messageRequest.getCustomerIdList());
 
 		List<Message> messages = messageMapper.toEntityList(customerList, messageRequest.getContent(),
@@ -56,24 +57,18 @@ public class MessageService {
 		messageValidator.validateAgentAccess(message, agent);
 		messageValidator.validateMessageStatusEqualsPending(message);
 
-		UpdateMessageCommand updateMessageCommand = UpdateMessageRequest.toCommand(updateMessageRequest);
+		UpdateMessageCommand updateMessageCommand = updateMessageRequest.toCommand();
 		messageDataProvider.updateMessage(message, updateMessageCommand);
 	}
 
 	@Transactional(readOnly = true)
-	public Page<MessageDto.Response> getReservedMessagePage(Long agentId, Pageable pageable) {
+	public Page<MessageResponse> getReservedMessagePage(Long agentId, Pageable pageable) {
 		Page<Message> messagePage = messageDataProvider.getReservedMessagePageByAgent(agentId, pageable);
-		return messagePage.map(MessageDto::toResponse);
-	}
-
-	@Transactional(readOnly = true)
-	public MessageDto.Response getReservedMessage(Long messageId) {
-		Message message = messageDataProvider.getMessage(messageId);
-		return MessageDto.toResponse(message);
+		return messagePage.map(MessageResponse::toResponse);
 	}
 
 	@Transactional
-	public void deleteReservedMessage(Long agentId, Long messageId) {
+	public void deleteMessage(Long agentId, Long messageId) {
 		Agent agent = agentDataProvider.getAgentById(agentId);
 		Message message = messageDataProvider.getMessage(messageId);
 

@@ -3,7 +3,7 @@ package org.silsagusi.api.notification.controller;
 import java.util.List;
 
 import org.silsagusi.api.common.annotation.CurrentAgentId;
-import org.silsagusi.api.notification.application.dto.NotificationDto;
+import org.silsagusi.api.notification.application.dto.NotificationResponse;
 import org.silsagusi.api.notification.application.service.NotificationService;
 import org.silsagusi.api.response.ApiResponse;
 import org.springframework.http.MediaType;
@@ -35,20 +35,19 @@ public class NotificationController {
 	}
 
 	@GetMapping("/api/notifications")
-	public ResponseEntity<ApiResponse<List<NotificationDto.Response>>> getNotifications(
+	public ResponseEntity<ApiResponse<List<NotificationResponse>>> getNotifications(
 		@CurrentAgentId Long agentId
 	) {
-		List<NotificationDto.Response> notification = notificationService.getNotifications(agentId);
-		return ResponseEntity.ok(ApiResponse.ok(notification));
+		List<NotificationResponse> notificationResponses = notificationService.getNotifications(agentId);
+		return ResponseEntity.ok(ApiResponse.ok(notificationResponses));
 	}
 
 	@GetMapping("/api/notifiactions/{notificationId}")
-	public ResponseEntity<ApiResponse<NotificationDto.Response>> getNotification(
+	public ResponseEntity<ApiResponse<NotificationResponse>> getNotification(
 		@PathVariable Long notificationId
 	) {
-		NotificationDto.Response notification = notificationService.getNotification(notificationId);
-
-		return ResponseEntity.ok(ApiResponse.ok(notification));
+		NotificationResponse notificationResponse = notificationService.getNotification(notificationId);
+		return ResponseEntity.ok(ApiResponse.ok(notificationResponse));
 	}
 
 	@PatchMapping("/api/notifications/{notificationId}")

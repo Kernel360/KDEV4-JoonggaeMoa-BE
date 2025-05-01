@@ -9,8 +9,11 @@ import org.silsagusi.api.consultation.infrastructure.dataprovider.ConsultationDa
 import org.silsagusi.api.customer.application.mapper.CustomerMapper;
 import org.silsagusi.api.customer.infrastructure.dataprovider.CustomerDataProvider;
 import org.silsagusi.api.notification.infrastructure.dataprovider.NotificationDataProvider;
-import org.silsagusi.api.survey.application.dto.AnswerDto;
-import org.silsagusi.api.survey.application.dto.SurveyDto;
+import org.silsagusi.api.survey.application.dto.AnswerResponse;
+import org.silsagusi.api.survey.application.dto.CreateSurveyRequest;
+import org.silsagusi.api.survey.application.dto.SubmitAnswerRequest;
+import org.silsagusi.api.survey.application.dto.SurveyResponse;
+import org.silsagusi.api.survey.application.dto.UpdateSurveyRequest;
 import org.silsagusi.api.survey.application.mapper.SurveyMapper;
 import org.silsagusi.api.survey.application.validator.SurveyValidator;
 import org.silsagusi.api.survey.infrastructure.dataprovider.SurveyDataProvider;
@@ -44,7 +47,7 @@ public class SurveyService {
 	private final ConsultationMapper consultationMapper;
 
 	@Transactional
-	public void createSurvey(Long agentId, SurveyDto.CreateRequest surveyCreateRequest) {
+	public void createSurvey(Long agentId, CreateSurveyRequest surveyCreateRequest) {
 		Agent agent = agentDataProvider.getAgentById(agentId);
 		Survey survey = surveyMapper.toSurvey(agent, surveyCreateRequest);
 		List<Question> questions = surveyMapper.fromCreateDtoToQuestions(survey, surveyCreateRequest.getQuestionList());
@@ -63,7 +66,7 @@ public class SurveyService {
 	}
 
 	@Transactional
-	public void updateSurvey(Long agentId, String surveyId, SurveyDto.UpdateRequest surveyUpdateRequest) {
+	public void updateSurvey(Long agentId, String surveyId, UpdateSurveyRequest surveyUpdateRequest) {
 		Agent agent = agentDataProvider.getAgentById(agentId);
 		Survey survey = surveyDataProvider.getSurvey(surveyId);
 		surveyValidator.validateAgentAccess(agent, survey);
@@ -79,35 +82,35 @@ public class SurveyService {
 	}
 
 	@Transactional(readOnly = true)
-	public Page<SurveyDto.Response> getAllSurveys(Long agentId, Pageable pageable) {
+	public Page<SurveyResponse> getAllSurveys(Long agentId, Pageable pageable) {
 		Agent agent = agentDataProvider.getAgentById(agentId);
 		Page<Survey> surveyPage = surveyDataProvider.getSurveyPageByAgent(agent, pageable);
-		return surveyPage.map(SurveyDto::toResponse);
+		return surveyPage.map(SurveyResponse::toResponse);
 	}
 
 	@Transactional(readOnly = true)
-	public SurveyDto.Response findById(String surveyId) {
+	public SurveyResponse findById(String surveyId) {
 		Survey survey = surveyDataProvider.getSurvey(surveyId);
-		return SurveyDto.toResponse(survey);
+		return SurveyResponse.toResponse(survey);
 	}
 
 	@Transactional
 	public void submitSurveyAnswer(
 		String surveyId,
-		AnswerDto.Request answerRequest
+		SubmitAnswerRequest submitAnswerRequest
 	) {
 		Survey survey = surveyDataProvider.getSurvey(surveyId);
 		Agent agent = survey.getAgent();
 
-		Customer customer = customerDataProvider.getCustomerByPhone(answerRequest.getPhone());
+		Customer customer = customerDataProvider.getCustomerByPhone(submitAnswerRequest.getPhone());
 		if (customer == null) {
-			customer = customerMapper.toEntity(answerRequest, agent);
+			customer = customerMapper.toEntity(submitAnswerRequest, agent);
 			customerDataProvider.createCustomer(customer);
 		}
 
-		if (Boolean.TRUE.equals(answerRequest.getApplyConsultation())) {
+		if (Boolean.TRUE.equals(submitAnswerRequest.getApplyConsultation())) {
 			Consultation consultation = consultationMapper.answerRequestToEntity(customer,
-				answerRequest.getConsultAt());
+				submitAnswerRequest.getConsultAt());
 			consultationDataProvider.createConsultation(consultation);
 
 			//상담 신청 시 알림
@@ -121,12 +124,12 @@ public class SurveyService {
 
 		// 응답 추가
 		List<QuestionAnswerPair> pairList = surveyMapper.mapToQuestionAnswerPairList(
-			answerRequest.getQuestions(), answerRequest.getAnswers()
+			submitAnswerRequest.getQuestions(), submitAnswerRequest.getAnswers()
 		);
 
 		surveyDataProvider.createAnswer(
-			answerRequest.getApplyConsultation(),
-			answerRequest.getConsultAt(),
+			submitAnswerRequest.getApplyConsultation(),
+			submitAnswerRequest.getConsultAt(),
 			customer,
 			survey,
 			pairList
@@ -141,9 +144,9 @@ public class SurveyService {
 	}
 
 	@Transactional(readOnly = true)
-	public Page<AnswerDto.Response> getAllAnswers(Long agentId, Pageable pageable) {
+	public Page<AnswerResponse> getAllAnswers(Long agentId, Pageable pageable) {
 		Page<Answer> answerPage = surveyDataProvider.getAnswerPage(agentId, pageable);
 
-		return answerPage.map(AnswerDto::toResponse);
+		return answerPage.map(AnswerResponse::toResponse);
 	}
 }

@@ -2,7 +2,8 @@ package org.silsagusi.api.customer.application.mapper;
 
 import org.silsagusi.api.customer.application.dto.CreateCustomerRequest;
 import org.silsagusi.api.customer.application.dto.CustomerExcelDto;
-import org.silsagusi.api.survey.application.dto.AnswerDto;
+import org.silsagusi.api.inquiry.application.dto.CreateConsultationRequest;
+import org.silsagusi.api.survey.application.dto.SubmitAnswerRequest;
 import org.silsagusi.core.domain.agent.Agent;
 import org.silsagusi.core.domain.customer.entity.Customer;
 import org.springframework.stereotype.Component;
@@ -44,7 +45,7 @@ public class CustomerMapper {
 		);
 	}
 
-	public Customer toEntity(AnswerDto.Request answerRequest, Agent agent) {
+	public Customer toEntity(SubmitAnswerRequest answerRequest, Agent agent) {
 		return Customer.create(
 			answerRequest.getName(),
 			null,
@@ -54,6 +55,23 @@ public class CustomerMapper {
 			null,
 			null,
 			answerRequest.getConsent(),
+			null,
+			null,
+			null,
+			agent
+		);
+	}
+
+	public Customer toEntity(CreateConsultationRequest createConsultationRequest, Agent agent) {
+		return Customer.create(
+			createConsultationRequest.getName(),
+			null,
+			createConsultationRequest.getPhone(),
+			createConsultationRequest.getEmail(),
+			null,
+			null,
+			null,
+			createConsultationRequest.getConsent(),
 			null,
 			null,
 			null,
