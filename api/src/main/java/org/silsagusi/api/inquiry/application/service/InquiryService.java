@@ -30,7 +30,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
-import reactor.core.publisher.Mono;
 
 @RequiredArgsConstructor
 @Service
@@ -119,7 +118,8 @@ public class InquiryService {
 
 	}
 
-	public Mono<ChatDto.Response> chat(ChatDto.Request chatRequest) {
-		return geminiApiClient.askGemini(chatRequest);
+	public ChatDto.Response chat(ChatDto.Request chatRequest) {
+		String answer = geminiApiClient.askGemini(chatRequest.getQuestion());
+		return ChatDto.Response.builder().answer(answer).build();
 	}
 }
