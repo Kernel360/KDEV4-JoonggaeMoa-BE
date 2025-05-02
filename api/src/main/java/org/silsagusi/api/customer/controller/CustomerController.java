@@ -1,9 +1,11 @@
 package org.silsagusi.api.customer.controller;
 
 import org.silsagusi.api.common.annotation.CurrentAgentId;
-import org.silsagusi.api.customer.application.dto.CustomerDto;
+import org.silsagusi.api.customer.application.dto.CreateCustomerRequest;
 import org.silsagusi.api.customer.application.dto.CustomerHistoryResponse;
+import org.silsagusi.api.customer.application.dto.CustomerResponse;
 import org.silsagusi.api.customer.application.dto.CustomerSummaryResponse;
+import org.silsagusi.api.customer.application.dto.UpdateCustomerRequest;
 import org.silsagusi.api.customer.application.service.CustomerService;
 import org.silsagusi.api.response.ApiResponse;
 import org.springframework.data.domain.Page;
@@ -32,7 +34,7 @@ public class CustomerController {
 	@PostMapping("/api/customers")
 	public ResponseEntity<ApiResponse<Void>> createCustomer(
 		@CurrentAgentId Long agentId,
-		@RequestBody @Valid CustomerDto.Request customerRequestDto
+		@RequestBody @Valid CreateCustomerRequest customerRequestDto
 	) {
 		customerService.createCustomer(agentId, customerRequestDto);
 		return ResponseEntity.ok(ApiResponse.ok());
@@ -66,18 +68,18 @@ public class CustomerController {
 	public ResponseEntity<ApiResponse<Void>> updateCustomer(
 		@CurrentAgentId Long agentId,
 		@PathVariable("customerId") Long customerId,
-		@RequestBody @Valid CustomerDto.Request customerRequestDto
+		@RequestBody @Valid UpdateCustomerRequest customerRequestDto
 	) {
 		customerService.updateCustomer(agentId, customerId, customerRequestDto);
 		return ResponseEntity.ok(ApiResponse.ok());
 	}
 
 	@GetMapping("/api/customers")
-	public ResponseEntity<ApiResponse<Page<CustomerDto.Response>>> getAllCustomers(
+	public ResponseEntity<ApiResponse<Page<CustomerResponse>>> getAllCustomers(
 		@CurrentAgentId Long agentId,
 		Pageable pageable
 	) {
-		Page<CustomerDto.Response> customerResponseList = customerService.getAllCustomers(agentId, pageable);
+		Page<CustomerResponse> customerResponseList = customerService.getAllCustomers(agentId, pageable);
 		return ResponseEntity.ok(ApiResponse.ok(customerResponseList));
 	}
 

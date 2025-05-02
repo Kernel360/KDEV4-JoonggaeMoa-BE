@@ -12,7 +12,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.silsagusi.api.common.exception.CustomException;
 import org.silsagusi.api.common.exception.ErrorCode;
-import org.silsagusi.api.customer.application.dto.CustomerExcelDto;
+import org.silsagusi.api.customer.application.dto.CustomerExcelRequest;
 import org.silsagusi.api.customer.application.mapper.CustomerMapper;
 import org.silsagusi.api.customer.application.validator.CustomerValidator;
 import org.silsagusi.core.domain.agent.Agent;
@@ -62,7 +62,7 @@ public class CustomerExcelParser {
 						continue;
 					}
 
-					CustomerExcelDto customerExcelDto = CustomerExcelDto.of(
+					CustomerExcelRequest customerExcelDto = CustomerExcelRequest.create(
 						row.getCell(0).getStringCellValue(),
 						row.getCell(1).getLocalDateTimeCellValue().toLocalDate(),
 						row.getCell(2).getStringCellValue(),

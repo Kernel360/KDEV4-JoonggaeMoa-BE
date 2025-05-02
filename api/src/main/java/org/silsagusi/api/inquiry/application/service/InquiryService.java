@@ -5,12 +5,16 @@ import java.time.format.DateTimeFormatter;
 import org.silsagusi.api.agent.infrastructure.dataprovider.AgentDataProvider;
 import org.silsagusi.api.consultation.application.mapper.ConsultationMapper;
 import org.silsagusi.api.consultation.infrastructure.dataprovider.ConsultationDataProvider;
-import org.silsagusi.api.customer.application.dto.CustomerDto;
 import org.silsagusi.api.customer.application.mapper.CustomerMapper;
 import org.silsagusi.api.customer.infrastructure.dataprovider.CustomerDataProvider;
-import org.silsagusi.api.inquiry.application.dto.ChatDto;
-import org.silsagusi.api.inquiry.application.dto.InquiryAnswerDto;
-import org.silsagusi.api.inquiry.application.dto.InquiryDto;
+import org.silsagusi.api.inquiry.application.dto.Chat;
+import org.silsagusi.api.inquiry.application.dto.CreateConsultationRequest;
+import org.silsagusi.api.inquiry.application.dto.CreateInquiryAnswerRequest;
+import org.silsagusi.api.inquiry.application.dto.CreateInquiryRequest;
+import org.silsagusi.api.inquiry.application.dto.DeleteInquiryRequest;
+import org.silsagusi.api.inquiry.application.dto.InquiryDetailResponse;
+import org.silsagusi.api.inquiry.application.dto.InquiryResponse;
+import org.silsagusi.api.inquiry.application.dto.UpdateInquiryRequest;
 import org.silsagusi.api.inquiry.application.mapper.InquiryAnswerMapper;
 import org.silsagusi.api.inquiry.application.mapper.InquiryMapper;
 import org.silsagusi.api.inquiry.application.validator.InquiryValidator;
@@ -48,40 +52,40 @@ public class InquiryService {
 	private final GeminiApiClient geminiApiClient;
 
 	@Transactional
-	public void createInquiry(InquiryDto.CreateRequest inquiryCreateRequest) {
+	public void createInquiry(CreateInquiryRequest inquiryCreateRequest) {
 		Inquiry inquiry = inquiryMapper.toEntity(inquiryCreateRequest);
 		inquiryDataProvider.createInquiry(inquiry);
 	}
 
 	@Transactional
-	public void updateInquiry(Long inquiryId, InquiryDto.UpdateRequest inquiryUpdateRequest) {
+	public void updateInquiry(Long inquiryId, UpdateInquiryRequest inquiryUpdateRequest) {
 		Inquiry inquiry = inquiryDataProvider.getInquiry(inquiryId);
 		inquiryValidator.validatePassword(inquiry, inquiryUpdateRequest.getPassword());
-		UpdateInquiryCommand updateInquiryCommand = InquiryDto.toCommand(inquiryUpdateRequest);
+		UpdateInquiryCommand updateInquiryCommand = inquiryUpdateRequest.toCommand();
 		inquiryDataProvider.updateInquiry(inquiry, updateInquiryCommand);
 	}
 
 	@Transactional
-	public void deleteInquiry(Long inquiryId, InquiryDto.PasswordRequest passwordRequest) {
+	public void deleteInquiry(Long inquiryId, DeleteInquiryRequest deleteInquiryRequest) {
 		Inquiry inquiry = inquiryDataProvider.getInquiry(inquiryId);
-		inquiryValidator.validatePassword(inquiry, passwordRequest.getPassword());
+		inquiryValidator.validatePassword(inquiry, deleteInquiryRequest.getPassword());
 		inquiryDataProvider.deleteInquiry(inquiry);
 	}
 
 	@Transactional(readOnly = true)
-	public Page<InquiryDto.Response> getAllInquiry(Pageable pageable) {
+	public Page<InquiryResponse> getAllInquiry(Pageable pageable) {
 		Page<Inquiry> inquiries = inquiryDataProvider.getInquiries(pageable);
-		return inquiries.map(InquiryDto::toResponse);
+		return inquiries.map(InquiryResponse::toResponse);
 	}
 
 	@Transactional(readOnly = true)
-	public InquiryDto.Response getInquiry(Long inquiryId) {
+	public InquiryDetailResponse getInquiry(Long inquiryId) {
 		Inquiry inquiry = inquiryDataProvider.getInquiry(inquiryId);
-		return InquiryDto.toResponse(inquiry);
+		return InquiryDetailResponse.toResponse(inquiry);
 	}
 
 	@Transactional
-	public void createInquiryAnswer(Long agentId, Long inquiryId, InquiryAnswerDto.Request inquiryAnswerRequest) {
+	public void createInquiryAnswer(Long agentId, Long inquiryId, CreateInquiryAnswerRequest inquiryAnswerRequest) {
 		Inquiry inquiry = inquiryDataProvider.getInquiry(inquiryId);
 		Agent agent = agentDataProvider.getAgentById(agentId);
 		inquiryDataProvider.markAsAnswered(inquiry);
@@ -90,22 +94,16 @@ public class InquiryService {
 	}
 
 	@Transactional
-	public void createConsultation(InquiryDto.ConsultationRequest inquiryConsultationRequest) {
-		Agent agent = agentDataProvider.getAgentById(inquiryConsultationRequest.getAgentId());
-		Customer customer = customerDataProvider.getCustomerByPhone(inquiryConsultationRequest.getPhone());
+	public void createConsultation(CreateConsultationRequest createConsultationRequest) {
+		Agent agent = agentDataProvider.getAgentById(createConsultationRequest.getAgentId());
+		Customer customer = customerDataProvider.getCustomerByPhone(createConsultationRequest.getPhone());
 		if (customer == null) {
-			CustomerDto.Request customerRequest = CustomerDto.Request.builder()
-				.name(inquiryConsultationRequest.getName())
-				.email(inquiryConsultationRequest.getEmail())
-				.phone((inquiryConsultationRequest.getPhone()))
-				.consent(inquiryConsultationRequest.getConsent())
-				.build();
-			customer = customerMapper.toEntity(customerRequest, agent);
+			customer = customerMapper.toEntity(createConsultationRequest, agent);
 			customerDataProvider.createCustomer(customer);
 		}
 
 		Consultation consultation = consultationMapper.answerRequestToEntity(customer,
-			inquiryConsultationRequest.getConsultAt());
+			createConsultationRequest.getConsultAt());
 		consultationDataProvider.createConsultation(consultation);
 
 		// 상담 신청 시 알림
@@ -115,11 +113,10 @@ public class InquiryService {
 			customer.getName() + "님이 [" + consultation.getDate().format(DateTimeFormatter.ofPattern("YYYY-MM-dd HH:mm"))
 				+ "] 시에 상담을 신청했습니다."
 		);
-
 	}
 
-	public ChatDto.Response chat(ChatDto.Request chatRequest) {
+	public Chat.Response chat(Chat.Request chatRequest) {
 		String answer = geminiApiClient.askGemini(chatRequest.getQuestion());
-		return ChatDto.Response.builder().answer(answer).build();
+		return new Chat.Response(answer);
 	}
 }

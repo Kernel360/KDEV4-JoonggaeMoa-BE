@@ -3,8 +3,8 @@ package org.silsagusi.api.survey.application.mapper;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.silsagusi.api.survey.application.dto.QuestionDto;
-import org.silsagusi.api.survey.application.dto.SurveyDto;
+import org.silsagusi.api.survey.application.dto.CreateSurveyRequest;
+import org.silsagusi.api.survey.application.dto.UpdateSurveyRequest;
 import org.silsagusi.core.domain.agent.Agent;
 import org.silsagusi.core.domain.survey.entity.Question;
 import org.silsagusi.core.domain.survey.entity.QuestionAnswerPair;
@@ -17,7 +17,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SurveyMapper {
 
-	public Survey toSurvey(Agent agent, SurveyDto.CreateRequest createSurveyRequest) {
+	public Survey toSurvey(Agent agent, CreateSurveyRequest createSurveyRequest) {
 		return Survey.create(
 			agent,
 			createSurveyRequest.getTitle(),
@@ -27,8 +27,8 @@ public class SurveyMapper {
 	}
 
 	public List<Question> fromCreateDtoToQuestions(Survey survey,
-		List<QuestionDto.CreateRequest> createQuestionCRequests) {
-		return createQuestionCRequests.stream()
+		List<CreateSurveyRequest.CreateQuestion> createQuestions) {
+		return createQuestions.stream()
 			.map(request ->
 				Question.create(
 					survey, request.getContent(), request.getType(), request.getIsRequired(), request.getOptions()
@@ -37,8 +37,8 @@ public class SurveyMapper {
 	}
 
 	public List<Question> fromUpdateDtoToQuestions(Survey survey,
-		List<QuestionDto.UpdateRequest> updateQuestionCRequests) {
-		return updateQuestionCRequests.stream()
+		List<UpdateSurveyRequest.UpdateQuestion> updateUpdateQuestionCRequests) {
+		return updateUpdateQuestionCRequests.stream()
 			.map(request ->
 				Question.create(
 					survey, request.getContent(), request.getType(), request.getIsRequired(), request.getOptions()

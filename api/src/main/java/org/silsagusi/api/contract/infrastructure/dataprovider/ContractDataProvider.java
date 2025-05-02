@@ -2,6 +2,7 @@ package org.silsagusi.api.contract.infrastructure.dataprovider;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 import org.silsagusi.api.common.exception.CustomException;
@@ -100,4 +101,9 @@ public class ContractDataProvider {
 		return amazonS3.getUrl(S3_BUCKET_NAME, fileName).toString();
 	}
 
+	public List<Contract> getExpiredContracts(Long agentId) {
+		LocalDate targetDate = LocalDate.now().plusMonths(6);
+		return contractRepository.findAllByCustomerLandlord_Agent_IdAndExpiredAtBeforeAndDeletedAtIsNull(
+			agentId, targetDate);
+	}
 }

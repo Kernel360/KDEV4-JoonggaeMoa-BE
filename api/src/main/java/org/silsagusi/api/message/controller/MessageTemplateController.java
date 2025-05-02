@@ -3,7 +3,8 @@ package org.silsagusi.api.message.controller;
 import java.util.List;
 
 import org.silsagusi.api.common.annotation.CurrentAgentId;
-import org.silsagusi.api.message.application.dto.MessageTemplateDto;
+import org.silsagusi.api.message.application.dto.CreateMessageTemplateRequest;
+import org.silsagusi.api.message.application.dto.MessageTemplateResponse;
 import org.silsagusi.api.message.application.dto.UpdateMessageTemplateRequest;
 import org.silsagusi.api.message.application.service.MessageTemplateService;
 import org.silsagusi.api.response.ApiResponse;
@@ -26,17 +27,17 @@ public class MessageTemplateController {
 	private final MessageTemplateService messageTemplateService;
 
 	@GetMapping("/api/messages/templates")
-	public ResponseEntity<ApiResponse<List<MessageTemplateDto.Response>>> getMessageTemplateList(
+	public ResponseEntity<ApiResponse<List<MessageTemplateResponse>>> getMessageTemplateList(
 		@CurrentAgentId Long agentId
 	) {
-		List<MessageTemplateDto.Response> responseList = messageTemplateService.getMessageTemplates(agentId);
+		List<MessageTemplateResponse> responseList = messageTemplateService.getMessageTemplates(agentId);
 		return ResponseEntity.ok(ApiResponse.ok(responseList));
 	}
 
 	@PostMapping("/api/messages/templates")
 	public ResponseEntity<ApiResponse<Void>> createMessageTemplate(
 		@CurrentAgentId Long agentId,
-		@RequestBody @Valid MessageTemplateDto.Request messageTemplateRequest
+		@RequestBody @Valid CreateMessageTemplateRequest messageTemplateRequest
 	) {
 		messageTemplateService.createMessageTemplate(agentId, messageTemplateRequest);
 		return ResponseEntity.ok(ApiResponse.ok());

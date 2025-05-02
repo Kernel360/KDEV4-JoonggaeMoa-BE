@@ -3,7 +3,8 @@ package org.silsagusi.api.message.application.service;
 import java.util.List;
 
 import org.silsagusi.api.agent.infrastructure.dataprovider.AgentDataProvider;
-import org.silsagusi.api.message.application.dto.MessageTemplateDto;
+import org.silsagusi.api.message.application.dto.CreateMessageTemplateRequest;
+import org.silsagusi.api.message.application.dto.MessageTemplateResponse;
 import org.silsagusi.api.message.application.dto.UpdateMessageTemplateRequest;
 import org.silsagusi.api.message.application.mapper.MessageTemplateMapper;
 import org.silsagusi.api.message.application.validator.MessageTemplateValidator;
@@ -25,7 +26,7 @@ public class MessageTemplateService {
 	private final MessageTemplateValidator messageTemplateValidator;
 
 	@Transactional
-	public void createMessageTemplate(Long agentId, MessageTemplateDto.Request messageTemplateRequest) {
+	public void createMessageTemplate(Long agentId, CreateMessageTemplateRequest messageTemplateRequest) {
 		Agent agent = agentDataProvider.getAgentById(agentId);
 		MessageTemplate messageTemplate = messageTemplateMapper.toEntity(agent, messageTemplateRequest);
 
@@ -33,11 +34,11 @@ public class MessageTemplateService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<MessageTemplateDto.Response> getMessageTemplates(Long agentId) {
+	public List<MessageTemplateResponse> getMessageTemplates(Long agentId) {
 		Agent agent = agentDataProvider.getAgentById(agentId);
 		List<MessageTemplate> messageTemplates = messageTemplateDataProvider.getMessageTemplateList(agent);
 
-		return MessageTemplateDto.toResponseList(messageTemplates);
+		return MessageTemplateResponse.toResponses(messageTemplates);
 	}
 
 	@Transactional
