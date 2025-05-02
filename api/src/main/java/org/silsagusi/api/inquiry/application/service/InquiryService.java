@@ -12,6 +12,7 @@ import org.silsagusi.api.inquiry.application.dto.CreateConsultationRequest;
 import org.silsagusi.api.inquiry.application.dto.CreateInquiryAnswerRequest;
 import org.silsagusi.api.inquiry.application.dto.CreateInquiryRequest;
 import org.silsagusi.api.inquiry.application.dto.DeleteInquiryRequest;
+import org.silsagusi.api.inquiry.application.dto.InquiryDetailResponse;
 import org.silsagusi.api.inquiry.application.dto.InquiryResponse;
 import org.silsagusi.api.inquiry.application.dto.UpdateInquiryRequest;
 import org.silsagusi.api.inquiry.application.mapper.InquiryAnswerMapper;
@@ -78,9 +79,9 @@ public class InquiryService {
 	}
 
 	@Transactional(readOnly = true)
-	public InquiryResponse getInquiry(Long inquiryId) {
+	public InquiryDetailResponse getInquiry(Long inquiryId) {
 		Inquiry inquiry = inquiryDataProvider.getInquiry(inquiryId);
-		return InquiryResponse.toResponse(inquiry);
+		return InquiryDetailResponse.toResponse(inquiry);
 	}
 
 	@Transactional

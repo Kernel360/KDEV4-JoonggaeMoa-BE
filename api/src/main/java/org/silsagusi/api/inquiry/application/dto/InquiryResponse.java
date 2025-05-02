@@ -1,7 +1,6 @@
 package org.silsagusi.api.inquiry.application.dto;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import org.silsagusi.core.domain.inquiry.entity.Inquiry;
 
@@ -16,23 +15,16 @@ public class InquiryResponse {
 	private String title;
 	private String content;
 	private LocalDateTime createdAt;
-	private LocalDateTime updatedAt;
-	private List<InquiryAnswerResponse> answers;
+	private Integer count;
 
 	public static InquiryResponse toResponse(Inquiry inquiry) {
-		List<InquiryAnswerResponse> answers = inquiry.getAnswers()
-			.stream()
-			.map(InquiryAnswerResponse::toResponse)
-			.toList();
-
 		return InquiryResponse.builder()
 			.id(inquiry.getId())
 			.name(inquiry.getName())
 			.title(inquiry.getTitle())
 			.content(inquiry.getContent())
 			.createdAt(inquiry.getCreatedAt())
-			.updatedAt(inquiry.getUpdatedAt())
-			.answers(answers)
+			.count(inquiry.getAnswers().size())
 			.build();
 	}
 }

@@ -6,6 +6,7 @@ import org.silsagusi.api.inquiry.application.dto.CreateConsultationRequest;
 import org.silsagusi.api.inquiry.application.dto.CreateInquiryAnswerRequest;
 import org.silsagusi.api.inquiry.application.dto.CreateInquiryRequest;
 import org.silsagusi.api.inquiry.application.dto.DeleteInquiryRequest;
+import org.silsagusi.api.inquiry.application.dto.InquiryDetailResponse;
 import org.silsagusi.api.inquiry.application.dto.InquiryResponse;
 import org.silsagusi.api.inquiry.application.dto.UpdateInquiryRequest;
 import org.silsagusi.api.inquiry.application.service.InquiryService;
@@ -65,11 +66,11 @@ public class InquiryController {
 	}
 
 	@GetMapping("/api/inquiries/{inquiryId}")
-	public ResponseEntity<ApiResponse<InquiryResponse>> getInquiry(
+	public ResponseEntity<ApiResponse<InquiryDetailResponse>> getInquiry(
 		@PathVariable("inquiryId") Long inquiryId
 	) {
-		InquiryResponse inquiry = inquiryService.getInquiry(inquiryId);
-		return ResponseEntity.ok(ApiResponse.ok(inquiry));
+		InquiryDetailResponse inquiryResponse = inquiryService.getInquiry(inquiryId);
+		return ResponseEntity.ok(ApiResponse.ok(inquiryResponse));
 	}
 
 	@PostMapping("/api/inquiries-answers/{inquiryId}")
