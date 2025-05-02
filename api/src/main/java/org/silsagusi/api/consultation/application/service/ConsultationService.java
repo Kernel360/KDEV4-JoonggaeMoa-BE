@@ -12,7 +12,6 @@ import org.silsagusi.api.consultation.application.dto.UpdateConsultationRequest;
 import org.silsagusi.api.consultation.application.mapper.ConsultationMapper;
 import org.silsagusi.api.consultation.application.validator.ConsultationValidator;
 import org.silsagusi.api.consultation.infrastructure.dataprovider.ConsultationDataProvider;
-import org.silsagusi.api.customer.application.dto.CustomerResponse;
 import org.silsagusi.api.customer.infrastructure.dataprovider.CustomerDataProvider;
 import org.silsagusi.core.domain.consultation.command.UpdateConsultationCommand;
 import org.silsagusi.core.domain.consultation.entity.Consultation;
@@ -83,17 +82,13 @@ public class ConsultationService {
 	}
 
 	@Transactional(readOnly = true)
-	public ConsultationHistoryResponse getConsultationsByCustomer(Long consultationId, Pageable pageable) {
+	public ConsultationHistoryResponse getConsultationHistory(Long consultationId, Pageable pageable) {
 		Consultation consultation = consultationDataProvider.getConsultation(consultationId);
 		Customer customer = consultation.getCustomer();
 		Page<Consultation> consultations = consultationDataProvider.getConsultationsByCustomer(customer,
 			pageable);
 
-		Page<ConsultationResponse> consultationResponses = consultations.map(
-			ConsultationResponse::toResponse);
-		CustomerResponse customerResponse = CustomerResponse.toResponse(customer);
-
-		return new ConsultationHistoryResponse(customerResponse, consultationResponses);
+		return ConsultationHistoryResponse.toResponse(customer, consultations);
 	}
 
 	@Transactional(readOnly = true)

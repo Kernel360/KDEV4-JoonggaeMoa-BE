@@ -69,11 +69,11 @@ public class ConsultationController {
 	}
 
 	@GetMapping("/api/consultations/{consultationId}/customers")
-	public ResponseEntity<ApiResponse<ConsultationHistoryResponse>> getConsultationsByCustomer(
+	public ResponseEntity<ApiResponse<ConsultationHistoryResponse>> getConsultationHistory(
 		@PathVariable("consultationId") Long consultationId,
 		Pageable pageable
 	) {
-		ConsultationHistoryResponse consultationHistoryResponse = consultationService.getConsultationsByCustomer(
+		ConsultationHistoryResponse consultationHistoryResponse = consultationService.getConsultationHistory(
 			consultationId,
 			pageable);
 		return ResponseEntity.ok(ApiResponse.ok(consultationHistoryResponse));
