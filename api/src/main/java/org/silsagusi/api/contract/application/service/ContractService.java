@@ -1,11 +1,13 @@
 package org.silsagusi.api.contract.application.service;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.silsagusi.api.contract.application.dto.ContractDetailResponse;
 import org.silsagusi.api.contract.application.dto.ContractResponse;
 import org.silsagusi.api.contract.application.dto.ContractSummaryResponse;
 import org.silsagusi.api.contract.application.dto.CreateContractRequest;
+import org.silsagusi.api.contract.application.dto.ExpiredContractResponse;
 import org.silsagusi.api.contract.application.mapper.ContractMapper;
 import org.silsagusi.api.contract.application.validator.ContractValidator;
 import org.silsagusi.api.contract.infrastructure.dataprovider.ContractDataProvider;
@@ -70,5 +72,11 @@ public class ContractService {
 	public ContractSummaryResponse getContractSummary(Long agentId) {
 		ContractSummaryInfo contractSummaryInfo = contractDataProvider.getSummary(agentId);
 		return ContractSummaryResponse.toResponse(contractSummaryInfo);
+	}
+
+	@Transactional(readOnly = true)
+	public ExpiredContractResponse getExpiredContract(Long agentId) {
+		List<Contract> contracts = contractDataProvider.getExpiredContracts(agentId);
+		return ExpiredContractResponse.toResponse(contracts);
 	}
 }

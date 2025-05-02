@@ -7,6 +7,7 @@ import org.silsagusi.api.contract.application.dto.ContractDetailResponse;
 import org.silsagusi.api.contract.application.dto.ContractResponse;
 import org.silsagusi.api.contract.application.dto.ContractSummaryResponse;
 import org.silsagusi.api.contract.application.dto.CreateContractRequest;
+import org.silsagusi.api.contract.application.dto.ExpiredContractResponse;
 import org.silsagusi.api.contract.application.service.ContractService;
 import org.silsagusi.api.response.ApiResponse;
 import org.springframework.data.domain.Page;
@@ -52,7 +53,7 @@ public class ContractController {
 	public ResponseEntity<ApiResponse<ContractDetailResponse>> getContract(
 		@CurrentAgentId Long agentId,
 		@PathVariable("contractId") String contractId
-	) throws IOException {
+	) {
 		ContractDetailResponse contractResponse = contractService.getContractById(agentId, contractId);
 		return ResponseEntity.ok(ApiResponse.ok(contractResponse));
 	}
@@ -74,4 +75,11 @@ public class ContractController {
 		return ResponseEntity.ok(ApiResponse.ok(contractSummaryResponse));
 	}
 
+	@GetMapping("/api/dashboard/expired-contract")
+	public ResponseEntity<ApiResponse<ExpiredContractResponse>> getExpiredContract(
+		@CurrentAgentId Long agentId
+	) {
+		ExpiredContractResponse expiredContractResponse = contractService.getExpiredContract(agentId);
+		return ResponseEntity.ok(ApiResponse.ok(expiredContractResponse));
+	}
 }
