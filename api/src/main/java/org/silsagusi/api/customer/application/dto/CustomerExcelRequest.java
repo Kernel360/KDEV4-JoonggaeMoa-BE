@@ -6,8 +6,10 @@ import org.silsagusi.core.domain.agent.Agent;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
+@Setter
 @Builder
 public class CustomerExcelRequest {
 	private String name;
