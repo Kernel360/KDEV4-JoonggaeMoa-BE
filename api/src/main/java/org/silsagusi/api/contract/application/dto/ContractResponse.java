@@ -15,7 +15,6 @@ public class ContractResponse {
 	private String tenantName;
 	private LocalDate startedAt;
 	private LocalDate expiredAt;
-	private String url;
 
 	public static ContractResponse toResponse(ContractInfo info) {
 		return ContractResponse.builder()
@@ -24,7 +23,6 @@ public class ContractResponse {
 			.tenantName(info.getTenantName())
 			.startedAt(info.getStartedAt())
 			.expiredAt(info.getExpiredAt())
-			.url(info.getUrl())
 			.build();
 	}
 }

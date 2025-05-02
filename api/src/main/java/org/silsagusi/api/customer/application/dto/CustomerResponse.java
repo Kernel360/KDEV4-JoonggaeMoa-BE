@@ -17,11 +17,6 @@ public class CustomerResponse {
 	private String email;
 	private String job;
 	private Boolean isVip;
-	private String memo;
-	private Boolean consent;
-	private String interestProperty;
-	private String interestLocation;
-	private String assetStatus;
 
 	public static CustomerResponse toResponse(Customer customer) {
 		return CustomerResponse.builder()
@@ -32,11 +27,6 @@ public class CustomerResponse {
 			.email(customer.getEmail())
 			.job(customer.getJob())
 			.isVip(customer.getIsVip())
-			.memo(customer.getMemo())
-			.consent(customer.getConsent())
-			.interestProperty(customer.getInterestProperty())
-			.interestLocation(customer.getInterestLocation())
-			.assetStatus(customer.getAssetStatus())
 			.build();
 	}
 }
