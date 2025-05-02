@@ -5,6 +5,7 @@ import org.silsagusi.api.response.ApiResponse;
 import org.silsagusi.api.survey.application.dto.AnswerResponse;
 import org.silsagusi.api.survey.application.dto.CreateSurveyRequest;
 import org.silsagusi.api.survey.application.dto.SubmitAnswerRequest;
+import org.silsagusi.api.survey.application.dto.SurveyDetailResponse;
 import org.silsagusi.api.survey.application.dto.SurveyResponse;
 import org.silsagusi.api.survey.application.dto.UpdateSurveyRequest;
 import org.silsagusi.api.survey.application.service.SurveyService;
@@ -66,10 +67,10 @@ public class SurveyController {
 	}
 
 	@GetMapping("/api/surveys/{surveyId}")
-	public ResponseEntity<ApiResponse<SurveyResponse>> getSurvey(
+	public ResponseEntity<ApiResponse<SurveyDetailResponse>> getSurvey(
 		@PathVariable("surveyId") String surveyId
 	) {
-		SurveyResponse response = surveyService.findById(surveyId);
+		SurveyDetailResponse response = surveyService.findById(surveyId);
 		return ResponseEntity.ok(ApiResponse.ok(response));
 	}
 
@@ -84,11 +85,11 @@ public class SurveyController {
 
 	// 고객용 api
 	@GetMapping("/api/customers/surveys/{surveyId}")
-	public ResponseEntity<ApiResponse<SurveyResponse>> getSurveyForCustomer(
+	public ResponseEntity<ApiResponse<SurveyDetailResponse>> getSurveyForCustomer(
 		@PathVariable("surveyId") String surveyId
 	) {
-		SurveyResponse surveyCommand = surveyService.findById(surveyId);
-		return ResponseEntity.ok(ApiResponse.ok(surveyCommand));
+		SurveyDetailResponse surveyResponse = surveyService.findById(surveyId);
+		return ResponseEntity.ok(ApiResponse.ok(surveyResponse));
 	}
 
 	@PostMapping("/api/customers/surveys/{surveyId}")

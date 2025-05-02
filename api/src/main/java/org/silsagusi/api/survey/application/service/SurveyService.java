@@ -12,6 +12,7 @@ import org.silsagusi.api.notification.infrastructure.dataprovider.NotificationDa
 import org.silsagusi.api.survey.application.dto.AnswerResponse;
 import org.silsagusi.api.survey.application.dto.CreateSurveyRequest;
 import org.silsagusi.api.survey.application.dto.SubmitAnswerRequest;
+import org.silsagusi.api.survey.application.dto.SurveyDetailResponse;
 import org.silsagusi.api.survey.application.dto.SurveyResponse;
 import org.silsagusi.api.survey.application.dto.UpdateSurveyRequest;
 import org.silsagusi.api.survey.application.mapper.SurveyMapper;
@@ -89,9 +90,9 @@ public class SurveyService {
 	}
 
 	@Transactional(readOnly = true)
-	public SurveyResponse findById(String surveyId) {
+	public SurveyDetailResponse findById(String surveyId) {
 		Survey survey = surveyDataProvider.getSurvey(surveyId);
-		return SurveyResponse.toResponse(survey);
+		return SurveyDetailResponse.toResponse(survey);
 	}
 
 	@Transactional

@@ -14,7 +14,7 @@ public class MessageTemplateResponse {
 	private String title;
 	private String content;
 
-	public static List<MessageTemplateResponse> toResponseList(List<MessageTemplate> messageTemplates) {
+	public static List<MessageTemplateResponse> toResponses(List<MessageTemplate> messageTemplates) {
 		return messageTemplates.stream()
 			.map(messageTemplate ->
 				MessageTemplateResponse.builder()

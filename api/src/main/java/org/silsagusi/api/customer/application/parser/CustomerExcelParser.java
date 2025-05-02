@@ -8,7 +8,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.silsagusi.api.common.exception.CustomException;
 import org.silsagusi.api.common.exception.ErrorCode;
-import org.silsagusi.api.customer.application.dto.CustomerExcelDto;
+import org.silsagusi.api.customer.application.dto.CustomerExcelRequest;
 import org.silsagusi.api.customer.application.mapper.CustomerMapper;
 import org.silsagusi.core.domain.agent.Agent;
 import org.silsagusi.core.domain.customer.entity.Customer;
@@ -42,7 +42,7 @@ public class CustomerExcelParser {
 						Row row = workSheet.getRow(i);
 						if (row == null)
 							continue;
-						CustomerExcelDto customerExcelDto = CustomerExcelDto.of(
+						CustomerExcelRequest customerExcelRequest = CustomerExcelRequest.create(
 							row.getCell(0).getStringCellValue(),
 							row.getCell(1).getLocalDateTimeCellValue().toLocalDate(),
 							row.getCell(2).getStringCellValue(),
@@ -57,7 +57,7 @@ public class CustomerExcelParser {
 							agent
 						);
 
-						Customer customer = customerMapper.toEntity(customerExcelDto);
+						Customer customer = customerMapper.toEntity(customerExcelRequest);
 
 						customers.add(customer);
 

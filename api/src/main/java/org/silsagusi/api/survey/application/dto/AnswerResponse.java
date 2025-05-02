@@ -1,11 +1,13 @@
 package org.silsagusi.api.survey.application.dto;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
-import org.silsagusi.api.customer.application.dto.CustomerResponse;
+import org.silsagusi.core.domain.customer.entity.Customer;
 import org.silsagusi.core.domain.survey.entity.Answer;
 import org.silsagusi.core.domain.survey.entity.QuestionAnswerPair;
+import org.silsagusi.core.domain.survey.entity.Survey;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -14,34 +16,49 @@ import lombok.Getter;
 @Builder
 public class AnswerResponse {
 
-	private CustomerResponse customer;
-	private SurveyResponse survey;
+	private Long customerId;
+	private String customerName;
+	private String customerPhone;
+	private String customerEmail;
+	private Boolean customerConsent;
+
+	private String surveyTitle;
+	private String surveyDescription;
 	private LocalDateTime createdAt;
-	private List<QuestionAnswerResponse> answer;
+
+	private List<QuestionAnswerResponse> questionAnswers;
 
 	@Getter
 	@Builder
 	public static class QuestionAnswerResponse {
 		private String question;
-		private List<String> answer;
+		private List<String> answers;
 
-		public static QuestionAnswerResponse toResponse(QuestionAnswerPair questionAnswerPair) {
-			return QuestionAnswerResponse.builder()
-				.question(questionAnswerPair.getQuestion())
-				.answer(questionAnswerPair.getAnswer())
-				.build();
+		public static List<QuestionAnswerResponse> toResponses(List<QuestionAnswerPair> questionAnswerPairs) {
+			return questionAnswerPairs.stream()
+				.map(pair ->
+					QuestionAnswerResponse.builder()
+						.question(pair.getQuestion())
+						.answers(new ArrayList<>(pair.getAnswer()))
+						.build()
+				).toList();
 		}
 	}
 
 	public static AnswerResponse toResponse(Answer answer) {
-		List<QuestionAnswerResponse> questionAnswerResponseList = answer.getQuestionAnswerPairs().stream()
-			.map(QuestionAnswerResponse::toResponse).toList();
+		Customer customer = answer.getCustomer();
+		Survey survey = answer.getSurvey();
 
 		return AnswerResponse.builder()
-			.customer(CustomerResponse.toResponse(answer.getCustomer()))
-			.survey(SurveyResponse.toResponse(answer.getSurvey()))
-			.answer(questionAnswerResponseList)
+			.customerId(customer.getId())
+			.customerName(customer.getName())
+			.customerPhone(customer.getPhone())
+			.customerEmail(customer.getEmail())
+			.customerConsent(customer.getConsent())
+			.surveyTitle(survey.getTitle())
+			.surveyDescription(survey.getDescription())
 			.createdAt(answer.getCreatedAt())
+			.questionAnswers(QuestionAnswerResponse.toResponses(answer.getQuestionAnswerPairs()))
 			.build();
 	}
 }

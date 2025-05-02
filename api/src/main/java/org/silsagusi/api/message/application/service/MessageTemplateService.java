@@ -38,7 +38,7 @@ public class MessageTemplateService {
 		Agent agent = agentDataProvider.getAgentById(agentId);
 		List<MessageTemplate> messageTemplates = messageTemplateDataProvider.getMessageTemplateList(agent);
 
-		return MessageTemplateResponse.toResponseList(messageTemplates);
+		return MessageTemplateResponse.toResponses(messageTemplates);
 	}
 
 	@Transactional
