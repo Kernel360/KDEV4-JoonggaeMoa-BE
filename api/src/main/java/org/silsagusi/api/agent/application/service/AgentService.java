@@ -1,5 +1,6 @@
 package org.silsagusi.api.agent.application.service;
 
+import org.silsagusi.api.agent.application.dto.AgentProfileResponse;
 import org.silsagusi.api.agent.application.dto.AgentResponse;
 import org.silsagusi.api.agent.application.dto.AgentSignUpRequest;
 import org.silsagusi.api.agent.application.dto.FindUsername;
@@ -51,6 +52,12 @@ public class AgentService {
 	public AgentResponse getAgent(Long agentId) {
 		Agent agent = agentDataProvider.getAgentById(agentId);
 		return AgentResponse.toResponse(agent);
+	}
+
+	@Transactional(readOnly = true)
+	public AgentProfileResponse getAgentProfile(Long agentId) {
+		Agent agent = agentDataProvider.getAgentById(agentId);
+		return AgentProfileResponse.toResponse(agent);
 	}
 
 	@Transactional
