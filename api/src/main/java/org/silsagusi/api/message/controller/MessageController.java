@@ -1,7 +1,8 @@
 package org.silsagusi.api.message.controller;
 
 import org.silsagusi.api.common.annotation.CurrentAgentId;
-import org.silsagusi.api.message.application.dto.MessageDto;
+import org.silsagusi.api.message.application.dto.CreateMessageRequest;
+import org.silsagusi.api.message.application.dto.MessageResponse;
 import org.silsagusi.api.message.application.dto.UpdateMessageRequest;
 import org.silsagusi.api.message.application.service.MessageService;
 import org.silsagusi.api.response.ApiResponse;
@@ -26,28 +27,28 @@ public class MessageController {
 	private final MessageService messageService;
 
 	@GetMapping("/api/all-messages")
-	public ResponseEntity<ApiResponse<Page<MessageDto.Response>>> getMessagePage(
+	public ResponseEntity<ApiResponse<Page<MessageResponse>>> getMessagePage(
 		@CurrentAgentId Long agentId,
 		Pageable pageable
 	) {
-		Page<MessageDto.Response> messagePage = messageService.getMessagePage(agentId, pageable);
+		Page<MessageResponse> messagePage = messageService.getMessagePage(agentId, pageable);
 		return ResponseEntity.ok(ApiResponse.ok(messagePage));
 	}
 
 	@PostMapping("/api/messages")
 	public ResponseEntity<ApiResponse<Void>> createMessage(
-		@RequestBody @Valid MessageDto.Request messageRequest
+		@RequestBody @Valid CreateMessageRequest messageRequest
 	) {
 		messageService.createMessages(messageRequest);
 		return ResponseEntity.ok(ApiResponse.ok());
 	}
 
 	@GetMapping("/api/messages")
-	public ResponseEntity<ApiResponse<Page<MessageDto.Response>>> getReservedMessagePage(
+	public ResponseEntity<ApiResponse<Page<MessageResponse>>> getReservedMessagePage(
 		@CurrentAgentId Long agentId,
 		Pageable pageable
 	) {
-		Page<MessageDto.Response> responsePage = messageService.getReservedMessagePage(agentId, pageable);
+		Page<MessageResponse> responsePage = messageService.getReservedMessagePage(agentId, pageable);
 		return ResponseEntity.ok(ApiResponse.ok(responsePage));
 	}
 
@@ -62,11 +63,11 @@ public class MessageController {
 	}
 
 	@DeleteMapping("/api/messages/{messageId}")
-	public ResponseEntity<ApiResponse<Void>> deleteReservedMessage(
+	public ResponseEntity<ApiResponse<Void>> deleteMessage(
 		@CurrentAgentId Long agentId,
 		@PathVariable Long messageId
 	) {
-		messageService.deleteReservedMessage(agentId, messageId);
+		messageService.deleteMessage(agentId, messageId);
 		return ResponseEntity.ok(ApiResponse.ok());
 	}
 }

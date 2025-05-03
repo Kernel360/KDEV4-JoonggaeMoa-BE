@@ -2,7 +2,7 @@ package org.silsagusi.api.notification.application.service;
 
 import java.util.List;
 
-import org.silsagusi.api.notification.application.dto.NotificationDto;
+import org.silsagusi.api.notification.application.dto.NotificationResponse;
 import org.silsagusi.api.notification.infrastructure.dataprovider.NotificationDataProvider;
 import org.silsagusi.core.domain.notification.entity.Notification;
 import org.silsagusi.core.domain.notification.entity.NotificationType;
@@ -30,15 +30,15 @@ public class NotificationService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<NotificationDto.Response> getNotifications(Long agentId) {
+	public List<NotificationResponse> getNotifications(Long agentId) {
 		List<Notification> notificationList = notificationDataProvider.getAllByAgent(agentId);
-		return notificationList.stream().map(NotificationDto::toResponse).toList();
+		return notificationList.stream().map(NotificationResponse::toResponse).toList();
 	}
 
 	@Transactional(readOnly = true)
-	public NotificationDto.Response getNotification(Long notificationId) {
+	public NotificationResponse getNotification(Long notificationId) {
 		Notification notification = notificationDataProvider.getNotification(notificationId);
-		return NotificationDto.toResponse(notification);
+		return NotificationResponse.toResponse(notification);
 	}
 
 	@Transactional

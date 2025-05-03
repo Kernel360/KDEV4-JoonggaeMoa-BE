@@ -13,7 +13,19 @@ import lombok.Getter;
 @Getter
 @Builder
 public class CustomerHistoryResponse {
-	private CustomerDto.Response customer;
+	private Long id;
+	private String name;
+	private LocalDate birthday;
+	private String phone;
+	private String email;
+	private String job;
+	private Boolean isVip;
+	private String memo;
+	private Boolean consent;
+	private String interestProperty;
+	private String interestLocation;
+	private String assetStatus;
+
 	private List<History> history;
 
 	@Getter
@@ -55,11 +67,21 @@ public class CustomerHistoryResponse {
 	public static CustomerHistoryResponse toResponse(Customer customer,
 		List<CustomerHistoryInfo> customerHistoryInfos) {
 		return CustomerHistoryResponse.builder()
-			.customer(CustomerDto.toResponse(customer))
-			.history(
-				customerHistoryInfos.stream()
-					.map(History::create)
-					.toList()
-			).build();
+			.id(customer.getId())
+			.name(customer.getName())
+			.birthday(customer.getBirthday())
+			.phone(customer.getPhone())
+			.email(customer.getEmail())
+			.job(customer.getJob())
+			.isVip(customer.getIsVip())
+			.memo(customer.getMemo())
+			.consent(customer.getConsent())
+			.interestProperty(customer.getInterestProperty())
+			.interestLocation(customer.getInterestLocation())
+			.assetStatus(customer.getAssetStatus())
+			.history(customerHistoryInfos.stream()
+				.map(History::create)
+				.toList())
+			.build();
 	}
 }

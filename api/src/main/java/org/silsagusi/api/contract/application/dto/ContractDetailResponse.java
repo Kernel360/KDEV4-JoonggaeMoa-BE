@@ -4,33 +4,28 @@ import java.time.LocalDate;
 
 import org.silsagusi.core.domain.contract.info.ContractDetailInfo;
 
-import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class ContractDetailDto {
+@Getter
+@Builder
+public class ContractDetailResponse {
 
-	@Getter
-	@Builder
-	public static class Response {
-		private String id;
-		private Long landlordId;
-		private Long tenantId;
-		private String landlordName;
-		private String tenantName;
-		private String landlordPhone;
-		private String tenantPhone;
-		private String landlordEmail;
-		private String tenantEmail;
-		private LocalDate startedAt;
-		private LocalDate expiredAt;
-		private String url;
-	}
+	private String id;
+	private Long landlordId;
+	private Long tenantId;
+	private String landlordName;
+	private String tenantName;
+	private String landlordPhone;
+	private String tenantPhone;
+	private String landlordEmail;
+	private String tenantEmail;
+	private LocalDate startedAt;
+	private LocalDate expiredAt;
+	private String url;
 
-	public static Response toResponse(ContractDetailInfo info) {
-		return Response.builder()
+	public static ContractDetailResponse toResponse(ContractDetailInfo info) {
+		return ContractDetailResponse.builder()
 			.id(info.getId())
 			.landlordId(info.getLandlordId())
 			.tenantId(info.getTenantId())

@@ -1,10 +1,10 @@
 package org.silsagusi.core.domain.agent.command;
 
-import lombok.Builder;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
-@Builder
+@AllArgsConstructor
 public class UpdateAgentCommand {
 	private String username;
 	private String name;

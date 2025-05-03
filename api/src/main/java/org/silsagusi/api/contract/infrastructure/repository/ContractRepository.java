@@ -43,4 +43,7 @@ public interface ContractRepository extends JpaRepository<Contract, String> {
 		@Param("start") LocalDate start,
 		@Param("end") LocalDate end
 	);
+
+	List<Contract> findAllByCustomerLandlord_Agent_IdAndExpiredAtBeforeAndDeletedAtIsNull(Long agentId,
+		LocalDate expiredAtBefore);
 }

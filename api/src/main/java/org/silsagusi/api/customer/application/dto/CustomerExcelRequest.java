@@ -6,10 +6,12 @@ import org.silsagusi.core.domain.agent.Agent;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
+@Setter
 @Builder
-public class CustomerExcelDto {
+public class CustomerExcelRequest {
 	private String name;
 	private LocalDate birthday;
 	private String phone;
@@ -23,10 +25,10 @@ public class CustomerExcelDto {
 	private String assetStatus;
 	private Agent agent;
 
-	public static CustomerExcelDto of(String name, LocalDate birthday, String phone, String email, String job,
+	public static CustomerExcelRequest create(String name, LocalDate birthday, String phone, String email, String job,
 		Boolean isVip, String memo, Boolean consent, String interestProperty, String interestLocation,
 		String assetStatus, Agent agent) {
-		return CustomerExcelDto.builder()
+		return CustomerExcelRequest.builder()
 			.name(name)
 			.birthday(birthday)
 			.phone(phone)

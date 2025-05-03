@@ -1,8 +1,10 @@
 package org.silsagusi.api.agent.application.service;
 
-import org.silsagusi.api.agent.application.dto.AgentDto;
+import org.silsagusi.api.agent.application.dto.AgentProfileResponse;
+import org.silsagusi.api.agent.application.dto.AgentResponse;
+import org.silsagusi.api.agent.application.dto.AgentSignUpRequest;
+import org.silsagusi.api.agent.application.dto.FindUsername;
 import org.silsagusi.api.agent.application.dto.UpdateAgentRequest;
-import org.silsagusi.api.agent.application.dto.UsernameDto;
 import org.silsagusi.api.agent.application.mapper.AgentMapper;
 import org.silsagusi.api.agent.application.validator.AgentValidator;
 import org.silsagusi.api.agent.infrastructure.dataprovider.AgentDataProvider;
@@ -24,22 +26,21 @@ public class AgentService {
 	private final MessageTemplateDataProvider messageTemplateDataProvider;
 
 	@Transactional
-	public void signup(AgentDto.Request agentRequest) {
-		Agent agent = agentMapper.toEntity(agentRequest);
-
+	public void signup(AgentSignUpRequest agentSignUpRequest) {
+		Agent agent = agentMapper.toEntity(agentSignUpRequest);
 		agentValidator.validateExist(agent);
 
 		agentDataProvider.createAgent(agent);
-
 		messageTemplateDataProvider.createDefaultMessageTemplate(agent);
 	}
 
 	@Transactional
-	public UsernameDto.Response getAgentByNameAndPhone(UsernameDto.Request usernameRequest) {
-		Agent agent = agentDataProvider.getAgentByNameAndPhone(usernameRequest.getName(),
+	public FindUsername.Response getAgentByNameAndPhone(FindUsername.Request usernameRequest) {
+		Agent agent = agentDataProvider.getAgentByNameAndPhone(
+			usernameRequest.getName(),
 			usernameRequest.getPhone());
 
-		return UsernameDto.toResponse(agent);
+		return FindUsername.toResponse(agent);
 	}
 
 	@Transactional
@@ -48,17 +49,21 @@ public class AgentService {
 	}
 
 	@Transactional(readOnly = true)
-	public AgentDto.Response getAgent(Long agentId) {
+	public AgentResponse getAgent(Long agentId) {
 		Agent agent = agentDataProvider.getAgentById(agentId);
-		return AgentDto.toResponse(agent);
+		return AgentResponse.toResponse(agent);
+	}
+
+	@Transactional(readOnly = true)
+	public AgentProfileResponse getAgentProfile(Long agentId) {
+		Agent agent = agentDataProvider.getAgentById(agentId);
+		return AgentProfileResponse.toResponse(agent);
 	}
 
 	@Transactional
 	public void updateAgent(Long agentId, UpdateAgentRequest updateAgentRequest) {
 		Agent agent = agentDataProvider.getAgentById(agentId);
-
-		UpdateAgentCommand updateAgentCommand = UpdateAgentRequest.toCommand(updateAgentRequest);
-
+		UpdateAgentCommand updateAgentCommand = updateAgentRequest.toCommand();
 		agentDataProvider.updateAgent(agent, updateAgentCommand);
 	}
 }

@@ -1,18 +1,17 @@
-package org.silsagusi.api.agent.application.dto;
+package org.silsagusi.api.message.application.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Data
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class LoginRequest {
+public class CreateMessageTemplateRequest {
+	@NotBlank
+	private String title;
 
 	@NotBlank
-	private String username;
-
-	@NotBlank
-	private String password;
+	private String content;
 }

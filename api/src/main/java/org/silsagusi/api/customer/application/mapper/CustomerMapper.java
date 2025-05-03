@@ -1,8 +1,9 @@
 package org.silsagusi.api.customer.application.mapper;
 
-import org.silsagusi.api.customer.application.dto.CustomerDto;
-import org.silsagusi.api.customer.application.dto.CustomerExcelDto;
-import org.silsagusi.api.survey.application.dto.AnswerDto;
+import org.silsagusi.api.customer.application.dto.CreateCustomerRequest;
+import org.silsagusi.api.customer.application.dto.CustomerExcelRequest;
+import org.silsagusi.api.inquiry.application.dto.CreateConsultationRequest;
+import org.silsagusi.api.survey.application.dto.SubmitAnswerRequest;
 import org.silsagusi.core.domain.agent.Agent;
 import org.silsagusi.core.domain.customer.entity.Customer;
 import org.springframework.stereotype.Component;
@@ -10,7 +11,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class CustomerMapper {
 
-	public Customer toEntity(CustomerDto.Request customerRequestDto, Agent agent) {
+	public Customer toEntity(CreateCustomerRequest customerRequestDto, Agent agent) {
 		return Customer.create(
 			customerRequestDto.getName(),
 			customerRequestDto.getBirthday(),
@@ -27,24 +28,24 @@ public class CustomerMapper {
 		);
 	}
 
-	public Customer toEntity(CustomerExcelDto customerExcelDto) {
+	public Customer toEntity(CustomerExcelRequest customerExcelRequest) {
 		return Customer.create(
-			customerExcelDto.getName(),
-			customerExcelDto.getBirthday(),
-			customerExcelDto.getPhone(),
-			customerExcelDto.getEmail(),
-			customerExcelDto.getJob(),
-			customerExcelDto.getIsVip(),
-			customerExcelDto.getMemo(),
-			customerExcelDto.getConsent(),
-			customerExcelDto.getInterestProperty(),
-			customerExcelDto.getInterestLocation(),
-			customerExcelDto.getAssetStatus(),
-			customerExcelDto.getAgent()
+			customerExcelRequest.getName(),
+			customerExcelRequest.getBirthday(),
+			customerExcelRequest.getPhone(),
+			customerExcelRequest.getEmail(),
+			customerExcelRequest.getJob(),
+			customerExcelRequest.getIsVip(),
+			customerExcelRequest.getMemo(),
+			customerExcelRequest.getConsent(),
+			customerExcelRequest.getInterestProperty(),
+			customerExcelRequest.getInterestLocation(),
+			customerExcelRequest.getAssetStatus(),
+			customerExcelRequest.getAgent()
 		);
 	}
 
-	public Customer toEntity(AnswerDto.Request answerRequest, Agent agent) {
+	public Customer toEntity(SubmitAnswerRequest answerRequest, Agent agent) {
 		return Customer.create(
 			answerRequest.getName(),
 			null,
@@ -54,6 +55,23 @@ public class CustomerMapper {
 			null,
 			null,
 			answerRequest.getConsent(),
+			null,
+			null,
+			null,
+			agent
+		);
+	}
+
+	public Customer toEntity(CreateConsultationRequest createConsultationRequest, Agent agent) {
+		return Customer.create(
+			createConsultationRequest.getName(),
+			null,
+			createConsultationRequest.getPhone(),
+			createConsultationRequest.getEmail(),
+			null,
+			null,
+			null,
+			createConsultationRequest.getConsent(),
 			null,
 			null,
 			null,
