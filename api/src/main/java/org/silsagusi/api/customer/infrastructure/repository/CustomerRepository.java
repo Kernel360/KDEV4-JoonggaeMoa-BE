@@ -9,7 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface CustomerRepository extends JpaRepository<Customer, Long> {
+public interface CustomerRepository extends JpaRepository<Customer, Long>, CustomerCustomRepository {
 
 	Long countByAgentIdAndCreatedAtBetweenAndDeletedAtIsNull(Long agentId, LocalDateTime start, LocalDateTime end);
 
@@ -19,7 +19,10 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
 
 	Optional<Customer> findByIdAndDeletedAtIsNull(Long customerId);
 
-	Page<Customer> findAllByAgentAndDeletedAtIsNull(Agent agent, Pageable pageable);
+	Page<Customer> findAllByAgent_IdAndDeletedAtIsNull(Long agentId, Pageable pageable);
 
 	Optional<Customer> findByPhoneAndDeletedAtIsNull(String phone);
+
+	Page<Customer> findAllByAgent_IdAndNameContainingIgnoreCaseAndDeletedAtIsNull(Long agentId, String name,
+		Pageable pageable);
 }

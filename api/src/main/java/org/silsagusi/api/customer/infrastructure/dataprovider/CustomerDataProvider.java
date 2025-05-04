@@ -14,13 +14,13 @@ import org.silsagusi.api.contract.infrastructure.repository.ContractRepository;
 import org.silsagusi.api.customer.infrastructure.repository.CustomerRepository;
 import org.silsagusi.api.message.infrastructure.repository.MessageRepository;
 import org.silsagusi.api.survey.infrastructure.repository.AnswerRepository;
-import org.silsagusi.core.domain.agent.Agent;
 import org.silsagusi.core.domain.customer.command.UpdateCustomerCommand;
 import org.silsagusi.core.domain.customer.entity.Customer;
 import org.silsagusi.core.domain.customer.info.CustomerHistoryInfo;
 import org.silsagusi.core.domain.customer.info.CustomerSummaryInfo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Component;
 
 import com.amazonaws.services.s3.AmazonS3;
@@ -67,8 +67,17 @@ public class CustomerDataProvider {
 			updateCustomerCommand.getAssetStatus());
 	}
 
-	public Page<Customer> getAllByAgent(Agent agent, Pageable pageable) {
-		return customerRepository.findAllByAgentAndDeletedAtIsNull(agent, pageable);
+	public Page<Customer> getAllByAgent(Long agentId, String keyword, Pageable pageable) {
+		if (keyword == null || keyword.isEmpty()) {
+			return customerRepository.findAllByAgent_IdAndDeletedAtIsNull(agentId, pageable);
+		} else {
+			return customerRepository.findAllByAgent_IdAndNameContainingIgnoreCaseAndDeletedAtIsNull(agentId, keyword,
+				pageable);
+		}
+	}
+
+	public Slice<Customer> getInfiniteCustomers(Long customerId, Long cursor, String keyword) {
+		return customerRepository.findCustomerSlice(customerId, cursor, keyword);
 	}
 
 	public Customer getCustomerByPhone(String phone) {

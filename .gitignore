@@ -380,3 +380,6 @@ application-local.yml
 /batch/src/main/resources/application-local.yml
 
 .env
+
+/api/src/main/generated
+/core/src/main/generated

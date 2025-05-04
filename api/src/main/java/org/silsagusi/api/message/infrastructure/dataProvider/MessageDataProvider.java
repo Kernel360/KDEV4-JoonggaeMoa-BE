@@ -29,8 +29,8 @@ public class MessageDataProvider {
 			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ELEMENT));
 	}
 
-	public Page<Message> getMessagePageByAgent(Long agentId, Pageable pageable) {
-		return messageRepository.findAllByCustomer_Agent_IdAndDeletedAtIsNull(agentId, pageable);
+	public Page<Message> getMessagePageByAgent(Long agentId, String searchType, String keyword, Pageable pageable) {
+		return messageRepository.findMessagesByAgentAndCondition(agentId, searchType, keyword, pageable);
 	}
 
 	public Page<Message> getReservedMessagePageByAgent(Long agentId, Pageable pageable) {
