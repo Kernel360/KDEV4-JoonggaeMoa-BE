@@ -7,6 +7,7 @@ import org.silsagusi.api.article.application.mapper.ArticleMapper;
 import org.silsagusi.api.article.application.validator.ArticleValidator;
 import org.silsagusi.api.article.infrastructure.dataprovider.ArticleDataProvider;
 import org.silsagusi.core.domain.article.Article;
+import org.silsagusi.core.domain.article.Cluster;
 import org.silsagusi.core.domain.article.projection.ArticleTypeRatioProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -124,7 +125,7 @@ public class ArticleService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<ClusterResponse> getClusters(
+	public List<Cluster> getClusters(
 		double swLat, double neLat, double swLng, double neLng, int precision
 	) {
 		return articleDataProvider.getClustersByBounds(swLat, neLat, swLng, neLng, precision);

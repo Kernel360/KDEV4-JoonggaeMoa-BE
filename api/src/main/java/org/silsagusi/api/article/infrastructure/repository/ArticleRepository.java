@@ -1,6 +1,6 @@
 package org.silsagusi.api.article.infrastructure.repository;
 
-import org.silsagusi.api.article.application.dto.ClusterResponse;
+import org.silsagusi.core.domain.article.Cluster;
 import org.silsagusi.core.domain.article.Article;
 import org.silsagusi.core.domain.article.projection.ArticleTypeRatioProjection;
 import org.springframework.data.domain.Page;
@@ -36,7 +36,7 @@ public interface ArticleRepository extends JpaRepository<Article, Long>, JpaSpec
 		  FLOOR(latitude * POWER(10, :precision)),
 		  FLOOR(longitude * POWER(10, :precision))
 		""", nativeQuery = true)
-	List<ClusterResponse> findClustersByBounds(
+	List<Cluster> findClustersByBounds(
 		@Param("swLat") double swLat,
 		@Param("neLat") double neLat,
 		@Param("swLng") double swLng,

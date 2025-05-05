@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.silsagusi.api.article.application.dto.*;
 import org.silsagusi.api.article.application.service.ArticleService;
 import org.silsagusi.api.response.ApiResponse;
+import org.silsagusi.core.domain.article.Cluster;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
@@ -74,14 +75,15 @@ public class ArticleController {
 	}
 
 	@GetMapping("/api/clusters")
-	public List<ClusterResponse> getClusters(
+	public ResponseEntity<ApiResponse<List<Cluster>>> getClusters(
 		@RequestParam double swLat,
 		@RequestParam double neLat,
 		@RequestParam double swLng,
 		@RequestParam double neLng,
 		@RequestParam(defaultValue = "6") int precision
 	) {
-		return articleService.getClusters(swLat, neLat, swLng, neLng, precision);
+		List<Cluster> list = articleService.getClusters(swLat, neLat, swLng, neLng, precision);
+		return ResponseEntity.ok(ApiResponse.ok(list));
 	}
 
 	@GetMapping("/api/articles/by-cluster")

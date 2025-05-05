@@ -1,7 +1,7 @@
 package org.silsagusi.api.article.infrastructure.dataprovider;
 
 import lombok.RequiredArgsConstructor;
-import org.silsagusi.api.article.application.dto.ClusterResponse;
+import org.silsagusi.core.domain.article.Cluster;
 import org.silsagusi.api.article.application.validator.ArticleValidator;
 import org.silsagusi.api.article.infrastructure.repository.ArticleRepository;
 import org.silsagusi.api.common.exception.CustomException;
@@ -160,7 +160,7 @@ public class ArticleDataProvider {
 		);
 	}
 
-	public List<ClusterResponse> getClustersByBounds(
+	public List<Cluster> getClustersByBounds(
 		Double swLat, Double neLat, Double swLng, Double neLng, int precision
 	) {
 		return articleRepository.findClustersByBounds(swLat, neLat, swLng, neLng, precision);
