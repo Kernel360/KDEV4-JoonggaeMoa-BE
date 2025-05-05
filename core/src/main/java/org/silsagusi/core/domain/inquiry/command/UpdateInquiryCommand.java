@@ -1,10 +1,10 @@
 package org.silsagusi.core.domain.inquiry.command;
 
-import lombok.Builder;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
-@Builder
+@AllArgsConstructor
 public class UpdateInquiryCommand {
 
 	private String title;

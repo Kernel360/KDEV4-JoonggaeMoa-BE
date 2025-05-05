@@ -1,12 +1,11 @@
 package org.silsagusi.batch.naverland.infrastructure;
 
+import lombok.RequiredArgsConstructor;
 import org.silsagusi.batch.naverland.infrastructure.dto.NaverLandArticleResponse;
 import org.silsagusi.batch.naverland.infrastructure.dto.NaverLandComplexResponse;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
-
-import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor

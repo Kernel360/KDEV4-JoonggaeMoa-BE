@@ -1,14 +1,12 @@
 package org.silsagusi.batch.naverland.infrastructure.dto;
 
-import java.time.LocalDate;
-import java.util.List;
-
-import org.silsagusi.batch.common.FlexibleDateDeserializer;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-
 import lombok.Data;
+import org.silsagusi.batch.common.FlexibleDateDeserializer;
+
+import java.time.LocalDate;
+import java.util.List;
 
 @Data
 public class NaverLandComplexResponse {

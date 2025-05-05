@@ -18,13 +18,15 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @DynamicUpdate
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Entity(name = "consultations")
+@Entity
+@Table(name = "consultations")
 @Getter
 public class Consultation extends BaseEntity {
 

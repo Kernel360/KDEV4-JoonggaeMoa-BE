@@ -2,7 +2,7 @@ package org.silsagusi.api.consultation.application.mapper;
 
 import java.time.LocalDateTime;
 
-import org.silsagusi.api.consultation.application.dto.ConsultationDto;
+import org.silsagusi.api.consultation.application.dto.CreateConsultationRequest;
 import org.silsagusi.core.domain.consultation.entity.Consultation;
 import org.silsagusi.core.domain.customer.entity.Customer;
 import org.springframework.stereotype.Component;
@@ -10,7 +10,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class ConsultationMapper {
 
-	public Consultation consultationRequestToEntity(Customer customer, ConsultationDto.Request consultationRequestDto) {
+	public Consultation consultationRequestToEntity(Customer customer,
+		CreateConsultationRequest consultationRequestDto) {
 		Consultation consultation = Consultation.create(
 			customer,
 			consultationRequestDto.getDate(),

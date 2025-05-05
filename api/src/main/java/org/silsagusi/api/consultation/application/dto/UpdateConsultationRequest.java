@@ -24,11 +24,7 @@ public class UpdateConsultationRequest {
 	private String purpose;
 	private String memo;
 
-	public static UpdateConsultationCommand toCommand(UpdateConsultationRequest updateConsultationRequest) {
-		return UpdateConsultationCommand.builder()
-			.date(updateConsultationRequest.getDate())
-			.purpose(updateConsultationRequest.getPurpose())
-			.memo(updateConsultationRequest.getMemo())
-			.build();
+	public UpdateConsultationCommand toCommand() {
+		return new UpdateConsultationCommand(date, purpose, memo);
 	}
 }

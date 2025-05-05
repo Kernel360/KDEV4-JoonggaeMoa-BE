@@ -2,9 +2,12 @@ package org.silsagusi.api.contract.controller;
 
 import java.io.IOException;
 
-import org.silsagusi.api.contract.application.dto.ContractDetailDto;
-import org.silsagusi.api.contract.application.dto.ContractDto;
+import org.silsagusi.api.common.annotation.CurrentAgentId;
+import org.silsagusi.api.contract.application.dto.ContractDetailResponse;
+import org.silsagusi.api.contract.application.dto.ContractResponse;
 import org.silsagusi.api.contract.application.dto.ContractSummaryResponse;
+import org.silsagusi.api.contract.application.dto.CreateContractRequest;
+import org.silsagusi.api.contract.application.dto.ExpiredContractResponse;
 import org.silsagusi.api.contract.application.service.ContractService;
 import org.silsagusi.api.response.ApiResponse;
 import org.springframework.data.domain.Page;
@@ -19,7 +22,6 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -31,7 +33,7 @@ public class ContractController {
 
 	@PostMapping(value = "/api/contracts", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<ApiResponse<String>> createContract(
-		@RequestPart("contractData") @Valid ContractDto.Request contractRequestDto,
+		@RequestPart("contractData") @Valid CreateContractRequest contractRequestDto,
 		@RequestPart("file") MultipartFile file
 	) throws IOException {
 		contractService.createContract(contractRequestDto, file);
@@ -39,50 +41,45 @@ public class ContractController {
 	}
 
 	@GetMapping("/api/contracts")
-	public ResponseEntity<ApiResponse<Page<ContractDto.Response>>> getAllContracts(
-		HttpServletRequest request,
+	public ResponseEntity<ApiResponse<Page<ContractResponse>>> getAllContracts(
+		@CurrentAgentId Long agentId,
 		Pageable pageable
 	) {
-		Page<ContractDto.Response> contractResponsePage = contractService.getAllContracts(
-			(Long)request.getAttribute("agentId"),
-			pageable
-		);
+		Page<ContractResponse> contractResponsePage = contractService.getAllContracts(agentId, pageable);
 		return ResponseEntity.ok(ApiResponse.ok(contractResponsePage));
 	}
 
 	@GetMapping("/api/contracts/{contractId}")
-	public ResponseEntity<ApiResponse<ContractDetailDto.Response>> getContract(
-		HttpServletRequest request,
+	public ResponseEntity<ApiResponse<ContractDetailResponse>> getContract(
+		@CurrentAgentId Long agentId,
 		@PathVariable("contractId") String contractId
-	) throws IOException {
-		ContractDetailDto.Response contractResponse = contractService.getContractById(
-			(Long)request.getAttribute("agentId"),
-			contractId
-		);
+	) {
+		ContractDetailResponse contractResponse = contractService.getContractById(agentId, contractId);
 		return ResponseEntity.ok(ApiResponse.ok(contractResponse));
 	}
 
 	@DeleteMapping("/api/contracts/{contractId}")
 	public ResponseEntity<ApiResponse<Void>> deleteContract(
-		HttpServletRequest request,
+		@CurrentAgentId Long agentId,
 		@PathVariable("contractId") String contractId
 	) {
-		contractService.deleteContract(
-			(Long)request.getAttribute("agentId"),
-			contractId
-		);
+		contractService.deleteContract(agentId, contractId);
 		return ResponseEntity.ok(ApiResponse.ok());
 	}
 
 	@GetMapping("/api/dashboard/contract-summary")
 	public ResponseEntity<ApiResponse<ContractSummaryResponse>> getContractSummary(
-		HttpServletRequest request
+		@CurrentAgentId Long agentId
 	) {
-		return ResponseEntity.ok(ApiResponse.ok(
-			contractService.getContractSummary(
-				(Long)request.getAttribute("agentId")
-			)
-		));
+		ContractSummaryResponse contractSummaryResponse = contractService.getContractSummary(agentId);
+		return ResponseEntity.ok(ApiResponse.ok(contractSummaryResponse));
 	}
 
+	@GetMapping("/api/dashboard/expired-contract")
+	public ResponseEntity<ApiResponse<ExpiredContractResponse>> getExpiredContract(
+		@CurrentAgentId Long agentId
+	) {
+		ExpiredContractResponse expiredContractResponse = contractService.getExpiredContract(agentId);
+		return ResponseEntity.ok(ApiResponse.ok(expiredContractResponse));
+	}
 }

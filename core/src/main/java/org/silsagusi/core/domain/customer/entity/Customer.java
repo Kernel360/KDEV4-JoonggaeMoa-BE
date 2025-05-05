@@ -23,11 +23,13 @@ import lombok.NoArgsConstructor;
 
 @DynamicUpdate
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Entity(name = "customers")
-@Table(uniqueConstraints = {
-	@UniqueConstraint(name = "UK_customer_phone", columnNames = {"agent_id", "phone"}),
-	@UniqueConstraint(name = "UK_customer_email", columnNames = {"agent_id", "email"})
-})
+@Entity
+@Table(
+	name = "customers",
+	uniqueConstraints = {
+		@UniqueConstraint(name = "UK_customer_phone", columnNames = {"agent_id", "phone", "deleted_at"}),
+		@UniqueConstraint(name = "UK_customer_email", columnNames = {"agent_id", "email", "deleted_at"})
+	})
 @Getter
 public class Customer extends BaseEntity {
 
@@ -46,6 +48,7 @@ public class Customer extends BaseEntity {
 
 	private String job;
 
+	@Column(name = "is_vip")
 	private Boolean isVip;
 
 	@Lob
@@ -53,10 +56,13 @@ public class Customer extends BaseEntity {
 
 	private Boolean consent;
 
+	@Column(name = "interest_property")
 	private String interestProperty;
 
+	@Column(name = "interest_location")
 	private String interestLocation;
 
+	@Column(name = "asset_status")
 	private String assetStatus;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -103,5 +109,11 @@ public class Customer extends BaseEntity {
 		this.interestProperty = interestProperty;
 		this.interestLocation = interestLocation;
 		this.assetStatus = assetStatus;
+	}
+
+	@Override
+	public void markAsDeleted() {
+		super.markAsDeleted();
+		this.name = this.name + "(삭제)";
 	}
 }

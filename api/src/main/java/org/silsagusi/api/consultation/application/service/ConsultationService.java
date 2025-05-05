@@ -3,16 +3,15 @@ package org.silsagusi.api.consultation.application.service;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.silsagusi.api.consultation.application.dto.ConsultationDto;
-import org.silsagusi.api.consultation.application.dto.ConsultationHistoryDto;
+import org.silsagusi.api.consultation.application.dto.ConsultationHistoryResponse;
 import org.silsagusi.api.consultation.application.dto.ConsultationMonthResponse;
+import org.silsagusi.api.consultation.application.dto.ConsultationResponse;
 import org.silsagusi.api.consultation.application.dto.ConsultationSummaryResponse;
+import org.silsagusi.api.consultation.application.dto.CreateConsultationRequest;
 import org.silsagusi.api.consultation.application.dto.UpdateConsultationRequest;
 import org.silsagusi.api.consultation.application.mapper.ConsultationMapper;
 import org.silsagusi.api.consultation.application.validator.ConsultationValidator;
 import org.silsagusi.api.consultation.infrastructure.dataprovider.ConsultationDataProvider;
-import org.silsagusi.api.customer.application.dto.CustomerDto;
-import org.silsagusi.api.customer.application.mapper.CustomerMapper;
 import org.silsagusi.api.customer.infrastructure.dataprovider.CustomerDataProvider;
 import org.silsagusi.core.domain.consultation.command.UpdateConsultationCommand;
 import org.silsagusi.core.domain.consultation.entity.Consultation;
@@ -34,21 +33,17 @@ public class ConsultationService {
 	private final CustomerDataProvider customerDataProvider;
 	private final ConsultationMapper consultationMapper;
 	private final ConsultationValidator consultationValidator;
-	private final CustomerMapper customerMapper;
 
 	@Transactional
-	public void createConsultation(ConsultationDto.Request consultationRequestDto) {
-		Customer customer = customerDataProvider.getCustomer(consultationRequestDto.getCustomerId());
-
-		Consultation consultation = consultationMapper.consultationRequestToEntity(customer, consultationRequestDto);
-
+	public void createConsultation(CreateConsultationRequest createConsultationRequest) {
+		Customer customer = customerDataProvider.getCustomer(createConsultationRequest.getCustomerId());
+		Consultation consultation = consultationMapper.consultationRequestToEntity(customer, createConsultationRequest);
 		consultationDataProvider.createConsultation(consultation);
 	}
 
 	@Transactional
 	public void updateConsultationStatus(Long agentId, Long consultationId, String consultationStatus) {
 		Consultation consultation = consultationDataProvider.getConsultation(consultationId);
-
 		consultationValidator.validateAgentAccess(agentId, consultation);
 
 		consultationDataProvider.updateStatus(consultation, consultationStatus);
@@ -60,46 +55,40 @@ public class ConsultationService {
 		UpdateConsultationRequest updateConsultationRequest
 	) {
 		Consultation consultation = consultationDataProvider.getConsultation(consultationId);
-
 		consultationValidator.validateAgentAccess(agentId, consultation);
 
-		UpdateConsultationCommand updateConsultationCommand = UpdateConsultationRequest.toCommand(
-			updateConsultationRequest);
-
+		UpdateConsultationCommand updateConsultationCommand = updateConsultationRequest.toCommand();
 		consultationDataProvider.updateConsultation(consultation, updateConsultationCommand);
 	}
 
 	@Transactional(readOnly = true)
-	public ConsultationDto.Response getConsultation(Long consultationId) {
+	public ConsultationResponse getConsultation(Long consultationId) {
 		Consultation consultation = consultationDataProvider.getConsultation(consultationId);
-		return ConsultationDto.toResponse(consultation);
+		return ConsultationResponse.toResponse(consultation);
 	}
 
 	@Transactional(readOnly = true)
-	public List<ConsultationDto.Response> getConsultationsByStatus(Long agentId, String month, String status) {
+	public List<ConsultationResponse> getConsultationsByStatus(Long agentId, String month, String status) {
 		List<Consultation> consultations = consultationDataProvider.getConsultationsByStatus(agentId, month, status);
 
-		return consultations.stream().map(ConsultationDto::toResponse).toList();
+		return consultations.stream().map(ConsultationResponse::toResponse).toList();
 	}
 
 	@Transactional(readOnly = true)
-	public List<ConsultationDto.Response> getAllConsultationsByDate(Long agentId, LocalDateTime date) {
+	public List<ConsultationResponse> getAllConsultationsByDate(Long agentId, LocalDateTime date) {
 		List<Consultation> consultationList = consultationDataProvider.getConsultationByDate(agentId, date);
 
-		return consultationList.stream().map(ConsultationDto::toResponse).toList();
+		return consultationList.stream().map(ConsultationResponse::toResponse).toList();
 	}
 
 	@Transactional(readOnly = true)
-	public ConsultationHistoryDto getConsultationsByCustomer(Long consultationId, Pageable pageable) {
-		Customer customer = customerDataProvider.getCustomer(consultationId);
+	public ConsultationHistoryResponse getConsultationHistory(Long consultationId, Pageable pageable) {
+		Consultation consultation = consultationDataProvider.getConsultation(consultationId);
+		Customer customer = consultation.getCustomer();
 		Page<Consultation> consultations = consultationDataProvider.getConsultationsByCustomer(customer,
 			pageable);
 
-		Page<ConsultationDto.Response> consultationResponses = consultations.map(
-			ConsultationDto::toResponse);
-		CustomerDto.Response customerResponse = CustomerDto.toResponse(customer);
-
-		return new ConsultationHistoryDto(customerResponse, consultationResponses);
+		return ConsultationHistoryResponse.toResponse(customer, consultations);
 	}
 
 	@Transactional(readOnly = true)

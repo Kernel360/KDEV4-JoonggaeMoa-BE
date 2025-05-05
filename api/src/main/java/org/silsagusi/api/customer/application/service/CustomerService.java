@@ -3,9 +3,11 @@ package org.silsagusi.api.customer.application.service;
 import java.util.List;
 
 import org.silsagusi.api.agent.infrastructure.dataprovider.AgentDataProvider;
-import org.silsagusi.api.customer.application.dto.CustomerDto;
+import org.silsagusi.api.customer.application.dto.CreateCustomerRequest;
 import org.silsagusi.api.customer.application.dto.CustomerHistoryResponse;
+import org.silsagusi.api.customer.application.dto.CustomerResponse;
 import org.silsagusi.api.customer.application.dto.CustomerSummaryResponse;
+import org.silsagusi.api.customer.application.dto.UpdateCustomerRequest;
 import org.silsagusi.api.customer.application.mapper.CustomerMapper;
 import org.silsagusi.api.customer.application.parser.CustomerExcelParser;
 import org.silsagusi.api.customer.application.validator.CustomerValidator;
@@ -34,15 +36,10 @@ public class CustomerService {
 	private final CustomerValidator customerValidator;
 
 	@Transactional
-	public void createCustomer(
-		Long agentId,
-		CustomerDto.Request customerRequestDto
-	) {
+	public void createCustomer(Long agentId, CreateCustomerRequest createCustomerRequest) {
 		Agent agent = agentDataProvider.getAgentById(agentId);
-
-		customerValidator.validateExist(agent, customerRequestDto.getPhone(), customerRequestDto.getEmail());
-
-		Customer customer = customerMapper.toEntity(customerRequestDto, agent);
+		customerValidator.validateExist(agent, createCustomerRequest.getPhone(), createCustomerRequest.getEmail());
+		Customer customer = customerMapper.toEntity(createCustomerRequest, agent);
 
 		customerDataProvider.createCustomer(customer);
 	}
@@ -65,11 +62,11 @@ public class CustomerService {
 	}
 
 	@Transactional
-	public void updateCustomer(Long agentId, Long customerId, CustomerDto.Request customerRequestDto) {
+	public void updateCustomer(Long agentId, Long customerId, UpdateCustomerRequest updateCustomerRequest) {
 		Customer customer = customerDataProvider.getCustomer(customerId);
 		customerValidator.validateAgentAccess(agentId, customer);
 
-		UpdateCustomerCommand updateCustomerCommand = CustomerDto.toCommand(customer, customerRequestDto);
+		UpdateCustomerCommand updateCustomerCommand = updateCustomerRequest.toCommand(customer);
 
 		customerDataProvider.updateCustomer(updateCustomerCommand);
 	}
@@ -83,11 +80,11 @@ public class CustomerService {
 	}
 
 	@Transactional(readOnly = true)
-	public Page<CustomerDto.Response> getAllCustomers(Long agentId, Pageable pageable) {
+	public Page<CustomerResponse> getAllCustomers(Long agentId, Pageable pageable) {
 		Agent agent = agentDataProvider.getAgentById(agentId);
 
 		Page<Customer> customerPage = customerDataProvider.getAllByAgent(agent, pageable);
-		return customerPage.map(CustomerDto::toResponse);
+		return customerPage.map(CustomerResponse::toResponse);
 	}
 
 	@Transactional

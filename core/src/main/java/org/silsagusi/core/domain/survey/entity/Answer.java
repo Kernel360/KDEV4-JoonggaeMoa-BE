@@ -16,12 +16,14 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Entity(name = "answers")
+@Entity
+@Table(name = "answers")
 @Getter
 public class Answer extends BaseEntity {
 
@@ -30,8 +32,10 @@ public class Answer extends BaseEntity {
 	@Column(name = "answer_id")
 	private Long id;
 
+	@Column(name = "apply_consultation")
 	private Boolean applyConsultation;
 
+	@Column(name = "consult_at")
 	private LocalDateTime consultAt;
 
 	@ManyToOne(fetch = FetchType.LAZY)

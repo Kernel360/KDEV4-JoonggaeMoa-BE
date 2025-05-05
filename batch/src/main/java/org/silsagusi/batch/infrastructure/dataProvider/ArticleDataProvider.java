@@ -1,8 +1,6 @@
 package org.silsagusi.batch.infrastructure.dataProvider;
 
-import java.util.List;
-import java.util.Objects;
-
+import lombok.RequiredArgsConstructor;
 import org.silsagusi.batch.infrastructure.external.AddressResponse;
 import org.silsagusi.batch.infrastructure.repository.ArticleRepository;
 import org.silsagusi.batch.naverland.infrastructure.dto.NaverLandArticleResponse;
@@ -11,13 +9,14 @@ import org.silsagusi.batch.zigbang.infrastructure.dto.ZigBangItemCatalogResponse
 import org.silsagusi.core.domain.article.Article;
 import org.silsagusi.core.domain.article.Complex;
 import org.silsagusi.core.domain.article.Region;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import lombok.RequiredArgsConstructor;
+import java.util.List;
+import java.util.Objects;
 
-@Service
+@Component
 @RequiredArgsConstructor
 public class ArticleDataProvider {
 
@@ -71,12 +70,12 @@ public class ArticleDataProvider {
 		ZigBangItemCatalogResponse.ZigBangItemCatalog item,
 		ZigBangDanjiResponse danji,
 		AddressResponse addressResponse,
-		Region region, Complex complex
+		Region region, Complex complex, String cortarNo
 
 	) {
 		return Article.create(
 			String.valueOf(item.getAreaDanjiId()),
-			null,
+			cortarNo,
 			item.getAreaDanjiName() + " " + item.getDong(),
 			"A01",
 			"아파트",
@@ -88,7 +87,8 @@ public class ArticleDataProvider {
 			String.valueOf(item.getSizeM2()),
 			null,
 			danji.getFiltered().get(0).get사용승인일(),
-			item.getThumbnailUrl() + "?w=1000",
+			Objects.equals(item.getThumbnailUrl(), "") ? null :
+				item.getThumbnailUrl() + "?w=1000",
 			danji.getFiltered().get(0).getLat(),
 			danji.getFiltered().get(0).getLng(),
 			item.getItemTitle(),

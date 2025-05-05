@@ -1,12 +1,11 @@
 package org.silsagusi.batch.zigbang.infrastructure;
 
+import lombok.RequiredArgsConstructor;
 import org.silsagusi.batch.zigbang.infrastructure.dto.ZigBangDanjiResponse;
 import org.silsagusi.batch.zigbang.infrastructure.dto.ZigBangItemCatalogResponse;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
-
-import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
