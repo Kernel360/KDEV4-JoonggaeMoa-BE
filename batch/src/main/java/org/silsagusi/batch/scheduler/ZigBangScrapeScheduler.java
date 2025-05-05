@@ -1,5 +1,6 @@
 package org.silsagusi.batch.scheduler;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.JobParametersInvalidException;
@@ -13,8 +14,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import lombok.RequiredArgsConstructor;
-
 @Component
 @EnableScheduling
 @RequiredArgsConstructor
@@ -27,7 +26,7 @@ public class ZigBangScrapeScheduler {
 	private static final String RESET_SCRAPE_JOB_NAME = "zigBangScrapeStatusResetJob";
 	private static final String TIME_STAMP = "timeStamp";
 
-	@Scheduled(initialDelay = 5000, fixedRate = 1800000) // 어플리케이션 실행 5초 후 30분 간격으로 실행
+	@Scheduled(initialDelay = 15000, fixedRate = 1800000) // 어플리케이션 실행 15초 후 30분 간격으로 실행
 	public void scrapZigBang() throws
 		NoSuchJobException,
 		JobInstanceAlreadyCompleteException,

@@ -1,20 +1,15 @@
 package org.silsagusi.core.domain.agent;
 
-import java.util.List;
-
 import org.hibernate.annotations.DynamicUpdate;
 import org.silsagusi.core.domain.BaseEntity;
-import org.silsagusi.core.domain.customer.entity.Customer;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import lombok.AccessLevel;
@@ -23,12 +18,14 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @DynamicUpdate
-@Entity(name = "agents")
-@Table(uniqueConstraints = {
-	@UniqueConstraint(name = "UK_agent_username", columnNames = {"username"}),
-	@UniqueConstraint(name = "UK_agent_phone", columnNames = {"phone"}),
-	@UniqueConstraint(name = "UK_agent_email", columnNames = {"email"})
-})
+@Entity
+@Table(
+	name = "agents",
+	uniqueConstraints = {
+		@UniqueConstraint(name = "UK_agent_username", columnNames = {"username", "deleted_at"}),
+		@UniqueConstraint(name = "UK_agent_phone", columnNames = {"phone", "deleted_at"}),
+		@UniqueConstraint(name = "UK_agent_email", columnNames = {"email", "deleted_at"})
+	})
 @Getter
 public class Agent extends BaseEntity {
 
@@ -36,9 +33,6 @@ public class Agent extends BaseEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "agent_id")
 	private Long id;
-
-	@OneToMany(fetch = FetchType.LAZY)
-	private List<Customer> customers;
 
 	private String name;
 
@@ -54,6 +48,7 @@ public class Agent extends BaseEntity {
 
 	private String region;
 
+	@Column(name = "business_no")
 	private String businessNo;
 
 	@Enumerated(EnumType.STRING)

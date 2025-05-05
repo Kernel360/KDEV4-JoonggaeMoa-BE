@@ -2,12 +2,14 @@ package org.silsagusi.api.article.infrastructure.dataProvider;
 
 import lombok.RequiredArgsConstructor;
 import org.silsagusi.api.article.infrastructure.repository.ArticleRepository;
-import org.silsagusi.api.exception.CustomException;
-import org.silsagusi.api.exception.ErrorCode;
+import org.silsagusi.api.common.exception.CustomException;
+import org.silsagusi.api.common.exception.ErrorCode;
 import org.silsagusi.core.domain.article.Article;
 import org.silsagusi.core.domain.article.projection.ArticleTypeRatioProjection;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
@@ -33,17 +35,20 @@ public class ArticleDataProvider {
 		Specification<Article> spec = Specification.where(null);
 
 		if (realEstateType != null && !realEstateType.isEmpty()) {
-			spec = spec.and((root, query, criteriaBuilder) -> root.get(REAL_ESTATE_TYPE).in(realEstateType));
+			spec = spec.and((root, query, criteriaBuilder)
+				-> root.get(REAL_ESTATE_TYPE).in(realEstateType));
 		}
 
 		if (tradeType != null && !tradeType.isEmpty()) {
-			spec = spec.and((root, query, criteriaBuilder) -> root.get(TRADE_TYPE).in(tradeType));
+			spec = spec.and((root, query, criteriaBuilder)
+				-> root.get(TRADE_TYPE).in(tradeType));
 		}
 
 		if (minPrice != null) {
 			int pri = Integer.parseInt(minPrice);
 			spec = spec.and(
-				((root, query, criteriaBuilder) -> criteriaBuilder.greaterThan(root.get(PRICE), pri)));
+				((root, query, criteriaBuilder)
+					-> criteriaBuilder.greaterThan(root.get(PRICE), pri)));
 		}
 
 		if (maxPrice != null) {
@@ -57,8 +62,29 @@ public class ArticleDataProvider {
 		}
 		return spec;
 	}
+	public Page<Article> getArticlesByRegionPrefix(
+		String regionPrefix,
+		int page,
+		int size,
+		String sortBy,
+		String direction
+	) {
+		Sort.Direction sortDirection = direction.equalsIgnoreCase("asc")
+			? Sort.Direction.ASC : Sort.Direction.DESC;
+		Sort sortObj = Sort.by(sortDirection, sortBy);
+		Pageable pageable = PageRequest.of(page, size, sortObj);
+		return articleRepository.findByBjdCodeStartingWith(regionPrefix, pageable);
+	}
 
-	public Page<Article> getArticlePage(Specification<Article> spec, Pageable pageable) {
+	public Page<Article> getArticlePage(
+		Specification<Article> spec,
+		int page, int size,
+		String sortBy, String direction
+	) {
+		Sort.Direction sortDirection = direction.equalsIgnoreCase("asc")
+			? Sort.Direction.ASC : Sort.Direction.DESC;
+		Sort sortObj = Sort.by(sortDirection, sortBy);
+		Pageable pageable = PageRequest.of(page, size, sortObj);
 		return articleRepository.findAll(spec, pageable);
 	}
 

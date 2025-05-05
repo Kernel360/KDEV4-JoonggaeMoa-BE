@@ -4,11 +4,11 @@ import java.time.LocalDate;
 
 import org.silsagusi.core.domain.customer.entity.Customer;
 
-import lombok.Builder;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
-@Builder
+@AllArgsConstructor
 public class UpdateCustomerCommand {
 	private Customer customer;
 	private String name;

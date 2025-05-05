@@ -1,9 +1,9 @@
 package org.silsagusi.api.agent.infrastructure.dataprovider;
 
 import org.silsagusi.api.agent.infrastructure.reposiroty.AgentRepository;
-import org.silsagusi.api.auth.jwt.JwtProvider;
-import org.silsagusi.api.auth.jwt.RefreshTokenStore;
-import org.silsagusi.api.exception.AgentNotFoundException;
+import org.silsagusi.api.common.auth.jwt.JwtProvider;
+import org.silsagusi.api.common.auth.jwt.RefreshTokenStore;
+import org.silsagusi.api.common.exception.AgentNotFoundException;
 import org.silsagusi.core.domain.agent.Agent;
 import org.silsagusi.core.domain.agent.command.UpdateAgentCommand;
 import org.springframework.stereotype.Component;

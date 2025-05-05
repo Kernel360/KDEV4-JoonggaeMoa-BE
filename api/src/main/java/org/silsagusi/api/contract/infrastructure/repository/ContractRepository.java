@@ -17,7 +17,7 @@ public interface ContractRepository extends JpaRepository<Contract, String> {
 
 	List<Contract> findByExpiredAtAndDeletedAtIsNull(LocalDate expiredAt);
 
-	@Query("SELECT COUNT(c) FROM contracts c WHERE c.customerLandlord.agent.id = :agentId " +
+	@Query("SELECT COUNT(c) FROM Contract c WHERE c.customerLandlord.agent.id = :agentId " +
 		"AND c.startedAt <= :today AND c.expiredAt >= :today AND c.deletedAt IS NULL"
 	)
 	long countInProgress(@Param("agentId") Long agentId, @Param("today") LocalDate today);
@@ -28,7 +28,7 @@ public interface ContractRepository extends JpaRepository<Contract, String> {
 	Optional<Contract> findByIdAndDeletedAtIsNull(String contractId);
 
 	@Query("""
-		    SELECT c FROM contracts c
+		    SELECT c FROM Contract c
 		    WHERE 
 		        (c.customerLandlord = :customer OR c.customerTenant = :customer)
 		        AND (
@@ -43,4 +43,7 @@ public interface ContractRepository extends JpaRepository<Contract, String> {
 		@Param("start") LocalDate start,
 		@Param("end") LocalDate end
 	);
+
+	List<Contract> findAllByCustomerLandlord_Agent_IdAndExpiredAtBeforeAndDeletedAtIsNull(Long agentId,
+		LocalDate expiredAtBefore);
 }

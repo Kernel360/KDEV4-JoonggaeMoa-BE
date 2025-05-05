@@ -10,11 +10,11 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 public class RegionDataProvider {
-
 	private final RegionRepository regionRepository;
 
-	public List<Region> getRegions() {
-		return regionRepository.findAll();
+
+	public List<Region> getChildRegionsByPrefix(String prefix) {
+		return regionRepository.findAllByCortarNoStartingWith(prefix);
 	}
 
 }

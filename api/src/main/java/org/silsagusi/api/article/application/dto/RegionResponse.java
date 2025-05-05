@@ -1,9 +1,8 @@
 package org.silsagusi.api.article.application.dto;
 
-import org.silsagusi.core.domain.article.Region;
-
 import lombok.Builder;
 import lombok.Getter;
+import org.silsagusi.core.domain.article.Region;
 
 @Getter
 @Builder

@@ -16,10 +16,7 @@ public class UpdateMessageRequest {
 	private String content;
 	private LocalDateTime sendAt;
 
-	public static UpdateMessageCommand toCommand(UpdateMessageRequest updateMessageRequest) {
-		return UpdateMessageCommand.builder()
-			.content(updateMessageRequest.getContent())
-			.sendAt(updateMessageRequest.getSendAt())
-			.build();
+	public UpdateMessageCommand toCommand() {
+		return new UpdateMessageCommand(content, sendAt);
 	}
 }

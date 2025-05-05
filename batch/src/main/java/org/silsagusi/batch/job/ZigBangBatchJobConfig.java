@@ -1,11 +1,11 @@
 package org.silsagusi.batch.job;
 
-import java.util.List;
-
-import org.silsagusi.batch.infrastructure.repository.RegionRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.silsagusi.batch.infrastructure.repository.ScrapeStatusRepository;
 import org.silsagusi.batch.zigbang.application.ZigBangRequestService;
-import org.silsagusi.core.domain.article.Region;
+import org.silsagusi.batch.zigbang.infrastructure.dto.ZigBangScrapeRequest;
+import org.silsagusi.batch.zigbang.infrastructure.dto.ZigBangScrapeResult;
 import org.silsagusi.core.domain.article.ScrapeStatus;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -19,8 +19,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.util.List;
 
 @Slf4j
 @Configuration
@@ -34,15 +33,11 @@ public class ZigBangBatchJobConfig {
 	private final PlatformTransactionManager transactionManager;
 	private final ScrapeStatusRepository scrapeStatusRepository;
 	private final ZigBangRequestService zigBangRequestService;
-	private final RegionRepository regionRepository;
 
 	@Bean
-	public Job zigBangItemCatalogJob(
-		Step initZigBangScrapeStatusStep,
-		Step zigBangItemCatalogStep) {
+	public Job zigBangItemCatalogJob(Step zigBangItemCatalogStep) {
 		Job job = new JobBuilder(JOB_NAME, jobRepository)
-			.start(initZigBangScrapeStatusStep)
-			.next(zigBangItemCatalogStep)
+			.start(zigBangItemCatalogStep)
 			.build();
 
 		try {
@@ -55,34 +50,34 @@ public class ZigBangBatchJobConfig {
 	}
 
 	@Bean
-	public Step initZigBangScrapeStatusStep() {
-		return new StepBuilder("initZigBangScrapeStatusStep", jobRepository)
+	public Step zigBangItemCatalogStep() {
+		return new StepBuilder(JOB_NAME + "Step", jobRepository)
 			.tasklet((contribution, chunkContext) -> {
-				List<Region> regions = regionRepository.findAllByCortarType("sec");
-				for (Region region : regions) {
-					scrapeStatusRepository.upsertNative(
-						region.getId(),
-						1,
-						false,
-						null,
-						"직방"
+				List<ScrapeStatus> regions = scrapeStatusRepository.findTop10BySourceAndCompletedFalseOrderByIdAsc(
+					"직방");
+				for (ScrapeStatus status : regions) {
+					ZigBangScrapeRequest request = new ZigBangScrapeRequest(
+						status.getId(),
+						status.getRegion().getId(),
+						status.getRegion().getCortarNo(),
+						status.getLastScrapedPage(),
+						status.getRegion().getGeohash()
 					);
+					zigBangRequestService.scrapZigBang(request, this::updateScrapeStatusByResult);
 				}
 				return RepeatStatus.FINISHED;
 			}, transactionManager)
 			.build();
 	}
 
-	@Bean
-	public Step zigBangItemCatalogStep() {
-		return new StepBuilder(JOB_NAME + "Step", jobRepository)
-			.tasklet((contribution, chunkContext) -> {
-				List<ScrapeStatus> regions = scrapeStatusRepository.findAll();
-				for (ScrapeStatus status : regions) {
-					zigBangRequestService.scrapZigBang(status);
-				}
-				return RepeatStatus.FINISHED;
-			}, transactionManager)
-			.build();
+	private void updateScrapeStatusByResult(ZigBangScrapeResult result) {
+		scrapeStatusRepository.findById(result.scrapeStatusId()).ifPresent(status -> {
+			if (result.errorMessage() != null) {
+				status.failed(result.errorMessage());
+			} else {
+				status.completed();
+			}
+			scrapeStatusRepository.save(status);
+		});
 	}
 }
