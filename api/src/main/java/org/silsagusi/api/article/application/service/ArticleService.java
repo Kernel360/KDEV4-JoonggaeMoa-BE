@@ -2,12 +2,12 @@ package org.silsagusi.api.article.application.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.silsagusi.api.article.application.dto.ArticleResponse;
 import org.silsagusi.api.article.application.dto.*;
-import org.silsagusi.api.article.application.mapper.ArticleMapper;
 import org.silsagusi.api.article.application.validator.ArticleValidator;
 import org.silsagusi.api.article.infrastructure.dataprovider.ArticleDataProvider;
 import org.silsagusi.core.domain.article.Article;
-import org.silsagusi.core.domain.article.Cluster;
+import org.silsagusi.api.article.application.dto.ClusterResponse;
 import org.silsagusi.core.domain.article.projection.ArticleTypeRatioProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -25,27 +26,26 @@ import java.util.List;
 public class ArticleService {
 
 	private final ArticleDataProvider articleDataProvider;
-	private final ArticleMapper articleMapper;
 	private final ArticleValidator articleValidator;
 
 	@Transactional(readOnly = true)
 	public Page<ArticleResponse> getAllArticles(
-		Pageable pageable, List<String> realEstateType, List<String> tradeType,
+		String type, Pageable pageable, List<String> realEstateType, List<String> tradeType,
 		String minPrice, String maxPrice, String regionPrefix,
-		Double neLat, Double neLng,
-		Double swLat, Double swLng
+		Double neLat, Double neLng, Double swLat, Double swLng
 	) {
 		Page<Article> articlePage;
 		articleValidator.validateSearchParams(
 			realEstateType, tradeType, minPrice, maxPrice,
 			regionPrefix, neLat, neLng, swLat, swLng);
+		articleValidator.validateTypeParam(type);
 
-		if (articleValidator.isBoundsSearch(neLat, neLng, swLat, swLng)) {
+		if ("bounds".equalsIgnoreCase(type)) {
 			articleValidator.validateBoundsParams(swLat, neLat, swLng, neLng);
 			articlePage = articleDataProvider.getArticlesByBounds(
 				swLat, neLat, swLng, neLng, regionPrefix, pageable);
 
-		} else if (articleValidator.isRegionSearch(regionPrefix)) {
+		} else if ("region".equalsIgnoreCase(type)) {
 			articlePage = articleDataProvider.getArticlesByRegionPrefix(regionPrefix, pageable);
 
 		} else {
@@ -53,13 +53,13 @@ public class ArticleService {
 				realEstateType, tradeType, minPrice, maxPrice);
 			articlePage = articleDataProvider.getArticlePage(spec, pageable);
 		}
-		return articleMapper.toResponsePage(articlePage);
+		return articlePage.map(ArticleResponse::toResponse);
 	}
 
 	@Transactional(readOnly = true)
 	public ArticleResponse getArticleById(Long id) {
 		Article article = articleDataProvider.getArticleById(id);
-		return articleMapper.toResponse(article);
+		return ArticleResponse.toResponse(article);
 	}
 
 	@Transactional(readOnly = true)
@@ -80,7 +80,9 @@ public class ArticleService {
 			realEstateType, tradeType, minPrice, maxPrice,
 			regionPrefix, pageable
 		);
-		List<ArticleResponse> list = articleMapper.toResponseList(p.getContent());
+		List<ArticleResponse> list = p.getContent().stream()
+			.map(ArticleResponse::toResponse)
+			.collect(Collectors.toList());
 		return new ArticleListResponse(
 			list,
 			p.getTotalElements(),
@@ -98,7 +100,9 @@ public class ArticleService {
 		List<Article> articles = articleDataProvider.getArticlesByCluster(
 			clusterId, precision, page, size
 		);
-		return articleMapper.toResponseList(articles);
+		return articles.stream()
+			.map(ArticleResponse::toResponse)
+			.collect(Collectors.toList());
 	}
 
 	@Transactional(readOnly = true)
@@ -125,7 +129,7 @@ public class ArticleService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<Cluster> getClusters(
+	public List<ClusterResponse> getClusters(
 		double swLat, double neLat, double swLng, double neLng, int precision
 	) {
 		return articleDataProvider.getClustersByBounds(swLat, neLat, swLng, neLng, precision);

@@ -3,8 +3,8 @@ package org.silsagusi.api.article.controller;
 import lombok.RequiredArgsConstructor;
 import org.silsagusi.api.article.application.dto.*;
 import org.silsagusi.api.article.application.service.ArticleService;
+import org.silsagusi.api.article.controller.request.ArticleSearchCriteria;
 import org.silsagusi.api.response.ApiResponse;
-import org.silsagusi.core.domain.article.Cluster;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
@@ -13,10 +13,9 @@ import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -28,21 +27,22 @@ public class ArticleController {
 
 	@GetMapping("/api/articles")
 	public PagedModel<EntityModel<ArticleResponse>> getArticles(
+		@RequestParam(value = "type", defaultValue = "filter") String type,
+		@ModelAttribute ArticleSearchCriteria criteria,
 		@PageableDefault(sort = "priceSale", direction = Direction.DESC, size = 500) Pageable pageable,
-		PagedResourcesAssembler<ArticleResponse> assembler,
-		@RequestParam(required = false) List<String> realEstateType,
-		@RequestParam(required = false) List<String> tradeType,
-		@RequestParam(required = false) String minPrice,
-		@RequestParam(required = false) String maxPrice,
-		@RequestParam(required = false) String regionPrefix,
-		@RequestParam(required = false) Double neLat,
-		@RequestParam(required = false) Double neLng,
-		@RequestParam(required = false) Double swLat,
-		@RequestParam(required = false) Double swLng
+		PagedResourcesAssembler<ArticleResponse> assembler
 	) {
 		Page<ArticleResponse> page = articleService.getAllArticles(
-			pageable, realEstateType, tradeType, minPrice, maxPrice,
-			regionPrefix, neLat, neLng, swLat, swLng
+			type, pageable,
+			criteria.getRealEstateType(),
+			criteria.getTradeType(),
+			criteria.getMinPrice(),
+			criteria.getMaxPrice(),
+			criteria.getRegionPrefix(),
+			criteria.getNeLat(),
+			criteria.getNeLng(),
+			criteria.getSwLat(),
+			criteria.getSwLng()
 		);
 		return assembler.toModel(page);
 	}
@@ -57,32 +57,32 @@ public class ArticleController {
 
 	@GetMapping("/api/articles/search")
 	public ResponseEntity<ApiResponse<ArticleListResponse>> searchArticles(
-		@RequestParam(required = false) List<String> realEstateType,
-		@RequestParam(required = false) List<String> tradeType,
-		@RequestParam(required = false) String minPrice,
-		@RequestParam(required = false) String maxPrice,
-		@RequestParam(required = false) String regionPrefix,
+		@ModelAttribute ArticleSearchCriteria criteria,
 		@RequestParam(defaultValue = "0") int page,
 		@RequestParam(defaultValue = "20") int size,
 		@RequestParam(defaultValue = "confirmedAt") String sortBy,
 		@RequestParam(defaultValue = "desc")     String direction
 	) {
 		ArticleListResponse result = articleService.searchArticles(
-			realEstateType, tradeType, minPrice, maxPrice,
-			regionPrefix, page, size, sortBy, direction
+			criteria.getRealEstateType(),
+			criteria.getTradeType(),
+			criteria.getMinPrice(),
+			criteria.getMaxPrice(),
+			criteria.getRegionPrefix(),
+			page, size, sortBy, direction
 		);
 		return ResponseEntity.ok(ApiResponse.ok(result));
 	}
 
 	@GetMapping("/api/clusters")
-	public ResponseEntity<ApiResponse<List<Cluster>>> getClusters(
+	public ResponseEntity<ApiResponse<List<ClusterResponse>>> getClusters(
 		@RequestParam double swLat,
 		@RequestParam double neLat,
 		@RequestParam double swLng,
 		@RequestParam double neLng,
 		@RequestParam(defaultValue = "6") int precision
 	) {
-		List<Cluster> list = articleService.getClusters(swLat, neLat, swLng, neLng, precision);
+		List<ClusterResponse> list = articleService.getClusters(swLat, neLat, swLng, neLng, precision);
 		return ResponseEntity.ok(ApiResponse.ok(list));
 	}
 
@@ -101,7 +101,7 @@ public class ArticleController {
 
 	@GetMapping("/api/dashboard/real-estate-type-summary")
 	public ResponseEntity<ApiResponse<RealEstateTypeSummaryResponse>> getRealEstateTypeSummary(
-		@RequestParam String period                            // period = [daily, weekly, monthly]
+		@RequestParam String period
 	) {
 		return ResponseEntity.ok(ApiResponse.ok(
 			articleService.getRealEstateTypeSummary(period)

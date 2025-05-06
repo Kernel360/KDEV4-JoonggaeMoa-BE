@@ -1,11 +1,13 @@
 package org.silsagusi.batch.zigbang.application;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.silsagusi.batch.infrastructure.dataProvider.ArticleDataProvider;
-import org.silsagusi.batch.infrastructure.dataProvider.ComplexDataProvider;
+import org.silsagusi.batch.infrastructure.dataprovider.ArticleDataProvider;
+import org.silsagusi.batch.infrastructure.dataprovider.ComplexDataProvider;
 import org.silsagusi.batch.infrastructure.external.AddressResponse;
 import org.silsagusi.batch.infrastructure.external.KakaoMapApiClient;
+import org.silsagusi.batch.infrastructure.repository.ComplexRepository;
 import org.silsagusi.batch.infrastructure.repository.RegionRepository;
 import org.silsagusi.batch.zigbang.infrastructure.ZigBangApiClient;
 import org.silsagusi.batch.zigbang.infrastructure.dto.ZigBangDanjiResponse;
@@ -34,6 +36,7 @@ public class ZigBangRequestService {
 	private final ArticleDataProvider articleDataProvider;
 	private final ComplexDataProvider complexDataProvider;
 	private final RegionRepository regionRepository;
+	private final ComplexRepository complexRepository;
 
 	private static final ScheduledExecutorService scheduler =
 		Executors.newSingleThreadScheduledExecutor();
@@ -51,12 +54,17 @@ public class ZigBangRequestService {
 		Map<Integer, Complex> idToComplex = new HashMap<>();
 
 		// 단지 스크래핑
-		ZigBangDanjiResponse danjiResp = zigbangApiClient.fetchDanji(geohash);
-		for (ZigBangDanjiResponse.ZigBangDanji dto : danjiResp.getFiltered()) {
-			if (seenDanjiIds.add(dto.getId())) {
-				Complex danji = complexDataProvider.createZigBangDanji(dto, region);
-				allComplexes.add(danji);
-				idToComplex.put(dto.getId(), danji);
+		ZigBangDanjiResponse zigBangDanjiResponse = zigbangApiClient.fetchDanji(geohash);
+		for (ZigBangDanjiResponse.ZigBangDanji zigBangDanji : zigBangDanjiResponse.getFiltered()) {
+			if (seenDanjiIds.add(zigBangDanji.getId())) {
+				String complexName = zigBangDanji.getName();
+				List<Complex> complexes = complexRepository.findByComplexName(complexName);
+				if (complexes.isEmpty()) {
+					throw new EntityNotFoundException("No complex found with name: " + complexName);
+				}
+				Complex complex = complexDataProvider.createZigBangDanji(zigBangDanji, region);
+				allComplexes.add(complex);
+				idToComplex.put(zigBangDanji.getId(), complex);
 			}
 		}
 		complexDataProvider.saveComplexes(allComplexes);
@@ -67,8 +75,8 @@ public class ZigBangRequestService {
 		while (true) {
 			ZigBangItemCatalogResponse itemResp = zigbangApiClient.fetchItemCatalog(localCode, offset);
 			AddressResponse kakaoResp = kakaoMapApiClient.lookupAddress(
-				danjiResp.getFiltered().get(0).getLng(),
-				danjiResp.getFiltered().get(0).getLat()
+				zigBangDanjiResponse.getFiltered().get(0).getLng(),
+				zigBangDanjiResponse.getFiltered().get(0).getLat()
 			);
 
 			for (ZigBangItemCatalogResponse.ZigBangItemCatalog item : itemResp.getList()) {
@@ -82,7 +90,7 @@ public class ZigBangRequestService {
 				page++;
 				offset += 20;
 				Article article = articleDataProvider.createZigBangItemCatalog(
-					item, danjiResp, kakaoResp, region, complex, cortarNo);
+					item, zigBangDanjiResponse, kakaoResp, region, complex, cortarNo);
 				articleDataProvider.saveArticles(List.of(article));
 
 			}

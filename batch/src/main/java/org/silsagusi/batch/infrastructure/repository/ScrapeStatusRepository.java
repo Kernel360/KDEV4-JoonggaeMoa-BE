@@ -14,30 +14,16 @@ public interface ScrapeStatusRepository extends JpaRepository<ScrapeStatus, Long
 
 	List<ScrapeStatus> findTop10BySourceAndCompletedFalseOrderByIdAsc(String source);
 
-	List<ScrapeStatus> findTop1ByCompletedFalseOrderByIdAsc();
-
-	@Modifying
+	@Modifying(clearAutomatically = true)
 	@Transactional
-	@Query("update ScrapeStatus s set s.completed = false, s.lastScrapedPage = 1 "
-		+ "where s.lastScrapedAt < :cutoff")
+	@Query("""
+	    UPDATE ScrapeStatus s
+	    SET s.completed = false,
+	        s.failed = false,
+	        s.errorMessage = null,
+	        s.lastScrapedAt = null,
+	        s.lastScrapedPage = 1
+	    WHERE s.lastScrapedAt < :cutoff
+	    """)
 	void resetAllScrapeStatus(@Param("cutoff") LocalDateTime cutoff);
-
-	@Modifying
-	@Transactional
-	@Query(
-		value = "INSERT INTO ScrapeStatus(region_id, last_scraped_page, completed, last_scraped_at, source) " +
-			"VALUES(:regionId, :page, :completed, :lastAt, :source) " +
-			"ON DUPLICATE KEY UPDATE " +
-			"last_scraped_page = VALUES(last_scraped_page), " +
-			"completed = VALUES(completed), " +
-			"last_scraped_at = VALUES(last_scraped_at)",
-		nativeQuery = true
-	)
-	void upsertNative(
-		@Param("regionId") Long regionId,
-		@Param("page") Integer page,
-		@Param("completed") Boolean completed,
-		@Param("lastAt") LocalDateTime lastAt,
-		@Param("source") String source
-	);
 }

@@ -2,8 +2,8 @@ package org.silsagusi.batch.naverland.application;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.silsagusi.batch.infrastructure.dataProvider.ArticleDataProvider;
-import org.silsagusi.batch.infrastructure.dataProvider.ComplexDataProvider;
+import org.silsagusi.batch.infrastructure.dataprovider.ArticleDataProvider;
+import org.silsagusi.batch.infrastructure.dataprovider.ComplexDataProvider;
 import org.silsagusi.batch.infrastructure.external.AddressResponse;
 import org.silsagusi.batch.infrastructure.external.KakaoMapApiClient;
 import org.silsagusi.batch.infrastructure.repository.RegionRepository;
@@ -111,7 +111,7 @@ public class NaverLandRequestService {
 		return articleList.stream()
 			.map(article -> {
 				AddressResponse kakaoResp = kakaoMapApiClient.lookupAddress(article.getLng(), article.getLat());
-				Complex complex = codeToComplex.get(article.getCortarNo());
+				Complex complex = codeToComplex.get(article.getAtclNm());
 				return articleDataProvider.createNaverLandArticle(article, kakaoResp, region, complex);
 			})
 			.toList();

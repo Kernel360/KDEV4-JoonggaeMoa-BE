@@ -71,4 +71,14 @@ public class ArticleValidator {
 			throw new CustomException(ErrorCode.VALIDATION_FAILED);
 		}
 	}
+
+	public void validateTypeParam(String type) {
+	    if (type == null || type.isBlank()) {
+	        throw new CustomException(ErrorCode.MISSING_REQUIRED_VALUE);
+	    }
+	    String t = type.toLowerCase();
+	    if (!("bounds".equals(t) || "region".equals(t) || "filter".equals(t))) {
+	        throw new CustomException(ErrorCode.VALIDATION_FAILED);
+	    }
+	}
 }
