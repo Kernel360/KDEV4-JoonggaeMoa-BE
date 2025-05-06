@@ -1,4 +1,4 @@
-package org.silsagusi.batch.naverland.application;
+package org.silsagusi.batch.application;
 
 import org.silsagusi.batch.naverland.infrastructure.dto.NaverLandComplexResponse;
 import org.silsagusi.batch.zigbang.infrastructure.dto.ZigBangDanjiResponse;

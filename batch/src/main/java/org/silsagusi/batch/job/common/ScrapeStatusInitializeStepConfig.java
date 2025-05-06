@@ -4,6 +4,7 @@ import java.util.Collections;
 
 import org.silsagusi.batch.infrastructure.repository.ScrapeStatusRepository;
 import org.silsagusi.core.domain.article.ScrapeStatus;
+import org.silsagusi.core.domain.article.enums.Platform;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
@@ -33,7 +34,7 @@ public class ScrapeStatusInitializeStepConfig {
 	public Step naverLandScrapeStatusInitializeStep() {
 		return new StepBuilder("naverLandScrapeStatusInitializeStep", jobRepository)
 			.<ScrapeStatus, ScrapeStatus>chunk(10, transactionManager)
-			.reader(scrapeStatusReader(ScrapeStatus.Platform.NAVERLAND))
+			.reader(scrapeStatusReader(Platform.NAVERLAND))
 			.processor(scrapeStatusInitializeProcessor())
 			.writer(scrapeStatusInitializeWriter())
 			.build();
@@ -43,13 +44,13 @@ public class ScrapeStatusInitializeStepConfig {
 	public Step zigbangScrapeStatusInitializeStep() {
 		return new StepBuilder("zigbangScrapeStatusInitializeStep", jobRepository)
 			.<ScrapeStatus, ScrapeStatus>chunk(10, transactionManager)
-			.reader(scrapeStatusReader(ScrapeStatus.Platform.ZIGBANG))
+			.reader(scrapeStatusReader(Platform.ZIGBANG))
 			.processor(scrapeStatusInitializeProcessor())
 			.writer(scrapeStatusInitializeWriter())
 			.build();
 	}
 
-	public ItemReader<ScrapeStatus> scrapeStatusReader(ScrapeStatus.Platform platform) {
+	public ItemReader<ScrapeStatus> scrapeStatusReader(Platform platform) {
 		return new JpaPagingItemReaderBuilder<ScrapeStatus>()
 			.name("scrapeStatusReader")
 			.pageSize(10)

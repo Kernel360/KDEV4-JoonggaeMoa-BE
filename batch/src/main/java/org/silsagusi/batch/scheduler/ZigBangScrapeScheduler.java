@@ -10,7 +10,6 @@ import org.springframework.batch.core.repository.JobExecutionAlreadyRunningExcep
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
@@ -43,7 +42,7 @@ public class ZigBangScrapeScheduler {
 	}
 
 	// 새벽 3시에 초기화
-	@Scheduled(cron = "0 0 3 * * ?")
+	// @Scheduled(cron = "0 0 3 * * ?")
 	public void resetJob() throws
 		NoSuchJobException,
 		JobInstanceAlreadyCompleteException,

@@ -2,7 +2,6 @@ package org.silsagusi.core.domain.article;
 
 import java.time.LocalDate;
 
-import org.locationtech.jts.geom.Point;
 import org.silsagusi.core.domain.BaseEntity;
 
 import jakarta.persistence.Column;
@@ -89,14 +88,14 @@ public class Article extends BaseEntity {
 	private String address2SiGunGu;
 	@Column(name = "address3_dong_eup_myeon")
 	private String address3DongEupMyeon;
-	@Column(
-		name = "geom",
-		nullable = false,
-		insertable = false,
-		updatable = false,
-		columnDefinition = "POINT"
-	)
-	private Point geom;
+	// @Column(
+	// 	name = "geom",
+	// 	nullable = false,
+	// 	insertable = false,
+	// 	updatable = false,
+	// 	columnDefinition = "POINT"
+	// )
+	// private Point geom;
 
 	private Article(
 		String articleCode, String bjdCode, String articleName,

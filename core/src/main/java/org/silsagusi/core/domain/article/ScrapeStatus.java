@@ -2,6 +2,10 @@ package org.silsagusi.core.domain.article;
 
 import java.time.LocalDateTime;
 
+import org.silsagusi.core.domain.article.enums.Platform;
+import org.silsagusi.core.domain.article.enums.ScrapeStatusType;
+import org.silsagusi.core.domain.article.enums.ScrapeTargetType;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -44,46 +48,41 @@ public class ScrapeStatus {
 	private LocalDateTime lastScrapedAt;
 
 	@Enumerated(EnumType.STRING)
-	private Status status;
+	private ScrapeStatusType status;
 
 	@Enumerated(EnumType.STRING)
 	private Platform platform;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "target_type")
-	private TargetType targetType;
-
-	public ScrapeStatus initialize() {
-		this.status = Status.PENDING;
-		this.lastScrapedPage = 0;
-		return this;
-	}
+	private ScrapeTargetType targetType;
 
 	public void updatePage(Integer page, LocalDateTime lastScrapedAt) {
 		this.lastScrapedPage = page;
 		this.lastScrapedAt = lastScrapedAt;
 	}
 
+	public ScrapeStatus initialize() {
+		if (this.status.equals(ScrapeStatusType.IN_PROGRESS)) {
+			return this;
+		}
+		this.status = ScrapeStatusType.PENDING;
+		this.lastScrapedPage = 0;
+		return this;
+	}
+
+	public void inProgress() {
+		this.status = ScrapeStatusType.IN_PROGRESS;
+	}
+
 	public void completed() {
-		this.status = Status.COMPLETED;
+		this.status = ScrapeStatusType.COMPLETED;
 	}
 
-	public enum Status {
-		PENDING, COMPLETED
-	}
-
-	public enum Platform {
-		NAVERLAND, ZIGBANG
-	}
-
-	public enum TargetType {
-		COMPLEX, ARTICLE
-	}
-
-	public ScrapeStatus(Region region, Platform platform, TargetType targetType) {
+	public ScrapeStatus(Region region, Platform platform, ScrapeTargetType targetType) {
 		this.region = region;
 		this.platform = platform;
 		this.targetType = targetType;
-		this.status = Status.PENDING;
+		this.status = ScrapeStatusType.PENDING;
 	}
 }

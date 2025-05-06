@@ -1,4 +1,4 @@
-package org.silsagusi.batch.config;
+package org.silsagusi.batch.common.config;
 
 import org.silsagusi.core.config.DataDBConfig;
 import org.springframework.context.annotation.Configuration;

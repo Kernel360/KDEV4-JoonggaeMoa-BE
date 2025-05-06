@@ -3,6 +3,9 @@ package org.silsagusi.batch.job.naverland;
 import org.silsagusi.batch.infrastructure.repository.ScrapeStatusRepository;
 import org.silsagusi.batch.naverland.application.NaverLandScraper;
 import org.silsagusi.core.domain.article.ScrapeStatus;
+import org.silsagusi.core.domain.article.enums.Platform;
+import org.silsagusi.core.domain.article.enums.ScrapeStatusType;
+import org.silsagusi.core.domain.article.enums.ScrapeTargetType;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
@@ -36,15 +39,17 @@ public class NaverLandComplexStepConfig {
 		return (contribution, chunkContext) -> {
 			while (true) {
 				ScrapeStatus status = scrapeStatusRepository.findFirstByPlatformAndTargetTypeAndStatusOrderByIdAsc(
-					ScrapeStatus.Platform.NAVERLAND, ScrapeStatus.TargetType.COMPLEX, ScrapeStatus.Status.PENDING);
+					Platform.NAVERLAND, ScrapeTargetType.COMPLEX, ScrapeStatusType.PENDING);
 
 				if (status == null) {
-					break; // 더 이상 처리할 status 없음
+					break;
 				}
 
-				naverLandScraper.scrapComplex(status);
-				status.completed();
-				log.info("Completed NaverLandComplexScraper region: {}", status.getRegion().getId());
+				status.inProgress();
+
+				if (naverLandScraper.scrapComplex(status)) {
+					status.completed();
+				}
 			}
 			return RepeatStatus.FINISHED;
 		};

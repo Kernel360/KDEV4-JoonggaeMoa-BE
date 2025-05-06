@@ -1,4 +1,4 @@
-package org.silsagusi.batch.config;
+package org.silsagusi.batch.common.config;
 
 import javax.sql.DataSource;
 

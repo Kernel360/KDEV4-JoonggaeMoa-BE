@@ -1,10 +1,8 @@
 package org.silsagusi.batch.job.common;
 
-import java.util.ArrayList;
-
 import org.silsagusi.batch.infrastructure.repository.RegionRepository;
 import org.silsagusi.batch.infrastructure.repository.ScrapeStatusRepository;
-import org.silsagusi.core.domain.article.ScrapeStatus;
+import org.silsagusi.core.domain.article.enums.Platform;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.configuration.JobRegistry;
@@ -34,20 +32,21 @@ public class ScrapeJobStarter implements ApplicationListener<ApplicationReadyEve
 	@Override
 	public void onApplicationEvent(ApplicationReadyEvent event) {
 
-		regionRepository.findAll().forEach(region -> {
-			ArrayList<ScrapeStatus> list = new ArrayList<>();
-			list.add(new ScrapeStatus(region, ScrapeStatus.Platform.NAVERLAND, ScrapeStatus.TargetType.COMPLEX));
-			list.add(new ScrapeStatus(region, ScrapeStatus.Platform.NAVERLAND, ScrapeStatus.TargetType.ARTICLE));
-			list.add(new ScrapeStatus(region, ScrapeStatus.Platform.ZIGBANG, ScrapeStatus.TargetType.COMPLEX));
-			list.add(new ScrapeStatus(region, ScrapeStatus.Platform.ZIGBANG, ScrapeStatus.TargetType.ARTICLE));
-			scrapeStatusRepository.saveAll(list);
-			log.info("region id: {}", region.getId());
-		});
+		// regionRepository.findAll().forEach(region -> {
+		// 	ArrayList<ScrapeStatus> list = new ArrayList<>();
+		// 	list.add(new ScrapeStatus(region, Platform.NAVERLAND, ScrapeTargetType.COMPLEX));
+		// 	list.add(new ScrapeStatus(region, Platform.NAVERLAND, ScrapeTargetType.ARTICLE));
+		// 	list.add(new ScrapeStatus(region, Platform.ZIGBANG, ScrapeTargetType.COMPLEX));
+		// 	list.add(new ScrapeStatus(region, Platform.ZIGBANG, ScrapeTargetType.ARTICLE));
+		// 	scrapeStatusRepository.saveAll(list);
+		// 	log.info("region id: {}", region.getId());
+		// });
 
 		new Thread(() -> {
 			try {
 				Thread.sleep(10000);
 				JobParameters jobParameters = new JobParametersBuilder()
+					.addString("platform", Platform.NAVERLAND.name())
 					.addLong(TIME_STAMP, System.currentTimeMillis())
 					.toJobParameters();
 
@@ -61,6 +60,7 @@ public class ScrapeJobStarter implements ApplicationListener<ApplicationReadyEve
 			try {
 				Thread.sleep(5000);
 				JobParameters jobParameters = new JobParametersBuilder()
+					.addString("platform", Platform.ZIGBANG.name())
 					.addLong(TIME_STAMP, System.currentTimeMillis())
 					.toJobParameters();
 

@@ -1,4 +1,4 @@
-package org.silsagusi.batch.naverland.application;
+package org.silsagusi.batch.application;
 
 import java.util.Objects;
 
