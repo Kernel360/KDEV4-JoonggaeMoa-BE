@@ -29,12 +29,12 @@ public class ArticleResponse {
 	private String articleDesc;
 	private String companyName;
 	private String agency;
-//	private Integer priceRoomMin;
-//	private Integer priceRoomMax;
+	// private Integer priceRoomMin;
+	// private Integer priceRoomMax;
 	private String subway;
-//	private String articleDescRoom;
-//	private String articleDescMw;
-//	private Integer emptyRoomCount;
+	// private String articleDescRoom;
+	// private String articleDescMw;
+	// private Integer emptyRoomCount;
 	private Boolean isChecked;
 	private String addressFullLot;
 	private String addressFullRoad;
@@ -63,12 +63,12 @@ public class ArticleResponse {
 			.articleDesc(article.getArticleDesc())
 			.companyName(article.getCompanyName())
 			.agency(article.getAgency())
-//			.priceRoomMin(article.getPriceRoomMin())
-//			.priceRoomMax(article.getPriceRoomMax())
+			// .priceRoomMin(article.getPriceRoomMin())
+			// .priceRoomMax(article.getPriceRoomMax())
 			.subway(article.getSubway())
-//			.articleDescRoom(article.getArticleDescRoom())
-//			.articleDescMw(article.getArticleDescMw())
-//			.emptyRoomCount(article.getEmptyRoomCount())
+			// .articleDescRoom(article.getArticleDescRoom())
+			// .articleDescMw(article.getArticleDescMw())
+			// .emptyRoomCount(article.getEmptyRoomCount())
 			.isChecked(article.getIsChecked())
 			.addressFullLot(article.getAddressFullLot())
 			.addressFullRoad(article.getAddressFullRoad())

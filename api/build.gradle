@@ -86,6 +86,14 @@ dependencies {
     // discord webhook
     implementation('com.github.napstr:logback-discord-appender:1.0.0')
 
+    // Spring HATEOAS
+    implementation 'org.springframework.boot:spring-boot-starter-hateoas'
+
+    // JTS
+    implementation 'org.locationtech.jts:jts-core:1.18.2'
+
+    // Hibernate Spatial
+    implementation 'org.hibernate:hibernate-spatial:6.2.5.Final'
 }
 
 tasks.named('test') {

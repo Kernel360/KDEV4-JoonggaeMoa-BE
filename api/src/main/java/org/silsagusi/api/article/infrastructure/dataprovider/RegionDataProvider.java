@@ -1,4 +1,4 @@
-package org.silsagusi.api.article.infrastructure.dataProvider;
+package org.silsagusi.api.article.infrastructure.dataprovider;
 
 import lombok.RequiredArgsConstructor;
 import org.silsagusi.api.article.infrastructure.repository.RegionRepository;

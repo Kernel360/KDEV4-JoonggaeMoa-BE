@@ -1,15 +1,15 @@
-package org.silsagusi.api.article.infrastructure.dataProvider;
+package org.silsagusi.api.article.infrastructure.dataprovider;
 
 import lombok.RequiredArgsConstructor;
+import org.silsagusi.api.article.application.dto.ClusterResponse;
+import org.silsagusi.api.article.application.validator.ArticleValidator;
 import org.silsagusi.api.article.infrastructure.repository.ArticleRepository;
 import org.silsagusi.api.common.exception.CustomException;
 import org.silsagusi.api.common.exception.ErrorCode;
 import org.silsagusi.core.domain.article.Article;
 import org.silsagusi.core.domain.article.projection.ArticleTypeRatioProjection;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
@@ -25,6 +25,7 @@ public class ArticleDataProvider {
 	private static final String PRICE = "price";
 
 	private final ArticleRepository articleRepository;
+	private final ArticleValidator articleValidator;
 
 	public Specification<Article> getArticleSpec(
 		List<String> realEstateType,
@@ -62,29 +63,34 @@ public class ArticleDataProvider {
 		}
 		return spec;
 	}
+
+	public Page<Article> searchByParams(
+		List<String> realEstateType, List<String> tradeType,
+		String minPrice, String maxPrice,
+		String regionPrefix, Pageable pageable
+	) {
+		Specification<Article> spec = getArticleSpec(
+			realEstateType, tradeType, minPrice, maxPrice
+		);
+		if (regionPrefix != null && !regionPrefix.isBlank()) {
+			spec = spec.and((root, q, cb) ->
+				cb.like(root.get("bjdCode"), regionPrefix + "%")
+			);
+		}
+		return articleRepository.findAll(spec, pageable);
+	}
+
 	public Page<Article> getArticlesByRegionPrefix(
 		String regionPrefix,
-		int page,
-		int size,
-		String sortBy,
-		String direction
+		Pageable pageable
 	) {
-		Sort.Direction sortDirection = direction.equalsIgnoreCase("asc")
-			? Sort.Direction.ASC : Sort.Direction.DESC;
-		Sort sortObj = Sort.by(sortDirection, sortBy);
-		Pageable pageable = PageRequest.of(page, size, sortObj);
 		return articleRepository.findByBjdCodeStartingWith(regionPrefix, pageable);
 	}
 
 	public Page<Article> getArticlePage(
 		Specification<Article> spec,
-		int page, int size,
-		String sortBy, String direction
+		Pageable pageable
 	) {
-		Sort.Direction sortDirection = direction.equalsIgnoreCase("asc")
-			? Sort.Direction.ASC : Sort.Direction.DESC;
-		Sort sortObj = Sort.by(sortDirection, sortBy);
-		Pageable pageable = PageRequest.of(page, size, sortObj);
 		return articleRepository.findAll(spec, pageable);
 	}
 
@@ -111,5 +117,52 @@ public class ArticleDataProvider {
 			case "monthly" -> now.minusMonths(1);
 			default -> throw new CustomException(ErrorCode.VALIDATION_FAILED);
 		};
+	}
+
+	public Page<Article> getArticlesByBounds(
+		Double swLat, Double neLat, Double swLng, Double neLng,
+		String regionPrefix, Pageable pageable
+	) {
+		if (regionPrefix != null && !regionPrefix.isEmpty()) {
+			return articleRepository.findByLatitudeBetweenAndLongitudeBetweenAndBjdCodeStartingWith(
+				swLat, neLat, swLng, neLng, regionPrefix, pageable
+			);
+		} else {
+			return articleRepository.findAll(
+				Specification.where((root, query, cb) -> cb.and(
+					cb.between(root.get("latitude"), swLat, neLat),
+					cb.between(root.get("longitude"), swLng, neLng)
+				)),
+				pageable
+			);
+		}
+	}
+
+	public Article getArticleById(Long id) {
+		return articleRepository.findById(id)
+			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ARTICLE));
+	}
+
+	// 프론트의 clusterId, precision, page, size 요청을 받아
+	// 해당 클러스터 내 Article 목록을 반환
+	public List<Article> getArticlesByCluster(
+		String clusterId, int precision, int page, int size
+	) {
+		articleValidator.validateClusterParams(clusterId, precision, page, size);
+
+		int offset = page * size;
+		String[] parts = clusterId.split(",");
+		long latGroup = Long.parseLong(parts[0]);
+		long lngGroup = Long.parseLong(parts[1]);
+
+		return articleRepository.findArticlesByCluster(
+			latGroup, lngGroup, precision, size, offset
+		);
+	}
+
+	public List<ClusterResponse> getClustersByBounds(
+		Double swLat, Double neLat, Double swLng, Double neLng, int precision
+	) {
+		return articleRepository.findClustersByBounds(swLat, neLat, swLng, neLng, precision);
 	}
 }
