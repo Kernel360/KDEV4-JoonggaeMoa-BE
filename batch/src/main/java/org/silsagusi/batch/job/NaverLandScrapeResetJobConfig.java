@@ -1,11 +1,11 @@
 package org.silsagusi.batch.job;
 
-import lombok.RequiredArgsConstructor;
+import java.time.LocalDateTime;
+
 import org.silsagusi.batch.infrastructure.repository.ScrapeStatusRepository;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.JobRegistry;
-import org.springframework.batch.core.configuration.support.ReferenceJobFactory;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import java.time.LocalDateTime;
+import lombok.RequiredArgsConstructor;
 
 @Configuration
 @RequiredArgsConstructor
@@ -33,11 +33,11 @@ public class NaverLandScrapeResetJobConfig {
 			.start(naverLandScrapeStatusResetStep)
 			.build();
 
-		try {
-			jobRegistry.register(new ReferenceJobFactory(job));
-		} catch (Exception e) {
-			throw new RuntimeException("Failed to register job", e);
-		}
+		// try {
+		// 	jobRegistry.register(new ReferenceJobFactory(job));
+		// } catch (Exception e) {
+		// 	throw new RuntimeException("Failed to register job", e);
+		// }
 
 		return job;
 	}
@@ -47,7 +47,7 @@ public class NaverLandScrapeResetJobConfig {
 		return new StepBuilder(JOB_NAME + "Step", jobRepository)
 			.tasklet(((contribution, chunkContext) -> {
 				LocalDateTime cutoff = LocalDateTime.now().minusDays(1);
-				scrapeStatusRepository.resetAllScrapeStatus(cutoff);
+				// scrapeStatusRepository.resetAllScrapeStatus(cutoff);
 				return RepeatStatus.FINISHED;
 			}), transactionManager)
 			.build();

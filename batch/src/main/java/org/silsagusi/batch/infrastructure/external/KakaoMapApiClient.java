@@ -1,9 +1,10 @@
 package org.silsagusi.batch.infrastructure.external;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
+
+import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
@@ -12,7 +13,7 @@ public class KakaoMapApiClient {
 	private final WebClient kakaoWebClient;
 
 	@Cacheable(value = "addressCache", key = "#latitude + ':' + #longitude")
-	public AddressResponse lookupAddress(double longitude, double latitude) {
+	public AddressResponse lookupAddress(double latitude, double longitude) {
 		KakaoMapCoord2AddressResponse response = kakaoWebClient.get()
 			.uri(uriBuilder -> uriBuilder
 				.path("/v2/local/geo/coord2address.json")

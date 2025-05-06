@@ -1,7 +1,13 @@
 package org.silsagusi.batch.naverland.application;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Consumer;
+
 import org.silsagusi.batch.infrastructure.dataProvider.ArticleDataProvider;
 import org.silsagusi.batch.infrastructure.dataProvider.ComplexDataProvider;
 import org.silsagusi.batch.infrastructure.external.AddressResponse;
@@ -18,8 +24,8 @@ import org.silsagusi.core.domain.article.Region;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
-import java.util.function.Consumer;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
@@ -47,10 +53,11 @@ public class NaverLandRequestService {
 					.orElseThrow(() -> new IllegalArgumentException(request.getRegionId() + "지역 없음"));
 
 				// 단지 스크래핑
-				NaverLandComplexResponse compResp = naverLandApiClient.fetchComplexList(
-					String.valueOf(page), request.getCenterLat().toString(),
-					request.getCenterLon().toString(), request.getCortarNo()
-				);
+				NaverLandComplexResponse compResp = null;
+				// NaverLandComplexResponse compResp = naverLandApiClient.fetchComplexList(
+				// 	String.valueOf(page), request.getCenterLat().toString(),
+				// 	request.getCenterLon().toString(), request.getCortarNo()
+				// );
 				Thread.sleep((long)(2000 + Math.random() * 3000)); // 2~5초 랜덤 대기
 
 				// 중복 없는 단지만 변환 후 저장 리스트에 추가
@@ -65,9 +72,10 @@ public class NaverLandRequestService {
 				complexDataProvider.saveComplexes(allComplexes);
 
 				// 매물 스크래핑
-				NaverLandArticleResponse artResp = naverLandApiClient.fetchArticleList(
-					String.valueOf(page), request.getCenterLat().toString(),
-					request.getCenterLon().toString(), request.getCortarNo());
+				NaverLandArticleResponse artResp = null;
+				// NaverLandArticleResponse artResp = naverLandApiClient.fetchArticleList(
+				// 	String.valueOf(page), request.getCenterLat().toString(),
+				// 	request.getCenterLon().toString(), request.getCortarNo());
 				List<Article> pageArticles = mapNaverLandToArticles(artResp.getBody(), region, codeToComplex);
 				articleDataProvider.saveArticles(pageArticles);
 				Thread.sleep((long)(2000 + Math.random() * 3000)); // 2~5초 랜덤 대기

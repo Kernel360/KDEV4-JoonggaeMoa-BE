@@ -2,6 +2,8 @@ package org.silsagusi.core.domain.article;
 
 import java.time.LocalDate;
 
+import org.silsagusi.core.domain.BaseEntity;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -19,7 +21,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "articles")
 @Getter
-public class Article {
+public class Article extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -94,9 +96,7 @@ public class Article {
 		String areaSupply, String areaExclusive, String direction,
 		LocalDate confirmedAt, String imageUrl, Double latitude,
 		Double longitude, String articleDesc, String companyName,
-		String agency, String subway, Boolean isChecked, Region regionId, Complex complexId,
-		String addressFullLot, String addressFullRoad, String address2City,
-		String address2Sigungu, String address3Dongeupmyeon
+		String agency, String subway, Boolean isChecked, Region regionId, Complex complexId
 	) {
 		this.articleCode = articleCode;
 		this.bjdCode = bjdCode;
@@ -121,11 +121,6 @@ public class Article {
 		this.isChecked = isChecked;
 		this.region_id = regionId;
 		this.complex_id = complexId;
-		this.addressFullLot = addressFullLot;
-		this.addressFullRoad = addressFullRoad;
-		this.address1SiDo = address2City;
-		this.address2SiGunGu = address2Sigungu;
-		this.address3DongEupMyeon = address3Dongeupmyeon;
 	}
 
 	public static Article create(
@@ -135,15 +130,21 @@ public class Article {
 		String areaSupply, String areaExclusive, String direction,
 		LocalDate confirmedAt, String imageUrl, Double latitude,
 		Double longitude, String articleDesc, String companyName,
-		String agency, String subway, Boolean isChecked, Region regionId, Complex complexId,
-		String addressFullLot, String addressFullRoad, String address2City,
-		String address2Sigungu, String address3Dongeupmyeon
+		String agency, String subway, Boolean isChecked, Region regionId, Complex complexId
 	) {
 		return new Article(
 			articleCode, bjdCode, articleName, buildingTypeCode, buildingType, tradeType, floors, priceSale, priceRent,
 			areaSupply, areaExclusive, direction, confirmedAt, imageUrl, latitude, longitude, articleDesc,
-			companyName, agency, subway, isChecked, regionId, complexId, addressFullLot, addressFullRoad,
-			address2City, address2Sigungu, address3Dongeupmyeon
+			companyName, agency, subway, isChecked, regionId, complexId
 		);
+	}
+
+	public void updateAddress(String addressFullLot, String addressFullRoad, String address2City,
+		String address2Sigungu, String address3Dongeupmyeon) {
+		this.addressFullLot = addressFullLot;
+		this.addressFullRoad = addressFullRoad;
+		this.address1SiDo = address2City;
+		this.address2SiGunGu = address2Sigungu;
+		this.address3DongEupMyeon = address3Dongeupmyeon;
 	}
 }

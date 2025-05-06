@@ -1,10 +1,7 @@
-package org.silsagusi.batch.infrastructure.dataProvider;
+package org.silsagusi.batch.naverland.application;
 
-import java.util.List;
 import java.util.Objects;
 
-import org.silsagusi.batch.infrastructure.external.AddressResponse;
-import org.silsagusi.batch.infrastructure.repository.ArticleRepository;
 import org.silsagusi.batch.naverland.infrastructure.dto.NaverLandArticleResponse;
 import org.silsagusi.batch.zigbang.infrastructure.dto.ZigBangDanjiResponse;
 import org.silsagusi.batch.zigbang.infrastructure.dto.ZigBangItemCatalogResponse;
@@ -12,28 +9,12 @@ import org.silsagusi.core.domain.article.Article;
 import org.silsagusi.core.domain.article.Complex;
 import org.silsagusi.core.domain.article.Region;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-
-import lombok.RequiredArgsConstructor;
 
 @Component
-@RequiredArgsConstructor
-public class ArticleDataProvider {
+public class ArticleMapper {
 
-	private final ArticleRepository articleRepository;
-
-	@Transactional(propagation = Propagation.REQUIRES_NEW)
-	public void saveArticles(List<Article> articles) {
-		articleRepository.saveAll(articles);
-	}
-
-	public Article createNaverLandArticle(
-		NaverLandArticleResponse.NaverLandArticle naverLandArticle,
-		AddressResponse addressResponse,
-		Region region,
-		Complex complex
-	) {
+	public Article toEntity(NaverLandArticleResponse.NaverLandArticle naverLandArticle, Region region,
+		Complex complex) {
 		return Article.create(
 			naverLandArticle.getAtclNo(),
 			naverLandArticle.getCortarNo(),
@@ -62,15 +43,10 @@ public class ArticleDataProvider {
 		);
 	}
 
-	public Article createZigBangItemCatalog(
-		ZigBangItemCatalogResponse.ZigBangItemCatalog item,
-		ZigBangDanjiResponse danji,
-		AddressResponse addressResponse,
-		Region region, Complex complex, String cortarNo
-
-	) {
+	public Article toEntity(ZigBangItemCatalogResponse.ZigBangItemCatalog item, ZigBangDanjiResponse danji,
+		Region region, Complex complex, String cortarNo) {
 		return Article.create(
-			String.valueOf(item.getAreaDanjiId()),
+			String.valueOf(item.getAreaHoId()),
 			cortarNo,
 			item.getAreaDanjiName() + " " + item.getDong(),
 			"A01",

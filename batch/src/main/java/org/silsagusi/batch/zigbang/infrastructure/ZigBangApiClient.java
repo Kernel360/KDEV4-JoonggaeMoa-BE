@@ -1,11 +1,12 @@
 package org.silsagusi.batch.zigbang.infrastructure;
 
-import lombok.RequiredArgsConstructor;
 import org.silsagusi.batch.zigbang.infrastructure.dto.ZigBangDanjiResponse;
 import org.silsagusi.batch.zigbang.infrastructure.dto.ZigBangItemCatalogResponse;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
+
+import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
@@ -13,7 +14,7 @@ public class ZigBangApiClient {
 
 	private final WebClient zigBangWebClient;
 
-	public ZigBangItemCatalogResponse fetchItemCatalog(String localCode) {
+	public ZigBangItemCatalogResponse fetchItemCatalog(String localCode, Integer offset) {
 		return zigBangWebClient.get()
 			.uri(uriBuilder -> uriBuilder.path(
 						String.format("/apt/locals/%s/item-catalogs", localCode)
@@ -22,8 +23,8 @@ public class ZigBangApiClient {
 					//					.queryParam("tranTypeIn[1]", "charter") // 전세
 					//					.queryParam("tranTypeIn[2]", "rental") // 월세
 					//					.queryParam("includeOfferItem", "true") // 신규 분양 포함
-					.queryParam("offset", "0")
-					.queryParam("limit", "2100000000")
+					.queryParam("offset", offset)
+					// .queryParam("limit", "2100000000")
 					.build()
 			)
 			.accept(MediaType.APPLICATION_JSON)

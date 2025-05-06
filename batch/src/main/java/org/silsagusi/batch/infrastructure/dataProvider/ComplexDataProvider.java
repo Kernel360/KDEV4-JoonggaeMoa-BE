@@ -1,6 +1,7 @@
 package org.silsagusi.batch.infrastructure.dataProvider;
 
-import lombok.RequiredArgsConstructor;
+import java.util.List;
+
 import org.silsagusi.batch.infrastructure.repository.ComplexRepository;
 import org.silsagusi.batch.naverland.infrastructure.dto.NaverLandComplexResponse;
 import org.silsagusi.batch.zigbang.infrastructure.dto.ZigBangDanjiResponse;
@@ -10,7 +11,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor

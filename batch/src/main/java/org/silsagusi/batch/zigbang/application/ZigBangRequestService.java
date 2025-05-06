@@ -1,7 +1,12 @@
 package org.silsagusi.batch.zigbang.application;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.silsagusi.batch.infrastructure.dataProvider.ArticleDataProvider;
 import org.silsagusi.batch.infrastructure.dataProvider.ComplexDataProvider;
 import org.silsagusi.batch.infrastructure.external.AddressResponse;
@@ -17,7 +22,8 @@ import org.silsagusi.core.domain.article.Region;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
@@ -31,7 +37,8 @@ public class ZigBangRequestService {
 	private final RegionRepository regionRepository;
 
 	@Async("scrapeExecutor")
-	public void scrapZigBang(ZigBangScrapeRequest request, java.util.function.Consumer<org.silsagusi.batch.zigbang.infrastructure.dto.ZigBangScrapeResult> callback) {
+	public void scrapZigBang(ZigBangScrapeRequest request,
+		java.util.function.Consumer<org.silsagusi.batch.zigbang.infrastructure.dto.ZigBangScrapeResult> callback) {
 		Region region = regionRepository.findById(request.getRegionId())
 			.orElseThrow(() -> new IllegalArgumentException("Region not found with id: " + request.getRegionId()));
 		String geohash = region.getGeohash().substring(0, 5);
@@ -54,7 +61,7 @@ public class ZigBangRequestService {
 			complexDataProvider.saveComplexes(allComplexes);
 
 			// 매물 스크래핑
-			ZigBangItemCatalogResponse itemResp = zigbangApiClient.fetchItemCatalog(localCode);
+			ZigBangItemCatalogResponse itemResp = zigbangApiClient.fetchItemCatalog(localCode, 1);
 			AddressResponse kakaoResp = kakaoMapApiClient.lookupAddress(
 				danjiResp.getFiltered().get(0).getLng(),
 				danjiResp.getFiltered().get(0).getLat()

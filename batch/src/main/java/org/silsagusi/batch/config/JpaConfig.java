@@ -8,7 +8,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @Configuration
 @EnableJpaRepositories(
 	basePackages = {"org.silsagusi.batch"},
-	entityManagerFactoryRef = "dataEntityManager",
 	transactionManagerRef = "dataTransactionManager"
 )
 @Import(DataDBConfig.class)

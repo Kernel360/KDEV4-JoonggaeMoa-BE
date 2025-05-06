@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -22,7 +24,7 @@ import lombok.NoArgsConstructor;
 	name = "scrape_statuses",
 	uniqueConstraints = @UniqueConstraint(
 		name = "scrape_status_unique_constraint",
-		columnNames = {"region_id", "source"}))
+		columnNames = {"region_id", "platform", "target_type"}))
 @Getter
 public class ScrapeStatus {
 
@@ -38,31 +40,50 @@ public class ScrapeStatus {
 	@Column(name = "last_scraped_page")
 	private Integer lastScrapedPage;
 
-	@Column(name = "completed")
-	private Boolean completed;
-
 	@Column(name = "last_scraped_at")
 	private LocalDateTime lastScrapedAt;
 
-	private Boolean failed;
+	@Enumerated(EnumType.STRING)
+	private Status status;
 
-	@Column(name = "error_message")
-	private String errorMessage;
+	@Enumerated(EnumType.STRING)
+	private Platform platform;
 
-	private String source;
+	@Enumerated(EnumType.STRING)
+	@Column(name = "target_type")
+	private TargetType targetType;
 
-	public void updatePage(Integer page, LocalDateTime lastScrapedAt, String source) {
+	public ScrapeStatus initialize() {
+		this.status = Status.PENDING;
+		this.lastScrapedPage = 0;
+		return this;
+	}
+
+	public void updatePage(Integer page, LocalDateTime lastScrapedAt) {
 		this.lastScrapedPage = page;
 		this.lastScrapedAt = lastScrapedAt;
-		this.source = source;
 	}
 
 	public void completed() {
-		this.completed = true;
+		this.status = Status.COMPLETED;
 	}
 
-	public void failed(String errorMessage) {
-		this.failed = true;
-		this.errorMessage = errorMessage;
+	public enum Status {
+		PENDING, COMPLETED
+	}
+
+	public enum Platform {
+		NAVERLAND, ZIGBANG
+	}
+
+	public enum TargetType {
+		COMPLEX, ARTICLE
+	}
+
+	public ScrapeStatus(Region region, Platform platform, TargetType targetType) {
+		this.region = region;
+		this.platform = platform;
+		this.targetType = targetType;
+		this.status = Status.PENDING;
 	}
 }

@@ -1,16 +1,11 @@
 package org.silsagusi.batch.job;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.silsagusi.batch.infrastructure.repository.ScrapeStatusRepository;
 import org.silsagusi.batch.zigbang.application.ZigBangRequestService;
-import org.silsagusi.batch.zigbang.infrastructure.dto.ZigBangScrapeRequest;
 import org.silsagusi.batch.zigbang.infrastructure.dto.ZigBangScrapeResult;
-import org.silsagusi.core.domain.article.ScrapeStatus;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.JobRegistry;
-import org.springframework.batch.core.configuration.support.ReferenceJobFactory;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
@@ -19,7 +14,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import java.util.List;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Configuration
@@ -40,11 +36,11 @@ public class ZigBangBatchJobConfig {
 			.start(zigBangItemCatalogStep)
 			.build();
 
-		try {
-			jobRegistry.register(new ReferenceJobFactory(job));
-		} catch (Exception e) {
-			throw new RuntimeException("Failed to register job", e);
-		}
+		// try {
+		// 	jobRegistry.register(new ReferenceJobFactory(job));
+		// } catch (Exception e) {
+		// 	throw new RuntimeException("Failed to register job", e);
+		// }
 
 		return job;
 	}
@@ -53,18 +49,18 @@ public class ZigBangBatchJobConfig {
 	public Step zigBangItemCatalogStep() {
 		return new StepBuilder(JOB_NAME + "Step", jobRepository)
 			.tasklet((contribution, chunkContext) -> {
-				List<ScrapeStatus> regions = scrapeStatusRepository.findTop10BySourceAndCompletedFalseOrderByIdAsc(
-					"직방");
-				for (ScrapeStatus status : regions) {
-					ZigBangScrapeRequest request = new ZigBangScrapeRequest(
-						status.getId(),
-						status.getRegion().getId(),
-						status.getRegion().getCortarNo(),
-						status.getLastScrapedPage(),
-						status.getRegion().getGeohash()
-					);
-					zigBangRequestService.scrapZigBang(request, this::updateScrapeStatusByResult);
-				}
+				// List<ScrapeStatus> regions = scrapeStatusRepository.findTop10BySourceAndCompletedFalseOrderByIdAsc(
+				// 	"직방");
+				// for (ScrapeStatus status : regions) {
+				// 	ZigBangScrapeRequest request = new ZigBangScrapeRequest(
+				// 		status.getId(),
+				// 		status.getRegion().getId(),
+				// 		status.getRegion().getCortarNo(),
+				// 		status.getLastScrapedPage(),
+				// 		status.getRegion().getGeohash()
+				// 	);
+				// 	zigBangRequestService.scrapZigBang(request, this::updateScrapeStatusByResult);
+				// }
 				return RepeatStatus.FINISHED;
 			}, transactionManager)
 			.build();
@@ -73,7 +69,7 @@ public class ZigBangBatchJobConfig {
 	private void updateScrapeStatusByResult(ZigBangScrapeResult result) {
 		scrapeStatusRepository.findById(result.scrapeStatusId()).ifPresent(status -> {
 			if (result.errorMessage() != null) {
-				status.failed(result.errorMessage());
+				// status.failed(result.errorMessage());
 			} else {
 				status.completed();
 			}

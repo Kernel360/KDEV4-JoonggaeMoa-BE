@@ -2,6 +2,8 @@ package org.silsagusi.core.domain.article;
 
 import java.time.LocalDate;
 
+import org.silsagusi.core.domain.BaseEntity;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -19,7 +21,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "complexes")
 @Getter
-public class Complex {
+public class Complex extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,7 +30,7 @@ public class Complex {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "region_id", nullable = false)
-	private Region region_id;
+	private Region region;
 
 	@Column(name = "complex_code")
 	private String complexCode; // 단지 고유 번호
@@ -79,7 +81,7 @@ public class Complex {
 		Integer countRentShortTerm, Integer countArticles,
 		String sizeMin, String sizeMax, Integer priceSaleInitialMin,
 		Integer priceSaleInitialMax, Boolean tourExists,
-		Boolean isSeismic, Integer countElevator, Region region_id
+		Boolean isSeismic, Integer countElevator, Region region
 	) {
 		this.complexCode = complexCode;
 		this.complexName = complexName;
@@ -101,7 +103,7 @@ public class Complex {
 		this.tourExists = tourExists;
 		this.isSeismic = isSeismic;
 		this.countElevator = countElevator;
-		this.region_id = region_id;
+		this.region = region;
 	}
 
 	public static Complex create(
@@ -109,12 +111,12 @@ public class Complex {
 		Integer countHousehold, Integer countHouseholdGeneral, LocalDate confirmedAt, Integer countDeal,
 		Integer countLease, Integer countRent, Integer countRentShortTerm, Integer countArticles, String sizeMin,
 		String sizeMax, Integer priceSaleInitialMin, Integer priceSaleInitialMax, Boolean tourExists, Boolean isSeismic,
-		Integer countElevator, Region region_id
+		Integer countElevator, Region region
 	) {
 		return new Complex(
 			complexCode, complexName, buildingTypeCode, buildingType, countDong, countHousehold, countHouseholdGeneral,
 			confirmedAt, countDeal, countLease, countRent, countRentShortTerm, countArticles, sizeMin, sizeMax,
-			priceSaleInitialMin, priceSaleInitialMax, tourExists, isSeismic, countElevator, region_id
+			priceSaleInitialMin, priceSaleInitialMax, tourExists, isSeismic, countElevator, region
 		);
 	}
 }
