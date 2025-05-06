@@ -12,7 +12,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-public interface ContractRepository extends JpaRepository<Contract, String> {
+public interface ContractRepository extends JpaRepository<Contract, String>, ContractCustomRepository {
 	Page<Contract> findAllByCustomerLandlord_AgentIdAndDeletedAtIsNull(Long agentId, Pageable pageable);
 
 	List<Contract> findByExpiredAtAndDeletedAtIsNull(LocalDate expiredAt);

@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -43,9 +44,10 @@ public class ContractController {
 	@GetMapping("/api/contracts")
 	public ResponseEntity<ApiResponse<Page<ContractResponse>>> getAllContracts(
 		@CurrentAgentId Long agentId,
+		@RequestParam(required = false) String keyword,
 		Pageable pageable
 	) {
-		Page<ContractResponse> contractResponsePage = contractService.getAllContracts(agentId, pageable);
+		Page<ContractResponse> contractResponsePage = contractService.getAllContracts(agentId, keyword, pageable);
 		return ResponseEntity.ok(ApiResponse.ok(contractResponsePage));
 	}
 

@@ -94,6 +94,13 @@ dependencies {
     // AWS cloudwatch
     implementation 'ca.pjer:logback-awslogs-appender:1.6.0'
 
+
+    //QueryDSL
+    implementation "com.querydsl:querydsl-jpa:5.0.0:jakarta"
+    annotationProcessor "com.querydsl:querydsl-apt:5.0.0:jakarta"
+    annotationProcessor "jakarta.annotation:jakarta.annotation-api"
+    annotationProcessor "jakarta.persistence:jakarta.persistence-api"
+
     // JTS
     implementation 'org.locationtech.jts:jts-core:1.18.2'
 

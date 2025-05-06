@@ -47,8 +47,8 @@ public class ContractService {
 	}
 
 	@Transactional(readOnly = true)
-	public Page<ContractResponse> getAllContracts(Long agentId, Pageable pageable) {
-		Page<ContractInfo> contractInfoPage = contractDataProvider.getAllContracts(agentId, pageable);
+	public Page<ContractResponse> getAllContracts(Long agentId, String keyword, Pageable pageable) {
+		Page<ContractInfo> contractInfoPage = contractDataProvider.getAllContracts(agentId, keyword, pageable);
 		return contractInfoPage.map(ContractResponse::toResponse);
 	}
 

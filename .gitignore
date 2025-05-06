@@ -379,3 +379,6 @@ application-local.yml
 /batch/src/main/resources/application-prod.yml
 
 .env
+
+/api/src/main/generated
+/core/src/main/generated

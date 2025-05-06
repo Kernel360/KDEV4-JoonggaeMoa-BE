@@ -35,9 +35,9 @@ public class ContractDataProvider {
 		contractRepository.save(contract);
 	}
 
-	public Page<ContractInfo> getAllContracts(Long agentId, Pageable pageable) {
-		Page<Contract> contractPage = contractRepository.findAllByCustomerLandlord_AgentIdAndDeletedAtIsNull(agentId,
-			pageable);
+	public Page<ContractInfo> getAllContracts(Long agentId, String keyword, Pageable pageable) {
+		Page<Contract> contractPage = contractRepository.findContracts(agentId, keyword, pageable);
+
 		Page<ContractInfo> contractInfoPage = contractPage.map(it -> {
 			ContractInfo info = ContractInfo.of(it);
 			info.setUrl(getUrl(it.getUrl()));
