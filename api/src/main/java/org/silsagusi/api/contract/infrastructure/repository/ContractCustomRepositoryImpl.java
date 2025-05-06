@@ -2,6 +2,7 @@ package org.silsagusi.api.contract.infrastructure.repository;
 
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.silsagusi.core.domain.contract.entity.Contract;
 import org.silsagusi.core.domain.contract.entity.QContract;
 import org.silsagusi.core.domain.customer.entity.QCustomer;
@@ -31,7 +32,7 @@ public class ContractCustomRepositoryImpl implements ContractCustomRepository {
 		builder.and(contract.customerLandlord.agent.id.eq(agentId));
 		builder.and(contract.deletedAt.isNull());
 
-		if (keyword != null && !keyword.isEmpty()) {
+		if (StringUtils.isNotBlank(keyword)) {
 			builder.and(
 				contract.customerLandlord.name.containsIgnoreCase(keyword)
 					.or(contract.customerTenant.name.containsIgnoreCase(keyword))

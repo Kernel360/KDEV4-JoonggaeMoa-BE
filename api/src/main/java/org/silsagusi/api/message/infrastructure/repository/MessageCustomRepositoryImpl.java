@@ -2,6 +2,7 @@ package org.silsagusi.api.message.infrastructure.repository;
 
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.silsagusi.core.domain.customer.entity.QCustomer;
 import org.silsagusi.core.domain.message.entity.Message;
 import org.silsagusi.core.domain.message.entity.QMessage;
@@ -31,9 +32,9 @@ public class MessageCustomRepositoryImpl implements MessageCustomRepository {
 		builder.and(message.customer.agent.id.eq(agentId));
 		builder.and(message.deletedAt.isNull());
 
-		if ("name".equalsIgnoreCase(searchType) && keyword != null && !keyword.isBlank()) {
+		if ("name".equalsIgnoreCase(searchType) && StringUtils.isNotBlank(keyword)) {
 			builder.and(message.customer.name.containsIgnoreCase(keyword));
-		} else if ("phone".equalsIgnoreCase(searchType) && keyword != null && !keyword.isBlank()) {
+		} else if ("phone".equalsIgnoreCase(searchType) && StringUtils.isNotBlank(keyword)) {
 			builder.and(message.customer.phone.containsIgnoreCase(keyword));
 		}
 

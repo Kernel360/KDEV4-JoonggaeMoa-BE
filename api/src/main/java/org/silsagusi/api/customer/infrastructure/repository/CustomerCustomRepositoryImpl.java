@@ -2,6 +2,7 @@ package org.silsagusi.api.customer.infrastructure.repository;
 
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.silsagusi.core.domain.customer.entity.Customer;
 import org.silsagusi.core.domain.customer.entity.QCustomer;
 import org.springframework.data.domain.PageRequest;
@@ -29,7 +30,7 @@ public class CustomerCustomRepositoryImpl implements CustomerCustomRepository {
 		builder.and(customer.agent.id.eq(agentId));
 		builder.and(customer.deletedAt.isNull());
 
-		if (keyword != null && !keyword.isBlank()) {
+		if (StringUtils.isNotBlank(keyword)) {
 			builder.and(customer.name.containsIgnoreCase(keyword));
 		}
 
