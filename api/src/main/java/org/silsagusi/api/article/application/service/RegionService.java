@@ -2,7 +2,7 @@ package org.silsagusi.api.article.application.service;
 
 import lombok.RequiredArgsConstructor;
 import org.silsagusi.api.article.application.dto.RegionResponse;
-import org.silsagusi.api.article.infrastructure.dataProvider.RegionDataProvider;
+import org.silsagusi.api.article.infrastructure.dataprovider.RegionDataProvider;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

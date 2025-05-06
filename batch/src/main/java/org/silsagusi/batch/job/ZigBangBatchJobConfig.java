@@ -14,8 +14,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 
+<<<<<<< HEAD
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+=======
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+>>>>>>> develop
 
 @Slf4j
 @Configuration
@@ -49,6 +55,7 @@ public class ZigBangBatchJobConfig {
 	public Step zigBangItemCatalogStep() {
 		return new StepBuilder(JOB_NAME + "Step", jobRepository)
 			.tasklet((contribution, chunkContext) -> {
+<<<<<<< HEAD
 				// List<ScrapeStatus> regions = scrapeStatusRepository.findTop10BySourceAndCompletedFalseOrderByIdAsc(
 				// 	"직방");
 				// for (ScrapeStatus status : regions) {
@@ -61,6 +68,37 @@ public class ZigBangBatchJobConfig {
 				// 	);
 				// 	zigBangRequestService.scrapZigBang(request, this::updateScrapeStatusByResult);
 				// }
+=======
+				List<ScrapeStatus> regions =
+					scrapeStatusRepository.findTop10BySourceAndCompletedFalseOrderByIdAsc("직방");
+				log.info("Found {} regions", regions.size());
+
+				List<CompletableFuture<?>> futures = new ArrayList<>();
+				for (ScrapeStatus status : regions) {
+					ZigBangScrapeRequest request = new ZigBangScrapeRequest(
+						status.getId(),
+						status.getRegion().getId(),
+						status.getRegion().getCortarNo(),
+						status.getLastScrapedPage(),
+						status.getRegion().getGeohash()
+					);
+					CompletableFuture<ZigBangScrapeResult> future = zigBangRequestService.scrapZigBang(request);
+					futures.add(future);
+					future.whenComplete((result, throwable) -> {
+						if (throwable != null) {
+							ZigBangScrapeResult errorResult = new ZigBangScrapeResult(
+								request.getScrapeStatusId(),
+								request.getLastScrapedPage(),
+								throwable.getMessage()
+							);
+							updateScrapeStatusByResult(errorResult);
+						} else {
+							updateScrapeStatusByResult(result);
+						}
+					});
+				}
+				CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
+>>>>>>> develop
 				return RepeatStatus.FINISHED;
 			}, transactionManager)
 			.build();

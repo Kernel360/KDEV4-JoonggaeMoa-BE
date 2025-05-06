@@ -11,13 +11,6 @@ public class RealEstateTypeSummaryResponse {
 
 	private final List<RealEstateTypeSummary> values;
 
-	@Getter
-	@Builder
-	public static class RealEstateTypeSummary {
-		private String type;
-		private Double ratio;
-	}
-
 	public RealEstateTypeSummaryResponse(List<ArticleTypeRatioProjection> realEstateTypeRatioProjections, long count) {
 		this.values = realEstateTypeRatioProjections.stream()
 			.map(it -> RealEstateTypeSummary.builder()
@@ -25,5 +18,12 @@ public class RealEstateTypeSummaryResponse {
 				.ratio((it.getCount() * 100.0) / count)
 				.build())
 			.toList();
+	}
+
+	@Getter
+	@Builder
+	public static class RealEstateTypeSummary {
+		private String type;
+		private Double ratio;
 	}
 }

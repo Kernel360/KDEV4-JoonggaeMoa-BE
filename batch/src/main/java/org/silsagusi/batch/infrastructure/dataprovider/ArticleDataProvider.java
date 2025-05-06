@@ -1,4 +1,4 @@
-package org.silsagusi.batch.infrastructure.dataProvider;
+package org.silsagusi.batch.infrastructure.dataprovider;
 
 import java.util.List;
 import java.util.Objects;

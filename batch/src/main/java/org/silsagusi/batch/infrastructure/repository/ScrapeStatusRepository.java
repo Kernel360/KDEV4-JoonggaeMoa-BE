@@ -9,6 +9,7 @@ public interface ScrapeStatusRepository extends JpaRepository<ScrapeStatus, Long
 	//
 	// List<ScrapeStatus> findTop1ByCompletedFalseOrderByIdAsc();
 
+<<<<<<< HEAD
 	ScrapeStatus findFirstByPlatformAndTargetTypeAndStatusOrderByIdAsc(ScrapeStatus.Platform platform,
 		ScrapeStatus.TargetType targetType, ScrapeStatus.Status status);
 
@@ -36,4 +37,18 @@ public interface ScrapeStatusRepository extends JpaRepository<ScrapeStatus, Long
 	// 	@Param("lastAt") LocalDateTime lastAt,
 	// 	@Param("source") String source
 	// );
+=======
+	@Modifying(clearAutomatically = true)
+	@Transactional
+	@Query("""
+	    UPDATE ScrapeStatus s
+	    SET s.completed = false,
+	        s.failed = false,
+	        s.errorMessage = null,
+	        s.lastScrapedAt = null,
+	        s.lastScrapedPage = 1
+	    WHERE s.lastScrapedAt < :cutoff
+	    """)
+	void resetAllScrapeStatus(@Param("cutoff") LocalDateTime cutoff);
+>>>>>>> develop
 }
