@@ -17,6 +17,7 @@ public enum ErrorCode {
 	PAYLOAD_TOO_LARGE(4004, "요청 데이터 길이가 초과되었습니다."),
 	METHOD_NOT_ALLOWED(4005, "지원하지 않는 HTTP 메서드입니다."),
 	PASSWORD_NOT_VALID(4006, "비밀번호가 일치하지 않습니다."),
+	INVALID_CLUSTER_ID(4007, "유효하지 않은 클러스터 ID입니다."),
 
 	// 401X - 인증 오류
 	UNAUTHORIZED(4010, "토큰이 없습니다."),
@@ -34,6 +35,9 @@ public enum ErrorCode {
 	NOT_FOUND_ELEMENT(4041, "존재하지 않는 엔티티입니다."),
 	NOT_FOUND_USER(4042, "존재하지 않는 사용자입니다. (%s)"),
 	NOT_FOUND_CUSTOMER(4043, "존재하지 않는 고객입니다. (%s)"),
+	NOT_FOUND_ARTICLE(4044, "존재하지 않는 매물입니다. (%s)"),
+	NOT_FOUND_REGION(4045, "존재하지 않는 지역입니다. (%s)"),
+	NOT_FOUND_COMPLEX(4046, "존재하지 않는 단지입니다. (%s)"),
 
 	// 409X - 데이터 충돌
 	CONFLICT(4090, "중복된 데이터입니다."),

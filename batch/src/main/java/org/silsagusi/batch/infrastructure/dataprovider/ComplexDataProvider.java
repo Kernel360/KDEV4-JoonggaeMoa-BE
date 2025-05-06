@@ -1,4 +1,4 @@
-package org.silsagusi.batch.infrastructure.dataProvider;
+package org.silsagusi.batch.infrastructure.dataprovider;
 
 import lombok.RequiredArgsConstructor;
 import org.silsagusi.batch.infrastructure.repository.ComplexRepository;

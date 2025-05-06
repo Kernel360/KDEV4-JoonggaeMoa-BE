@@ -368,16 +368,15 @@ gradle-app.setting
 
 # End of https://www.toptal.com/developers/gitignore/api/macos,windows,java,gradle,maven,intellij+all,visualstudiocode,netbeans,git,eclipse
 
-/src/main/resources/application-secret.yml
-api/src/main/resources/application-prod.yml
-batch/src/main/resources/application-prod.yml
 
 application-local.yml
-
-/api/src/main/resources/application-local.yml
 /api/src/main/resources/regions.sql
 /api/src/main/resources/scrape_statuses.sql
+/api/src/main/resources/article_add_geom_and_spatial_index.sql
+/api/src/main/resources/application-local.yml
+/api/src/main/resources/application-prod.yml
 /batch/src/main/resources/application-local.yml
+/batch/src/main/resources/application-prod.yml
 
 .env
 

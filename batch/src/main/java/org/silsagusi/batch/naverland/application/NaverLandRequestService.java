@@ -2,8 +2,8 @@ package org.silsagusi.batch.naverland.application;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.silsagusi.batch.infrastructure.dataProvider.ArticleDataProvider;
-import org.silsagusi.batch.infrastructure.dataProvider.ComplexDataProvider;
+import org.silsagusi.batch.infrastructure.dataprovider.ArticleDataProvider;
+import org.silsagusi.batch.infrastructure.dataprovider.ComplexDataProvider;
 import org.silsagusi.batch.infrastructure.external.AddressResponse;
 import org.silsagusi.batch.infrastructure.external.KakaoMapApiClient;
 import org.silsagusi.batch.infrastructure.repository.RegionRepository;
@@ -19,7 +19,10 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
-import java.util.function.Consumer;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Component
@@ -32,13 +35,17 @@ public class NaverLandRequestService {
 	private final ComplexDataProvider complexDataProvider;
 	private final RegionRepository regionRepository;
 
+	// Scheduler for delayed completion
+	private static final ScheduledExecutorService scheduler =
+	    Executors.newSingleThreadScheduledExecutor();
+
 	@Async("scrapeExecutor")
-	public void scrapNaverLand(NaverLandScrapeRequest request, Consumer<NaverLandScrapeResult> callback) {
+	public CompletableFuture<NaverLandScrapeResult> scrapNaverLand(NaverLandScrapeRequest request) {
+		CompletableFuture<NaverLandScrapeResult> future = new CompletableFuture<>();
 		int page = request.getLastScrapedPage();
 		boolean hasMore;
 
 		Set<String> seenComplexNos = new HashSet<>();
-
 		Map<String, Complex> codeToComplex = new HashMap<>();
 
 		try {
@@ -77,19 +84,25 @@ public class NaverLandRequestService {
 				Thread.sleep((long)(10000 + Math.random() * 5000)); // 10~15초 랜덤 대기
 			} while (hasMore);
 
-			callback.accept(new NaverLandScrapeResult(request.getScrapeStatusId(), page, null));
+			long delay = (long)(2000 + Math.random() * 3000);
+			int finalPage = page;
+			scheduler.schedule(() ->
+				future.complete(new NaverLandScrapeResult(request.getScrapeStatusId(), finalPage, null)),
+				delay, TimeUnit.MILLISECONDS
+			);
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
 			log.debug("{} - {}페이지 스크래핑 중단됨. 현재 스크래핑된 값까지 저장중...",
 				request.getRegionId(), page - 1, e);
-			callback.accept(new NaverLandScrapeResult(request.getScrapeStatusId(), page, e.getMessage()));
+			future.complete(new NaverLandScrapeResult(request.getScrapeStatusId(), page, e.getMessage()));
 		} catch (NullPointerException e) {
 			log.debug("서비스 이용 제한. https://m.land.naver.com 에서 캡챠 인증 후 사용 가능");
-			callback.accept(new NaverLandScrapeResult(request.getScrapeStatusId(), page, "CAPTCHA"));
+			future.complete(new NaverLandScrapeResult(request.getScrapeStatusId(), page, "CAPTCHA"));
 		} catch (Exception e) {
 			log.error("에러 발생. {} - {}", request.getRegionId(), e.getMessage(), e);
-			callback.accept(new NaverLandScrapeResult(request.getScrapeStatusId(), page, e.getMessage()));
+			future.complete(new NaverLandScrapeResult(request.getScrapeStatusId(), page, e.getMessage()));
 		}
+		return future;
 	}
 
 	private List<Article> mapNaverLandToArticles(
@@ -98,7 +111,7 @@ public class NaverLandRequestService {
 		return articleList.stream()
 			.map(article -> {
 				AddressResponse kakaoResp = kakaoMapApiClient.lookupAddress(article.getLng(), article.getLat());
-				Complex complex = codeToComplex.get(article.getCortarNo());
+				Complex complex = codeToComplex.get(article.getAtclNm());
 				return articleDataProvider.createNaverLandArticle(article, kakaoResp, region, complex);
 			})
 			.toList();
