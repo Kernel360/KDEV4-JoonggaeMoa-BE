@@ -5,7 +5,10 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.silsagusi.core.domain.customer.entity.Customer;
 import org.silsagusi.core.domain.customer.entity.QCustomer;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Repository;
@@ -52,5 +55,36 @@ public class CustomerCustomRepositoryImpl implements CustomerCustomRepository {
 		}
 
 		return new SliceImpl<>(content, PageRequest.of(0, size), hasNext);
+	}
+
+	@Override
+	public Page<Customer> findCustomerPage(Long agentId, String keyword, Pageable pageable) {
+		QCustomer customer = QCustomer.customer;
+
+		BooleanBuilder builder = new BooleanBuilder();
+		builder.and(customer.agent.id.eq(agentId));
+		builder.and(customer.deletedAt.isNull());
+
+		if (StringUtils.isNotBlank(keyword)) {
+			builder.and(customer.name.containsIgnoreCase(keyword));
+		}
+
+		// 페이징된 데이터 조회
+		List<Customer> content = queryFactory
+			.selectFrom(customer)
+			.where(builder)
+			.offset(pageable.getOffset())
+			.limit(pageable.getPageSize())
+			.orderBy(customer.createdAt.desc(), customer.id.desc())
+			.fetch();
+
+		// 전체 개수 조회
+		Long total = queryFactory
+			.select(customer.count())
+			.from(customer)
+			.where(builder)
+			.fetchOne();
+
+		return new PageImpl<>(content, pageable, total);
 	}
 }

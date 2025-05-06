@@ -68,12 +68,7 @@ public class CustomerDataProvider {
 	}
 
 	public Page<Customer> getAllByAgent(Long agentId, String keyword, Pageable pageable) {
-		if (keyword == null || keyword.isEmpty()) {
-			return customerRepository.findAllByAgent_IdAndDeletedAtIsNull(agentId, pageable);
-		} else {
-			return customerRepository.findAllByAgent_IdAndNameContainingIgnoreCaseAndDeletedAtIsNull(agentId, keyword,
-				pageable);
-		}
+		return customerRepository.findCustomerPage(agentId, keyword, pageable);
 	}
 
 	public Slice<Customer> getInfiniteCustomers(Long customerId, Long cursor, String keyword) {
