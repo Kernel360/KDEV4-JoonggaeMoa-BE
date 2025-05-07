@@ -19,7 +19,6 @@ import org.springframework.transaction.PlatformTransactionManager;
 @Configuration
 @EnableJpaRepositories(
 	basePackages = {"org.silsagusi.core"},
-	entityManagerFactoryRef = "dataEntityManager",
 	transactionManagerRef = "dataTransactionManager"
 )
 @EnableJpaAuditing
@@ -34,7 +33,7 @@ public class DataDBConfig {
 
 	@Primary
 	@Bean
-	public LocalContainerEntityManagerFactoryBean dataEntityManager() {
+	public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
 		LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
 
 		em.setDataSource(dataSource());
@@ -52,7 +51,7 @@ public class DataDBConfig {
 	@Bean
 	public PlatformTransactionManager dataTransactionManager() {
 		JpaTransactionManager transactionManager = new JpaTransactionManager();
-		transactionManager.setEntityManagerFactory(dataEntityManager().getObject());
+		transactionManager.setEntityManagerFactory(entityManagerFactory().getObject());
 		return transactionManager;
 	}
 }

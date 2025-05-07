@@ -15,7 +15,6 @@ import lombok.RequiredArgsConstructor;
 @Configuration
 @EnableJpaRepositories(
 	basePackages = {"org.silsagusi.api"},
-	entityManagerFactoryRef = "dataEntityManager",
 	transactionManagerRef = "dataTransactionManager"
 )
 @Import(DataDBConfig.class)
