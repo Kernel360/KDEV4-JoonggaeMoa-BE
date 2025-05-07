@@ -32,16 +32,6 @@ public class ScrapeJobStarter implements ApplicationListener<ApplicationReadyEve
 	@Override
 	public void onApplicationEvent(ApplicationReadyEvent event) {
 
-		// regionRepository.findAll().forEach(region -> {
-		// 	ArrayList<ScrapeStatus> list = new ArrayList<>();
-		// 	list.add(new ScrapeStatus(region, Platform.NAVERLAND, ScrapeTargetType.COMPLEX));
-		// 	list.add(new ScrapeStatus(region, Platform.NAVERLAND, ScrapeTargetType.ARTICLE));
-		// 	list.add(new ScrapeStatus(region, Platform.ZIGBANG, ScrapeTargetType.COMPLEX));
-		// 	list.add(new ScrapeStatus(region, Platform.ZIGBANG, ScrapeTargetType.ARTICLE));
-		// 	scrapeStatusRepository.saveAll(list);
-		// 	log.info("region id: {}", region.getId());
-		// });
-
 		new Thread(() -> {
 			try {
 				Thread.sleep(10000);

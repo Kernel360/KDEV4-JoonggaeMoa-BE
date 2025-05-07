@@ -1,7 +1,6 @@
 package org.silsagusi.batch.zigbang.application;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.silsagusi.batch.application.ArticleMapper;
@@ -28,6 +27,8 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class ZigbangScraper {
 
+	private static final String BASE_32 = "0123456789bcdefghjkmnpqrstuvwxyz";
+
 	private final ZigBangApiClient zigBangApiClient;
 	private final ArticleDataProvider articleDataProvider;
 	private final ComplexDataProvider complexDataProvider;
@@ -37,51 +38,50 @@ public class ZigbangScraper {
 
 	public boolean scrapComplex(ScrapeStatus status) throws InterruptedException {
 		Region region = status.getRegion();
-		String geohash = region.getGeohash().substring(0, 5);
+		String geohashPrefix = region.getGeohash().substring(0, 4);
 
-		try {
-			ZigBangDanjiResponse zigBangDanjiResponse = zigBangApiClient.fetchDanji(geohash);
+		for (char fifth : BASE_32.toCharArray()) {
+			try {
+				ZigBangDanjiResponse zigBangDanjiResponse = zigBangApiClient.fetchDanji(geohashPrefix + fifth);
 
-			List<Complex> complexes = zigBangDanjiResponse.getFiltered().stream()
-				.map(response -> complexMapper.toEntity(response, region))
-				.filter(articleValidator::validateExist)
-				.toList();
+				List<Complex> complexes = zigBangDanjiResponse.getFiltered().stream()
+					.map(response -> complexMapper.toEntity(response, region))
+					.filter(articleValidator::validateExist)
+					.toList();
 
-			complexDataProvider.saveComplexes(complexes);
-
-		} catch (Exception e) {
-			log.error(
-				"Failed to scrape, platform: {}, target type: {}, region id: {}, latitude: {}, longitude: {}, message: {}",
-				Platform.ZIGBANG, ScrapeTargetType.COMPLEX, region.getId(),
-				region.getCenterLat(), region.getCenterLon(), e.getMessage(), e);
-			Thread.sleep(300_000);
-		} finally {
-			status.updatePage(null, LocalDateTime.now());
-			Thread.sleep((long)(3000 + Math.random() * 4000));
+				complexDataProvider.saveComplexes(complexes);
+			} catch (Exception e) {
+				log.error(
+					"Failed to scrape, platform: {}, target type: {}, region id: {}, latitude: {}, longitude: {}, message: {}",
+					Platform.ZIGBANG, ScrapeTargetType.COMPLEX, region.getId(),
+					region.getCenterLat(), region.getCenterLon(), e.getMessage(), e);
+				Thread.sleep(300_000);
+			} finally {
+				status.updatePage(null, LocalDateTime.now());
+				Thread.sleep((long)(3000 + Math.random() * 4000));
+			}
 		}
 		return true;
 	}
 
 	public boolean scrapArticle(ScrapeStatus status) throws InterruptedException {
 		int offset = status.getLastScrapedPage();
+		int limit = 20;
 		Region region = status.getRegion();
 		String localCode = region.getCortarNo().substring(0, 8);
 		boolean hasMore = true;
 
-		// 임시
-		ZigBangDanjiResponse danji = new ZigBangDanjiResponse();
-		danji.setFiltered(new ArrayList<>());
-		danji.getFiltered().add(new ZigBangDanjiResponse.ZigBangDanji());
-		danji.getFiltered().get(0).setLat(region.getCenterLat());
-		danji.getFiltered().get(0).setLng(region.getCenterLon());
-
 		while (hasMore) {
 			try {
 				ZigBangItemCatalogResponse zigBangItemCatalogResponse = zigBangApiClient.fetchItemCatalog(localCode,
-					offset);
+					offset, String.valueOf(limit));
 
 				List<Article> articles = zigBangItemCatalogResponse.getList().stream()
-					.map(response -> articleMapper.toEntity(response, danji, region, null, region.getCortarNo()))
+					.map(response -> {
+						Complex complex = complexDataProvider.getComplexByComplexCode(
+							String.valueOf(response.getAreaDanjiId()));
+						return articleMapper.toEntity(response, region, complex);
+					})
 					.filter(articleValidator::validateExist)
 					.toList();
 
@@ -95,7 +95,7 @@ public class ZigbangScraper {
 					region.getCenterLat(), region.getCenterLon(), offset, e.getMessage(), e);
 				Thread.sleep(300_000);
 			} finally {
-				offset += 10;
+				offset += limit;
 				status.updatePage(offset, LocalDateTime.now());
 				Thread.sleep((long)(3000 + Math.random() * 4000));
 			}

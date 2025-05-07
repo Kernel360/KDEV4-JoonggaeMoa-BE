@@ -13,11 +13,8 @@ public class ComplexMapper {
 		return Complex.create(
 			naverLandComplex.getHscpNo(),                   // complexCode
 			naverLandComplex.getHscpNm(),                   // complexName
-			naverLandComplex.getHscpTypeCd(),               // buildingTypeCode
-			naverLandComplex.getHscpTypeNm(),               // buildingType
 			naverLandComplex.getTotDongCnt(),               // countDong
 			naverLandComplex.getTotHsehCnt(),               // countHousehold
-			naverLandComplex.getGenHsehCnt(),               // countHouseholdGeneral
 			naverLandComplex.getUseAprvYmd(),               // confirmedAt
 			naverLandComplex.getDealCnt(),                  // countDeal
 			naverLandComplex.getLeaseCnt(),                 // countLease
@@ -31,34 +28,37 @@ public class ComplexMapper {
 			Boolean.FALSE,                     // tourExists
 			Boolean.FALSE,                     // isSeismic
 			naverLandComplex.getTotalElevatorCount(),       // countElevator
+			null,
+			null,
 			region
 		);
 	}
 
-	public Complex toEntity(ZigBangDanjiResponse.ZigBangDanji dto, Region region) {
+	public Complex toEntity(ZigBangDanjiResponse.ZigBangDanji zigBangDanji, Region region) {
 		return Complex.create(
-			String.valueOf(dto.getId()),
-			dto.getName(),          // complexName
-			null,                   // buildingTypeCode
-			dto.getReal_type(),     // buildingType
-			null,                   // countDong
-			dto.get총세대수(),        // countHousehold
-			null,                   // countHouseholdGeneral
-			dto.get사용승인일(),       // confirmedAt
-			null,                   // countDeal
-			null,                   // countLease
-			null,                   // countRent
-			null,                   // countRentShortTerm
-			null,                   // countArticles
-			null,                   // sizeMin
-			null,                   // sizeMax
-			(dto.getPrice() != null && dto.getPrice().getSales() != null && dto.getPrice().getSales().getMin() != null
-				? dto.getPrice().getSales().getMin() : 0), // priceSaleInitialMin
-			(dto.getPrice() != null && dto.getPrice().getSales() != null && dto.getPrice().getSales().getMax() != null
-				? dto.getPrice().getSales().getMax() : 0), // priceSaleInitialMax
+			zigBangDanji.getId().toString(), // complexCode
+			zigBangDanji.getName(),   // complexName
+			null,                     // countDong
+			zigBangDanji.get총세대수(), // countHousehold
+			zigBangDanji.get사용승인일(),// confirmedAt
+			null,                     // countDeal
+			null,                     // countLease
+			null,                     // countRent
+			null,                     // countRentShortTerm
+			null,                     // countArticles
+			null,                     // sizeMin
+			null,                     // sizeMax
+			(zigBangDanji.getPrice() != null && zigBangDanji.getPrice().getSales() != null
+				&& zigBangDanji.getPrice().getSales().getMin() != null
+				? zigBangDanji.getPrice().getSales().getMin() : 0), // priceSaleInitialMin
+			(zigBangDanji.getPrice() != null && zigBangDanji.getPrice().getSales() != null
+				&& zigBangDanji.getPrice().getSales().getMax() != null
+				? zigBangDanji.getPrice().getSales().getMax() : 0), // priceSaleInitialMax
 			Boolean.FALSE,          // tourExists
 			Boolean.FALSE,          // isSeismic
 			null,                   // countElevator
+			zigBangDanji.getLat(),
+			zigBangDanji.getLng(),
 			region
 		);
 	}

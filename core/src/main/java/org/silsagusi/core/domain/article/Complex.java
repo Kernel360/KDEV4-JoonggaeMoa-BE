@@ -69,6 +69,9 @@ public class Complex extends BaseEntity {
 	@Column(name = "count_elevator")
 	private Integer countElevator; // 총 엘리베이터 수
 
+	private Double latitude;
+	private Double longitude;
+
 	private Complex(
 		String complexCode, String complexName,
 		Integer countDong, Integer countHousehold, LocalDate confirmedAt,
@@ -76,7 +79,7 @@ public class Complex extends BaseEntity {
 		Integer countRentShortTerm, Integer countArticles,
 		String sizeMin, String sizeMax, Integer priceSaleInitialMin,
 		Integer priceSaleInitialMax, Boolean tourExists,
-		Boolean isSeismic, Integer countElevator, Region region
+		Boolean isSeismic, Integer countElevator, Double latitude, Double longitude, Region region
 	) {
 		this.complexCode = complexCode;
 		this.complexName = complexName;
@@ -95,6 +98,8 @@ public class Complex extends BaseEntity {
 		this.tourExists = tourExists;
 		this.isSeismic = isSeismic;
 		this.countElevator = countElevator;
+		this.latitude = latitude;
+		this.longitude = longitude;
 		this.region = region;
 	}
 
@@ -105,7 +110,7 @@ public class Complex extends BaseEntity {
 		Integer countArticles, String sizeMin, String sizeMax,
 		Integer priceSaleInitialMin, Integer priceSaleInitialMax,
 		Boolean tourExists, Boolean isSeismic,
-		Integer countElevator, Region region
+		Integer countElevator, Double latitude, Double longitude, Region region
 	) {
 		return new Complex(
 			complexCode, complexName, countDong,
@@ -114,7 +119,7 @@ public class Complex extends BaseEntity {
 			countArticles, sizeMin, sizeMax,
 			priceSaleInitialMin, priceSaleInitialMax,
 			tourExists, isSeismic,
-			countElevator, region
+			countElevator, latitude, longitude, region
 		);
 	}
 }

@@ -1,12 +1,14 @@
 package org.silsagusi.batch.zigbang.infrastructure.dto;
 
+import java.time.LocalDate;
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import lombok.Data;
 
-import java.time.LocalDate;
-import java.util.List;
+import lombok.Data;
+import lombok.ToString;
 
 @Data
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
@@ -15,6 +17,7 @@ public class ZigBangDanjiResponse {
 	private List<String> unfiltered;
 
 	@Data
+	@ToString
 	public static class ZigBangDanji {
 		private Integer id;         // 단지 고유 번호
 		private String name;        // 단지명

@@ -14,7 +14,7 @@ public class ZigBangApiClient {
 
 	private final WebClient zigBangWebClient;
 
-	public ZigBangItemCatalogResponse fetchItemCatalog(String localCode, int offset) {
+	public ZigBangItemCatalogResponse fetchItemCatalog(String localCode, int offset, String limit) {
 		return zigBangWebClient.get()
 			.uri(uriBuilder -> uriBuilder.path(
 						String.format("/apt/locals/%s/item-catalogs", localCode)
@@ -24,7 +24,7 @@ public class ZigBangApiClient {
 					//.queryParam("tranTypeIn[2]", "rental") // 월세
 					//.queryParam("includeOfferItem", "true") // 신규 분양 포함
 					.queryParam("offset", offset)
-					.queryParam("limit", "20")
+					.queryParam("limit", limit)
 					.build()
 			)
 			.accept(MediaType.APPLICATION_JSON)

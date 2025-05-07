@@ -2,6 +2,7 @@ package org.silsagusi.core.domain.article;
 
 import java.time.LocalDate;
 
+import org.locationtech.jts.geom.Point;
 import org.silsagusi.core.domain.BaseEntity;
 
 import jakarta.persistence.Column;
@@ -30,11 +31,11 @@ public class Article extends BaseEntity {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "region_id", nullable = false)
-	private Region region_id;
+	private Region region;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "complex_id")
-	private Complex complex_id;
+	private Complex complex;
 
 	@Column(name = "article_code")
 	private String articleCode;       // atclNo 매물번호
@@ -88,14 +89,12 @@ public class Article extends BaseEntity {
 	private String address2SiGunGu;
 	@Column(name = "address3_dong_eup_myeon")
 	private String address3DongEupMyeon;
-	// @Column(
-	// 	name = "geom",
-	// 	nullable = false,
-	// 	insertable = false,
-	// 	updatable = false,
-	// 	columnDefinition = "POINT"
-	// )
-	// private Point geom;
+	@Column(
+		name = "geom",
+		nullable = false,
+		columnDefinition = "POINT"
+	)
+	private Point geom;
 
 	private Article(
 		String articleCode, String bjdCode, String articleName,
@@ -104,7 +103,7 @@ public class Article extends BaseEntity {
 		String areaSupply, String areaExclusive, String direction,
 		LocalDate confirmedAt, String imageUrl, Double latitude,
 		Double longitude, String articleDesc, String companyName,
-		String agency, String subway, Boolean isChecked, Region regionId, Complex complexId
+		String agency, String subway, Boolean isChecked, Point geom, Region region, Complex complex
 	) {
 		this.articleCode = articleCode;
 		this.bjdCode = bjdCode;
@@ -127,8 +126,9 @@ public class Article extends BaseEntity {
 		this.agency = agency;
 		this.subway = subway;
 		this.isChecked = isChecked;
-		this.region_id = regionId;
-		this.complex_id = complexId;
+		this.geom = geom;
+		this.region = region;
+		this.complex = complex;
 	}
 
 	public static Article create(
@@ -138,12 +138,12 @@ public class Article extends BaseEntity {
 		String areaSupply, String areaExclusive, String direction,
 		LocalDate confirmedAt, String imageUrl, Double latitude,
 		Double longitude, String articleDesc, String companyName,
-		String agency, String subway, Boolean isChecked, Region regionId, Complex complexId
+		String agency, String subway, Boolean isChecked, Point geom, Region region, Complex complexId
 	) {
 		return new Article(
 			articleCode, bjdCode, articleName, buildingTypeCode, buildingType, tradeType, floors, priceSale, priceRent,
 			areaSupply, areaExclusive, direction, confirmedAt, imageUrl, latitude, longitude, articleDesc,
-			companyName, agency, subway, isChecked, regionId, complexId
+			companyName, agency, subway, isChecked, geom, region, complexId
 		);
 	}
 
