@@ -29,7 +29,7 @@ public class AutoRestartJobListener implements JobExecutionListener {
 			String jobName = jobExecution.getJobInstance().getJobName();
 
 			try {
-				Thread.sleep(5000);
+				Thread.sleep(15000);
 				JobParametersBuilder jobParametersBuilder = new JobParametersBuilder().
 					addLong(TIME_STAMP, System.currentTimeMillis());
 

@@ -63,26 +63,12 @@ public class ScrapeStatus {
 	}
 
 	public ScrapeStatus initialize() {
-		if (this.status.equals(ScrapeStatusType.IN_PROGRESS)) {
-			return this;
-		}
 		this.status = ScrapeStatusType.PENDING;
 		this.lastScrapedPage = 0;
 		return this;
 	}
 
-	public void inProgress() {
-		this.status = ScrapeStatusType.IN_PROGRESS;
-	}
-
 	public void completed() {
 		this.status = ScrapeStatusType.COMPLETED;
-	}
-
-	public ScrapeStatus(Region region, Platform platform, ScrapeTargetType targetType) {
-		this.region = region;
-		this.platform = platform;
-		this.targetType = targetType;
-		this.status = ScrapeStatusType.PENDING;
 	}
 }

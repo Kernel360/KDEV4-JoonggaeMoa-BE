@@ -45,8 +45,6 @@ public class NaverLandArticleStepConfig {
 					break;
 				}
 
-				status.inProgress();
-
 				if (naverLandScraper.scrapArticle(status)) {
 					status.completed();
 				}
