@@ -45,8 +45,6 @@ public class NaverLandComplexStepConfig {
 					break;
 				}
 
-				status.inProgress();
-
 				if (naverLandScraper.scrapComplex(status)) {
 					status.completed();
 				}

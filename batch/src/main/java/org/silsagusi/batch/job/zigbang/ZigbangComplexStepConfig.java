@@ -45,8 +45,6 @@ public class ZigbangComplexStepConfig {
 					break;
 				}
 
-				status.inProgress();
-
 				if (zigbangScraper.scrapComplex(status)) {
 					status.completed();
 				}
