@@ -53,7 +53,7 @@ public class NotificationDataProvider {
 				SseEmitter.event()
 					.name("notification")
 					.reconnectTime(RECONNECTION_TIMEOUT)
-					.data("connection", MediaType.APPLICATION_JSON)
+					.data("connection")
 			);
 		} catch (IOException e) {
 			log.error("Failed to send notification to agentId {}: {}", emitterId, e.getMessage());
