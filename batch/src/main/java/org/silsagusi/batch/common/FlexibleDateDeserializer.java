@@ -14,16 +14,23 @@ public class FlexibleDateDeserializer extends JsonDeserializer<LocalDate> {
 
 	@Override
 	public LocalDate deserialize(JsonParser parser, DeserializationContext context) throws IOException {
-		String date = parser.getText();
+		String date = parser.getText().trim();
+
+		// 불필요한 공백 제거 및 끝의 점(.) 제거
+		date = date.replaceAll("\\s+", "").replaceAll("\\.$", "");
+
+		// "일자"가 00이면 01로 교체
+		date = date.replaceAll("(\\d{4}\\.\\d{2}\\.)00", "$101");
+
 		try {
-			return LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyy.MM.dd."));
+			return LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyy.MM.dd"));
 		} catch (DateTimeParseException e) {
 			try {
-				DateTimeFormatter yearMonthFormatter = DateTimeFormatter.ofPattern("yyyy.MM.");
+				DateTimeFormatter yearMonthFormatter = DateTimeFormatter.ofPattern("yyyy.MM");
 				YearMonth yearMonth = YearMonth.parse(date, yearMonthFormatter);
 				return yearMonth.atDay(1); // 일자가 없으면 1일로 처리
 			} catch (DateTimeParseException ex) {
-				throw new IOException("Unable to parse date: " + date, ex);
+				throw new IOException("날짜 포맷 오류: " + date, ex);
 			}
 		}
 	}

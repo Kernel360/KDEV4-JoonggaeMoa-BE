@@ -1,20 +1,20 @@
 package org.silsagusi.batch.zigbang.infrastructure.dto;
 
-import java.time.LocalDate;
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-
 import lombok.Data;
 import lombok.ToString;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
 
 @Data
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class ZigBangDanjiResponse {
 	private List<ZigBangDanji> filtered;
-	private List<String> unfiltered;
+	private List<Map<String, Object>> unfiltered;
 
 	@Data
 	@ToString
