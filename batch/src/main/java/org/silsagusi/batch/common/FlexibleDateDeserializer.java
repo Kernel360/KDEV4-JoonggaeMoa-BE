@@ -19,6 +19,19 @@ public class FlexibleDateDeserializer extends JsonDeserializer<LocalDate> {
 		// 불필요한 공백 제거 및 끝의 점(.) 제거
 		date = date.replaceAll("\\s+", "").replaceAll("\\.$", "");
 
+		// 월 또는 일이 한 자리인 경우 두 자리로 보정 (예: "2013.10.5" -> "2013.10.05")
+		String[] parts = date.split("\\.");
+		if (parts.length == 3) {
+		    try {
+		        int year = Integer.parseInt(parts[0]);
+		        int month = Integer.parseInt(parts[1]);
+		        int day = Integer.parseInt(parts[2]);
+		        date = String.format("%04d.%02d.%02d", year, month, day);
+		    } catch (NumberFormatException ignored) {
+		        // 파싱 실패 시 원본 문자열 유지
+		    }
+		}
+
 		// "일자"가 00이면 01로 교체
 		date = date.replaceAll("(\\d{4}\\.\\d{2}\\.)00", "$101");
 

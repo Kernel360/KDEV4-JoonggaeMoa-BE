@@ -130,8 +130,14 @@ public class ArticleService {
 
 	@Transactional(readOnly = true)
 	public List<ClusterResponse> getClusters(
-		double swLat, double neLat, double swLng, double neLng, int precision
+		double swLat, double neLat, double swLng, double neLng, int zoomLevel
 	) {
-		return articleDataProvider.getClustersByBounds(swLat, neLat, swLng, neLng, precision);
+		if (zoomLevel < 6) {
+			return articleDataProvider.getClustersByBounds(swLat, neLat, swLng, neLng, zoomLevel);
+		} else if (zoomLevel < 12) {
+			return articleDataProvider.getClustersByDong(swLat, neLat, swLng, neLng);
+		} else {
+			return articleDataProvider.getClustersByComplex(swLat, neLat, swLng, neLng);
+		}
 	}
 }

@@ -80,9 +80,9 @@ public class ArticleController {
 		@RequestParam double neLat,
 		@RequestParam double swLng,
 		@RequestParam double neLng,
-		@RequestParam(defaultValue = "6") int precision
+		@RequestParam int zoomLevel
 	) {
-		List<ClusterResponse> list = articleService.getClusters(swLat, neLat, swLng, neLng, precision);
+		List<ClusterResponse> list = articleService.getClusters(swLat, neLat, swLng, neLng, zoomLevel);
 		return ResponseEntity.ok(ApiResponse.ok(list));
 	}
 

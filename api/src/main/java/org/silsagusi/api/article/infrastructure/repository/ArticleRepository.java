@@ -53,13 +53,47 @@ public interface ArticleRepository extends JpaRepository<Article, Long>, JpaSpec
 		  AND FLOOR(longitude * POWER(10, :precision)) = :lngGroup
 		ORDER BY article_id
 		LIMIT :size OFFSET :offset
-    """, nativeQuery = true)
+	""", nativeQuery = true)
 	List<Article> findArticlesByCluster(
-		@Param("latGroup")   long   latGroup,
-		@Param("lngGroup")   long   lngGroup,
-		@Param("precision")  int    precision,
-		@Param("size")       int    size,
-		@Param("offset")     int    offset
+		@Param("latGroup") long latGroup,
+		@Param("lngGroup") long lngGroup,
+		@Param("precision") int precision,
+		@Param("size") int size,
+		@Param("offset") int offset
+	);
+
+	@Query(value = """
+		SELECT
+		  AVG(latitude) AS lat,
+		  AVG(longitude) AS lng,
+		  COUNT(*) AS count
+		FROM articles
+		WHERE latitude BETWEEN :swLat AND :neLat
+		  AND longitude BETWEEN :swLng AND :neLng
+		GROUP BY SUBSTRING(bjd_code, 1, 10)
+		""", nativeQuery = true)
+	List<ClusterResponse> findClustersByDong(
+		@Param("swLat") double swLat,
+		@Param("neLat") double neLat,
+		@Param("swLng") double swLng,
+		@Param("neLng") double neLng
+	);
+
+	@Query(value = """
+		SELECT
+		  AVG(latitude) AS lat,
+		  AVG(longitude) AS lng,
+		  COUNT(*) AS count
+		FROM articles
+		WHERE latitude BETWEEN :swLat AND :neLat
+		  AND longitude BETWEEN :swLng AND :neLng
+		GROUP BY hscp_no
+		""", nativeQuery = true)
+	List<ClusterResponse> findClustersByComplex(
+		@Param("swLat") double swLat,
+		@Param("neLat") double neLat,
+		@Param("swLng") double swLng,
+		@Param("neLng") double neLng
 	);
 
 	// 매물 타입(BuildingType) 비율
