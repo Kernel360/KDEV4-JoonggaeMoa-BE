@@ -88,7 +88,7 @@ public class InquiryService {
 	public void createInquiryAnswer(Long agentId, Long inquiryId, CreateInquiryAnswerRequest inquiryAnswerRequest) {
 		Inquiry inquiry = inquiryDataProvider.getInquiry(inquiryId);
 		Agent agent = agentDataProvider.getAgentById(agentId);
-		inquiryDataProvider.markAsAnswered(inquiry);
+		inquiryDataProvider.increaseAnswerCount(inquiry);
 		InquiryAnswer inquiryAnswer = inquiryAnswerMapper.toEntity(inquiry, agent, inquiryAnswerRequest);
 		inquiryDataProvider.createInquiryAnswer(inquiryAnswer);
 	}
