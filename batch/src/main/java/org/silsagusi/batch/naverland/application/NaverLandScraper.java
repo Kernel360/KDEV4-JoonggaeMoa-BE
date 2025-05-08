@@ -1,11 +1,11 @@
 package org.silsagusi.batch.naverland.application;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.silsagusi.batch.application.ArticleMapper;
 import org.silsagusi.batch.application.ArticleValidator;
 import org.silsagusi.batch.application.ComplexMapper;
+import org.silsagusi.batch.application.ComplexValidator;
 import org.silsagusi.batch.infrastructure.dataprovider.ArticleDataProvider;
 import org.silsagusi.batch.infrastructure.dataprovider.ComplexDataProvider;
 import org.silsagusi.batch.naverland.infrastructure.NaverLandApiClient;
@@ -19,8 +19,8 @@ import org.silsagusi.core.domain.article.enums.Platform;
 import org.silsagusi.core.domain.article.enums.ScrapeTargetType;
 import org.springframework.stereotype.Component;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Slf4j
 @Component
@@ -33,6 +33,7 @@ public class NaverLandScraper {
 	private final ComplexMapper complexMapper;
 	private final ArticleMapper articleMapper;
 	private final ArticleValidator articleValidator;
+	private final ComplexValidator complexValidator;
 
 	public boolean scrapComplex(ScrapeStatus status) throws InterruptedException {
 		int page = status.getLastScrapedPage() + 1;
@@ -44,9 +45,14 @@ public class NaverLandScraper {
 				NaverLandComplexResponse naverLandComplexResponse = naverLandApiClient.fetchComplexList(page + "",
 					region.getCenterLat(), region.getCenterLon(), region.getCortarNo());
 
+				if (naverLandComplexResponse == null || naverLandComplexResponse.getResult() == null) {
+					page++;
+					continue;
+				}
+
 				List<Complex> complexes = naverLandComplexResponse.getResult().stream()
 					.map(response -> complexMapper.toEntity(response, region))
-					.filter(articleValidator::validateExist)
+					.filter(complexValidator::validateExist)
 					.toList();
 
 				complexDataProvider.saveComplexes(complexes);
@@ -54,9 +60,9 @@ public class NaverLandScraper {
 				hasMore = naverLandComplexResponse.isMore();
 			} catch (Exception e) {
 				log.error(
-					"Failed to scrape, platform: {}, target type: {}, region id: {}, latitude: {}, longitude: {}, page: {}, message: {}",
-					Platform.NAVERLAND, ScrapeTargetType.COMPLEX, region.getId(),
-					region.getCenterLat(), region.getCenterLon(), page, e.getMessage(), e);
+					"스크래핑 실패: {} - {}. region_id: {} - {}페이지. 좌표값: {},{}. 에러 내용: {}",
+					Platform.NAVERLAND, ScrapeTargetType.COMPLEX, region.getId(), page,
+					region.getCenterLat(), region.getCenterLon(), e.getMessage(), e);
 				Thread.sleep(600_000);
 			} finally {
 				status.updatePage(page++, LocalDateTime.now());
@@ -86,9 +92,9 @@ public class NaverLandScraper {
 				hasMore = naverLandArticleResponse.isMore();
 			} catch (Exception e) {
 				log.error(
-					"Failed to scrape, platform: {}, target type: {}, region id: {}, latitude: {}, longitude: {}, page: {}, message: {}",
-					Platform.NAVERLAND, ScrapeTargetType.ARTICLE, region.getId(),
-					region.getCenterLat(), region.getCenterLon(), page, e.getMessage(), e);
+					"스크래핑 실패: {} - {}. region_id: {} - {}페이지. 좌표값: {},{}. 에러 내용: {}",
+					Platform.NAVERLAND, ScrapeTargetType.ARTICLE, region.getId(), page,
+					region.getCenterLat(), region.getCenterLon(), e.getMessage(), e);
 				Thread.sleep(600_000);
 			} finally {
 				status.updatePage(page++, LocalDateTime.now());
