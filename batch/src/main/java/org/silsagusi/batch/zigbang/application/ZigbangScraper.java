@@ -55,7 +55,7 @@ public class ZigbangScraper {
 					"Failed to scrape, platform: {}, target type: {}, region id: {}, latitude: {}, longitude: {}, message: {}",
 					Platform.ZIGBANG, ScrapeTargetType.COMPLEX, region.getId(),
 					region.getCenterLat(), region.getCenterLon(), e.getMessage(), e);
-				Thread.sleep(300_000);
+				Thread.sleep(600_000);
 			} finally {
 				status.updatePage(null, LocalDateTime.now());
 				Thread.sleep((long)(3000 + Math.random() * 4000));
@@ -93,7 +93,7 @@ public class ZigbangScraper {
 					"Failed to scrape, platform: {}, target type: {}, region id: {}, latitude: {}, longitude: {}, page: {}, message: {}",
 					Platform.ZIGBANG, ScrapeTargetType.ARTICLE, region.getId(),
 					region.getCenterLat(), region.getCenterLon(), offset, e.getMessage(), e);
-				Thread.sleep(300_000);
+				Thread.sleep(600_000);
 			} finally {
 				offset += limit;
 				status.updatePage(offset, LocalDateTime.now());

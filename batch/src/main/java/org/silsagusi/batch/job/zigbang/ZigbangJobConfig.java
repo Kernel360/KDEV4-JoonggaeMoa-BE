@@ -25,10 +25,10 @@ public class ZigbangJobConfig {
 	@Bean
 	public Job zigbangJob(JobRepository jobRepository, JobExecutionListener jobExecutionListener) {
 		return new JobBuilder(ZIGBANG_JOB, jobRepository)
-			.start(scrapeStatusInitializeStepConfig.zigbangScrapeStatusInitializeStep())
-			.next(zigbangComplexStepConfig.zigbangComplexStep())
+			.start(zigbangComplexStepConfig.zigbangComplexStep())
 			.next(zigbangArticleStepConfig.zigbangArticleStep())
 			.next(articleAddressStepConfig.articleAddressStep())
+			.next(scrapeStatusInitializeStepConfig.zigbangScrapeStatusInitializeStep())
 			.listener(jobExecutionListener)
 			.build();
 	}

@@ -25,10 +25,10 @@ public class NaverLandJobConfig {
 	@Bean
 	public Job naverLandJob(JobRepository jobRepository, JobExecutionListener jobExecutionListener) {
 		return new JobBuilder(NAVER_LAND_JOB, jobRepository)
-			.start(scrapeStatusInitializeStepConfig.naverLandScrapeStatusInitializeStep())
-			.next(naverLandComplexStepConfig.naverLandComplexStep())
+			.start(naverLandComplexStepConfig.naverLandComplexStep())
 			.next(naverLandArticleStepConfig.naverLandArticleStep())
 			.next(articleAddressStepConfig.articleAddressStep())
+			.next(scrapeStatusInitializeStepConfig.naverLandScrapeStatusInitializeStep())
 			.listener(jobExecutionListener)
 			.build();
 	}
