@@ -163,20 +163,24 @@ public class ArticleDataProvider {
 	public List<ClusterResponse> getClustersByBounds(
 		Double swLat, Double neLat, Double swLng, Double neLng, int zoomLevel
 	) {
-		if (zoomLevel < 6) {
-			return articleRepository.findClustersByBounds(swLat, neLat, swLng, neLng, zoomLevel);
-		} else if (zoomLevel < 12) {
-			return getClustersByDong(swLat, neLat, swLng, neLng);
-		} else {
-			return getClustersByComplex(swLat, neLat, swLng, neLng);
-		}
+		return articleRepository.findClustersByBounds(swLat, neLat, swLng, neLng, zoomLevel);
 	}
 
-	public List<ClusterResponse> getClustersByDong(Double swLat, Double neLat, Double swLng, Double neLng) {
-		return articleRepository.findClustersByDong(swLat, neLat, swLng, neLng);
+	public List<ClusterResponse> getClustersByMarker(
+		Double swLat, Double neLat, Double swLng, Double neLng
+	) {
+		return articleRepository.findClustersByMarker(swLat, neLat, swLng, neLng);
 	}
 
-	public List<ClusterResponse> getClustersByComplex(Double swLat, Double neLat, Double swLng, Double neLng) {
-		return articleRepository.findClustersByComplex(swLat, neLat, swLng, neLng);
+	public List<ClusterResponse> getClustersByGu(
+		Double swLat, Double neLat, Double swLng, Double neLng
+	) {
+		return articleRepository.findClustersByGu(swLat, neLat, swLng, neLng);
+	}
+
+	public List<ClusterResponse> getClustersBySi(
+		Double swLat, Double neLat, Double swLng, Double neLng
+	) {
+		return articleRepository.findClustersBySi(swLat, neLat, swLng, neLng);
 	}
 }
