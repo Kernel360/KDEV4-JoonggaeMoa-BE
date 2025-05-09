@@ -1,11 +1,11 @@
 package org.silsagusi.batch.zigbang.application;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.silsagusi.batch.application.ArticleMapper;
 import org.silsagusi.batch.application.ArticleValidator;
 import org.silsagusi.batch.application.ComplexMapper;
+import org.silsagusi.batch.application.ComplexValidator;
 import org.silsagusi.batch.infrastructure.dataprovider.ArticleDataProvider;
 import org.silsagusi.batch.infrastructure.dataprovider.ComplexDataProvider;
 import org.silsagusi.batch.zigbang.infrastructure.ZigBangApiClient;
@@ -19,8 +19,8 @@ import org.silsagusi.core.domain.article.enums.Platform;
 import org.silsagusi.core.domain.article.enums.ScrapeTargetType;
 import org.springframework.stereotype.Component;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Slf4j
 @Component
@@ -35,6 +35,7 @@ public class ZigbangScraper {
 	private final ComplexMapper complexMapper;
 	private final ArticleMapper articleMapper;
 	private final ArticleValidator articleValidator;
+	private final ComplexValidator complexValidator;
 
 	public boolean scrapComplex(ScrapeStatus status) throws InterruptedException {
 		Region region = status.getRegion();
@@ -46,13 +47,13 @@ public class ZigbangScraper {
 
 				List<Complex> complexes = zigBangDanjiResponse.getFiltered().stream()
 					.map(response -> complexMapper.toEntity(response, region))
-					.filter(articleValidator::validateExist)
+					.filter(complexValidator::validateExist)
 					.toList();
 
 				complexDataProvider.saveComplexes(complexes);
 			} catch (Exception e) {
 				log.error(
-					"Failed to scrape, platform: {}, target type: {}, region id: {}, latitude: {}, longitude: {}, message: {}",
+					"스크래핑 실패: {} - {}. region_id: {}. 좌표값: {},{}. 에러 내용: {}",
 					Platform.ZIGBANG, ScrapeTargetType.COMPLEX, region.getId(),
 					region.getCenterLat(), region.getCenterLon(), e.getMessage(), e);
 				Thread.sleep(600_000);
@@ -90,9 +91,9 @@ public class ZigbangScraper {
 				hasMore = zigBangItemCatalogResponse.getCount() >= offset;
 			} catch (Exception e) {
 				log.error(
-					"Failed to scrape, platform: {}, target type: {}, region id: {}, latitude: {}, longitude: {}, page: {}, message: {}",
-					Platform.ZIGBANG, ScrapeTargetType.ARTICLE, region.getId(),
-					region.getCenterLat(), region.getCenterLon(), offset, e.getMessage(), e);
+					"스크래핑 실패: {} - {}. region_id: {} - {}페이지. 좌표값: {},{}. 에러 내용: {}",
+					Platform.ZIGBANG, ScrapeTargetType.ARTICLE, region.getId(), offset,
+					region.getCenterLat(), region.getCenterLon(), e.getMessage(), e);
 				Thread.sleep(600_000);
 			} finally {
 				offset += limit;

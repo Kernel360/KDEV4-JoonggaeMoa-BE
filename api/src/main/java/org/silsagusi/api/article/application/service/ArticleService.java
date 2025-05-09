@@ -2,12 +2,10 @@ package org.silsagusi.api.article.application.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.silsagusi.api.article.application.dto.ArticleResponse;
 import org.silsagusi.api.article.application.dto.*;
 import org.silsagusi.api.article.application.validator.ArticleValidator;
 import org.silsagusi.api.article.infrastructure.dataprovider.ArticleDataProvider;
 import org.silsagusi.core.domain.article.Article;
-import org.silsagusi.api.article.application.dto.ClusterResponse;
 import org.silsagusi.core.domain.article.projection.ArticleTypeRatioProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -130,8 +128,16 @@ public class ArticleService {
 
 	@Transactional(readOnly = true)
 	public List<ClusterResponse> getClusters(
-		double swLat, double neLat, double swLng, double neLng, int precision
+		double swLat, double neLat, double swLng, double neLng, int zoomLevel
 	) {
-		return articleDataProvider.getClustersByBounds(swLat, neLat, swLng, neLng, precision);
+		if (zoomLevel <= 4) {
+			return articleDataProvider.getClustersByMarker(swLat, neLat, swLng, neLng);
+		} else if (zoomLevel <= 6) {
+			return articleDataProvider.getClustersByBounds(swLat, neLat, swLng, neLng, zoomLevel);
+		} else if (zoomLevel <= 8) {
+			return articleDataProvider.getClustersByGu(swLat, neLat, swLng, neLng);
+		} else {
+			return articleDataProvider.getClustersBySi(swLat, neLat, swLng, neLng);
+		}
 	}
 }

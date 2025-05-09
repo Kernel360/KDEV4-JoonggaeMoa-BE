@@ -161,8 +161,26 @@ public class ArticleDataProvider {
 	}
 
 	public List<ClusterResponse> getClustersByBounds(
-		Double swLat, Double neLat, Double swLng, Double neLng, int precision
+		Double swLat, Double neLat, Double swLng, Double neLng, int zoomLevel
 	) {
-		return articleRepository.findClustersByBounds(swLat, neLat, swLng, neLng, precision);
+		return articleRepository.findClustersByBounds(swLat, neLat, swLng, neLng, zoomLevel);
+	}
+
+	public List<ClusterResponse> getClustersByMarker(
+		Double swLat, Double neLat, Double swLng, Double neLng
+	) {
+		return articleRepository.findClustersByMarker(swLat, neLat, swLng, neLng);
+	}
+
+	public List<ClusterResponse> getClustersByGu(
+		Double swLat, Double neLat, Double swLng, Double neLng
+	) {
+		return articleRepository.findClustersByGu(swLat, neLat, swLng, neLng);
+	}
+
+	public List<ClusterResponse> getClustersBySi(
+		Double swLat, Double neLat, Double swLng, Double neLng
+	) {
+		return articleRepository.findClustersBySi(swLat, neLat, swLng, neLng);
 	}
 }

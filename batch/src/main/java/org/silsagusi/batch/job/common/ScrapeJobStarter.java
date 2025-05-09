@@ -1,7 +1,8 @@
 package org.silsagusi.batch.job.common;
 
-import org.silsagusi.batch.infrastructure.repository.RegionRepository;
-import org.silsagusi.batch.infrastructure.repository.ScrapeStatusRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.silsagusi.core.domain.article.enums.Platform;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
@@ -10,9 +11,6 @@ import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
-
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
@@ -26,11 +24,23 @@ public class ScrapeJobStarter implements ApplicationListener<ApplicationReadyEve
 	private static final String ZIGBANG_JOB = "zigbangJob";
 	private static final String TIME_STAMP = "timeStamp";
 
-	private final RegionRepository regionRepository;
-	private final ScrapeStatusRepository scrapeStatusRepository;
+//	private final RegionRepository regionRepository;
+//	private final ScrapeStatusRepository scrapeStatusRepository;
 
 	@Override
-	public void onApplicationEvent(ApplicationReadyEvent event) {
+	public void onApplicationEvent(@NotNull ApplicationReadyEvent event) {
+
+//		regionRepository.findAll().forEach(
+//			region -> {
+//				List<ScrapeStatus> list = new ArrayList<>();
+//				list.add(new ScrapeStatus(region, Platform.NAVERLAND, ScrapeTargetType.COMPLEX));
+//				list.add(new ScrapeStatus(region, Platform.NAVERLAND, ScrapeTargetType.ARTICLE));
+//				list.add(new ScrapeStatus(region, Platform.ZIGBANG, ScrapeTargetType.COMPLEX));
+//				list.add(new ScrapeStatus(region, Platform.ZIGBANG, ScrapeTargetType.ARTICLE));
+//				scrapeStatusRepository.saveAll(list);
+//				System.out.println(region.getId());
+//			}
+//		);
 
 		new Thread(() -> {
 			try {

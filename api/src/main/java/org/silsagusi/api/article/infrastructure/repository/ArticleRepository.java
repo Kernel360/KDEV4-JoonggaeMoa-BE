@@ -53,30 +53,80 @@ public interface ArticleRepository extends JpaRepository<Article, Long>, JpaSpec
 		  AND FLOOR(longitude * POWER(10, :precision)) = :lngGroup
 		ORDER BY article_id
 		LIMIT :size OFFSET :offset
-    """, nativeQuery = true)
+	""", nativeQuery = true)
 	List<Article> findArticlesByCluster(
-		@Param("latGroup")   long   latGroup,
-		@Param("lngGroup")   long   lngGroup,
-		@Param("precision")  int    precision,
-		@Param("size")       int    size,
-		@Param("offset")     int    offset
+		@Param("latGroup") long latGroup,
+		@Param("lngGroup") long lngGroup,
+		@Param("precision") int precision,
+		@Param("size") int size,
+		@Param("offset") int offset
+	);
+
+	@Query(value = """
+		SELECT
+		  latitude AS lat,
+		  longitude AS lng,
+		  1 AS count
+		FROM articles
+		WHERE latitude BETWEEN :swLat AND :neLat
+		  AND longitude BETWEEN :swLng AND :neLng
+		""", nativeQuery = true)
+	List<ClusterResponse> findClustersByMarker(
+		@Param("swLat") double swLat,
+		@Param("neLat") double neLat,
+		@Param("swLng") double swLng,
+		@Param("neLng") double neLng
+	);
+
+	@Query(value = """
+		SELECT
+		  AVG(latitude) AS lat,
+		  AVG(longitude) AS lng,
+		  COUNT(*)   AS count
+		FROM articles
+		WHERE latitude BETWEEN :swLat AND :neLat
+		  AND longitude BETWEEN :swLng AND :neLng
+		GROUP BY SUBSTRING(bjd_code, 1, 5)
+		""", nativeQuery = true)
+	List<ClusterResponse> findClustersByGu(
+		@Param("swLat") double swLat,
+		@Param("neLat") double neLat,
+		@Param("swLng") double swLng,
+		@Param("neLng") double neLng
+	);
+
+	@Query(value = """
+		SELECT
+		  AVG(latitude) AS lat,
+		  AVG(longitude) AS lng,
+		  COUNT(*)   AS count
+		FROM articles
+		WHERE latitude BETWEEN :swLat AND :neLat
+		  AND longitude BETWEEN :swLng AND :neLng
+		GROUP BY SUBSTRING(bjd_code, 1, 2)
+		""", nativeQuery = true)
+	List<ClusterResponse> findClustersBySi(
+		@Param("swLat") double swLat,
+		@Param("neLat") double neLat,
+		@Param("swLng") double swLng,
+		@Param("neLng") double neLng
 	);
 
 	// 매물 타입(BuildingType) 비율
 	@Query("""
-		    SELECT a.buildingType AS type, COUNT(a) AS count
-		    FROM Article a
-		    WHERE a.confirmedAt >= :startDate
-		    GROUP BY a.buildingType
+		SELECT a.buildingType AS type, COUNT(a) AS count
+		FROM Article a
+		WHERE a.confirmedAt >= :startDate
+		GROUP BY a.buildingType
 		""")
 	List<ArticleTypeRatioProjection> countByArticleTypeSince(LocalDate startDate);
 
 	// 거래 방식(TradeType) 비율
 	@Query("""
-		    SELECT a.tradeType AS type, COUNT(a) AS count
-		    FROM Article a
-		    WHERE a.confirmedAt >= :startDate
-		    GROUP BY a.tradeType
+		SELECT a.tradeType AS type, COUNT(a) AS count
+		FROM Article a
+		WHERE a.confirmedAt >= :startDate
+		GROUP BY a.tradeType
 		""")
 	List<ArticleTypeRatioProjection> countByTradeTypeSince(LocalDate startDate);
 }

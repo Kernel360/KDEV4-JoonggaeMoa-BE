@@ -14,8 +14,6 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -80,9 +78,9 @@ public class ArticleController {
 		@RequestParam double neLat,
 		@RequestParam double swLng,
 		@RequestParam double neLng,
-		@RequestParam(defaultValue = "6") int precision
+		@RequestParam int zoomLevel
 	) {
-		List<ClusterResponse> list = articleService.getClusters(swLat, neLat, swLng, neLng, precision);
+		List<ClusterResponse> list = articleService.getClusters(swLat, neLat, swLng, neLng, zoomLevel);
 		return ResponseEntity.ok(ApiResponse.ok(list));
 	}
 
