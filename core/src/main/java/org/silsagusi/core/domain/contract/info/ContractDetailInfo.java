@@ -3,6 +3,7 @@ package org.silsagusi.core.domain.contract.info;
 import java.time.LocalDate;
 
 import org.silsagusi.core.domain.contract.entity.Contract;
+import org.silsagusi.core.domain.customer.entity.Customer;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -26,16 +27,19 @@ public class ContractDetailInfo {
 	private String url;
 
 	public static ContractDetailInfo of(Contract contract) {
+		Customer customerLandlord = contract.getCustomerLandlord();
+		Customer customerTenant = contract.getCustomerTenant();
+
 		return ContractDetailInfo.builder()
 			.id(contract.getId())
-			.landlordId(contract.getCustomerLandlord().getId())
-			.tenantId(contract.getCustomerTenant().getId())
-			.landlordName(contract.getCustomerLandlord().getName())
-			.tenantName(contract.getCustomerTenant().getName())
-			.landlordPhone(contract.getCustomerLandlord().getPhone())
-			.tenantPhone(contract.getCustomerTenant().getPhone())
-			.landlordEmail(contract.getCustomerLandlord().getEmail())
-			.tenantEmail(contract.getCustomerTenant().getEmail())
+			.landlordId(customerLandlord.getId())
+			.tenantId(customerTenant.getId())
+			.landlordName(customerLandlord.getName())
+			.tenantName(customerTenant.getName())
+			.landlordPhone(customerLandlord.getPhone())
+			.tenantPhone(customerTenant.getPhone())
+			.landlordEmail(customerLandlord.getEmail())
+			.tenantEmail(customerTenant.getEmail())
 			.startedAt(contract.getStartedAt())
 			.expiredAt(contract.getExpiredAt())
 			.build();

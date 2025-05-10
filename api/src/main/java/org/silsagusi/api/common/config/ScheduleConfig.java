@@ -126,7 +126,7 @@ public class ScheduleConfig {
 
 		for (Contract contract : expiredContracts) {
 			try {
-				Long agentId = contract.getCustomerLandlord().getAgent().getId();
+				Long agentId = contract.getAgent().getId();
 				String customerLandlordName = contract.getCustomerLandlord().getName();
 				String customerTenantName = contract.getCustomerTenant().getName();
 				String content = "고객 " + customerLandlordName + ", " + customerTenantName + "의 계약이 만료되었습니다.";

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 public class ContractValidator {
 
 	public void validateAgentAccess(Long agentId, Contract contract) {
-		if (!contract.getCustomerLandlord().getAgent().getId().equals(agentId)) {
+		if (!contract.getAgent().getId().equals(agentId)) {
 			throw new CustomException(ErrorCode.FORBIDDEN);
 		}
 	}
