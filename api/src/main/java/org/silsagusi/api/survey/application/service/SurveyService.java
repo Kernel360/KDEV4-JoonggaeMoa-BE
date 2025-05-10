@@ -110,7 +110,7 @@ public class SurveyService {
 		}
 
 		if (Boolean.TRUE.equals(submitAnswerRequest.getApplyConsultation())) {
-			Consultation consultation = consultationMapper.answerRequestToEntity(customer,
+			Consultation consultation = consultationMapper.answerRequestToEntity(agent, customer,
 				submitAnswerRequest.getConsultAt());
 			consultationDataProvider.createConsultation(consultation);
 

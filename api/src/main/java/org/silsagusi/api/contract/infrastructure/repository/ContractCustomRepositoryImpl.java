@@ -1,10 +1,12 @@
 package org.silsagusi.api.contract.infrastructure.repository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.silsagusi.core.domain.contract.entity.Contract;
 import org.silsagusi.core.domain.contract.entity.QContract;
+import org.silsagusi.core.domain.customer.entity.Customer;
 import org.silsagusi.core.domain.customer.entity.QCustomer;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -58,5 +60,25 @@ public class ContractCustomRepositoryImpl implements ContractCustomRepository {
 			.fetchOne();
 
 		return new PageImpl<>(content, pageable, total);
+	}
+
+	@Override
+	public List<Contract> findContractsByCustomerAndDateRange(Customer customer, LocalDate start, LocalDate end) {
+		QContract contract = QContract.contract;
+		QCustomer landlord = QCustomer.customer;
+		QCustomer tenant = new QCustomer("tenant");
+
+		return queryFactory
+			.selectFrom(contract)
+			.leftJoin(contract.customerLandlord, landlord).fetchJoin()
+			.leftJoin(contract.customerTenant, tenant).fetchJoin()
+			.where(
+				contract.deletedAt.isNull(),
+				contract.customerLandlord.eq(customer)
+					.or(contract.customerTenant.eq(customer)),
+				contract.startedAt.between(start, end)
+					.or(contract.expiredAt.between(start, end))
+			)
+			.fetch();
 	}
 }

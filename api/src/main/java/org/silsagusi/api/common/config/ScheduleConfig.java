@@ -11,6 +11,7 @@ import org.silsagusi.api.message.infrastructure.repository.MessageRepository;
 import org.silsagusi.api.notification.infrastructure.dataprovider.NotificationDataProvider;
 import org.silsagusi.core.domain.agent.Agent;
 import org.silsagusi.core.domain.consultation.entity.Consultation;
+import org.silsagusi.core.domain.consultation.enums.ConsultationStatus;
 import org.silsagusi.core.domain.contract.entity.Contract;
 import org.silsagusi.core.domain.customer.entity.Customer;
 import org.silsagusi.core.domain.message.entity.Message;
@@ -96,7 +97,7 @@ public class ScheduleConfig {
 		LocalDateTime endOfDay = LocalDate.now().atTime(LocalTime.MAX);
 
 		List<Consultation> consultations = consultationRepository.findByDateBetweenAndConsultationStatusAndDeletedAtIsNull(
-			startOfDay, endOfDay, Consultation.ConsultationStatus.CONFIRMED);
+			startOfDay, endOfDay, ConsultationStatus.CONFIRMED);
 
 		for (Consultation consultation : consultations) {
 			try {
@@ -126,7 +127,7 @@ public class ScheduleConfig {
 
 		for (Contract contract : expiredContracts) {
 			try {
-				Long agentId = contract.getCustomerLandlord().getAgent().getId();
+				Long agentId = contract.getAgent().getId();
 				String customerLandlordName = contract.getCustomerLandlord().getName();
 				String customerTenantName = contract.getCustomerTenant().getName();
 				String content = "고객 " + customerLandlordName + ", " + customerTenantName + "의 계약이 만료되었습니다.";

@@ -39,6 +39,9 @@ public class Inquiry extends BaseEntity {
 	@Lob
 	private String content;
 
+	@Column(name = "answer_count")
+	private Integer answerCount;
+
 	@Column(name = "is_answered")
 	private boolean isAnswered;
 
@@ -50,6 +53,7 @@ public class Inquiry extends BaseEntity {
 		this.password = password;
 		this.title = title;
 		this.content = content;
+		this.answerCount = 0;
 	}
 
 	public static Inquiry create(String name, String password, String title, String content) {
@@ -63,6 +67,10 @@ public class Inquiry extends BaseEntity {
 
 	public void markAsAnswered() {
 		this.isAnswered = true;
+	}
+
+	public void increaseAnswerCount() {
+		this.answerCount++;
 	}
 
 }

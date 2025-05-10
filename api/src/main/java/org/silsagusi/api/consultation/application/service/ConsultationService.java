@@ -3,6 +3,7 @@ package org.silsagusi.api.consultation.application.service;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.silsagusi.api.agent.infrastructure.dataprovider.AgentDataProvider;
 import org.silsagusi.api.consultation.application.dto.ConsultationHistoryResponse;
 import org.silsagusi.api.consultation.application.dto.ConsultationMonthResponse;
 import org.silsagusi.api.consultation.application.dto.ConsultationResponse;
@@ -13,6 +14,7 @@ import org.silsagusi.api.consultation.application.mapper.ConsultationMapper;
 import org.silsagusi.api.consultation.application.validator.ConsultationValidator;
 import org.silsagusi.api.consultation.infrastructure.dataprovider.ConsultationDataProvider;
 import org.silsagusi.api.customer.infrastructure.dataprovider.CustomerDataProvider;
+import org.silsagusi.core.domain.agent.Agent;
 import org.silsagusi.core.domain.consultation.command.UpdateConsultationCommand;
 import org.silsagusi.core.domain.consultation.entity.Consultation;
 import org.silsagusi.core.domain.consultation.info.ConsultationMonthInfo;
@@ -31,13 +33,16 @@ public class ConsultationService {
 
 	private final ConsultationDataProvider consultationDataProvider;
 	private final CustomerDataProvider customerDataProvider;
+	private final AgentDataProvider agentDataProvider;
 	private final ConsultationMapper consultationMapper;
 	private final ConsultationValidator consultationValidator;
 
 	@Transactional
-	public void createConsultation(CreateConsultationRequest createConsultationRequest) {
+	public void createConsultation(Long agentId, CreateConsultationRequest createConsultationRequest) {
+		Agent agent = agentDataProvider.getAgentById(agentId);
 		Customer customer = customerDataProvider.getCustomer(createConsultationRequest.getCustomerId());
-		Consultation consultation = consultationMapper.consultationRequestToEntity(customer, createConsultationRequest);
+		Consultation consultation = consultationMapper.consultationRequestToEntity(agent, customer,
+			createConsultationRequest);
 		consultationDataProvider.createConsultation(consultation);
 	}
 

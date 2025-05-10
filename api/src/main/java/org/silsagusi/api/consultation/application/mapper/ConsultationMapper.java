@@ -3,32 +3,35 @@ package org.silsagusi.api.consultation.application.mapper;
 import java.time.LocalDateTime;
 
 import org.silsagusi.api.consultation.application.dto.CreateConsultationRequest;
+import org.silsagusi.core.domain.agent.Agent;
 import org.silsagusi.core.domain.consultation.entity.Consultation;
+import org.silsagusi.core.domain.consultation.enums.ConsultationStatus;
 import org.silsagusi.core.domain.customer.entity.Customer;
 import org.springframework.stereotype.Component;
 
 @Component
 public class ConsultationMapper {
 
-	public Consultation consultationRequestToEntity(Customer customer,
+	public Consultation consultationRequestToEntity(Agent agent, Customer customer,
 		CreateConsultationRequest consultationRequestDto) {
-		Consultation consultation = Consultation.create(
+		return Consultation.create(
+			agent,
 			customer,
 			consultationRequestDto.getDate(),
-			Consultation.ConsultationStatus.CONFIRMED
+			consultationRequestDto.getPurpose(),
+			consultationRequestDto.getMemo(),
+			ConsultationStatus.CONFIRMED
 		);
-
-		consultation.updateConsultation(consultation.getDate(), consultationRequestDto.getPurpose(),
-			consultationRequestDto.getMemo());
-
-		return consultation;
 	}
 
-	public Consultation answerRequestToEntity(Customer customer, LocalDateTime date) {
+	public Consultation answerRequestToEntity(Agent agent, Customer customer, LocalDateTime date) {
 		return Consultation.create(
+			agent,
 			customer,
 			date,
-			Consultation.ConsultationStatus.WAITING
+			null,
+			null,
+			ConsultationStatus.WAITING
 		);
 	}
 }

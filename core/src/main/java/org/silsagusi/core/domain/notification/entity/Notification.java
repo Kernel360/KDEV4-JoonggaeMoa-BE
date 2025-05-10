@@ -9,12 +9,15 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "notifications")
+@Table(name = "notifications", indexes = {
+	@Index(name = "idx_notification_agent", columnList = "agent_id")
+})
 @Getter
 @NoArgsConstructor
 public class Notification extends BaseEntity {

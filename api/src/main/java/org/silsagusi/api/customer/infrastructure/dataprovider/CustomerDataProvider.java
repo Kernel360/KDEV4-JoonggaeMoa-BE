@@ -90,16 +90,15 @@ public class CustomerDataProvider {
 		LocalDateTime endDate = now.plusMonths(3);
 
 		consultationRepository.findByCustomerAndDateBetweenAndDeletedAtIsNull(customer, startDate, endDate)
-			.forEach(consultation -> {
+			.forEach(consultation ->
 				customerHistoryInfos.add(
 					CustomerHistoryInfo.builder()
 						.id(consultation.getId() + "")
 						.type("CONSULTATION")
 						.date(consultation.getDate())
 						.purpose(consultation.getPurpose())
-						.build()
-				);
-			});
+						.build())
+			);
 
 		contractRepository.findContractsByCustomerAndDateRange(customer, startDate.toLocalDate(), endDate.toLocalDate())
 			.forEach(contract -> {
@@ -119,12 +118,11 @@ public class CustomerDataProvider {
 						.role(role)
 						.startDate(contract.getStartedAt())
 						.endDate(contract.getExpiredAt())
-						.build(
-						));
+						.build());
 			});
 
 		messageRepository.findByCustomerAndSendAtBetweenAndDeletedAtIsNull(customer, startDate, endDate)
-			.forEach(message -> {
+			.forEach(message ->
 				customerHistoryInfos.add(
 					CustomerHistoryInfo.builder()
 						.id(message.getId() + "")
@@ -132,37 +130,35 @@ public class CustomerDataProvider {
 						.date(message.getSendAt())
 						.content(message.getContent())
 						.sendStatus(message.getSendStatus() + "")
-						.build()
-				);
-			});
+						.build())
+			);
 
 		answerRepository.findAllByCustomerAndCreatedAtBetweenAndDeletedAtIsNull(
 				customer, startDate, endDate)
-			.forEach(answer -> {
+			.forEach(answer ->
 				customerHistoryInfos.add(
 					CustomerHistoryInfo.builder()
 						.id(answer.getId() + "")
 						.type("SURVEY")
 						.date(answer.getCreatedAt())
-						.build()
-				);
-			});
+						.build())
+			);
 
 		customerHistoryInfos.sort(Comparator.comparing(CustomerHistoryInfo::getSortDate).reversed());
 		return customerHistoryInfos;
 	}
 
 	public CustomerSummaryInfo getCustomerSummary(Long agentId) {
+		LocalDate today = LocalDate.now();
 		LocalDateTime now = LocalDateTime.now();
 
-		LocalDate today = LocalDate.now();
-		LocalDate thisWeekStart = today.with(DayOfWeek.MONDAY);
-		LocalDateTime thisWeekStartTime = thisWeekStart.atStartOfDay();
+		LocalDate thisWeekStartDate = today.with(DayOfWeek.MONDAY);
+		LocalDate lastWeekStartDate = thisWeekStartDate.minusWeeks(1);
+		LocalDate lastWeekEndDate = thisWeekStartDate.minusDays(1);
 
-		LocalDate lastWeekStart = thisWeekStart.minusWeeks(1);
-		LocalDate lastWeekEnd = thisWeekStart.minusDays(1);
-		LocalDateTime lastWeekStartTime = lastWeekStart.atStartOfDay();
-		LocalDateTime lastWeekEndTime = lastWeekEnd.atTime(LocalTime.MAX);
+		LocalDateTime thisWeekStartTime = thisWeekStartDate.atStartOfDay();
+		LocalDateTime lastWeekStartTime = lastWeekStartDate.atStartOfDay();
+		LocalDateTime lastWeekEndTime = lastWeekEndDate.atTime(LocalTime.MAX);
 
 		Long thisWeekCount = customerRepository.countByAgentIdAndCreatedAtBetweenAndDeletedAtIsNull(agentId,
 			thisWeekStartTime, now);
@@ -176,7 +172,7 @@ public class CustomerDataProvider {
 			changeRate = ((double)(thisWeekCount - lastWeekCount) / lastWeekCount) * 100;
 		}
 
-		return CustomerSummaryInfo.builder().count(thisWeekCount).rate(changeRate).build();
+		return new CustomerSummaryInfo(thisWeekCount, changeRate);
 	}
 
 	public List<Customer> getCustomerListByIdList(List<Long> customerIdList) {

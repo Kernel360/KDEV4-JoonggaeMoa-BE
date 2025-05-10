@@ -8,8 +8,8 @@ import lombok.Getter;
 @Getter
 @Builder
 public class ConsultationSummaryResponse {
-	private Integer todayCount;
-	private Integer remainingCount;
+	private Long todayCount;
+	private Long remainingCount;
 
 	public static ConsultationSummaryResponse toResponse(ConsultationSummaryInfo info) {
 		return ConsultationSummaryResponse.builder()

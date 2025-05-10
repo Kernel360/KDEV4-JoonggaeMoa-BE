@@ -33,9 +33,10 @@ public class ConsultationController {
 
 	@PostMapping("/api/consultations")
 	public ResponseEntity<ApiResponse<Void>> createConsultation(
+		@CurrentAgentId Long agentId,
 		@RequestBody @Valid CreateConsultationRequest createConsultationRequest
 	) {
-		consultationService.createConsultation(createConsultationRequest);
+		consultationService.createConsultation(agentId, createConsultationRequest);
 		return ResponseEntity.ok(ApiResponse.ok());
 	}
 
