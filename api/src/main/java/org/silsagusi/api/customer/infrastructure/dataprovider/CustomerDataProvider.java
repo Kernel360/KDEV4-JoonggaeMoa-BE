@@ -149,16 +149,16 @@ public class CustomerDataProvider {
 	}
 
 	public CustomerSummaryInfo getCustomerSummary(Long agentId) {
+		LocalDate today = LocalDate.now();
 		LocalDateTime now = LocalDateTime.now();
 
-		LocalDate today = LocalDate.now();
-		LocalDate thisWeekStart = today.with(DayOfWeek.MONDAY);
-		LocalDateTime thisWeekStartTime = thisWeekStart.atStartOfDay();
+		LocalDate thisWeekStartDate = today.with(DayOfWeek.MONDAY);
+		LocalDate lastWeekStartDate = thisWeekStartDate.minusWeeks(1);
+		LocalDate lastWeekEndDate = thisWeekStartDate.minusDays(1);
 
-		LocalDate lastWeekStart = thisWeekStart.minusWeeks(1);
-		LocalDate lastWeekEnd = thisWeekStart.minusDays(1);
-		LocalDateTime lastWeekStartTime = lastWeekStart.atStartOfDay();
-		LocalDateTime lastWeekEndTime = lastWeekEnd.atTime(LocalTime.MAX);
+		LocalDateTime thisWeekStartTime = thisWeekStartDate.atStartOfDay();
+		LocalDateTime lastWeekStartTime = lastWeekStartDate.atStartOfDay();
+		LocalDateTime lastWeekEndTime = lastWeekEndDate.atTime(LocalTime.MAX);
 
 		Long thisWeekCount = customerRepository.countByAgentIdAndCreatedAtBetweenAndDeletedAtIsNull(agentId,
 			thisWeekStartTime, now);
@@ -172,7 +172,7 @@ public class CustomerDataProvider {
 			changeRate = ((double)(thisWeekCount - lastWeekCount) / lastWeekCount) * 100;
 		}
 
-		return CustomerSummaryInfo.builder().count(thisWeekCount).rate(changeRate).build();
+		return new CustomerSummaryInfo(thisWeekCount, changeRate);
 	}
 
 	public List<Customer> getCustomerListByIdList(List<Long> customerIdList) {
