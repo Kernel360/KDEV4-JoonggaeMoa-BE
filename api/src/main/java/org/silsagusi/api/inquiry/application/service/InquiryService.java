@@ -102,7 +102,7 @@ public class InquiryService {
 			customerDataProvider.createCustomer(customer);
 		}
 
-		Consultation consultation = consultationMapper.answerRequestToEntity(customer,
+		Consultation consultation = consultationMapper.answerRequestToEntity(agent, customer,
 			createConsultationRequest.getConsultAt());
 		consultationDataProvider.createConsultation(consultation);
 

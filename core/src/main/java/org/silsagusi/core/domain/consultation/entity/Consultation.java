@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 
 import org.hibernate.annotations.DynamicUpdate;
 import org.silsagusi.core.domain.BaseEntity;
+import org.silsagusi.core.domain.agent.Agent;
+import org.silsagusi.core.domain.consultation.enums.ConsultationStatus;
 import org.silsagusi.core.domain.customer.entity.Customer;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -36,6 +38,10 @@ public class Consultation extends BaseEntity {
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "agent_id", nullable = false)
+	private Agent agent;
+
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "customer_id", nullable = false)
 	private Customer customer;
 
@@ -50,39 +56,28 @@ public class Consultation extends BaseEntity {
 	@Column(name = "consultation_status")
 	private ConsultationStatus consultationStatus;
 
-	private Consultation(
-		Customer customer,
-		LocalDateTime date,
-		ConsultationStatus consultationStatus
-	) {
+	private Consultation(Agent agent, Customer customer, LocalDateTime date, String purpose, String memo,
+		ConsultationStatus consultationStatus) {
+		this.agent = agent;
 		this.customer = customer;
 		this.date = date;
+		this.purpose = purpose;
+		this.memo = memo;
 		this.consultationStatus = consultationStatus;
 	}
 
-	public static Consultation create(Customer customer, LocalDateTime date, ConsultationStatus consultationStatus) {
-		return new Consultation(customer, date, consultationStatus);
+	public static Consultation create(Agent agent, Customer customer, LocalDateTime date, String purpose, String memo,
+		ConsultationStatus consultationStatus) {
+		return new Consultation(agent, customer, date, purpose, memo, consultationStatus);
 	}
 
 	public void updateStatus(ConsultationStatus consultationStatus) {
 		this.consultationStatus = consultationStatus;
 	}
 
-	public void updateConsultation(
-		LocalDateTime date,
-		String purpose,
-		String memo
-	) {
+	public void updateConsultation(LocalDateTime date, String purpose, String memo) {
 		this.date = date;
 		this.purpose = purpose;
 		this.memo = memo;
 	}
-
-	public enum ConsultationStatus {
-		WAITING,     // 상담 예약 대기
-		CONFIRMED,   // 예약 확정
-		CANCELED,    // 예약 취소
-		COMPLETED    // 진행 완료
-	}
-
 }
