@@ -23,7 +23,6 @@ public class ConsultationCustomRepositoryImpl implements ConsultationCustomRepos
 		Long count = queryFactory
 			.select(c.count())
 			.from(c)
-			.leftJoin(c.agent)
 			.where(
 				c.date.between(today.atStartOfDay(), today.plusDays(1).atStartOfDay()),
 				c.agent.id.eq(agentId),
@@ -46,7 +45,6 @@ public class ConsultationCustomRepositoryImpl implements ConsultationCustomRepos
 		Long count = queryFactory
 			.select(c.count())
 			.from(c)
-			.leftJoin(c.agent)
 			.where(
 				c.date.between(today.atStartOfDay(), today.plusDays(1).atStartOfDay()),
 				c.agent.id.eq(agentId),
