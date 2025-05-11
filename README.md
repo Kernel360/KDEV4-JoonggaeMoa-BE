@@ -145,12 +145,10 @@
 
 ## 5. 실행 가이드
 ### 백엔드 실행
-```bash
-# 설정 파일이 필요한 경우 application.yml 또는 application-local.yml 파일을 수정하세요.
-
-# 백엔드 실행
-./gradlew bootRun
-```
+- 설정 파일이 필요한 경우 application.yml 또는 application-local.yml 파일을 수정하세요.
+  ```bash
+  ./gradlew bootRun
+  ```
 
 ### Swagger UI 사용
 - 백엔드가 정상 기동되면 브라우저에서 아래 주소로 접근하여 API를 확인하고 테스트할 수 있습니다:
