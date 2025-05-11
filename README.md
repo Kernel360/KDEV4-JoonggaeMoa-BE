@@ -1,4 +1,4 @@
-<h1 style="text-align: center">부동산 중개의 새로운 기준, 중개모아 <img src="./docs/logo.png" width="25" height="29" alt="logo"></h1>
+# 부동산 중개의 새로운 기준, 중개모아 <img alt="중개모아 로고" height="29" src="./docs/logo.png" title="logo" width="25"/>
 
 ![대시보드](./docs/screenshot-dashboard.png)
 
@@ -72,24 +72,83 @@
 - 파일 첨부, 댓글 및 좋아요 기능
 
 ## 3. 아키텍처 및 모듈 구조
-![도메인 계층 구조](./docs/domain-hierarchy.png)
-
 ```
    Backend
-   ├─ core            # 도메인 모델, Repository, Service
-   ├─ batch           # Spring Batch 스크래핑 로직
-   ├─ api             # REST Controller, DTO, HATEOAS
-   ├─ infrastructure  # 외부 API 클라이언트, GeoHashService
-   ├─ security        # JWT 인증, 권한 관리
-   ├─ business        # 위의 주요 서비스 로직(매물, 계약, 고객 등)
+   ├─ core                                # 도메인 모델, Repository, Service
+   │  ├─ src/main/java/org/silsagusi/core
+   │  │  ├─ config                        # 핵심 모듈 설정
+   │  │  ├─ domain                        # 도메인 모델 정의
+   │  │  │  ├─ agent                      # 중개사 도메인
+   │  │  │  ├─ article                    # 매물 관련 도메인
+   │  │  │  ├─ consultation               # 상담 도메인
+   │  │  │  ├─ contract                   # 계약 도메인
+   │  │  │  ├─ customer                   # 고객 도메인
+   │  │  │  ├─ inquiry                    # 문의 도메인
+   │  │  │  ├─ message                    # 메시지/문자 도메인
+   │  │  │  ├─ notification               # 알림 도메인
+   │  │  │  └─ survey                     # 설문 도메인
+   │  │  └─ logger                        # 로깅 관련 기능
+   ├─ batch                               # Spring Batch 스크래핑 로직
+   │  ├─ src/main/java/org/silsagusi/batch
+   │  │  ├─ application                   # 일괄 작업 응용 계층
+   │  │  ├─ common/config                 # Batch 설정
+   │  │  ├─ infrastructure                # 스크래핑 인프라
+   │  │  │  ├─ dataprovider               # 데이터 제공자
+   │  │  │  ├─ external                   # 외부 API 연동
+   │  │  │  └─ repository                 # 저장소
+   │  │  ├─ job                           # Batch Job 정의
+   │  │  │  ├─ common                     # 공통 작업
+   │  │  │  ├─ naverland                  # 네이버 부동산 스크래핑
+   │  │  │  └─ zigbang                    # 직방 스크래핑
+   │  │  ├─ naverland                     # 네이버 부동산 관련 서비스
+   │  │  └─ zigbang                       # 직방 관련 서비스
+   ├─ api                                 # REST Controller, DTO, HATEOAS
+   │  ├─ src/main/java/org/silsagusi/api
+   │  │  ├─ agent                         # 중개사 API
+   │  │  ├─ article                       # 매물 API
+   │  │  ├─ common                        # 공통 컴포넌트
+   │  │  │  ├─ annotation                 # 커스텀 어노테이션
+   │  │  │  ├─ auth                       # 인증 관련 기능
+   │  │  │  ├─ config                     # API 설정
+   │  │  │  ├─ controller                 # 공통 컨트롤러
+   │  │  │  ├─ exception                  # 예외 처리
+   │  │  │  └─ util                       # 유틸리티
+   │  │  ├─ consultation                  # 상담 API
+   │  │  ├─ contract                      # 계약 API
+   │  │  ├─ customer                      # 고객 API
+   │  │  ├─ inquiry                       # 문의 API
+   │  │  ├─ message                       # 메시지 API
+   │  │  ├─ notification                  # 알림 API
+   │  │  ├─ response                      # 응답 형식
+   │  │  └─ survey                        # 설문 API
    Frontend
    ├─ src
-   │  ├─ components   # 공통 UI 컴포넌트
-   │  ├─ pages        # 페이지별 컴포넌트(Login, Dashboard 등)
-   │  ├─ store        # Redux 상태 관리
-   │  ├─ services     # API 호출 함수
-   │  ├─ hooks        # 커스텀 훅
-   │  └─ App.js       # 라우터 설정
+   │  ├─ global                        # 전역 설정 및 공통 모듈
+   │  │  ├─ config                     # 프로젝트 설정 파일 (라우팅, 상태관리 등)
+   │  │  ├─ auth                       # 인증 관련 컴포넌트 (로그인, 회원가입, 권한)
+   │  │  ├─ api                        # API 호출 모듈 (Axios 인스턴스, 인터셉터)
+   │  │  └─ common                     # 공통 컴포넌트 (버튼, 입력창, 모달 등)
+   │  └─ domain                        # 도메인별 비즈니스 로직 및 컴포넌트
+   │     ├─ agent                      # 중개사 관련 페이지 및 컴포넌트
+   │     ├─ article                    # 매물 관리 페이지 및 컴포넌트 
+   │     ├─ consultation               # 상담 관리 페이지 및 컴포넌트
+   │     ├─ contract                   # 계약 관리 페이지 및 컴포넌트
+   │     ├─ customer                   # 고객 관리 페이지 및 컴포넌트
+   │     ├─ dashboard                  # 대시보드 페이지 및 컴포넌트
+   │     ├─ inquiry                    # 문의 게시판 페이지 및 컴포넌트
+   │     ├─ message                    # 문자 발송 관리 페이지 및 컴포넌트
+   │     ├─ notification               # 알림 관련 페이지 및 컴포넌트
+   │     └─ survey                     # 설문 관리 페이지 및 컴포넌트
+   ├─ public                           # 정적 파일 (이미지, 폰트 등)
+   ├─ styles                           # 글로벌 스타일 및 테마 설정
+   │  ├─ GlobalStyles.js              # 전역 스타일 정의
+   │  └─ theme.js                     # 테마 변수 (색상, 폰트, 간격 등)
+   ├─ tests                           # 테스트 파일
+   │  ├─ unit                         # 단위 테스트
+   │  └─ integration                  # 통합 테스트
+   ├─ package.json                    # 의존성 및 스크립트 정의
+   ├─ vite.config.js                  # Vite 설정
+   └─ .env.local                      # 환경 변수 설정
 ```
 
 ## 4. 기술 스택
