@@ -121,34 +121,6 @@
    │  │  ├─ notification                  # 알림 API
    │  │  ├─ response                      # 응답 형식
    │  │  └─ survey                        # 설문 API
-   Frontend
-   ├─ src
-   │  ├─ global                        # 전역 설정 및 공통 모듈
-   │  │  ├─ config                     # 프로젝트 설정 파일 (라우팅, 상태관리 등)
-   │  │  ├─ auth                       # 인증 관련 컴포넌트 (로그인, 회원가입, 권한)
-   │  │  ├─ api                        # API 호출 모듈 (Axios 인스턴스, 인터셉터)
-   │  │  └─ common                     # 공통 컴포넌트 (버튼, 입력창, 모달 등)
-   │  └─ domain                        # 도메인별 비즈니스 로직 및 컴포넌트
-   │     ├─ agent                      # 중개사 관련 페이지 및 컴포넌트
-   │     ├─ article                    # 매물 관리 페이지 및 컴포넌트 
-   │     ├─ consultation               # 상담 관리 페이지 및 컴포넌트
-   │     ├─ contract                   # 계약 관리 페이지 및 컴포넌트
-   │     ├─ customer                   # 고객 관리 페이지 및 컴포넌트
-   │     ├─ dashboard                  # 대시보드 페이지 및 컴포넌트
-   │     ├─ inquiry                    # 문의 게시판 페이지 및 컴포넌트
-   │     ├─ message                    # 문자 발송 관리 페이지 및 컴포넌트
-   │     ├─ notification               # 알림 관련 페이지 및 컴포넌트
-   │     └─ survey                     # 설문 관리 페이지 및 컴포넌트
-   ├─ public                           # 정적 파일 (이미지, 폰트 등)
-   ├─ styles                           # 글로벌 스타일 및 테마 설정
-   │  ├─ GlobalStyles.js              # 전역 스타일 정의
-   │  └─ theme.js                     # 테마 변수 (색상, 폰트, 간격 등)
-   ├─ tests                           # 테스트 파일
-   │  ├─ unit                         # 단위 테스트
-   │  └─ integration                  # 통합 테스트
-   ├─ package.json                    # 의존성 및 스크립트 정의
-   ├─ vite.config.js                  # Vite 설정
-   └─ .env.local                      # 환경 변수 설정
 ```
 
 ## 4. 기술 스택
@@ -165,13 +137,6 @@
 ### 🗄 Database
 - **MySQL 8.x (with Geometry)**: 공간 데이터를 저장하고, 공간 쿼리를 통해 위치 기반 검색 및 클러스터링 처리.
 
-### 🌐 Frontend
-- **React**: 컴포넌트 기반 UI 라이브러리로, 사용자 인터페이스를 효율적으로 구성.
-- **Redux**: 전역 상태 관리를 위한 라이브러리로, 복잡한 상태 트리와 API 상태를 효율적으로 관리.
-- **React Router**: 클라이언트 사이드 라우팅을 통해 SPA 구조 구현.
-- **Axios**: HTTP 비동기 통신 라이브러리로, API 요청 및 응답을 효율적으로 처리.
-- **Leaflet.js**: 지도 시각화 라이브러리로, 부동산 매물 및 단지 데이터를 직관적으로 표현.
-
 ### 🔐 인증 및 보안
 - **JWT (JSON Web Token)**: 무상태(stateless) 인증 방식으로 사용자 인증 정보와 권한을 안전하게 유지.
 
@@ -187,11 +152,6 @@
 ./gradlew bootRun
 ```
 
-### 프론트엔드 실행
-```bash
-npm install && npm run dev
-```
-
 ### Swagger UI 사용
 - 백엔드가 정상 기동되면 브라우저에서 아래 주소로 접근하여 API를 확인하고 테스트할 수 있습니다:
   ```
@@ -203,5 +163,6 @@ npm install && npm run dev
 - 정소현 ([sohyeonjung](https://github.com/sohyeonjung))
 - 허용석 ([missiletoe](https://github.com/missiletoe))
 
-## Frontend Repository
+## 7. 참고사항
+### Frontend Repository
 - [KDEV4-JoonggaeMoa-FE](https://github.com/Kernel360/KDEV4-JoonggaeMoa-FE)
