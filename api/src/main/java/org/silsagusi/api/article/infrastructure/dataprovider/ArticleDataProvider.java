@@ -1,8 +1,8 @@
 package org.silsagusi.api.article.infrastructure.dataprovider;
 
 import lombok.RequiredArgsConstructor;
-import org.silsagusi.api.article.application.dto.ClusterResponse;
 import org.silsagusi.api.article.application.validator.ArticleValidator;
+import org.silsagusi.api.article.controller.request.ClusterRequest;
 import org.silsagusi.api.article.infrastructure.repository.ArticleRepository;
 import org.silsagusi.api.common.exception.CustomException;
 import org.silsagusi.api.common.exception.ErrorCode;
@@ -160,25 +160,25 @@ public class ArticleDataProvider {
 		);
 	}
 
-	public List<ClusterResponse> getClustersByBounds(
+	public List<ClusterRequest> getClustersByBounds(
 		Double swLat, Double neLat, Double swLng, Double neLng, int zoomLevel
 	) {
 		return articleRepository.findClustersByBounds(swLat, neLat, swLng, neLng, zoomLevel);
 	}
 
-	public List<ClusterResponse> getClustersByMarker(
+	public List<ClusterRequest> getClustersByMarker(
 		Double swLat, Double neLat, Double swLng, Double neLng
 	) {
 		return articleRepository.findClustersByMarker(swLat, neLat, swLng, neLng);
 	}
 
-	public List<ClusterResponse> getClustersByGu(
+	public List<ClusterRequest> getClustersByGu(
 		Double swLat, Double neLat, Double swLng, Double neLng
 	) {
 		return articleRepository.findClustersByGu(swLat, neLat, swLng, neLng);
 	}
 
-	public List<ClusterResponse> getClustersBySi(
+	public List<ClusterRequest> getClustersBySi(
 		Double swLat, Double neLat, Double swLng, Double neLng
 	) {
 		return articleRepository.findClustersBySi(swLat, neLat, swLng, neLng);
