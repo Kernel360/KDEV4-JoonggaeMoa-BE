@@ -6,8 +6,8 @@ import org.silsagusi.api.article.application.dto.ArticleListResponse;
 import org.silsagusi.api.article.application.dto.ArticleResponse;
 import org.silsagusi.api.article.application.dto.RealEstateTypeSummaryResponse;
 import org.silsagusi.api.article.application.dto.TradeTypeSummaryResponse;
+import org.silsagusi.api.article.application.dto.ClusterSummaryResponse;
 import org.silsagusi.api.article.application.validator.ArticleValidator;
-import org.silsagusi.api.article.controller.request.ClusterRequest;
 import org.silsagusi.api.article.infrastructure.dataprovider.ArticleDataProvider;
 import org.silsagusi.core.domain.article.Article;
 import org.silsagusi.core.domain.article.projection.ArticleTypeRatioProjection;
@@ -108,17 +108,17 @@ public class ArticleService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<ClusterRequest> getClusters(
-		double swLat, double neLat, double swLng, double neLng, int zoomLevel
+	public List<ClusterSummaryResponse> getClustersByMarker(
+		double swLat, double neLat, double swLng, double neLng, long zoomLevel
 	) {
 		if (zoomLevel <= 4) {
-			return articleDataProvider.getClustersByMarker(swLat, neLat, swLng, neLng);
+			return articleDataProvider.getClustersByMarker(swLat, neLat, swLng, neLng, zoomLevel);
 		} else if (zoomLevel <= 6) {
 			return articleDataProvider.getClustersByBounds(swLat, neLat, swLng, neLng, zoomLevel);
 		} else if (zoomLevel <= 8) {
-			return articleDataProvider.getClustersByGu(swLat, neLat, swLng, neLng);
+			return articleDataProvider.getClustersByGu(swLat, neLat, swLng, neLng, zoomLevel);
 		} else {
-			return articleDataProvider.getClustersBySi(swLat, neLat, swLng, neLng);
+			return articleDataProvider.getClustersBySi(swLat, neLat, swLng, neLng, zoomLevel);
 		}
 	}
 

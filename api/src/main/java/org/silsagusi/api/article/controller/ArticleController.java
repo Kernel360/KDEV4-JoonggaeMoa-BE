@@ -1,19 +1,16 @@
 package org.silsagusi.api.article.controller;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
+import lombok.RequiredArgsConstructor;
 import org.silsagusi.api.article.application.assembler.ArticleListModelAssembler;
 import org.silsagusi.api.article.application.assembler.ArticleModelAssembler;
-import org.silsagusi.api.article.application.assembler.ClusterModelAssembler;
+import org.silsagusi.api.article.application.service.ArticleService;
 import org.silsagusi.api.article.application.dto.ArticleListResponse;
 import org.silsagusi.api.article.application.dto.ArticleResponse;
+import org.silsagusi.api.article.application.dto.ClusterSummaryResponse;
 import org.silsagusi.api.article.application.dto.RealEstateTypeSummaryResponse;
 import org.silsagusi.api.article.application.dto.TradeTypeSummaryResponse;
-import org.silsagusi.api.article.application.service.ArticleService;
 import org.silsagusi.api.article.controller.request.ArticleListRequest;
 import org.silsagusi.api.article.controller.request.ArticleSearchCriteria;
-import org.silsagusi.api.article.controller.request.ClusterRequest;
 import org.silsagusi.api.response.ApiResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,14 +22,10 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import lombok.RequiredArgsConstructor;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RequestMapping(produces = "application/hal+json")
 @RestController
@@ -40,7 +33,6 @@ import lombok.RequiredArgsConstructor;
 public class ArticleController {
 
 	private final ArticleService articleService;
-	private final ClusterModelAssembler clusterModelAssembler;
 	private final ArticleListModelAssembler articleListModelAssembler;
 	private final ArticleModelAssembler articleModelAssembler;
 
@@ -77,7 +69,7 @@ public class ArticleController {
 	@GetMapping("/api/articles/search")
 	public ResponseEntity<EntityModel<ArticleListResponse>> searchArticles(
 		@ModelAttribute ArticleListRequest articleListRequest
-		) {
+	) {
 		ArticleListResponse result = articleService.searchArticles(
 			articleListRequest.getCriteria().getRealEstateType(),
 			articleListRequest.getCriteria().getTradeType(),
@@ -101,26 +93,26 @@ public class ArticleController {
 		@RequestParam(defaultValue = "100") int size
 	) {
 		List<ArticleResponse> list = articleService.getArticlesByCluster(
-				clusterId, precision, page, size);
+			clusterId, precision, page, size);
 		List<EntityModel<ArticleResponse>> entityModels = list.stream()
-				.map(articleModelAssembler::toModel)
-				.collect(Collectors.toList());
+			.map(articleModelAssembler::toModel)
+			.collect(Collectors.toList());
 		return ResponseEntity.ok(CollectionModel.of(entityModels));
 	}
 
 	@GetMapping("/api/clusters")
-	public ResponseEntity<CollectionModel<EntityModel<ClusterRequest>>> getClusters(
-		@ModelAttribute ClusterRequest clusterRequest
+	public ResponseEntity<CollectionModel<EntityModel<ClusterSummaryResponse>>> getClustersByMarker(
+		@RequestParam("swLat") Double swLat,
+		@RequestParam("neLat") Double neLat,
+		@RequestParam("swLng") Double swLng,
+		@RequestParam("neLng") Double neLng,
+		@RequestParam("zoomLevel") long zoomLevel
 	) {
-		List<ClusterRequest> list = articleService.getClusters(
-			clusterRequest.getSwLat(),
-			clusterRequest.getNeLat(),
-			clusterRequest.getSwLng(),
-			clusterRequest.getNeLng(),
-			clusterRequest.getZoomLevel()
+		List<ClusterSummaryResponse> list = articleService.getClustersByMarker(
+			swLat, neLat, swLng, neLng, zoomLevel
 		);
-		List<EntityModel<ClusterRequest>> entityModels = list.stream()
-			.map(clusterModelAssembler::toModel)
+		List<EntityModel<ClusterSummaryResponse>> entityModels = list.stream()
+			.map(EntityModel::of)
 			.collect(Collectors.toList());
 		return ResponseEntity.ok(CollectionModel.of(entityModels));
 	}
