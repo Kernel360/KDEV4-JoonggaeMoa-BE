@@ -14,7 +14,7 @@ public class ZigBangApiClient {
 
 	private final WebClient zigBangWebClient;
 
-	public ZigBangItemCatalogResponse fetchItemCatalog(String localCode, int offset, String limit) {
+	public ZigBangItemCatalogResponse fetchItemCatalog(String localCode, int offset, int limit) {
 		return zigBangWebClient.get()
 			.uri(uriBuilder -> uriBuilder.path(
 						String.format("/apt/locals/%s/item-catalogs", localCode)
