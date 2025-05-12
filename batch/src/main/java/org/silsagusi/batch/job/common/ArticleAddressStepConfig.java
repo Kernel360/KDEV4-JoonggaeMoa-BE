@@ -38,7 +38,6 @@ public class ArticleAddressStepConfig {
 			.build();
 	}
 
-	@Bean
 	public ItemReader<Article> articleReader() {
 		return new JpaCursorItemReaderBuilder<Article>()
 			.name("articleReader")
@@ -47,7 +46,6 @@ public class ArticleAddressStepConfig {
 			.build();
 	}
 
-	@Bean
 	public ItemProcessor<Article, Article> articleProcessor() {
 		return article -> {
 			AddressResponse response = kakaoMapApiClient.lookupAddress(article.getLatitude(), article.getLongitude());
@@ -57,7 +55,6 @@ public class ArticleAddressStepConfig {
 		};
 	}
 
-	@Bean
 	public ItemWriter<Article> articleWriter() {
 		return articleRepository::saveAll;
 	}

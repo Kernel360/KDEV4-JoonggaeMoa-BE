@@ -57,18 +57,22 @@ public class ScrapeStatus {
 	@Column(name = "target_type")
 	private ScrapeTargetType targetType;
 
-	public void updatePage(Integer page, LocalDateTime lastScrapedAt) {
-		this.lastScrapedPage = page;
-		this.lastScrapedAt = lastScrapedAt;
-	}
-
 	public ScrapeStatus initialize() {
 		this.status = ScrapeStatusType.PENDING;
 		this.lastScrapedPage = 0;
 		return this;
 	}
 
-	public void completed() {
+	public ScrapeStatus completed() {
 		this.status = ScrapeStatusType.COMPLETED;
+		this.lastScrapedAt = LocalDateTime.now();
+		return this;
+	}
+
+	public ScrapeStatus failed(int page) {
+		this.status = ScrapeStatusType.FAILED;
+		this.lastScrapedPage = page;
+		this.lastScrapedAt = LocalDateTime.now();
+		return this;
 	}
 }
