@@ -1,8 +1,8 @@
 package org.silsagusi.api.article.infrastructure.dataprovider;
 
 import lombok.RequiredArgsConstructor;
+import org.silsagusi.api.article.application.dto.ClusterSummaryResponse;
 import org.silsagusi.api.article.application.validator.ArticleValidator;
-import org.silsagusi.api.article.controller.request.ClusterRequest;
 import org.silsagusi.api.article.infrastructure.repository.ArticleRepository;
 import org.silsagusi.api.common.exception.CustomException;
 import org.silsagusi.api.common.exception.ErrorCode;
@@ -94,14 +94,6 @@ public class ArticleDataProvider {
 		return articleRepository.findAll(spec, pageable);
 	}
 
-	public List<ArticleTypeRatioProjection> getRealEstateTypeRatio(LocalDate from) {
-		return articleRepository.countByArticleTypeSince(from);
-	}
-
-	public List<ArticleTypeRatioProjection> getTradeTypeRatio(LocalDate from) {
-		return articleRepository.countByTradeTypeSince(from);
-	}
-
 	public long sumArticleCount(List<ArticleTypeRatioProjection> articleTypeRatioProjections) {
 		return articleTypeRatioProjections.stream()
 			.mapToLong(ArticleTypeRatioProjection::getCount)
@@ -117,6 +109,11 @@ public class ArticleDataProvider {
 			case "monthly" -> now.minusMonths(1);
 			default -> throw new CustomException(ErrorCode.VALIDATION_FAILED);
 		};
+	}
+
+	public Article getArticleById(Long id) {
+		return articleRepository.findById(id)
+			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ARTICLE));
 	}
 
 	public Page<Article> getArticlesByBounds(
@@ -138,11 +135,6 @@ public class ArticleDataProvider {
 		}
 	}
 
-	public Article getArticleById(Long id) {
-		return articleRepository.findById(id)
-			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ARTICLE));
-	}
-
 	// 프론트의 clusterId, precision, page, size 요청을 받아
 	// 해당 클러스터 내 Article 목록을 반환
 	public List<Article> getArticlesByCluster(
@@ -160,27 +152,37 @@ public class ArticleDataProvider {
 		);
 	}
 
-	public List<ClusterRequest> getClustersByBounds(
-		Double swLat, Double neLat, Double swLng, Double neLng, int zoomLevel
+	public List<ClusterSummaryResponse> getClustersByBounds(
+		Double swLat, Double neLat, Double swLng, Double neLng, long zoomLevel
 	) {
 		return articleRepository.findClustersByBounds(swLat, neLat, swLng, neLng, zoomLevel);
 	}
 
-	public List<ClusterRequest> getClustersByMarker(
-		Double swLat, Double neLat, Double swLng, Double neLng
+	public List<ClusterSummaryResponse> getClustersByMarker(
+		Double swLat, Double neLat, Double swLng, Double neLng, long zoomLevel
 	) {
-		return articleRepository.findClustersByMarker(swLat, neLat, swLng, neLng);
+		return articleRepository.findClustersByMarker(swLat, neLat, swLng, neLng, zoomLevel);
 	}
 
-	public List<ClusterRequest> getClustersByGu(
-		Double swLat, Double neLat, Double swLng, Double neLng
+	public List<ClusterSummaryResponse> getClustersByGu(
+		Double swLat, Double neLat, Double swLng, Double neLng, long zoomLevel
 	) {
-		return articleRepository.findClustersByGu(swLat, neLat, swLng, neLng);
+		return articleRepository.findClustersByGu(swLat, neLat, swLng, neLng, zoomLevel);
 	}
 
-	public List<ClusterRequest> getClustersBySi(
-		Double swLat, Double neLat, Double swLng, Double neLng
+	public List<ClusterSummaryResponse> getClustersBySi(
+		Double swLat, Double neLat, Double swLng, Double neLng, long zoomLevel
 	) {
-		return articleRepository.findClustersBySi(swLat, neLat, swLng, neLng);
+		return articleRepository.findClustersBySi(swLat, neLat, swLng, neLng, zoomLevel);
 	}
+
+	public List<ArticleTypeRatioProjection> getRealEstateTypeRatio(LocalDate from) {
+		return articleRepository.countByArticleTypeSince(from);
+	}
+
+	public List<ArticleTypeRatioProjection> getTradeTypeRatio(LocalDate from) {
+		return articleRepository.countByTradeTypeSince(from);
+	}
+
+
 }
