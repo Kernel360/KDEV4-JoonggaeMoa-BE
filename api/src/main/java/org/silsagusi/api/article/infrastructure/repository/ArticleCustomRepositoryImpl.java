@@ -3,7 +3,7 @@ package org.silsagusi.api.article.infrastructure.repository;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
-import org.silsagusi.api.article.application.dto.ClusterResponse;
+import org.silsagusi.api.article.controller.request.ClusterRequest;
 import org.silsagusi.core.domain.article.Article;
 import org.silsagusi.core.domain.article.QArticle;
 import org.springframework.stereotype.Repository;
@@ -17,14 +17,15 @@ public class ArticleCustomRepositoryImpl implements ArticleCustomRepository {
 	private final JPAQueryFactory queryFactory;
 
 	@Override
-	public List<ClusterResponse> findClustersByBounds(double swLat, double neLat, double swLng, double neLng, int precision) {
+	public List<ClusterRequest> findClustersByBounds(double swLat, double neLat, double swLng, double neLng, int precision) {
 		QArticle article = QArticle.article;
+		double factor = Math.pow(10, precision);
 
 		return queryFactory
 			.select(Projections.constructor(
-				ClusterResponse.class,
-				article.latitude.avg(),
-				article.longitude.avg(),
+				ClusterRequest.class,
+				article.latitude.multiply(factor).floor().divide(factor),
+				article.longitude.multiply(factor).floor().divide(factor),
 				article.count()
 			))
 			.from(article)
@@ -33,8 +34,8 @@ public class ArticleCustomRepositoryImpl implements ArticleCustomRepository {
 				article.longitude.between(swLng, neLng)
 			)
 			.groupBy(
-				article.latitude.multiply(Math.pow(10, precision)).floor(),
-				article.longitude.multiply(Math.pow(10, precision)).floor()
+				article.latitude.multiply(factor).floor(),
+				article.longitude.multiply(factor).floor()
 			)
 			.fetch();
 	}
@@ -42,12 +43,13 @@ public class ArticleCustomRepositoryImpl implements ArticleCustomRepository {
 	@Override
 	public List<Article> findArticlesByCluster(long latGroup, long lngGroup, int precision, int size, int offset) {
 		QArticle article = QArticle.article;
+		double factor = Math.pow(10, precision);
 
 		return queryFactory
 			.selectFrom(article)
 			.where(
-				article.latitude.multiply(Math.pow(10, precision)).floor().eq((double) latGroup),
-				article.longitude.multiply(Math.pow(10, precision)).floor().eq((double) lngGroup)
+				article.latitude.multiply(factor).floor().eq((double) latGroup),
+				article.longitude.multiply(factor).floor().eq((double) lngGroup)
 			)
 			.orderBy(article.id.asc())
 			.offset(offset)
@@ -56,12 +58,12 @@ public class ArticleCustomRepositoryImpl implements ArticleCustomRepository {
 	}
 
 	@Override
-	public List<ClusterResponse> findClustersByMarker(double swLat, double neLat, double swLng, double neLng) {
+	public List<ClusterRequest> findClustersByMarker(double swLat, double neLat, double swLng, double neLng) {
 		QArticle article = QArticle.article;
 
 		return queryFactory
 			.select(Projections.constructor(
-				ClusterResponse.class,
+				ClusterRequest.class,
 				article.latitude,
 				article.longitude,
 				queryFactory.select(article.count())
@@ -80,12 +82,12 @@ public class ArticleCustomRepositoryImpl implements ArticleCustomRepository {
 	}
 
 	@Override
-	public List<ClusterResponse> findClustersByGu(double swLat, double neLat, double swLng, double neLng) {
+	public List<ClusterRequest> findClustersByGu(double swLat, double neLat, double swLng, double neLng) {
 		QArticle article = QArticle.article;
 
 		return queryFactory
 			.select(Projections.constructor(
-				ClusterResponse.class,
+				ClusterRequest.class,
 				article.latitude.avg(),
 				article.longitude.avg(),
 				article.count()
@@ -100,12 +102,12 @@ public class ArticleCustomRepositoryImpl implements ArticleCustomRepository {
 	}
 
 	@Override
-	public List<ClusterResponse> findClustersBySi(double swLat, double neLat, double swLng, double neLng) {
+	public List<ClusterRequest> findClustersBySi(double swLat, double neLat, double swLng, double neLng) {
 		QArticle article = QArticle.article;
 
 		return queryFactory
 			.select(Projections.constructor(
-				ClusterResponse.class,
+				ClusterRequest.class,
 				article.latitude.avg(),
 				article.longitude.avg(),
 				article.count()

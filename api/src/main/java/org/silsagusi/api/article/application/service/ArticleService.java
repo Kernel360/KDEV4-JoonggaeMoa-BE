@@ -2,8 +2,12 @@ package org.silsagusi.api.article.application.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.silsagusi.api.article.application.dto.*;
+import org.silsagusi.api.article.application.dto.ArticleListResponse;
+import org.silsagusi.api.article.application.dto.ArticleResponse;
+import org.silsagusi.api.article.application.dto.RealEstateTypeSummaryResponse;
+import org.silsagusi.api.article.application.dto.TradeTypeSummaryResponse;
 import org.silsagusi.api.article.application.validator.ArticleValidator;
+import org.silsagusi.api.article.controller.request.ClusterRequest;
 import org.silsagusi.api.article.infrastructure.dataprovider.ArticleDataProvider;
 import org.silsagusi.core.domain.article.Article;
 import org.silsagusi.core.domain.article.projection.ArticleTypeRatioProjection;
@@ -27,7 +31,7 @@ public class ArticleService {
 	private final ArticleValidator articleValidator;
 
 	@Transactional(readOnly = true)
-	public Page<ArticleResponse> getAllArticles(
+	public Page<ArticleResponse> getArticles(
 		String type, Pageable pageable, List<String> realEstateType, List<String> tradeType,
 		String minPrice, String maxPrice, String regionPrefix,
 		Double neLat, Double neLng, Double swLat, Double swLng
@@ -104,6 +108,21 @@ public class ArticleService {
 	}
 
 	@Transactional(readOnly = true)
+	public List<ClusterRequest> getClusters(
+		double swLat, double neLat, double swLng, double neLng, int zoomLevel
+	) {
+		if (zoomLevel <= 4) {
+			return articleDataProvider.getClustersByMarker(swLat, neLat, swLng, neLng);
+		} else if (zoomLevel <= 6) {
+			return articleDataProvider.getClustersByBounds(swLat, neLat, swLng, neLng, zoomLevel);
+		} else if (zoomLevel <= 8) {
+			return articleDataProvider.getClustersByGu(swLat, neLat, swLng, neLng);
+		} else {
+			return articleDataProvider.getClustersBySi(swLat, neLat, swLng, neLng);
+		}
+	}
+
+	@Transactional(readOnly = true)
 	public RealEstateTypeSummaryResponse getRealEstateTypeSummary(String period) {
 		LocalDate from = articleDataProvider.calculateStartDate(period);
 
@@ -124,20 +143,5 @@ public class ArticleService {
 		long tradeTotalCount = articleDataProvider.sumArticleCount(tradeTypeRatioProjections);
 
 		return new TradeTypeSummaryResponse(tradeTypeRatioProjections, tradeTotalCount);
-	}
-
-	@Transactional(readOnly = true)
-	public List<ClusterResponse> getClusters(
-		double swLat, double neLat, double swLng, double neLng, int zoomLevel
-	) {
-		if (zoomLevel <= 4) {
-			return articleDataProvider.getClustersByMarker(swLat, neLat, swLng, neLng);
-		} else if (zoomLevel <= 6) {
-			return articleDataProvider.getClustersByBounds(swLat, neLat, swLng, neLng, zoomLevel);
-		} else if (zoomLevel <= 8) {
-			return articleDataProvider.getClustersByGu(swLat, neLat, swLng, neLng);
-		} else {
-			return articleDataProvider.getClustersBySi(swLat, neLat, swLng, neLng);
-		}
 	}
 }

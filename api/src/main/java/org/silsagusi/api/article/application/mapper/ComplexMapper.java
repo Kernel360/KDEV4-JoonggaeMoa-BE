@@ -1,10 +1,9 @@
 package org.silsagusi.api.article.application.mapper;
 
+import lombok.RequiredArgsConstructor;
 import org.silsagusi.api.article.application.dto.ComplexResponse;
 import org.silsagusi.core.domain.article.Complex;
 import org.springframework.stereotype.Component;
-
-import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor

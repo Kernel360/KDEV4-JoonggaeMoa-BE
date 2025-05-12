@@ -1,6 +1,7 @@
 package org.silsagusi.api.article.controller.request;
 
 import lombok.Data;
+
 import java.util.List;
 
 @Data
