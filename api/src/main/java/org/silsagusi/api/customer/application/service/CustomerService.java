@@ -100,7 +100,6 @@ public class CustomerService {
 
 	@Transactional(readOnly = true)
 	public CustomerSummaryResponse getCustomerSummary(Long agentId) {
-
 		CustomerSummaryInfo customerSummaryInfo = customerDataProvider.getCustomerSummary(agentId);
 
 		return CustomerSummaryResponse.toResponse(customerSummaryInfo);

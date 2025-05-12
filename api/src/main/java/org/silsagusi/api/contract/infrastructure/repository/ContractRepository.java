@@ -5,45 +5,23 @@ import java.util.List;
 import java.util.Optional;
 
 import org.silsagusi.core.domain.contract.entity.Contract;
-import org.silsagusi.core.domain.customer.entity.Customer;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface ContractRepository extends JpaRepository<Contract, String>, ContractCustomRepository {
-	Page<Contract> findAllByCustomerLandlord_AgentIdAndDeletedAtIsNull(Long agentId, Pageable pageable);
 
+	@EntityGraph(attributePaths = {"agent", "customerLandlord", "customerTenant"})
 	List<Contract> findByExpiredAtAndDeletedAtIsNull(LocalDate expiredAt);
 
-	@Query("SELECT COUNT(c) FROM Contract c WHERE c.customerLandlord.agent.id = :agentId " +
-		"AND c.startedAt <= :today AND c.expiredAt >= :today AND c.deletedAt IS NULL"
-	)
+	@Query("SELECT COUNT(c) FROM Contract c WHERE c.agent.id = :agentId " +
+		"AND c.startedAt <= :today AND c.expiredAt >= :today AND c.deletedAt IS NULL")
 	long countInProgress(@Param("agentId") Long agentId, @Param("today") LocalDate today);
 
-	// 특정 날짜에 생성된 계약 수
-	long countByCustomerLandlord_Agent_IdAndStartedAt(Long agentId, LocalDate startedAt);
-
+	@EntityGraph(attributePaths = {"agent", "customerLandlord", "customerTenant"})
 	Optional<Contract> findByIdAndDeletedAtIsNull(String contractId);
 
-	@Query("""
-		    SELECT c FROM Contract c
-		    WHERE 
-		        (c.customerLandlord = :customer OR c.customerTenant = :customer)
-		        AND (
-		            (c.createdAt BETWEEN :start AND :end)
-		            OR
-		            (c.expiredAt BETWEEN :start AND :end)
-		        )
-				        AND c.deletedAt IS NULL
-		""")
-	List<Contract> findContractsByCustomerAndDateRange(
-		@Param("customer") Customer customer,
-		@Param("start") LocalDate start,
-		@Param("end") LocalDate end
-	);
-
-	List<Contract> findAllByCustomerLandlord_Agent_IdAndExpiredAtBeforeAndDeletedAtIsNull(Long agentId,
-		LocalDate expiredAtBefore);
+	@EntityGraph(attributePaths = {"customerLandlord", "customerTenant"})
+	List<Contract> findAllByAgent_IdAndExpiredAtBeforeAndDeletedAtIsNull(Long agentId, LocalDate expiredAt);
 }

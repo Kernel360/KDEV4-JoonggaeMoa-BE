@@ -1,7 +1,5 @@
 package org.silsagusi.api.contract.controller;
 
-import java.io.IOException;
-
 import org.silsagusi.api.common.annotation.CurrentAgentId;
 import org.silsagusi.api.contract.application.dto.ContractDetailResponse;
 import org.silsagusi.api.contract.application.dto.ContractResponse;
@@ -34,10 +32,11 @@ public class ContractController {
 
 	@PostMapping(value = "/api/contracts", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<ApiResponse<String>> createContract(
+		@CurrentAgentId Long agentId,
 		@RequestPart("contractData") @Valid CreateContractRequest contractRequestDto,
 		@RequestPart("file") MultipartFile file
-	) throws IOException {
-		contractService.createContract(contractRequestDto, file);
+	) {
+		contractService.createContract(agentId, contractRequestDto, file);
 		return ResponseEntity.ok(ApiResponse.ok());
 	}
 

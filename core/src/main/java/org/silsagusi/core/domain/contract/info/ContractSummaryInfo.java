@@ -1,10 +1,10 @@
 package org.silsagusi.core.domain.contract.info;
 
-import lombok.Builder;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
-@Builder
+@AllArgsConstructor
 public class ContractSummaryInfo {
 	private Long count;
 	private Double rate;
