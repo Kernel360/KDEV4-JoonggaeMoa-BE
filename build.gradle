@@ -1,11 +1,9 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '3.4.4'
-    id 'io.spring.dependency-management' version '1.1.7'
 }
 
 group = 'org.silsagusi'
-version = '0.0.1-SNAPSHOT'
+version = '1.0.0'
 
 java {
     toolchain {
@@ -23,32 +21,6 @@ repositories {
     mavenCentral()
 }
 
-dependencies {
-}
-
 test {
     useJUnitPlatform()
 }
-
-//subprojects {
-//    apply plugin: 'java'
-//    apply plugin: 'org.springframework.boot'
-//    apply plugin: 'io.spring.dependency-management'
-//
-//    dependencies { // 롬복은 공통적으로 사용하는 의존성이니 여기서 끌어다 사용
-//        compileOnly 'org.projectlombok:lombok'
-//        annotationProcessor 'org.projectlombok:lombok'
-//    }
-//
-//    tasks.named('bootJar') { //빌드할 때 bootjar 파일로 하겠다는 의미
-//        enabled = false
-//    }
-//
-//    tasks.named('jar') { //빌드할 때 jar 파일로 하겠다는 의미
-//        enabled = true
-//    }
-//
-//    tasks.named('test') {
-//        useJUnitPlatform()
-//    }
-//}
