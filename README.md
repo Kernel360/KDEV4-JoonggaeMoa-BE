@@ -38,8 +38,8 @@
 
 ### 2.3 매물 관리
 - 매물 목록 조회/검색
-- 상세 정보 편집(가격, 면적, 위치)
-- 상태 변경(활성/비활성)
+- 지도 화면을 통해 주변 인프라 확인
+- 상호작용 가능한 UI/UX 구현
 
 ### 2.4 단지 관리
 - 단지 목록 조회
@@ -129,13 +129,20 @@
 - **Java 17**: 최신 LTS 버전으로 안정성과 성능을 보장하며, 모듈 시스템과 레코드 등 최신 언어 기능을 활용.
 - **Spring Boot 2.7.x**: 애플리케이션의 설정과 실행을 간소화하며, 스타터 의존성과 자동 구성 기능을 제공.
 - **Spring Data JPA**: ORM 기반 데이터 접근을 추상화하여 생산성을 높이고, 복잡한 쿼리도 메서드 정의로 해결.
+
 - **Spring Batch**: 대용량 데이터 처리 및 배치 작업(스크래핑 등)을 위한 프레임워크.
-- **Hibernate Spatial**: 공간 데이터(위도/경도 등)를 JPA 기반으로 처리할 수 있는 확장 모듈.
-- **Spring HATEOAS**: RESTful API 응답에 하이퍼미디어 링크를 포함해 클라이언트가 자가 탐색이 가능하도록 지원.
+- **WebFlux (WebClient)**: Multi Thread Pool 방식으로 웹스크래핑(크롤링) 수행이 가능한 차세대 프레임워크.
+
 - **Springdoc OpenAPI3**: Swagger UI를 통해 API 문서를 자동 생성 및 인터페이스 테스트 제공.
+- **QueryDSL**: 네이티브쿼리보다 빠르게 데이터베이스 쿼리 처리가 가능한 ORM 프레임워크.
+
+- **AWS CloudWatch + Discord WebHook**
+- **AWS S3**
+- **Hibernate Spatial + Java Topology Suite + GeoJSON**: 공간 데이터(위도/경도 등)를 JPA 기반으로 처리할 수 있는 확장 모듈.
 
 ### 🗄 Database
 - **MySQL 8.x (with Geometry)**: 공간 데이터를 저장하고, 공간 쿼리를 통해 위치 기반 검색 및 클러스터링 처리.
+- **AWS RDS**
 
 ### 🔐 인증 및 보안
 - **JWT (JSON Web Token)**: 무상태(stateless) 인증 방식으로 사용자 인증 정보와 권한을 안전하게 유지.
