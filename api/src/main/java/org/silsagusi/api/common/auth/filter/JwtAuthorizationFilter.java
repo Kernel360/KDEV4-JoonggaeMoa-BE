@@ -6,6 +6,7 @@ import java.util.Collections;
 
 import org.silsagusi.api.common.auth.SecurityProperties;
 import org.silsagusi.api.common.auth.jwt.JwtProvider;
+import org.silsagusi.api.common.exception.CustomException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -36,22 +37,28 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 		String username = null;
 		String role = null;
 
-		if (token != null && !token.isEmpty()) {
-			token = token.substring(7);
-			Claims claims = jwtProvider.getClaims(token);
-			username = claims.get("username", String.class);
-			role = claims.get("role", String.class);
+		try {
+			if (token != null && !token.isEmpty()) {
+				token = token.substring(7);
+				Claims claims = jwtProvider.getClaims(token);
+				username = claims.get("username", String.class);
+				role = claims.get("role", String.class);
 
-			Long agentId = Long.valueOf(claims.getId());
-			request.setAttribute("agentId", agentId);
+				Long agentId = Long.valueOf(claims.getId());
+				request.setAttribute("agentId", agentId);
+			}
+
+			if (username != null && !username.isEmpty()
+				&& SecurityContextHolder.getContext().getAuthentication() == null) {
+				Authentication authentication = getUserAuth(username, role);
+				SecurityContextHolder.getContext().setAuthentication(authentication);
+			}
+
+			filterChain.doFilter(request, response);
+		} catch (CustomException e) {
+			request.setAttribute("error", e);
+			throw new ServletException(e);
 		}
-
-		if (username != null && !username.isEmpty() && SecurityContextHolder.getContext().getAuthentication() == null) {
-			Authentication authentication = getUserAuth(username, role);
-			SecurityContextHolder.getContext().setAuthentication(authentication);
-		}
-
-		filterChain.doFilter(request, response);
 	}
 
 	private UsernamePasswordAuthenticationToken getUserAuth(String username, String role) {
