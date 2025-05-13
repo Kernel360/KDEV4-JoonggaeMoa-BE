@@ -7,6 +7,7 @@ import java.util.Collections;
 import org.silsagusi.api.common.auth.SecurityProperties;
 import org.silsagusi.api.common.auth.jwt.JwtProvider;
 import org.silsagusi.api.common.exception.CustomException;
+import org.silsagusi.api.common.exception.ErrorCode;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -56,8 +57,9 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
 			filterChain.doFilter(request, response);
 		} catch (CustomException e) {
+			SecurityContextHolder.clearContext();
 			request.setAttribute("error", e);
-			filterChain.doFilter(request, response);
+			throw new CustomException(ErrorCode.TOKEN_EXPIRED);
 		}
 	}
 
