@@ -34,8 +34,8 @@ public class MessageService {
 	private final MessageValidator messageValidator;
 
 	@Transactional(readOnly = true)
-	public Page<MessageResponse> getMessagePage(Long agentId, Pageable pageable) {
-		Page<Message> messagePage = messageDataProvider.getMessagePageByAgent(agentId, pageable);
+	public Page<MessageResponse> getMessagePage(Long agentId, String searchType, String keyword, Pageable pageable) {
+		Page<Message> messagePage = messageDataProvider.getMessagePageByAgent(agentId, searchType, keyword, pageable);
 		return messagePage.map(MessageResponse::toResponse);
 	}
 

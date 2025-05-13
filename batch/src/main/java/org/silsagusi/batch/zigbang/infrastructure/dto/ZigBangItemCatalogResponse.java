@@ -1,8 +1,9 @@
 package org.silsagusi.batch.zigbang.infrastructure.dto;
 
-import lombok.Data;
-
 import java.util.List;
+
+import lombok.Data;
+import lombok.ToString;
 
 @Data
 public class ZigBangItemCatalogResponse {
@@ -18,6 +19,7 @@ public class ZigBangItemCatalogResponse {
 	private Double lng;
 
 	@Data
+	@ToString
 	public static class ZigBangItemCatalog {
 		private Integer areaHoId;
 		private String tranType; // 거래 종류

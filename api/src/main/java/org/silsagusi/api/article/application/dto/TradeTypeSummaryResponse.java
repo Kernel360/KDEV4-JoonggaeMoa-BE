@@ -11,13 +11,6 @@ public class TradeTypeSummaryResponse {
 
 	private final List<TradeTypeSummary> values;
 
-	@Getter
-	@Builder
-	public static class TradeTypeSummary {
-		private String type;
-		private Double ratio;
-	}
-
 	public TradeTypeSummaryResponse(List<ArticleTypeRatioProjection> tradeTypeRatioProjections, long count) {
 		this.values = tradeTypeRatioProjections.stream()
 			.map(it -> TradeTypeSummary.builder()
@@ -25,5 +18,12 @@ public class TradeTypeSummaryResponse {
 				.ratio((it.getCount() * 100.0) / count)
 				.build())
 			.toList();
+	}
+
+	@Getter
+	@Builder
+	public static class TradeTypeSummary {
+		private String type;
+		private Double ratio;
 	}
 }

@@ -24,7 +24,7 @@ public class InquiryResponse {
 			.title(inquiry.getTitle())
 			.content(inquiry.getContent())
 			.createdAt(inquiry.getCreatedAt())
-			.count(inquiry.getAnswers().size())
+			.count(inquiry.getAnswerCount())
 			.build();
 	}
 }

@@ -5,13 +5,15 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class ComplexResponse {
 	private Long id;
-	private String name;
-	private String type;
-	private String approvedAt;
+	private String complexName;
+	private String buildingType;
+	private LocalDate confirmedAt;
 }

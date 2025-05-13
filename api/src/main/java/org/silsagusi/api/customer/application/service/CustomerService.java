@@ -5,6 +5,7 @@ import java.util.List;
 import org.silsagusi.api.agent.infrastructure.dataprovider.AgentDataProvider;
 import org.silsagusi.api.customer.application.dto.CreateCustomerRequest;
 import org.silsagusi.api.customer.application.dto.CustomerHistoryResponse;
+import org.silsagusi.api.customer.application.dto.CustomerInfiniteResponse;
 import org.silsagusi.api.customer.application.dto.CustomerResponse;
 import org.silsagusi.api.customer.application.dto.CustomerSummaryResponse;
 import org.silsagusi.api.customer.application.dto.UpdateCustomerRequest;
@@ -19,6 +20,7 @@ import org.silsagusi.core.domain.customer.info.CustomerHistoryInfo;
 import org.silsagusi.core.domain.customer.info.CustomerSummaryInfo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -80,11 +82,15 @@ public class CustomerService {
 	}
 
 	@Transactional(readOnly = true)
-	public Page<CustomerResponse> getAllCustomers(Long agentId, Pageable pageable) {
-		Agent agent = agentDataProvider.getAgentById(agentId);
-
-		Page<Customer> customerPage = customerDataProvider.getAllByAgent(agent, pageable);
+	public Page<CustomerResponse> getAllCustomers(Long agentId, String keyword, Pageable pageable) {
+		Page<Customer> customerPage = customerDataProvider.getAllByAgent(agentId, keyword, pageable);
 		return customerPage.map(CustomerResponse::toResponse);
+	}
+
+	@Transactional(readOnly = true)
+	public Slice<CustomerInfiniteResponse> getInfiniteCustomers(Long agentId, Long cursor, String keyword) {
+		Slice<Customer> customers = customerDataProvider.getInfiniteCustomers(agentId, cursor, keyword);
+		return customers.map(CustomerInfiniteResponse::toResponse);
 	}
 
 	@Transactional
@@ -94,7 +100,6 @@ public class CustomerService {
 
 	@Transactional(readOnly = true)
 	public CustomerSummaryResponse getCustomerSummary(Long agentId) {
-
 		CustomerSummaryInfo customerSummaryInfo = customerDataProvider.getCustomerSummary(agentId);
 
 		return CustomerSummaryResponse.toResponse(customerSummaryInfo);

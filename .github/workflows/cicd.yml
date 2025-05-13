@@ -21,6 +21,9 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      pull-requests: write
+      checks: write
+      id-token: write
 
     steps:
 
@@ -58,7 +61,21 @@ jobs:
       - name: Build API Module
         run: |
           export SPRING_PROFILES_ACTIVE=prod
-          ./gradlew :api:build -x test 
+          ./gradlew :api:build -x test
+          ./gradlew :api:test
+
+      - name: register test result comment
+        uses: EnricoMi/publish-unit-test-result-action@v1
+        if: always()
+        with:
+          files: '**/build/test-results/test/TEST-*.xml'
+
+      - name: register failed test  comment
+        uses: mikepenz/action-junit-report@v3
+        if: always()
+        with:
+          report_paths: '**/build/test-results/test/TEST-*.xml'
+          token: ${{ github.token }}
 
   ci-batch:
     if: |

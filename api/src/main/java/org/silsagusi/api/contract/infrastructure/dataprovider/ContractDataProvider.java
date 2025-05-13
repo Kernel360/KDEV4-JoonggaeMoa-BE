@@ -35,9 +35,9 @@ public class ContractDataProvider {
 		contractRepository.save(contract);
 	}
 
-	public Page<ContractInfo> getAllContracts(Long agentId, Pageable pageable) {
-		Page<Contract> contractPage = contractRepository.findAllByCustomerLandlord_AgentIdAndDeletedAtIsNull(agentId,
-			pageable);
+	public Page<ContractInfo> getAllContracts(Long agentId, String keyword, Pageable pageable) {
+		Page<Contract> contractPage = contractRepository.findContracts(agentId, keyword, pageable);
+
 		Page<ContractInfo> contractInfoPage = contractPage.map(it -> {
 			ContractInfo info = ContractInfo.of(it);
 			info.setUrl(getUrl(it.getUrl()));
@@ -57,7 +57,6 @@ public class ContractDataProvider {
 	}
 
 	public ContractSummaryInfo getSummary(Long agentId) {
-
 		LocalDate today = LocalDate.now();
 		LocalDate sevenDaysAgo = today.minusDays(7);
 
@@ -71,8 +70,7 @@ public class ContractDataProvider {
 			rate = ((double)(todayCount - sevenDaysAgoCount) / sevenDaysAgoCount) * 100;
 		}
 
-		return ContractSummaryInfo.builder().count(todayCount).rate(rate).build();
-
+		return new ContractSummaryInfo(todayCount, rate);
 	}
 
 	public ContractDetailInfo getContractInfo(Contract contract) {
@@ -81,8 +79,8 @@ public class ContractDataProvider {
 		return contractDetailInfo;
 	}
 
-	public String fileUpload(MultipartFile file) throws IOException {
-		String filename = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
+	public String fileUpload(MultipartFile file) {
+		String filename = UUID.randomUUID() + "_" + file.getOriginalFilename();
 
 		//meta data
 		ObjectMetadata objectMetadata = new ObjectMetadata();
@@ -90,9 +88,13 @@ public class ContractDataProvider {
 		objectMetadata.setContentLength(file.getSize());
 
 		//S3 upload
-		PutObjectRequest putObjectRequest = new PutObjectRequest("joonggaemoa", filename, file.getInputStream(),
-			objectMetadata);
-		amazonS3.putObject(putObjectRequest);
+		try {
+			PutObjectRequest putObjectRequest =
+				new PutObjectRequest(S3_BUCKET_NAME, filename, file.getInputStream(), objectMetadata);
+			amazonS3.putObject(putObjectRequest);
+		} catch (IOException e) {
+			throw new CustomException(ErrorCode.FILE_UPLOAD_ERROR);
+		}
 
 		return filename;
 	}
@@ -103,7 +105,6 @@ public class ContractDataProvider {
 
 	public List<Contract> getExpiredContracts(Long agentId) {
 		LocalDate targetDate = LocalDate.now().plusMonths(6);
-		return contractRepository.findAllByCustomerLandlord_Agent_IdAndExpiredAtBeforeAndDeletedAtIsNull(
-			agentId, targetDate);
+		return contractRepository.findAllByAgent_IdAndExpiredAtBeforeAndDeletedAtIsNull(agentId, targetDate);
 	}
 }

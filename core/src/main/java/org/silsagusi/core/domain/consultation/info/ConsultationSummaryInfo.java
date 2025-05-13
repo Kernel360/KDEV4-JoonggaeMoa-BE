@@ -1,12 +1,12 @@
 package org.silsagusi.core.domain.consultation.info;
 
-import lombok.Builder;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-@Builder
 @Getter
+@AllArgsConstructor
 public class ConsultationSummaryInfo {
-    private Integer todayCount;
-    private Integer remainingCount;
+	private Long todayCount;
+	private Long remainingCount;
 }
 

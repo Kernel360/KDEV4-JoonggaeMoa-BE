@@ -2,6 +2,8 @@ package org.silsagusi.core.domain.article;
 
 import java.time.LocalDate;
 
+import org.silsagusi.core.domain.BaseEntity;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -19,7 +21,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "complexes")
 @Getter
-public class Complex {
+public class Complex extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,22 +30,18 @@ public class Complex {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "region_id", nullable = false)
-	private Region region_id;
+	private Region region;
 
 	@Column(name = "complex_code")
 	private String complexCode; // 단지 고유 번호
 	@Column(name = "complex_name")
 	private String complexName; // 단지 이름
-	@Column(name = "building_type_code")
-	private String buildingTypeCode; // 건물 유형 코드 (예: “A01”은 아파트)
-	@Column(name = "building_type")
-	private String buildingType; // 건물 유형 이름 (예: “아파트”, “오피스텔”)
 	@Column(name = "count_dong")
 	private Integer countDong; // 총 동 수
 	@Column(name = "count_household")
 	private Integer countHousehold; // 총 세대 수
-	@Column(name = "count_household_general")
-	private Integer countHouseholdGeneral; // 일반 세대 수 (일반적으로 0으로 표시됨)
+	//@Column(name = "count_household_general")
+	//private Integer countHouseholdGeneral; // 일반 세대 수 (일반적으로 0으로 표시됨)
 	@Column(name = "confirmed_at")
 	private LocalDate confirmedAt; // 사용 승인일 (예: “2025.02.”)
 	@Column(name = "count_deal")
@@ -71,23 +69,22 @@ public class Complex {
 	@Column(name = "count_elevator")
 	private Integer countElevator; // 총 엘리베이터 수
 
+	private Double latitude;
+	private Double longitude;
+
 	private Complex(
-		String complexCode, String complexName, String buildingTypeCode,
-		String buildingType, Integer countDong, Integer countHousehold,
-		Integer countHouseholdGeneral, LocalDate confirmedAt,
+		String complexCode, String complexName,
+		Integer countDong, Integer countHousehold, LocalDate confirmedAt,
 		Integer countDeal, Integer countLease, Integer countRent,
 		Integer countRentShortTerm, Integer countArticles,
 		String sizeMin, String sizeMax, Integer priceSaleInitialMin,
 		Integer priceSaleInitialMax, Boolean tourExists,
-		Boolean isSeismic, Integer countElevator, Region region_id
+		Boolean isSeismic, Integer countElevator, Double latitude, Double longitude, Region region
 	) {
 		this.complexCode = complexCode;
 		this.complexName = complexName;
-		this.buildingTypeCode = buildingTypeCode;
-		this.buildingType = buildingType;
 		this.countDong = countDong;
 		this.countHousehold = countHousehold;
-		this.countHouseholdGeneral = countHouseholdGeneral;
 		this.confirmedAt = confirmedAt;
 		this.countDeal = countDeal;
 		this.countLease = countLease;
@@ -101,20 +98,28 @@ public class Complex {
 		this.tourExists = tourExists;
 		this.isSeismic = isSeismic;
 		this.countElevator = countElevator;
-		this.region_id = region_id;
+		this.latitude = latitude;
+		this.longitude = longitude;
+		this.region = region;
 	}
 
 	public static Complex create(
-		String complexCode, String complexName, String buildingTypeCode, String buildingType, Integer countDong,
-		Integer countHousehold, Integer countHouseholdGeneral, LocalDate confirmedAt, Integer countDeal,
-		Integer countLease, Integer countRent, Integer countRentShortTerm, Integer countArticles, String sizeMin,
-		String sizeMax, Integer priceSaleInitialMin, Integer priceSaleInitialMax, Boolean tourExists, Boolean isSeismic,
-		Integer countElevator, Region region_id
+		String complexCode, String complexName, Integer countDong,
+		Integer countHousehold, LocalDate confirmedAt, Integer countDeal,
+		Integer countLease, Integer countRent, Integer countRentShortTerm,
+		Integer countArticles, String sizeMin, String sizeMax,
+		Integer priceSaleInitialMin, Integer priceSaleInitialMax,
+		Boolean tourExists, Boolean isSeismic,
+		Integer countElevator, Double latitude, Double longitude, Region region
 	) {
 		return new Complex(
-			complexCode, complexName, buildingTypeCode, buildingType, countDong, countHousehold, countHouseholdGeneral,
-			confirmedAt, countDeal, countLease, countRent, countRentShortTerm, countArticles, sizeMin, sizeMax,
-			priceSaleInitialMin, priceSaleInitialMax, tourExists, isSeismic, countElevator, region_id
+			complexCode, complexName, countDong,
+			countHousehold, confirmedAt, countDeal,
+			countLease, countRent, countRentShortTerm,
+			countArticles, sizeMin, sizeMax,
+			priceSaleInitialMin, priceSaleInitialMax,
+			tourExists, isSeismic,
+			countElevator, latitude, longitude, region
 		);
 	}
 }

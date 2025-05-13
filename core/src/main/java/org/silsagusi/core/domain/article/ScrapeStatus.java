@@ -2,8 +2,14 @@ package org.silsagusi.core.domain.article;
 
 import java.time.LocalDateTime;
 
+import org.silsagusi.core.domain.article.enums.Platform;
+import org.silsagusi.core.domain.article.enums.ScrapeStatusType;
+import org.silsagusi.core.domain.article.enums.ScrapeTargetType;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -22,7 +28,7 @@ import lombok.NoArgsConstructor;
 	name = "scrape_statuses",
 	uniqueConstraints = @UniqueConstraint(
 		name = "scrape_status_unique_constraint",
-		columnNames = {"region_id", "source"}))
+		columnNames = {"region_id", "platform", "target_type"}))
 @Getter
 public class ScrapeStatus {
 
@@ -38,31 +44,35 @@ public class ScrapeStatus {
 	@Column(name = "last_scraped_page")
 	private Integer lastScrapedPage;
 
-	@Column(name = "completed")
-	private Boolean completed;
-
 	@Column(name = "last_scraped_at")
 	private LocalDateTime lastScrapedAt;
 
-	private Boolean failed;
+	@Enumerated(EnumType.STRING)
+	private ScrapeStatusType status;
 
-	@Column(name = "error_message")
-	private String errorMessage;
+	@Enumerated(EnumType.STRING)
+	private Platform platform;
 
-	private String source;
+	@Enumerated(EnumType.STRING)
+	@Column(name = "target_type")
+	private ScrapeTargetType targetType;
 
-	public void updatePage(Integer page, LocalDateTime lastScrapedAt, String source) {
+	public ScrapeStatus initialize() {
+		this.status = ScrapeStatusType.PENDING;
+		this.lastScrapedPage = 0;
+		return this;
+	}
+
+	public ScrapeStatus completed() {
+		this.status = ScrapeStatusType.COMPLETED;
+		this.lastScrapedAt = LocalDateTime.now();
+		return this;
+	}
+
+	public ScrapeStatus failed(int page) {
+		this.status = ScrapeStatusType.FAILED;
 		this.lastScrapedPage = page;
-		this.lastScrapedAt = lastScrapedAt;
-		this.source = source;
-	}
-
-	public void completed() {
-		this.completed = true;
-	}
-
-	public void failed(String errorMessage) {
-		this.failed = true;
-		this.errorMessage = errorMessage;
+		this.lastScrapedAt = LocalDateTime.now();
+		return this;
 	}
 }

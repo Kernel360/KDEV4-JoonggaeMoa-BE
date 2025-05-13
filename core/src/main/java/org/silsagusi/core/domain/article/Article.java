@@ -2,6 +2,9 @@ package org.silsagusi.core.domain.article;
 
 import java.time.LocalDate;
 
+import org.locationtech.jts.geom.Point;
+import org.silsagusi.core.domain.BaseEntity;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -19,7 +22,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "articles")
 @Getter
-public class Article {
+public class Article extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,11 +31,11 @@ public class Article {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "region_id", nullable = false)
-	private Region region_id;
+	private Region region;
 
-	@ManyToOne(fetch = FetchType.LAZY, optional = true)
-	@JoinColumn(name = "complex_id", nullable = true)
-	private Complex complex_id;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "complex_id")
+	private Complex complex;
 
 	@Column(name = "article_code")
 	private String articleCode;       // atclNo 매물번호
@@ -86,6 +89,12 @@ public class Article {
 	private String address2SiGunGu;
 	@Column(name = "address3_dong_eup_myeon")
 	private String address3DongEupMyeon;
+	@Column(
+		name = "geom",
+		nullable = false,
+		columnDefinition = "POINT"
+	)
+	private Point geom;
 
 	private Article(
 		String articleCode, String bjdCode, String articleName,
@@ -94,9 +103,7 @@ public class Article {
 		String areaSupply, String areaExclusive, String direction,
 		LocalDate confirmedAt, String imageUrl, Double latitude,
 		Double longitude, String articleDesc, String companyName,
-		String agency, String subway, Boolean isChecked, Region regionId, Complex complexId,
-		String addressFullLot, String addressFullRoad, String address2City,
-		String address2Sigungu, String address3Dongeupmyeon
+		String agency, String subway, Boolean isChecked, Point geom, Region region, Complex complex
 	) {
 		this.articleCode = articleCode;
 		this.bjdCode = bjdCode;
@@ -119,13 +126,9 @@ public class Article {
 		this.agency = agency;
 		this.subway = subway;
 		this.isChecked = isChecked;
-		this.region_id = regionId;
-		this.complex_id = complexId;
-		this.addressFullLot = addressFullLot;
-		this.addressFullRoad = addressFullRoad;
-		this.address1SiDo = address2City;
-		this.address2SiGunGu = address2Sigungu;
-		this.address3DongEupMyeon = address3Dongeupmyeon;
+		this.geom = geom;
+		this.region = region;
+		this.complex = complex;
 	}
 
 	public static Article create(
@@ -135,15 +138,21 @@ public class Article {
 		String areaSupply, String areaExclusive, String direction,
 		LocalDate confirmedAt, String imageUrl, Double latitude,
 		Double longitude, String articleDesc, String companyName,
-		String agency, String subway, Boolean isChecked, Region regionId, Complex complexId,
-		String addressFullLot, String addressFullRoad, String address2City,
-		String address2Sigungu, String address3Dongeupmyeon
+		String agency, String subway, Boolean isChecked, Point geom, Region region, Complex complexId
 	) {
 		return new Article(
 			articleCode, bjdCode, articleName, buildingTypeCode, buildingType, tradeType, floors, priceSale, priceRent,
 			areaSupply, areaExclusive, direction, confirmedAt, imageUrl, latitude, longitude, articleDesc,
-			companyName, agency, subway, isChecked, regionId, complexId, addressFullLot, addressFullRoad,
-			address2City, address2Sigungu, address3Dongeupmyeon
+			companyName, agency, subway, isChecked, geom, region, complexId
 		);
+	}
+
+	public void updateAddress(String addressFullLot, String addressFullRoad, String address2City,
+		String address2Sigungu, String address3Dongeupmyeon) {
+		this.addressFullLot = addressFullLot;
+		this.addressFullRoad = addressFullRoad;
+		this.address1SiDo = address2City;
+		this.address2SiGunGu = address2Sigungu;
+		this.address3DongEupMyeon = address3Dongeupmyeon;
 	}
 }

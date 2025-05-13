@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 
 import org.hibernate.annotations.DynamicUpdate;
 import org.silsagusi.core.domain.BaseEntity;
+import org.silsagusi.core.domain.agent.Agent;
+import org.silsagusi.core.domain.consultation.enums.ConsultationStatus;
 import org.silsagusi.core.domain.customer.entity.Customer;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -16,6 +18,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
@@ -26,7 +29,9 @@ import lombok.NoArgsConstructor;
 @DynamicUpdate
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name = "consultations")
+@Table(name = "consultations", indexes = {
+	@Index(name = "idx_consultation_agent_date_status_deleted", columnList = "agent_id, date, consultation_status, deleted_at")
+})
 @Getter
 public class Consultation extends BaseEntity {
 
@@ -34,6 +39,10 @@ public class Consultation extends BaseEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "consultation_id")
 	private Long id;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "agent_id", nullable = false)
+	private Agent agent;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "customer_id", nullable = false)
@@ -50,39 +59,28 @@ public class Consultation extends BaseEntity {
 	@Column(name = "consultation_status")
 	private ConsultationStatus consultationStatus;
 
-	private Consultation(
-		Customer customer,
-		LocalDateTime date,
-		ConsultationStatus consultationStatus
-	) {
+	private Consultation(Agent agent, Customer customer, LocalDateTime date, String purpose, String memo,
+		ConsultationStatus consultationStatus) {
+		this.agent = agent;
 		this.customer = customer;
 		this.date = date;
+		this.purpose = purpose;
+		this.memo = memo;
 		this.consultationStatus = consultationStatus;
 	}
 
-	public static Consultation create(Customer customer, LocalDateTime date, ConsultationStatus consultationStatus) {
-		return new Consultation(customer, date, consultationStatus);
+	public static Consultation create(Agent agent, Customer customer, LocalDateTime date, String purpose, String memo,
+		ConsultationStatus consultationStatus) {
+		return new Consultation(agent, customer, date, purpose, memo, consultationStatus);
 	}
 
 	public void updateStatus(ConsultationStatus consultationStatus) {
 		this.consultationStatus = consultationStatus;
 	}
 
-	public void updateConsultation(
-		LocalDateTime date,
-		String purpose,
-		String memo
-	) {
+	public void updateConsultation(LocalDateTime date, String purpose, String memo) {
 		this.date = date;
 		this.purpose = purpose;
 		this.memo = memo;
 	}
-
-	public enum ConsultationStatus {
-		WAITING,     // 상담 예약 대기
-		CONFIRMED,   // 예약 확정
-		CANCELED,    // 예약 취소
-		COMPLETED    // 진행 완료
-	}
-
 }

@@ -2,11 +2,9 @@ package org.silsagusi.batch;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.batch.BatchAutoConfiguration;
 
 @SpringBootApplication(
-	scanBasePackages = "org.silsagusi",
-	exclude = {BatchAutoConfiguration.class}
+	scanBasePackages = "org.silsagusi"
 )
 public class BatchApplication {
 

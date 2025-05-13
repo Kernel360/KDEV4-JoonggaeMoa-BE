@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
@@ -29,9 +30,11 @@ public class MessageController {
 	@GetMapping("/api/all-messages")
 	public ResponseEntity<ApiResponse<Page<MessageResponse>>> getMessagePage(
 		@CurrentAgentId Long agentId,
+		@RequestParam(name = "search-type", required = false) String searchType,
+		@RequestParam(required = false) String keyword,
 		Pageable pageable
 	) {
-		Page<MessageResponse> messagePage = messageService.getMessagePage(agentId, pageable);
+		Page<MessageResponse> messagePage = messageService.getMessagePage(agentId, searchType, keyword, pageable);
 		return ResponseEntity.ok(ApiResponse.ok(messagePage));
 	}
 

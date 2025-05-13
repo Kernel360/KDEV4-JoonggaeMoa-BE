@@ -33,7 +33,7 @@ spring:
       enabled: false
     jdbc:
       schema: classpath:org/springframework/batch/core/schema-mysql.sql
-      initialize-schema: always
+      initialize-schema: never
 
   servlet:
     multipart:

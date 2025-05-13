@@ -3,6 +3,7 @@ package org.silsagusi.api.customer.controller;
 import org.silsagusi.api.common.annotation.CurrentAgentId;
 import org.silsagusi.api.customer.application.dto.CreateCustomerRequest;
 import org.silsagusi.api.customer.application.dto.CustomerHistoryResponse;
+import org.silsagusi.api.customer.application.dto.CustomerInfiniteResponse;
 import org.silsagusi.api.customer.application.dto.CustomerResponse;
 import org.silsagusi.api.customer.application.dto.CustomerSummaryResponse;
 import org.silsagusi.api.customer.application.dto.UpdateCustomerRequest;
@@ -10,6 +11,7 @@ import org.silsagusi.api.customer.application.service.CustomerService;
 import org.silsagusi.api.response.ApiResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -77,10 +79,21 @@ public class CustomerController {
 	@GetMapping("/api/customers")
 	public ResponseEntity<ApiResponse<Page<CustomerResponse>>> getAllCustomers(
 		@CurrentAgentId Long agentId,
+		@RequestParam(required = false) String keyword,
 		Pageable pageable
 	) {
-		Page<CustomerResponse> customerResponseList = customerService.getAllCustomers(agentId, pageable);
+		Page<CustomerResponse> customerResponseList = customerService.getAllCustomers(agentId, keyword, pageable);
 		return ResponseEntity.ok(ApiResponse.ok(customerResponseList));
+	}
+
+	@GetMapping("/api/customers/infinite")
+	public ResponseEntity<ApiResponse<Slice<CustomerInfiniteResponse>>> getAllInfiniteCustomers(
+		@CurrentAgentId Long agentId,
+		@RequestParam(required = false) Long cursor,
+		@RequestParam(required = false) String keyword
+	) {
+		Slice<CustomerInfiniteResponse> responses = customerService.getInfiniteCustomers(agentId, cursor, keyword);
+		return ResponseEntity.ok(ApiResponse.ok(responses));
 	}
 
 	@GetMapping("/api/customers/{customerId}")

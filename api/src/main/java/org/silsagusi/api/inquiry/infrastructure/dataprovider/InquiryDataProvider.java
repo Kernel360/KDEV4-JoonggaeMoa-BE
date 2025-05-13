@@ -45,7 +45,10 @@ public class InquiryDataProvider {
 		inquiryAnswerRepository.save(inquiryAnswer);
 	}
 
-	public void markAsAnswered(Inquiry inquiry) {
-		inquiry.markAsAnswered();
+	public void increaseAnswerCount(Inquiry inquiry) {
+		if (!inquiry.isAnswered()) {
+			inquiry.markAsAnswered();
+		}
+		inquiry.increaseAnswerCount();
 	}
 }

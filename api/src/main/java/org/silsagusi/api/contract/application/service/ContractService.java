@@ -1,8 +1,8 @@
 package org.silsagusi.api.contract.application.service;
 
-import java.io.IOException;
 import java.util.List;
 
+import org.silsagusi.api.agent.infrastructure.dataprovider.AgentDataProvider;
 import org.silsagusi.api.contract.application.dto.ContractDetailResponse;
 import org.silsagusi.api.contract.application.dto.ContractResponse;
 import org.silsagusi.api.contract.application.dto.ContractSummaryResponse;
@@ -12,6 +12,7 @@ import org.silsagusi.api.contract.application.mapper.ContractMapper;
 import org.silsagusi.api.contract.application.validator.ContractValidator;
 import org.silsagusi.api.contract.infrastructure.dataprovider.ContractDataProvider;
 import org.silsagusi.api.customer.infrastructure.dataprovider.CustomerDataProvider;
+import org.silsagusi.core.domain.agent.Agent;
 import org.silsagusi.core.domain.contract.entity.Contract;
 import org.silsagusi.core.domain.contract.info.ContractDetailInfo;
 import org.silsagusi.core.domain.contract.info.ContractInfo;
@@ -31,24 +32,25 @@ public class ContractService {
 
 	private final ContractDataProvider contractDataProvider;
 	private final CustomerDataProvider customerDataProvider;
+	private final AgentDataProvider agentDataProvider;
 	private final ContractMapper contractMapper;
 	private final ContractValidator contractValidator;
 
 	@Transactional
-	public void createContract(CreateContractRequest contractRequest, MultipartFile file) throws IOException {
+	public void createContract(Long agentId, CreateContractRequest contractRequest, MultipartFile file) {
+		Agent agent = agentDataProvider.getAgentById(agentId);
 		Customer customerLandlord = customerDataProvider.getCustomer(contractRequest.getLandlordId());
 		Customer customerTenant = customerDataProvider.getCustomer(contractRequest.getTenantId());
 
 		String filename = contractDataProvider.fileUpload(file);
-
-		Contract contract = contractMapper.toEntity(contractRequest, customerLandlord, customerTenant, filename);
+		Contract contract = contractMapper.toEntity(contractRequest, agent, customerLandlord, customerTenant, filename);
 
 		contractDataProvider.createContract(contract);
 	}
 
 	@Transactional(readOnly = true)
-	public Page<ContractResponse> getAllContracts(Long agentId, Pageable pageable) {
-		Page<ContractInfo> contractInfoPage = contractDataProvider.getAllContracts(agentId, pageable);
+	public Page<ContractResponse> getAllContracts(Long agentId, String keyword, Pageable pageable) {
+		Page<ContractInfo> contractInfoPage = contractDataProvider.getAllContracts(agentId, keyword, pageable);
 		return contractInfoPage.map(ContractResponse::toResponse);
 	}
 

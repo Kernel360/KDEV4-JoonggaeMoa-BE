@@ -1,11 +1,12 @@
 package org.silsagusi.batch.naverland.infrastructure;
 
-import lombok.RequiredArgsConstructor;
 import org.silsagusi.batch.naverland.infrastructure.dto.NaverLandArticleResponse;
 import org.silsagusi.batch.naverland.infrastructure.dto.NaverLandComplexResponse;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
+
+import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
@@ -49,7 +50,7 @@ public class NaverLandApiClient {
 	// zoom level 16 : 1:2,000
 	// zoom level 17 : 1:1,000
 
-	public <T> T fetchList(String path, String lat, String lon, String cortarNo, String page, Class<T> responseType) {
+	public <T> T fetchList(String path, Double lat, Double lon, String cortarNo, String page, Class<T> responseType) {
 		return naverWebClient.get()
 			.uri(uriBuilder -> uriBuilder.path(path)
 				.queryParam("rletTpCd", RLET_TP_CD)
@@ -57,10 +58,10 @@ public class NaverLandApiClient {
 				.queryParam("z", ZOOM_LEVEL)
 				.queryParam("lat", lat)
 				.queryParam("lon", lon)
-				.queryParam("btm", (String.valueOf(Double.parseDouble(lat) - 0.015)))
-				.queryParam("lft", (String.valueOf(Double.parseDouble(lon) - 0.02)))
-				.queryParam("top", (String.valueOf(Double.parseDouble(lat) + 0.015)))
-				.queryParam("rgt", (String.valueOf(Double.parseDouble(lon) + 0.02)))
+				.queryParam("btm", (String.valueOf(lat - 0.015)))
+				.queryParam("lft", (String.valueOf(lon - 0.02)))
+				.queryParam("top", (String.valueOf(lat + 0.015)))
+				.queryParam("rgt", (String.valueOf(lon + 0.02)))
 				.queryParam("cortarNo", cortarNo)
 				.queryParam("page", page)
 				.build())
@@ -70,11 +71,11 @@ public class NaverLandApiClient {
 			.block();
 	}
 
-	public NaverLandArticleResponse fetchArticleList(String page, String lat, String lon, String cortarNo) {
+	public NaverLandArticleResponse fetchArticleList(String page, Double lat, Double lon, String cortarNo) {
 		return fetchList("/cluster/ajax/articleList", lat, lon, cortarNo, page, NaverLandArticleResponse.class);
 	}
 
-	public NaverLandComplexResponse fetchComplexList(String page, String lat, String lon, String cortarNo) {
+	public NaverLandComplexResponse fetchComplexList(String page, Double lat, Double lon, String cortarNo) {
 		return fetchList("/cluster/ajax/complexList", lat, lon, cortarNo, page, NaverLandComplexResponse.class);
 	}
 }
