@@ -26,7 +26,7 @@ public class RefreshTokenController {
 		log.info("Refreshing token");
 		Cookie refreshToken = WebUtils.getCookie(request, "refreshToken");
 		log.info("Refresh token: {}", refreshToken);
-		if (refreshToken == null && refreshToken.getValue().isEmpty()) {
+		if (refreshToken == null || refreshToken.getValue().isEmpty()) {
 			return ResponseEntity.status(401).body(ApiResponse.fail(new CustomException(ErrorCode.UNAUTHORIZED)));
 		}
 

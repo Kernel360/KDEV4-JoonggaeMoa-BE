@@ -50,7 +50,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 		try {
 			requestDto = objectMapper.readValue(request.getInputStream(), AgentLoginRequest.class);
 		} catch (IOException e) {
-			log.error(e.getMessage());
+			log.warn(e.getMessage());
 			throw new CustomException(ErrorCode.INVALID_CREDENTIALS);
 		}
 
@@ -60,7 +60,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 		try {
 			return authenticationManager.authenticate(authToken);
 		} catch (AuthenticationException e) {
-			log.error(e.getMessage());
+			log.warn(e.getMessage());
 			throw e;
 		}
 	}

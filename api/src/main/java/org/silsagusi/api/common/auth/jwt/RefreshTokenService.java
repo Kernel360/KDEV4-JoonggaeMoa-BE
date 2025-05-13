@@ -23,7 +23,7 @@ public class RefreshTokenService {
 		String username = jwtProvider.getSubject(refreshToken);
 
 		String storedToken = refreshTokenStore.getRefreshToken(username);
-		if (storedToken == null && !storedToken.equals(refreshToken)) {
+		if (storedToken == null || !storedToken.equals(refreshToken)) {
 			throw new CustomException(ErrorCode.INVALID_TOKEN);
 		}
 
