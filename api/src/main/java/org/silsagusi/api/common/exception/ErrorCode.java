@@ -17,7 +17,8 @@ public enum ErrorCode {
 	PAYLOAD_TOO_LARGE(4004, "요청 데이터 길이가 초과되었습니다."),
 	METHOD_NOT_ALLOWED(4005, "지원하지 않는 HTTP 메서드입니다."),
 	PASSWORD_NOT_VALID(4006, "비밀번호가 일치하지 않습니다."),
-	INVALID_CLUSTER_ID(4007, "유효하지 않은 클러스터 ID입니다."),
+	INVALID_COORDINATE_ORDER(4007, "좌표 순서가 올바르지 않습니다."),
+	INVALID_COORDINATE_RANGE(4008, "좌표가 허용된 범위를 벗어났습니다."),
 
 	// 401X - 인증 오류
 	UNAUTHORIZED(4010, "토큰이 없습니다."),

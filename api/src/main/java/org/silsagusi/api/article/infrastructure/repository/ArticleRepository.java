@@ -2,23 +2,15 @@ package org.silsagusi.api.article.infrastructure.repository;
 
 import org.silsagusi.core.domain.article.Article;
 import org.silsagusi.core.domain.article.projection.ArticleTypeRatioProjection;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 
 import java.time.LocalDate;
 import java.util.List;
 
-public interface ArticleRepository extends JpaRepository<Article, Long>, JpaSpecificationExecutor<Article>, ArticleCustomRepository {
+public interface ArticleRepository extends JpaRepository<Article, Long> {
 
-	Page<Article> findByBjdCodeStartingWith(String regionPrefix, Pageable pageable);
-
-	// 화면에 보이는 영역 내 매물만 페이징 조회
-	Page<Article> findByLatitudeBetweenAndLongitudeBetweenAndBjdCodeStartingWith(
-		Double swLat, Double neLat, Double swLng, Double neLng, String regionPrefix, Pageable pageable
-	);
+	Article findArticleById(Long articleId);
 
 	// 매물 타입(BuildingType) 비율
 	@Query("""
