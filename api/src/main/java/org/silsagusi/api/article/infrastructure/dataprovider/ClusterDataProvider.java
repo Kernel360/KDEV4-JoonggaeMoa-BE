@@ -1,17 +1,15 @@
 package org.silsagusi.api.article.infrastructure.dataprovider;
 
+import lombok.RequiredArgsConstructor;
+import org.silsagusi.api.article.infrastructure.dto.BoundingBoxInfo;
+import org.silsagusi.api.article.infrastructure.dto.ClusterProjection;
+import org.silsagusi.api.article.infrastructure.repository.ClusterRepository;
+import org.springframework.stereotype.Component;
+
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
 import java.util.TreeMap;
-
-import org.silsagusi.api.article.infrastructure.dto.BoundingBoxInfo;
-import org.silsagusi.api.article.infrastructure.dto.ClusterProjection;
-import org.silsagusi.api.article.infrastructure.dto.MarkerProjection;
-import org.silsagusi.api.article.infrastructure.repository.ClusterRepository;
-import org.springframework.stereotype.Component;
-
-import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
@@ -25,10 +23,6 @@ public class ClusterDataProvider {
 		));
 
 	private final ClusterRepository clusterRepository;
-
-	public List<MarkerProjection> getMarkers(BoundingBoxInfo box) {
-		return clusterRepository.findMarkers(box);
-	}
 
 	public List<ClusterProjection> getClusters(BoundingBoxInfo box, int zoomLevel) {
 		int precision = ZOOM_TO_PRECISION.floorEntry(zoomLevel).getValue();
