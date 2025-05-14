@@ -1,15 +1,11 @@
 package org.silsagusi.api.article.infrastructure.dto;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class BoundingBox {
+public class BoundingBoxInfo {
 	private Double swLat;
 	private Double neLat;
 	private Double swLng;
