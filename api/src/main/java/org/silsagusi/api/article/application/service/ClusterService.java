@@ -26,12 +26,13 @@ public class ClusterService {
 	));
 	private final ClusterDataProvider clusterDataProvider;
 	private final BoundingBoxValidator boundingBoxValidator;
+	private final ClusterMapper clusterMapper;
 
 	@Transactional(readOnly = true)
 	public List<MarkerResponse> getMarkers(BoundingBox box) {
 		boundingBoxValidator.validateBoundingBox(box);
 		List<MarkerProjection> projections = clusterDataProvider.getMarkers(box);
-		return ClusterMapper.toMarkerResponseList(projections);
+		return clusterMapper.toMarkerResponseList(projections);
 	}
 
 	@Transactional(readOnly = true)
@@ -39,6 +40,6 @@ public class ClusterService {
 		boundingBoxValidator.validateBoundingBox(box);
 		int precision = ZOOM_TO_PRECISION.floorEntry(zoomLevel).getValue();
 		List<ClusterProjection> projections = clusterDataProvider.getClusters(box, precision);
-		return ClusterMapper.toClusterResponseList(projections);
+		return clusterMapper.toClusterResponseList(projections);
 	}
 }
