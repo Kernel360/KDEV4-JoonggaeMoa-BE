@@ -4,7 +4,7 @@
 
 ![Image](https://github.com/user-attachments/assets/b3568df3-77a8-424d-ab45-0dacf687c3ce)
 
-## 부동산 중개의 새로운 기준, 중개모아 <img alt="중개모아 로고" height="29" src="./docs/logo.png" title="logo" width="25"/>
+## 부동산 중개의 새로운 기준, 중개모아
 
 </div>
 
