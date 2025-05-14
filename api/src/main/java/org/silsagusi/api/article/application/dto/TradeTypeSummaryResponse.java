@@ -1,13 +1,15 @@
 package org.silsagusi.api.article.application.dto;
 
-import lombok.Builder;
-import lombok.Getter;
-import org.silsagusi.core.domain.article.projection.ArticleTypeRatioProjection;
-
+import java.io.Serializable;
 import java.util.List;
 
+import org.silsagusi.core.domain.article.projection.ArticleTypeRatioProjection;
+
+import lombok.Builder;
+import lombok.Getter;
+
 @Getter
-public class TradeTypeSummaryResponse {
+public class TradeTypeSummaryResponse implements Serializable {
 
 	private final List<TradeTypeSummary> values;
 
@@ -22,7 +24,7 @@ public class TradeTypeSummaryResponse {
 
 	@Getter
 	@Builder
-	public static class TradeTypeSummary {
+	public static class TradeTypeSummary implements Serializable {
 		private String type;
 		private Double ratio;
 	}
