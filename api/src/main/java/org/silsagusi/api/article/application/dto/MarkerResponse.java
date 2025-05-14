@@ -1,9 +1,13 @@
 package org.silsagusi.api.article.application.dto;
 
+import java.util.List;
+
+import org.silsagusi.api.article.infrastructure.dto.MarkerProjection;
+
 import com.fasterxml.jackson.annotation.JsonRawValue;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.silsagusi.api.article.infrastructure.dto.MarkerProjection;
 
 @Getter
 @AllArgsConstructor
@@ -12,10 +16,9 @@ public class MarkerResponse {
 	@JsonRawValue
 	private String geoJson;
 
-	public static MarkerResponse toResponse(MarkerProjection p) {
-		return new MarkerResponse(
-			p.getId(),
-			p.getGeoJson()
-		);
+	public static List<MarkerResponse> toResponses(List<MarkerProjection> projections) {
+		return projections.stream()
+			.map(projection -> new MarkerResponse(projection.getId(), projection.getGeoJson()))
+			.toList();
 	}
 }

@@ -1,14 +1,14 @@
 package org.silsagusi.api.article.infrastructure.repository;
 
-import org.silsagusi.api.article.infrastructure.dto.BoundingBox;
+import java.util.List;
+
+import org.silsagusi.api.article.infrastructure.dto.BoundingBoxInfo;
 import org.silsagusi.api.article.infrastructure.dto.ClusterProjection;
 import org.silsagusi.api.article.infrastructure.dto.MarkerProjection;
 import org.silsagusi.core.domain.article.Article;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-
-import java.util.List;
 
 public interface ClusterRepository extends JpaRepository<Article, Long> {
 
@@ -23,7 +23,7 @@ public interface ClusterRepository extends JpaRepository<Article, Long> {
 			ST_Y(a.geom) BETWEEN :#{#box.swLng} AND :#{#box.neLng}
 		""", nativeQuery = true)
 	List<MarkerProjection> findMarkers(
-		@Param("box") BoundingBox box
+		@Param("box") BoundingBoxInfo box
 	);
 
 	@Query(value = """
@@ -40,7 +40,7 @@ public interface ClusterRepository extends JpaRepository<Article, Long> {
 			FLOOR(ST_Y(a.geom) / :gridSize) * :gridSize
 		""", nativeQuery = true)
 	List<ClusterProjection> findClusters(
-		@Param("box") BoundingBox box,
+		@Param("box") BoundingBoxInfo box,
 		@Param("gridSize") double gridSize
 	);
 }

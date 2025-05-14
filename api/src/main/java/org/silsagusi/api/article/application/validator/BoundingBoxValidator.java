@@ -1,17 +1,14 @@
 package org.silsagusi.api.article.application.validator;
 
-import lombok.RequiredArgsConstructor;
-import org.silsagusi.api.article.infrastructure.dto.BoundingBox;
+import org.silsagusi.api.article.application.dto.BoundingBoxRequest;
 import org.silsagusi.api.common.exception.CustomException;
 import org.silsagusi.api.common.exception.ErrorCode;
 import org.springframework.stereotype.Component;
 
 @Component
-@RequiredArgsConstructor
 public class BoundingBoxValidator {
 
-	public void validateBoundingBox(BoundingBox box) {
-
+	public void validateBoundingBox(BoundingBoxRequest box) {
 		if (box.getSwLat() == null
 			|| box.getSwLng() == null
 			|| box.getNeLat() == null
