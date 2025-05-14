@@ -10,29 +10,15 @@ import java.util.stream.Collectors;
 
 public class ClusterMapper {
 
-	public static List<MarkerResponse> toMarkerResponseList(List<MarkerProjection> projections) {
+	public List<MarkerResponse> toMarkerResponseList(List<MarkerProjection> projections) {
 		return projections.stream()
-			.map(ClusterMapper::toMarkerResponse)
+			.map(MarkerResponse::toResponse)
 			.collect(Collectors.toList());
 	}
 
-	public static MarkerResponse toMarkerResponse(MarkerProjection p) {
-		return new MarkerResponse(
-			p.getId(),
-			p.getGeoJson()
-		);
-	}
-
-	public static List<ClusterResponse> toClusterResponseList(List<ClusterProjection> projections) {
+	public List<ClusterResponse> toClusterResponseList(List<ClusterProjection> projections) {
 		return projections.stream()
-			.map(ClusterMapper::toClusterResponse)
+			.map(ClusterResponse::toResponse)
 			.collect(Collectors.toList());
-	}
-
-	public static ClusterResponse toClusterResponse(ClusterProjection p) {
-		return new ClusterResponse(
-			p.getGeoJson(),
-			p.getCount()
-		);
 	}
 }
