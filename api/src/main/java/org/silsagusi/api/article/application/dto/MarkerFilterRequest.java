@@ -3,11 +3,13 @@ package org.silsagusi.api.article.application.dto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.util.List;
+
 @Getter
 @AllArgsConstructor
 public class MarkerFilterRequest {
-	private String tradeType;
-	private String buildingTypeCode;
+	private List<String> tradeType;
+	private List<String> buildingTypeCode;
 	private Long minSalePrice;
 	private Long maxSalePrice;
 	private Long minRentPrice;

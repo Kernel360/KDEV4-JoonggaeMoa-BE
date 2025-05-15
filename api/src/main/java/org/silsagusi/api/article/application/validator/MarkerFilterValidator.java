@@ -10,19 +10,17 @@ import org.springframework.util.StringUtils;
 public class MarkerFilterValidator {
 
 	public void validateFilter(MarkerFilterRequest request) {
-		if (hasText(request.getTradeType())) {
-			String[] tradeTypes = request.getTradeType().split(",");
-			for (String tradeType : tradeTypes) {
-				if (!tradeType.matches("^[가-힣A-Z]+$")) {
+		if (request.getTradeType() != null) {
+			for (String tradeType : request.getTradeType()) {
+				if (!StringUtils.hasText(tradeType) || !tradeType.matches("^[가-힣]+$")) {
 					throw new CustomException(ErrorCode.VALIDATION_FAILED, MarkerFilterValidator.class);
 				}
 			}
 		}
 
-		if (hasText(request.getBuildingTypeCode())) {
-			String[] buildingTypeCodes = request.getBuildingTypeCode().split(",");
-			for (String code : buildingTypeCodes) {
-				if (!code.matches("^[a-zA-Z0-9]+$")) {
+		if (request.getBuildingTypeCode() != null) {
+			for (String code : request.getBuildingTypeCode()) {
+				if (!StringUtils.hasText(code) || !code.matches("^[a-zA-Z0-9]+$")) {
 					throw new CustomException(ErrorCode.VALIDATION_FAILED, MarkerFilterValidator.class);
 				}
 			}
@@ -53,7 +51,4 @@ public class MarkerFilterValidator {
 		}
 	}
 
-	private boolean hasText(String s) {
-		return StringUtils.hasText(s);
-	}
 }
