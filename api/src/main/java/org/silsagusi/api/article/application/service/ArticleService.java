@@ -1,6 +1,8 @@
 package org.silsagusi.api.article.application.service;
 
-import lombok.RequiredArgsConstructor;
+import java.time.LocalDate;
+import java.util.List;
+
 import org.silsagusi.api.article.application.dto.ArticleResponse;
 import org.silsagusi.api.article.application.dto.RealEstateTypeSummaryResponse;
 import org.silsagusi.api.article.application.dto.TradeTypeSummaryResponse;
@@ -8,11 +10,11 @@ import org.silsagusi.api.article.application.validator.ArticleValidator;
 import org.silsagusi.api.article.infrastructure.dataprovider.ArticleDataProvider;
 import org.silsagusi.core.domain.article.Article;
 import org.silsagusi.core.domain.article.projection.ArticleTypeRatioProjection;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
-import java.util.List;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -29,6 +31,7 @@ public class ArticleService {
 	}
 
 	@Transactional(readOnly = true)
+	@Cacheable(value = "realEstateTypeSummary", key = "#period + '_' + T(java.time.LocalDate).now().toString()")
 	public RealEstateTypeSummaryResponse getRealEstateTypeSummary(String period) {
 		LocalDate from = articleDataProvider.calculateStartDate(period);
 
@@ -41,6 +44,7 @@ public class ArticleService {
 	}
 
 	@Transactional(readOnly = true)
+	@Cacheable(value = "tradeTypeSummary", key = "#period + '_' + T(java.time.LocalDate).now().toString()")
 	public TradeTypeSummaryResponse getTradeTypeSummary(String period) {
 		LocalDate from = articleDataProvider.calculateStartDate(period);
 

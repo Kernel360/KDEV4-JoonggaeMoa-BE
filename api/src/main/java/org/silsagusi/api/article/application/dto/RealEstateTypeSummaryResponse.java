@@ -1,13 +1,15 @@
 package org.silsagusi.api.article.application.dto;
 
-import lombok.Builder;
-import lombok.Getter;
-import org.silsagusi.core.domain.article.projection.ArticleTypeRatioProjection;
-
+import java.io.Serializable;
 import java.util.List;
 
+import org.silsagusi.core.domain.article.projection.ArticleTypeRatioProjection;
+
+import lombok.Builder;
+import lombok.Getter;
+
 @Getter
-public class RealEstateTypeSummaryResponse {
+public class RealEstateTypeSummaryResponse implements Serializable {
 
 	private final List<RealEstateTypeSummary> values;
 
@@ -22,7 +24,7 @@ public class RealEstateTypeSummaryResponse {
 
 	@Getter
 	@Builder
-	public static class RealEstateTypeSummary {
+	public static class RealEstateTypeSummary implements Serializable {
 		private String type;
 		private Double ratio;
 	}
