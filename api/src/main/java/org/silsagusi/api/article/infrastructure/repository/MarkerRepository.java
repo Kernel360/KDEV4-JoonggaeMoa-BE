@@ -12,13 +12,14 @@ import java.util.List;
 public interface MarkerRepository extends JpaRepository<Article, Long> {
 
 	@Query(value = """
-	SELECT
+
+		SELECT
 		a.article_id AS id,
 		ST_AsGeoJSON(Point(ST_X(a.geom), ST_Y(a.geom))) AS geoJson
-	FROM articles a
-	WHERE
+		FROM articles a
+		WHERE
 		ST_X(a.geom) BETWEEN :#{#box.swLat} AND :#{#box.neLat}
-	AND
+		AND
 		ST_Y(a.geom) BETWEEN :#{#box.swLng} AND :#{#box.neLng}
 	""", nativeQuery = true)
 	List<MarkerProjection> findMarkers(
@@ -26,14 +27,15 @@ public interface MarkerRepository extends JpaRepository<Article, Long> {
 	);
 
 	@Query(value = """
-	SELECT
+
+		SELECT
 		a.article_id AS id,
 		ST_AsGeoJSON(Point(ST_X(a.geom), ST_Y(a.geom))) AS geoJson
 	FROM articles a
 	WHERE ST_X(a.geom) BETWEEN :#{#box.swLat} AND :#{#box.neLat}
 		AND ST_Y(a.geom) BETWEEN :#{#box.swLng} AND :#{#box.neLng}
-		AND (:tradeType IS NULL OR a.trade_type IN :tradeType)
-		AND (:buildingTypeCode IS NULL OR a.building_type_code IN :buildingTypeCode)
+		AND (:isTradeTypeEmpty = TRUE OR a.trade_type IN :tradeType)
+		AND (:isBuildingTypeCodeEmpty = TRUE OR a.building_type_code IN :buildingTypeCode)
 		AND (:minSalePrice IS NULL OR a.price_sale >= :minSalePrice)
 		AND (:maxSalePrice IS NULL OR a.price_sale <= :maxSalePrice)
 		AND (:minRentPrice IS NULL OR a.price_rent >= :minRentPrice)
@@ -41,7 +43,9 @@ public interface MarkerRepository extends JpaRepository<Article, Long> {
 	""", nativeQuery = true)
 	List<MarkerProjection> findFilteredMarkers(
 		@Param("box") BoundingBoxInfo box,
+		@Param("isTradeTypeEmpty") boolean isTradeTypeEmpty,
 		@Param("tradeType") List<String> tradeType,
+		@Param("isBuildingTypeCodeEmpty") boolean isBuildingTypeCodeEmpty,
 		@Param("buildingTypeCode") List<String> buildingTypeCode,
 		@Param("minSalePrice") Long minSalePrice,
 		@Param("maxSalePrice") Long maxSalePrice,

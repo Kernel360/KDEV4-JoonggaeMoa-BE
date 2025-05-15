@@ -20,13 +20,14 @@ public class MarkerDataProvider {
 
 	public List<MarkerProjection> getFilteredMarkers(
 		BoundingBoxInfo box,
-		String tradeType, String buildingTypeCode,
+		List<String> tradeType, List<String> buildingTypeCode,
 		Long minSalePrice, Long maxSalePrice,
 		Long minRentPrice, Long maxRentPrice
 	) {
 		return markerRepository.findFilteredMarkers(
 			box,
-			List.of(tradeType), List.of(buildingTypeCode),
+			tradeType == null || tradeType.isEmpty(),tradeType,
+			buildingTypeCode == null || buildingTypeCode.isEmpty(), buildingTypeCode,
 			minSalePrice, maxSalePrice,
 			minRentPrice, maxRentPrice
 		);
