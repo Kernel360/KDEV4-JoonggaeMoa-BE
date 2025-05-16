@@ -12,15 +12,15 @@
 
 ### - 대시보드
 
-![Image](https://github.com/user-attachments/assets/5484d43b-4a33-41c3-9d93-5e0744cab5fb)
+![dashboard-screenshot-gif](https://github.com/user-attachments/assets/5484d43b-4a33-41c3-9d93-5e0744cab5fb)
 
 ### - 매물
 
-![Image](https://github.com/user-attachments/assets/df33d494-b8b9-425c-96d2-4e5f495ec218)
+![article-screenshot-gif](https://github.com/user-attachments/assets/e306bace-3f76-4609-a64f-98815e7247a6)
 
 ### - 상담
 
-![Image](https://github.com/user-attachments/assets/e6e7f35f-cefc-4a66-9bca-7a40229f6353)
+![consultation-screenshot-gif](https://github.com/user-attachments/assets/e6e7f35f-cefc-4a66-9bca-7a40229f6353)
 
 ## 프로젝트 설명
 
@@ -109,5 +109,6 @@
 |                      팀장 권승목 ([Seungmok1](https://github.com/Seungmok1))                      |                      허용석 ([missiletoe](https://github.com/missiletoe))                       |                            정소현 ([sohyeonjung](https://github.com/sohyeonjung))                            |
 |:--------------------------------------------------------------------------------------------:|:--------------------------------------------------------------------------------------------:|:---------------------------------------------------------------------------------------------------------:|
 | <img src="https://avatars.githubusercontent.com/u/103080705?v=4" width=200px height=200px /> | <img src="https://avatars.githubusercontent.com/u/116016950?v=4" width=200px height=200px /> |       <img src="https://avatars.githubusercontent.com/u/127183850?v=4" width=200px height=200px />        |
-|            Message, Agent API 구현, 부하 테스트 및 성능 모니터링, Spring Security, Spring batch            |                              Article API 구현, 매물 크롤링 및 지도 화면 구현                               | Consultation, Contract, Customer, Inquiry, Survey, Notification API 구현, Logging, 인프라 구축(무중단 배포, CI/CD 설계) |
-
+| Message, Agent API 구현 | Article API 구현 | Consultation, Contract, Customer, Inquiry, Survey, Notification API 구현 |
+| 부하 테스트 및 성능 모니터링 | 네이버부동산 및 직방 매물 크롤링 | Logging, 인프라 구축(무중단 배포, CI/CD 설계) |
+| Spring Security 및 Spring Batch 활용 | WebFlux, Hibernate Spatial + JTS + GeoJSON 활용 | SSE+ Spring Scheduler 활용 알림, AOP 활용 로깅, WebClient + GeminiApi 활용 챗봇 |
