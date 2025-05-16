@@ -35,11 +35,11 @@
 
 ### 대시보드
 
-전체 통계(매물 유형, 거래 병), 주요 알림, 만료 예정 계약 등
+전체 통계(매물 유형 및 거래 유형별 분포), 주요 알림, 만료 예정 계약 등
 
 ### 매물 관리
 
-지도 기반 매물 목록 조회/검색
+지도 기반 매물 목록 조회 및 상세 정보 확인
 
 ### 고객 관리
 
@@ -109,6 +109,5 @@
 |                      팀장 권승목 ([Seungmok1](https://github.com/Seungmok1))                      |                      허용석 ([missiletoe](https://github.com/missiletoe))                       |                            정소현 ([sohyeonjung](https://github.com/sohyeonjung))                            |
 |:--------------------------------------------------------------------------------------------:|:--------------------------------------------------------------------------------------------:|:---------------------------------------------------------------------------------------------------------:|
 | <img src="https://avatars.githubusercontent.com/u/103080705?v=4" width=200px height=200px /> | <img src="https://avatars.githubusercontent.com/u/116016950?v=4" width=200px height=200px /> |       <img src="https://avatars.githubusercontent.com/u/127183850?v=4" width=200px height=200px />        |
-| Message, Agent API 구현 | Article API 구현 | Consultation, Contract, Customer, Inquiry, Survey, Notification API 구현 |
-| 부하 테스트 및 성능 모니터링 | 네이버부동산 및 직방 매물 크롤링 | Logging, 인프라 구축(무중단 배포, CI/CD 설계) |
-| Spring Security 및 Spring Batch 활용 | WebFlux, Hibernate Spatial + JTS + GeoJSON 활용 | SSE+ Spring Scheduler 활용 알림, AOP 활용 로깅, WebClient + GeminiApi 활용 챗봇 |
+|                                    Message, Agent API 구현                                     |                                        Article API 구현                                        | Consultation, Contract, Customer, Inquiry, Survey, Notification API 구현 |
+|                       부하 테스트 및 성능 모니터링, Spring Security, Spring Batch                        |              네이버부동산 및 직방 매물 크롤링 (WebFlux, Hibernate Spatial + JTS + GeoJSON 활용)              | Logging, 인프라 구축(무중단 배포, CI/CD 설계) |
