@@ -111,3 +111,6 @@
 | <img src="https://avatars.githubusercontent.com/u/103080705?v=4" width=200px height=200px /> | <img src="https://avatars.githubusercontent.com/u/116016950?v=4" width=200px height=200px /> |       <img src="https://avatars.githubusercontent.com/u/127183850?v=4" width=200px height=200px />        |
 |                                    Message, Agent API 구현                                     |                                        Article API 구현                                        | Consultation, Contract, Customer, Inquiry, Survey, Notification API 구현 |
 |                       부하 테스트 및 성능 모니터링, Spring Security, Spring Batch                        |              네이버부동산 및 직방 매물 크롤링 (WebFlux, Hibernate Spatial + JTS + GeoJSON 활용)              | Logging, 인프라 구축(무중단 배포, CI/CD 설계) |
+
+## 트러블 슈팅
+[🧯 Connection 부족 문제 해결기](https://github.com/Kernel360/KDEV4-JoonggaeMoa-BE/wiki/%F0%9F%A7%AF-Connection-%EB%B6%80%EC%A1%B1-%EB%AC%B8%EC%A0%9C-%ED%95%B4%EA%B2%B0%EA%B8%B0)
